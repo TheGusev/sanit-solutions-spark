@@ -142,10 +142,10 @@ const Calculator = () => {
   };
 
   return (
-    <section id="calculator" className="py-20 bg-background">
+    <section id="calculator" className="py-10 md:py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12 animate-slide-in">
+          <div className="text-center mb-6 md:mb-12 animate-slide-in">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Рассчитайте <span className="text-primary">стоимость</span>
             </h2>

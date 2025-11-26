@@ -32,7 +32,7 @@ const TrustBadges = () => {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.2 });
 
   return (
-    <section className="py-12 bg-background border-y border-border">
+    <section className="py-6 md:py-12 bg-background border-y border-border">
       <div className="container mx-auto px-4">
         <div ref={ref} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {badges.map((badge, index) => (

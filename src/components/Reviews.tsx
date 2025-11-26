@@ -33,9 +33,9 @@ const Reviews = () => {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
 
   return (
-    <section id="reviews" className="py-20 bg-background">
+    <section id="reviews" className="py-10 md:py-20 bg-background">
       <div className="container mx-auto px-4">
-        <AnimatedSection animation="fade-up" className="text-center mb-16">
+        <AnimatedSection animation="fade-up" className="text-center mb-8 md:mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
             Отзывы наших <span className="text-primary">клиентов</span>
           </h2>
