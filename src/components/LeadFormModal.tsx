@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import PrivacyPolicyModal from "@/components/PrivacyPolicyModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,6 +35,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
   const [phone, setPhone] = useState("+7 ");
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
@@ -286,9 +287,12 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
                 className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Согласен с{" "}
-                <Link to="/privacy" className="text-primary hover:underline" target="_blank">
+                <span
+                  onClick={() => setPrivacyModalOpen(true)}
+                  className="text-primary hover:underline cursor-pointer"
+                >
                   политикой конфиденциальности
-                </Link>{" "}
+                </span>{" "}
                 <span className="text-destructive">*</span>
               </label>
             </div>
@@ -331,6 +335,15 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
             )}
           </Button>
         </form>
+
+        <PrivacyPolicyModal
+          open={privacyModalOpen}
+          onOpenChange={setPrivacyModalOpen}
+          onAccept={() => {
+            setConsent(true);
+            setErrors(prev => ({ ...prev, consent: "" }));
+          }}
+        />
       </DialogContent>
     </Dialog>
   );
