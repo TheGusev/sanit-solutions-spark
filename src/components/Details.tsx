@@ -51,6 +51,29 @@ const details = [
   }
 ];
 
+const guaranteeConditions = [
+  {
+    title: "Степень заражения",
+    description: "При первичной обработке степень заражения не выше 1 балла (не массовое заселение, нет старых очагов)"
+  },
+  {
+    title: "Отсутствие самолечения",
+    description: "До нашего визита не проводились самостоятельные обработки бытовой химией, которые снижают эффективность профессиональных препаратов"
+  },
+  {
+    title: "Подготовка помещения",
+    description: "Клиент подготовил помещение и соблюдает рекомендации мастера (уборка, доступ к зонам обработки, отсутствие повторного заноса и т.п.)"
+  },
+  {
+    title: "Безопасность жильцов",
+    description: "При наличии грудных детей, беременных, пожилых, хронических заболеваний и животных схема обработки может быть щадящей, поэтому результат достигается поэтапно, с возможными повторными визитами"
+  },
+  {
+    title: "Документальное оформление",
+    description: "Все детали и объём гарантий прописываются в договоре и акте осмотра объекта"
+  }
+];
+
 const Details = () => {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
   const [isGuaranteeDialogOpen, setIsGuaranteeDialogOpen] = useState(false);
@@ -106,45 +129,32 @@ const Details = () => {
                     </button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto mx-4 sm:mx-0">
-                    <DialogHeader>
+                    <DialogHeader className="animate-fade-in-up">
                       <DialogTitle className="text-2xl">Условия гарантийного сопровождения</DialogTitle>
                       <DialogDescription className="text-base mt-4">
                         Для предоставления гарантийного сопровождения необходимо соблюдение следующих условий:
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 mt-4">
-                      <div className="flex gap-3">
-                        <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0">✓</span>
-                        <p className="text-muted-foreground leading-relaxed">
-                          <strong>Степень заражения:</strong> При первичной обработке степень заражения не выше 1 балла (не массовое заселение, нет старых очагов)
-                        </p>
-                      </div>
-                      <div className="flex gap-3">
-                        <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0">✓</span>
-                        <p className="text-muted-foreground leading-relaxed">
-                          <strong>Отсутствие самолечения:</strong> До нашего визита не проводились самостоятельные обработки бытовой химией, которые снижают эффективность профессиональных препаратов
-                        </p>
-                      </div>
-                      <div className="flex gap-3">
-                        <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0">✓</span>
-                        <p className="text-muted-foreground leading-relaxed">
-                          <strong>Подготовка помещения:</strong> Клиент подготовил помещение и соблюдает рекомендации мастера (уборка, доступ к зонам обработки, отсутствие повторного заноса и т.п.)
-                        </p>
-                      </div>
-                      <div className="flex gap-3">
-                        <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0">✓</span>
-                        <p className="text-muted-foreground leading-relaxed">
-                          <strong>Безопасность жильцов:</strong> При наличии грудных детей, беременных, пожилых, хронических заболеваний и животных схема обработки может быть щадящей, поэтому результат достигается поэтапно, с возможными повторными визитами
-                        </p>
-                      </div>
-                      <div className="flex gap-3">
-                        <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0">✓</span>
-                        <p className="text-muted-foreground leading-relaxed">
-                          <strong>Документальное оформление:</strong> Все детали и объём гарантий прописываются в договоре и акте осмотра объекта
-                        </p>
-                      </div>
+                      {guaranteeConditions.map((condition, index) => (
+                        <div 
+                          key={index}
+                          className="flex gap-3 opacity-0 animate-fade-in-up"
+                          style={{ animationDelay: `${(index + 1) * 100}ms` }}
+                        >
+                          <span 
+                            className="text-green-600 dark:text-green-400 font-bold flex-shrink-0 opacity-0 animate-scale-in"
+                            style={{ animationDelay: `${(index + 1) * 100 + 50}ms` }}
+                          >
+                            ✓
+                          </span>
+                          <p className="text-muted-foreground leading-relaxed">
+                            <strong>{condition.title}:</strong> {condition.description}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                    <div className="mt-6 pt-4 border-t">
+                    <div className="mt-6 pt-4 border-t opacity-0 animate-fade-in-up" style={{ animationDelay: "700ms" }}>
                       <button 
                         onClick={() => setIsGuaranteeDialogOpen(false)}
                         className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
