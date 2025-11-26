@@ -23,7 +23,7 @@ const Header = () => {
   };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border transition-all duration-300 ${isScrolled ? 'py-1.5 md:py-2' : 'py-2 md:py-4'}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border transition-all duration-300 ${isScrolled ? 'py-1.5 md:py-2 min-h-[56px]' : 'py-2 md:py-4'}`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -36,7 +36,7 @@ const Header = () => {
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex flex-wrap items-center gap-x-4 lg:gap-x-6 gap-y-2">
             {isHomePage ? (
               <>
                 <button onClick={() => scrollToSection("services")} className="text-sm font-medium hover:text-primary transition-colors">
@@ -68,9 +68,13 @@ const Header = () => {
               </button>
             )}
             {isScrolled && (
-              <a href="tel:+79069989888" className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors flex items-center gap-1 animate-fade-in">
-                <Phone className="w-4 h-4" />
-                +7 (906) 998-98-88
+              <a 
+                href="tel:+79069989888" 
+                className="whitespace-nowrap flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary font-semibold text-sm hover:bg-primary/20 transition-colors animate-fade-in"
+              >
+                <Phone className="w-4 h-4 flex-shrink-0" />
+                <span className="hidden lg:inline">+7 (906) 998-98-88</span>
+                <span className="lg:hidden">Позвонить</span>
               </a>
             )}
           </nav>
