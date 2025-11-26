@@ -59,21 +59,23 @@ const Services = () => {
 
         <div ref={ref} className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children ${isVisible ? 'visible' : ''}`}>
           {services.map((service, index) => (
-            <div
-              key={index}
-              className="bg-card p-8 rounded-2xl shadow-sm hover-lift relative overflow-hidden"
-            >
-              {service.isHit && (
-                <div className="absolute -top-1 -right-12 gradient-accent text-accent-foreground px-12 py-1 text-xs font-bold rotate-45 shadow-lg">
-                  ХИТ ПРОДАЖ
-                </div>
-              )}
-              <div className="w-20 h-20 mb-4 rounded-xl bg-primary/10 flex items-center justify-center">
-                <service.icon className={`w-10 h-10 ${service.color}`} />
+          <div
+            key={index}
+            className="bg-card p-4 md:p-8 rounded-xl md:rounded-2xl shadow-sm hover-lift relative overflow-hidden"
+          >
+            {service.isHit && (
+              <div className="absolute -top-1 -right-12 gradient-accent text-accent-foreground px-12 py-1 text-xs font-bold rotate-45 shadow-lg">
+                ХИТ ПРОДАЖ
               </div>
-              <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
-              <p className="text-muted-foreground">{service.description}</p>
+            )}
+            <div className="flex items-center gap-3 md:block">
+              <div className="flex-shrink-0 md:w-20 md:h-20 md:mb-4 md:rounded-xl md:bg-primary/10 flex items-center justify-center">
+                <service.icon className={`w-8 h-8 md:w-10 md:h-10 ${service.color}`} />
+              </div>
+              <h3 className="text-xl md:text-2xl font-bold md:mb-3">{service.title}</h3>
             </div>
+            <p className="text-muted-foreground mt-2 md:mt-0">{service.description}</p>
+          </div>
           ))}
         </div>
       </div>

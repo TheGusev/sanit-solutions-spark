@@ -62,28 +62,30 @@ const Details = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {details.map((detail, index) => (
-            <div
-              key={index}
-              className={`p-8 rounded-2xl shadow-sm hover-lift animate-scale-in ${
-                detail.isHighlight
-                  ? "gradient-accent text-white col-span-1 md:col-span-2 lg:col-span-3 border-4 border-accent/30"
-                  : "bg-card"
-              }`}
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
+          <div
+            key={index}
+            className={`p-4 md:p-8 rounded-xl md:rounded-2xl shadow-sm hover-lift animate-scale-in ${
+              detail.isHighlight
+                ? "gradient-accent text-white col-span-1 md:col-span-2 lg:col-span-3 border-4 border-accent/30"
+                : "bg-card"
+            }`}
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <div className="flex items-center gap-3 md:block mb-3 md:mb-0">
               <div className={cn(
-                "w-16 h-16 mb-4 rounded-xl flex items-center justify-center",
-                detail.isHighlight ? "bg-accent/20 animate-pulse-attention" : "bg-primary/10"
+                "flex-shrink-0 md:w-16 md:h-16 md:mb-4 md:rounded-xl flex items-center justify-center",
+                detail.isHighlight ? "md:bg-accent/20 md:animate-pulse-attention" : "md:bg-primary/10"
               )}>
-                <detail.icon className={cn("w-8 h-8", detail.isHighlight ? "text-white" : detail.color)} />
+                <detail.icon className={cn("w-7 h-7 md:w-8 md:h-8", detail.isHighlight ? "text-white" : detail.color)} />
               </div>
-              <h3 className={`text-xl font-bold mb-3 ${detail.isHighlight ? "text-2xl" : ""}`}>
+              <h3 className={`text-lg md:text-xl font-bold md:mb-3 ${detail.isHighlight ? "md:text-2xl" : ""}`}>
                 {detail.title}
               </h3>
-              <p className={`leading-relaxed ${detail.isHighlight ? "text-white/90 text-lg" : "text-muted-foreground"}`}>
-                {detail.description}
-              </p>
             </div>
+            <p className={`leading-relaxed ${detail.isHighlight ? "text-white/90 md:text-lg" : "text-muted-foreground"}`}>
+              {detail.description}
+            </p>
+          </div>
           ))}
         </div>
       </div>

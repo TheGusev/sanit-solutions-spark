@@ -37,36 +37,40 @@ const Certificates = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {certificates.map((cert, index) => (
-            <div
-              key={cert.id}
-              className="bg-card rounded-2xl p-6 hover:shadow-xl transition-all duration-300 group cursor-pointer border border-border/50 animate-fade-in"
-              style={{ animationDelay: `${index * 100}ms` }}
-              onClick={() => openCertificate(cert)}
-            >
-              <div className="w-16 h-16 mb-4 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-all group-hover:scale-110">
+          <div
+            key={cert.id}
+            className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 hover:shadow-xl transition-all duration-300 group cursor-pointer border border-border/50 animate-fade-in"
+            style={{ animationDelay: `${index * 100}ms` }}
+            onClick={() => openCertificate(cert)}
+          >
+            <div className="flex items-center gap-3 md:block mb-3 md:mb-0">
+              <div className="flex-shrink-0 md:w-16 md:h-16 md:mb-4 md:rounded-xl md:bg-primary/10 flex items-center justify-center md:group-hover:bg-primary/20 transition-all md:group-hover:scale-110">
                 {(() => {
                   const Icon = cert.icon;
-                  return <Icon className="w-8 h-8 text-primary" />;
+                  return <Icon className="w-7 h-7 md:w-8 md:h-8 text-primary" />;
                 })()}
               </div>
-              <Badge variant="secondary" className="mb-3">
-                {cert.date}
-              </Badge>
-              <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">
-                {cert.title}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-2">
-                {cert.issuer}
-              </p>
-              <p className="text-xs text-primary font-mono mb-4">
-                {cert.number}
-              </p>
-              <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="outline" size="sm" className="w-full">
-                  Смотреть документ →
-                </Button>
+              <div>
+                <Badge variant="secondary" className="mb-1 md:mb-3">
+                  {cert.date}
+                </Badge>
+                <h3 className="font-bold text-base md:text-lg md:mb-2 group-hover:text-primary transition-colors">
+                  {cert.title}
+                </h3>
               </div>
             </div>
+            <p className="text-sm text-muted-foreground mb-2">
+              {cert.issuer}
+            </p>
+            <p className="text-xs text-primary font-mono mb-4">
+              {cert.number}
+            </p>
+            <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button variant="outline" size="sm" className="w-full">
+                Смотреть документ →
+              </Button>
+            </div>
+          </div>
           ))}
         </div>
       </div>
