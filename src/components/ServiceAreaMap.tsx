@@ -21,7 +21,7 @@ const ServiceAreaMap = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto mb-12">
+        <div className="grid lg:grid-cols-3 gap-4 lg:gap-8 max-w-7xl mx-auto mb-8 lg:mb-12">
           {/* Info panel - first on mobile, second on desktop */}
           <div className="order-1 lg:order-2 lg:col-span-1">
             <Card className="p-3 sm:p-4 lg:p-6 lg:sticky lg:top-4 bg-card overflow-hidden">
@@ -71,7 +71,7 @@ const ServiceAreaMap = () => {
 
                 <div className="pt-3 sm:pt-4 space-y-2 sm:space-y-3">
                   <Button 
-                    className="w-full text-sm"
+                    className="w-full text-sm whitespace-normal"
                     onClick={() => {
                       const calculatorElement = document.getElementById('calculator');
                       if (calculatorElement) {
@@ -82,7 +82,7 @@ const ServiceAreaMap = () => {
                     <span className="hidden sm:inline">Заказать выезд в {selectedArea.name}</span>
                     <span className="sm:hidden">Заказать выезд</span>
                   </Button>
-                  <Button variant="outline" className="w-full text-sm" asChild>
+                  <Button variant="outline" className="w-full text-sm whitespace-normal" asChild>
                     <a href="tel:+79069989888">
                       <Phone className="mr-2 h-4 w-4 flex-shrink-0" />
                       <span>+7 (906) 998-98-88</span>
