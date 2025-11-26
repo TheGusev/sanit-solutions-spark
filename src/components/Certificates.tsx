@@ -39,7 +39,7 @@ const Certificates = () => {
           {certificates.map((cert, index) => (
           <div
             key={cert.id}
-            className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 hover:shadow-xl transition-all duration-300 group cursor-pointer border border-border/50 animate-fade-in"
+            className="bg-card rounded-xl md:rounded-2xl p-4 md:p-6 hover-lift group cursor-pointer border border-border/50 animate-fade-in"
             style={{ animationDelay: `${index * 100}ms` }}
             onClick={() => openCertificate(cert)}
           >
