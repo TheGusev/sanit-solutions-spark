@@ -212,6 +212,22 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
     
+    // Find most recent impression for this session to link conversion
+    let impressionData = null;
+    if (leadData.session_id) {
+      const { data: impression } = await supabase
+        .from('mvt_impressions')
+        .select('id, test_name, intent, variant_key')
+        .eq('session_id', leadData.session_id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (impression) {
+        impressionData = impression;
+      }
+    }
+
     console.log("💾 Saving lead to database...");
     const { data, error } = await supabase.from("leads").insert({
       name: leadData.name,
@@ -242,6 +258,8 @@ serve(async (req) => {
       first_landing_url: leadData.first_landing_url || null,
       last_page_url: leadData.last_page_url || null,
       device_type: leadData.device_type || null,
+      mvt_impression_id: impressionData?.id || null,
+      mvt_arm_key: impressionData?.variant_key || null,
     }).select().single();
     
     if (error) {
@@ -251,19 +269,47 @@ serve(async (req) => {
     
     console.log("✅ Lead saved to database:", data.id);
     
-    // Инкрементируем счётчик конверсий в A/B статистике
-    if (leadData.variant_id && leadData.intent) {
+    // Track MVT conversion using explicit α,β update
+    if (impressionData) {
+      const revenue = leadData.final_price || 0;
+      
       try {
+        // Increment α (success) for the arm that led to this conversion
+        await supabase.rpc('increment_arm_alpha', {
+          p_test_name: impressionData.test_name,
+          p_intent: impressionData.intent || 'default',
+          p_variant_key: impressionData.variant_key,
+          p_revenue: revenue
+        });
+        
+        console.log('✅ MVT conversion tracked (α incremented):', {
+          test_name: impressionData.test_name,
+          variant: impressionData.variant_key,
+          intent: impressionData.intent,
+          revenue
+        });
+      } catch (convError) {
+        console.error("⚠️ Failed to track MVT conversion:", convError);
+      }
+    } else if (leadData.variant_id && leadData.intent) {
+      // Fallback to old A/B tracking if no impression found
+      try {
+        const revenue = leadData.final_price || 0;
+        
         await supabase.rpc('increment_ab_conversion', {
           p_test_name: 'main_variant',
           p_intent: leadData.intent || 'default',
           p_variant_id: leadData.variant_id,
-          p_revenue: leadData.final_price || 0
+          p_revenue: revenue
         });
-        console.log(`✅ A/B conversion tracked: variant ${leadData.variant_id}, intent ${leadData.intent}`);
+        
+        console.log('✅ A/B conversion tracked (fallback):', {
+          variant: leadData.variant_id,
+          intent: leadData.intent,
+          revenue
+        });
       } catch (convError) {
         console.error("⚠️ Failed to track A/B conversion:", convError);
-        // Не падаем если не удалось записать A/B статистику
       }
     }
     

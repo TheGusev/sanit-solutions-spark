@@ -69,6 +69,8 @@ export type Database = {
           keyword: string | null
           last_page_url: string | null
           method: string | null
+          mvt_arm_key: string | null
+          mvt_impression_id: string | null
           name: string
           object_type: string | null
           phone: string
@@ -102,6 +104,8 @@ export type Database = {
           keyword?: string | null
           last_page_url?: string | null
           method?: string | null
+          mvt_arm_key?: string | null
+          mvt_impression_id?: string | null
           name: string
           object_type?: string | null
           phone: string
@@ -135,6 +139,8 @@ export type Database = {
           keyword?: string | null
           last_page_url?: string | null
           method?: string | null
+          mvt_arm_key?: string | null
+          mvt_impression_id?: string | null
           name?: string
           object_type?: string | null
           phone?: string
@@ -149,6 +155,119 @@ export type Database = {
           utm_term?: string | null
           variant_id?: string | null
           yclid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_mvt_impression_id_fkey"
+            columns: ["mvt_impression_id"]
+            isOneToOne: false
+            referencedRelation: "mvt_impressions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mvt_arm_params: {
+        Row: {
+          alpha: number
+          beta: number
+          conversions_count: number | null
+          created_at: string | null
+          id: string
+          impressions_count: number | null
+          intent: string
+          revenue_sum: number | null
+          test_name: string
+          updated_at: string | null
+          variant_key: string
+        }
+        Insert: {
+          alpha?: number
+          beta?: number
+          conversions_count?: number | null
+          created_at?: string | null
+          id?: string
+          impressions_count?: number | null
+          intent?: string
+          revenue_sum?: number | null
+          test_name: string
+          updated_at?: string | null
+          variant_key: string
+        }
+        Update: {
+          alpha?: number
+          beta?: number
+          conversions_count?: number | null
+          created_at?: string | null
+          id?: string
+          impressions_count?: number | null
+          intent?: string
+          revenue_sum?: number | null
+          test_name?: string
+          updated_at?: string | null
+          variant_key?: string
+        }
+        Relationships: []
+      }
+      mvt_impressions: {
+        Row: {
+          created_at: string | null
+          device_type: string | null
+          id: string
+          intent: string | null
+          sampled_theta: number | null
+          session_id: string
+          test_name: string
+          utm_source: string | null
+          variant_key: string
+        }
+        Insert: {
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          intent?: string | null
+          sampled_theta?: number | null
+          session_id: string
+          test_name: string
+          utm_source?: string | null
+          variant_key: string
+        }
+        Update: {
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          intent?: string | null
+          sampled_theta?: number | null
+          session_id?: string
+          test_name?: string
+          utm_source?: string | null
+          variant_key?: string
+        }
+        Relationships: []
+      }
+      mvt_nodes: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          node_name: string
+          updated_at: string | null
+          variants: Json
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          node_name: string
+          updated_at?: string | null
+          variants?: Json
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          node_name?: string
+          updated_at?: string | null
+          variants?: Json
         }
         Relationships: []
       }
@@ -298,6 +417,23 @@ export type Database = {
       }
       increment_ab_session: {
         Args: { p_intent: string; p_test_name: string; p_variant_id: string }
+        Returns: undefined
+      }
+      increment_arm_alpha: {
+        Args: {
+          p_intent: string
+          p_revenue?: number
+          p_test_name: string
+          p_variant_key: string
+        }
+        Returns: undefined
+      }
+      increment_arm_beta: {
+        Args: { p_intent: string; p_test_name: string; p_variant_key: string }
+        Returns: undefined
+      }
+      increment_arm_impressions: {
+        Args: { p_intent: string; p_test_name: string; p_variant_key: string }
         Returns: undefined
       }
     }

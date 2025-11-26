@@ -65,7 +65,9 @@ export async function initializeTrafficContext(): Promise<TrafficContext> {
       body: {
         test_name: 'main_variant',
         intent: intent || 'default',
-        session_id: sessionId
+        session_id: sessionId,
+        device_type: deviceType,
+        utm_source: params.utm_source || undefined
       }
     });
     
