@@ -197,6 +197,15 @@ serve(async (req) => {
     console.log("📥 Received lead request");
     const leadData: LeadData = await req.json();
     
+    // Debug log incoming data
+    console.log('📥 Lead data received:', {
+      session_id: leadData.session_id,
+      intent: leadData.intent,
+      variant_id: leadData.variant_id,
+      utm_source: leadData.utm_source,
+      device_type: leadData.device_type
+    });
+    
     // Honeypot protection: if website field is filled, it's a bot
     if (leadData.website) {
       console.log("🤖 Bot detected via honeypot field");
@@ -253,7 +262,7 @@ serve(async (req) => {
       yclid: leadData.yclid || null,
       gclid: leadData.gclid || null,
       session_id: leadData.session_id || null,
-      intent: leadData.intent || null,
+      intent: leadData.intent || 'default',
       variant_id: leadData.variant_id || null,
       first_landing_url: leadData.first_landing_url || null,
       last_page_url: leadData.last_page_url || null,

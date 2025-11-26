@@ -155,7 +155,7 @@ serve(async (req) => {
         keyword_raw: sanitizeUtmParam(eventData.keyword_raw),
         yclid: sanitizeUtmParam(eventData.yclid),
         gclid: sanitizeUtmParam(eventData.gclid),
-        intent: sanitizeUtmParam(eventData.intent),
+        intent: sanitizeUtmParam(eventData.intent) || 'default',
         variant_id: sanitizeUtmParam(eventData.variant_id),
         device_type: sanitizeUtmParam(eventData.device_type),
         event_type: eventData.event_type,
