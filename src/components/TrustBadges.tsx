@@ -1,4 +1,5 @@
 import { CheckCircle, Shield } from "lucide-react";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const badges = [
   {
@@ -28,14 +29,19 @@ const badges = [
 ];
 
 const TrustBadges = () => {
+  const { ref, isVisible } = useScrollAnimation({ threshold: 0.2 });
+
   return (
     <section className="py-12 bg-background border-y border-border">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div ref={ref} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {badges.map((badge, index) => (
           <div
             key={index}
-            className="flex items-center gap-3 md:flex-col md:text-center group hover-lift"
+            className={`flex items-center gap-3 md:flex-col md:text-center group hover-lift transition-all duration-700 ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+            style={{ transitionDelay: `${index * 100}ms` }}
           >
             <div className="flex-shrink-0 md:w-16 md:h-16 md:mb-3 md:rounded-full md:bg-success/10 flex items-center justify-center md:group-hover:bg-success/20 transition-colors">
               <badge.icon className={`w-5 h-5 md:w-8 md:h-8 ${badge.color}`} />

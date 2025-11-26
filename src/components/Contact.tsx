@@ -28,11 +28,11 @@ const Contact = () => {
             <Phone className="w-10 h-10 text-primary" />
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
             Готовы начать работу?
           </h2>
           
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Свяжитесь с нами для бесплатной консультации и расчёта стоимости
           </p>
 
@@ -75,9 +75,9 @@ const Contact = () => {
             </a>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-12 text-left">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <MapPin className="w-5 h-5 text-primary" />
               </div>
               <div>
