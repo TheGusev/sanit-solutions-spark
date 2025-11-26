@@ -10,7 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Home, Building2, Warehouse, ShoppingCart, Factory, Snowflake, Flame, Target, Diamond, Microscope, Bug, Rat, Sparkles, Calendar, CalendarCheck, FileText, User, Briefcase, Building, Phone } from "lucide-react";
+import { Home, Building2, Warehouse, ShoppingCart, Factory, Snowflake, Flame, Target, Diamond, Microscope, Bug, Rat, Sparkles, Calendar, CalendarCheck, FileText, User, Briefcase, Building, Phone, Percent } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 
 const Calculator = () => {
   const [area, setArea] = useState<number>(50);
@@ -100,6 +101,86 @@ const Calculator = () => {
           </div>
 
           <div className="bg-card p-8 rounded-3xl shadow-xl">
+            {/* Блок визуализации скидки */}
+            <div className="bg-gradient-to-r from-primary/10 to-success/10 p-6 rounded-2xl mb-8">
+              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <Percent className="w-5 h-5 text-primary" />
+                Калькулятор скидки
+              </h3>
+              
+              {/* Слайдер площади */}
+              <div className="mb-6">
+                <div className="flex justify-between mb-2">
+                  <Label>Площадь: <span className="font-bold text-primary">{area} м²</span></Label>
+                  <span className="text-sm text-muted-foreground">10 - 500 м²</span>
+                </div>
+                <Slider
+                  value={[area]}
+                  onValueChange={(values) => setArea(values[0])}
+                  min={10}
+                  max={500}
+                  step={10}
+                  className="mb-2"
+                />
+                {/* Пороговые отметки под слайдером */}
+                <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                  <span>10м²</span>
+                  <span>100м² (10%)</span>
+                  <span>200м² (20%)</span>
+                  <span>300м²+ (30%)</span>
+                </div>
+              </div>
+              
+              {/* Прогресс-бар скидки */}
+              <div className="mb-4">
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm">Ваша скидка</span>
+                  <span className="font-bold text-success text-lg">{discount}%</span>
+                </div>
+                <div className="relative h-4 bg-muted rounded-full overflow-hidden">
+                  {/* Заполненная часть */}
+                  <div 
+                    className="absolute h-full bg-gradient-to-r from-success/70 to-success rounded-full transition-all duration-300"
+                    style={{ width: `${(discount / 30) * 100}%` }}
+                  />
+                  {/* Маркеры порогов */}
+                  <div className="absolute inset-0 flex">
+                    <div className="w-1/3 border-r border-background/50" />
+                    <div className="w-1/3 border-r border-background/50" />
+                    <div className="w-1/3" />
+                  </div>
+                </div>
+                {/* Подписи под прогресс-баром */}
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>0%</span>
+                  <span>10%</span>
+                  <span>20%</span>
+                  <span>30%</span>
+                </div>
+              </div>
+              
+              {/* Динамическая подсказка */}
+              {discount < 30 && (
+                <div className="bg-background/50 p-3 rounded-lg text-sm">
+                  <span className="text-muted-foreground">💡 </span>
+                  {discount < 10 && (
+                    <span>Увеличьте площадь до <strong>100 м²</strong> и получите <strong className="text-success">10% скидку</strong>!</span>
+                  )}
+                  {discount >= 10 && discount < 20 && (
+                    <span>Ещё <strong>{200 - area} м²</strong> до <strong className="text-success">20% скидки</strong>!</span>
+                  )}
+                  {discount >= 20 && discount < 30 && (
+                    <span>Ещё <strong>{300 - area} м²</strong> до <strong className="text-success">максимальной 30% скидки</strong>!</span>
+                  )}
+                </div>
+              )}
+              {discount >= 30 && (
+                <div className="bg-success/20 p-3 rounded-lg text-sm text-success font-medium">
+                  🎉 Поздравляем! Вы получаете максимальную скидку 30%!
+                </div>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div>
                 <Label htmlFor="premise">Тип помещения</Label>
