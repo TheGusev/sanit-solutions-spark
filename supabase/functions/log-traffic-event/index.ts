@@ -13,12 +13,20 @@ const MAX_EVENTS_PER_WINDOW = 30; // max events per IP+session per minute
 // In-memory cache for rate limits
 const rateLimitCache = new Map<string, { count: number; windowStart: number }>();
 
-// Sanitize input parameters
-function sanitizeParam(value: string | null | undefined, maxLength = 255): string | null {
+// Sanitize UTM parameters and other fields (strict whitelist)
+function sanitizeUtmParam(value: string | null | undefined, maxLength = 255): string | null {
   if (!value) return null;
   return value
     .slice(0, maxLength)
-    .replace(/[<>"'&;(){}[\]\\]/g, "_");
+    .replace(/[^a-zA-Z0-9\-_.%+ ]/g, "_");
+}
+
+// Sanitize URL parameters (broader whitelist to preserve URL structure)
+function sanitizeUrlParam(value: string | null | undefined, maxLength = 2048): string | null {
+  if (!value) return null;
+  return value
+    .slice(0, maxLength)
+    .replace(/[^a-zA-Z0-9\-_.%+:/?=&#@~]/g, "_");
 }
 
 // Check rate limit
@@ -40,15 +48,6 @@ function checkRateLimit(ip: string, sessionId: string): boolean {
   return true;
 }
 
-// Periodic cache cleanup (every 5 minutes)
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of rateLimitCache.entries()) {
-    if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS * 5) {
-      rateLimitCache.delete(key);
-    }
-  }
-}, 5 * 60 * 1000);
 
 interface TrafficEventData {
   session_id: string;
@@ -146,19 +145,19 @@ serve(async (req) => {
       .from("traffic_events")
       .insert({
         session_id: eventData.session_id,
-        page_url: sanitizeParam(eventData.page_url, 2048),
-        referrer: sanitizeParam(eventData.referrer, 2048),
-        utm_source: sanitizeParam(eventData.utm_source),
-        utm_medium: sanitizeParam(eventData.utm_medium),
-        utm_campaign: sanitizeParam(eventData.utm_campaign),
-        utm_content: sanitizeParam(eventData.utm_content),
-        utm_term: sanitizeParam(eventData.utm_term),
-        keyword_raw: sanitizeParam(eventData.keyword_raw),
-        yclid: sanitizeParam(eventData.yclid),
-        gclid: sanitizeParam(eventData.gclid),
-        intent: sanitizeParam(eventData.intent),
-        variant_id: sanitizeParam(eventData.variant_id),
-        device_type: sanitizeParam(eventData.device_type),
+        page_url: sanitizeUrlParam(eventData.page_url),
+        referrer: sanitizeUrlParam(eventData.referrer),
+        utm_source: sanitizeUtmParam(eventData.utm_source),
+        utm_medium: sanitizeUtmParam(eventData.utm_medium),
+        utm_campaign: sanitizeUtmParam(eventData.utm_campaign),
+        utm_content: sanitizeUtmParam(eventData.utm_content),
+        utm_term: sanitizeUtmParam(eventData.utm_term),
+        keyword_raw: sanitizeUtmParam(eventData.keyword_raw),
+        yclid: sanitizeUtmParam(eventData.yclid),
+        gclid: sanitizeUtmParam(eventData.gclid),
+        intent: sanitizeUtmParam(eventData.intent),
+        variant_id: sanitizeUtmParam(eventData.variant_id),
+        device_type: sanitizeUtmParam(eventData.device_type),
         event_type: eventData.event_type,
         event_data: eventData.event_data || null,
       })
