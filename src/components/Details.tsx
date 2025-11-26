@@ -1,39 +1,49 @@
+import { Shield, Microscope, Pill, FileText, BadgeDollarSign, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
+
 const details = [
   {
-    icon: "🛡️",
+    icon: Shield,
     title: "30-дневная гарантия результата",
     description: "Гарантируем 100% результат на все виды услуг. Если проблема вернётся в течение 30 дней — повторная обработка бесплатно или полный возврат денег.",
-    isHighlight: true
+    isHighlight: true,
+    color: "text-accent"
   },
   {
-    icon: "🔬",
+    icon: Microscope,
     title: "Профессиональная диагностика",
-    description: "Выезд специалиста для оценки ситуации и составления плана работ. Определяем масштаб проблемы и подбираем оптимальное решение."
+    description: "Выезд специалиста для оценки ситуации и составления плана работ. Определяем масштаб проблемы и подбираем оптимальное решение.",
+    color: "text-primary"
   },
   {
-    icon: "💊",
+    icon: Pill,
     title: "Сертифицированные препараты",
-    description: "Используем только профессиональные средства с подтверждёнными документами. Безопасно для людей и животных."
+    description: "Используем только профессиональные средства с подтверждёнными документами. Безопасно для людей и животных.",
+    color: "text-blue-500"
   },
   {
-    icon: "📋",
+    icon: FileText,
     title: "Официальное оформление",
-    description: "Предоставляем все необходимые документы: договор, акт выполненных работ, сертификаты на препараты."
+    description: "Предоставляем все необходимые документы: договор, акт выполненных работ, сертификаты на препараты.",
+    color: "text-green-600"
   },
   {
-    icon: "🛡️",
+    icon: Shield,
     title: "Гарантия качества",
-    description: "Гарантируем результат на все виды услуг. При необходимости проводим повторную обработку бесплатно."
+    description: "Гарантируем результат на все виды услуг. При необходимости проводим повторную обработку бесплатно.",
+    color: "text-success"
   },
   {
-    icon: "💰",
+    icon: BadgeDollarSign,
     title: "Гибкая система скидок",
-    description: "Скидки от площади помещения, постоянным клиентам, при заключении договоров на обслуживание."
+    description: "Скидки от площади помещения, постоянным клиентам, при заключении договоров на обслуживание.",
+    color: "text-orange-500"
   },
   {
-    icon: "⚡",
+    icon: Zap,
     title: "Экстренный выезд",
-    description: "Срочная обработка в течение 2-х часов по Москве. Работаем 24/7 без выходных и праздников."
+    description: "Срочная обработка в течение 2-х часов по Москве. Работаем 24/7 без выходных и праздников.",
+    color: "text-yellow-500"
   }
 ];
 
@@ -61,8 +71,11 @@ const Details = () => {
               }`}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className={`text-5xl mb-4 ${detail.isHighlight ? "animate-pulse-attention" : ""}`}>
-                {detail.icon}
+              <div className={cn(
+                "w-16 h-16 mb-4 rounded-xl flex items-center justify-center",
+                detail.isHighlight ? "bg-accent/20 animate-pulse-attention" : "bg-primary/10"
+              )}>
+                <detail.icon className={cn("w-8 h-8", detail.isHighlight ? "text-accent-foreground" : detail.color)} />
               </div>
               <h3 className={`text-xl font-bold mb-3 ${detail.isHighlight ? "text-2xl" : ""}`}>
                 {detail.title}

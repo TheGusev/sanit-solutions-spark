@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { blogPosts } from "@/data/blogPosts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { BookOpen } from "lucide-react";
 
 const BlogPreview = () => {
   const latestPosts = blogPosts.slice(0, 3);
@@ -10,9 +11,14 @@ const BlogPreview = () => {
     <section id="blog" className="py-20 px-4 bg-muted/30">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-            📚 Полезные статьи
-          </h2>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <BookOpen className="w-6 h-6 text-primary" />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground">
+              Полезные статьи
+            </h2>
+          </div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Экспертные советы и рекомендации по дезинфекции и борьбе с вредителями
           </p>
@@ -28,7 +34,9 @@ const BlogPreview = () => {
             >
               <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardHeader>
-                  <div className="text-6xl mb-4">{post.image}</div>
+                  <div className="w-16 h-16 mb-4 rounded-xl bg-primary/10 flex items-center justify-center">
+                    {<post.image className="w-8 h-8 text-primary" />}
+                  </div>
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
                       {post.category}

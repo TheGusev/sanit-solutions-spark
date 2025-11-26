@@ -1,3 +1,5 @@
+import { Star } from "lucide-react";
+
 const reviews = [
   {
     name: "Александр Петров",
@@ -57,7 +59,7 @@ const Reviews = () => {
 
               <div className="flex gap-1 mb-3">
                 {[...Array(review.rating)].map((_, i) => (
-                  <span key={i} className="text-yellow-400">⭐</span>
+                  <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                 ))}
               </div>
 

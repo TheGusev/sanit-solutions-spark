@@ -1,23 +1,29 @@
+import { CheckCircle, Shield } from "lucide-react";
+
 const badges = [
   {
-    icon: "✓",
+    icon: CheckCircle,
     title: "Роспотребнадзор",
-    description: "Официальная регистрация"
+    description: "Официальная регистрация",
+    color: "text-success"
   },
   {
-    icon: "✓",
+    icon: CheckCircle,
     title: "СЭС",
-    description: "Аккредитация службы"
+    description: "Аккредитация службы",
+    color: "text-success"
   },
   {
-    icon: "✓",
+    icon: CheckCircle,
     title: "Экологичность",
-    description: "Безопасные препараты"
+    description: "Безопасные препараты",
+    color: "text-success"
   },
   {
-    icon: "🛡️",
+    icon: Shield,
     title: "Гарантия 30 дней",
-    description: "Или деньги назад"
+    description: "Или деньги назад",
+    color: "text-primary"
   }
 ];
 
@@ -31,8 +37,8 @@ const TrustBadges = () => {
               key={index}
               className="flex flex-col items-center text-center group hover-lift"
             >
-              <div className="w-16 h-16 mb-3 rounded-full bg-success/10 flex items-center justify-center text-3xl group-hover:bg-success/20 transition-colors">
-                {badge.icon}
+              <div className="w-16 h-16 mb-3 rounded-full bg-success/10 flex items-center justify-center group-hover:bg-success/20 transition-colors">
+                <badge.icon className={`w-8 h-8 ${badge.color}`} />
               </div>
               <h3 className="font-bold text-sm md:text-base mb-1">{badge.title}</h3>
               <p className="text-xs text-muted-foreground">{badge.description}</p>

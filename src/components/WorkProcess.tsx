@@ -1,27 +1,33 @@
+import { Phone, Search, Beaker, CheckCircle } from "lucide-react";
+
 const steps = [
   {
     number: 1,
-    icon: "📞",
+    icon: Phone,
     title: "Звонок и консультация",
-    description: "Бесплатная оценка ситуации по телефону. Ответим на все вопросы и подберём подходящее решение."
+    description: "Бесплатная оценка ситуации по телефону. Ответим на все вопросы и подберём подходящее решение.",
+    color: "text-primary"
   },
   {
     number: 2,
-    icon: "🔍",
+    icon: Search,
     title: "Диагностика помещения",
-    description: "Выезд специалиста для осмотра. Определяем масштаб проблемы и составляем план обработки."
+    description: "Выезд специалиста для осмотра. Определяем масштаб проблемы и составляем план обработки.",
+    color: "text-blue-500"
   },
   {
     number: 3,
-    icon: "🧪",
+    icon: Beaker,
     title: "Профессиональная обработка",
-    description: "Выполняем работы сертифицированными препаратами. Используем современное оборудование."
+    description: "Выполняем работы сертифицированными препаратами. Используем современное оборудование.",
+    color: "text-purple-500"
   },
   {
     number: 4,
-    icon: "✅",
+    icon: CheckCircle,
     title: "Проверка и сертификат",
-    description: "Контрольная проверка результата. Выдаём документы и активируем гарантию на 30 дней."
+    description: "Контрольная проверка результата. Выдаём документы и активируем гарантию на 30 дней.",
+    color: "text-success"
   }
 ];
 
@@ -52,7 +58,7 @@ const WorkProcess = () => {
               <div className="flex flex-col items-center text-center px-4">
                 {/* Icon Circle */}
                 <div className="w-32 h-32 rounded-full bg-primary/10 border-4 border-background shadow-lg flex items-center justify-center mb-6 relative z-10 hover:scale-110 transition-transform">
-                  <span className="text-5xl">{step.icon}</span>
+                  <step.icon className={`w-14 h-14 ${step.color}`} />
                 </div>
                 
                 {/* Step Number */}
@@ -83,7 +89,7 @@ const WorkProcess = () => {
               {/* Left: Icon + Number */}
               <div className="flex flex-col items-center flex-shrink-0">
                 <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                  <span className="text-3xl">{step.icon}</span>
+                  <step.icon className={`w-9 h-9 ${step.color}`} />
                 </div>
                 <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-sm">
                   {step.number}

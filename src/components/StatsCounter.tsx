@@ -1,16 +1,17 @@
 import { useEffect, useRef, useState } from "react";
+import { Users, Ruler, CheckCircle, type LucideIcon } from "lucide-react";
 
 interface Stat {
   target: number;
   suffix: string;
   label: string;
-  icon: string;
+  icon: LucideIcon;
 }
 
 const stats: Stat[] = [
-  { target: 500, suffix: "+", label: "Довольных клиентов", icon: "👥" },
-  { target: 5000, suffix: "+", label: "м² обработано", icon: "📐" },
-  { target: 99.9, suffix: "%", label: "Гарантия результата", icon: "✅" }
+  { target: 500, suffix: "+", label: "Довольных клиентов", icon: Users },
+  { target: 5000, suffix: "+", label: "м² обработано", icon: Ruler },
+  { target: 99.9, suffix: "%", label: "Гарантия результата", icon: CheckCircle }
 ];
 
 const StatsCounter = () => {
@@ -72,7 +73,9 @@ const StatsCounter = () => {
               className="text-center text-primary-foreground animate-scale-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="text-5xl mb-3">{stat.icon}</div>
+              <div className="w-16 h-16 mx-auto mb-3 rounded-xl bg-white/20 flex items-center justify-center">
+                <stat.icon className="w-8 h-8" />
+              </div>
               <div className="text-5xl md:text-6xl font-bold mb-2">
                 {stat.suffix === "%" 
                   ? counts[index].toFixed(1) 

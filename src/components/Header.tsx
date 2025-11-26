@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Beaker, Phone } from "lucide-react";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -25,7 +26,9 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="text-3xl">🧪</div>
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Beaker className="w-6 h-6 text-primary" />
+            </div>
             <div>
               <h1 className="text-xl font-bold text-primary">Санитарные Решения</h1>
               <p className="text-xs text-muted-foreground">Дезинфекция МСК • Юр.лица, ИП, физ.лица</p>
@@ -68,7 +71,8 @@ const Header = () => {
             )}
             {isScrolled && (
               <a href="tel:+74951234567" className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors flex items-center gap-1 animate-fade-in">
-                📞 +7 (495) 123-45-67
+                <Phone className="w-4 h-4" />
+                +7 (495) 123-45-67
               </a>
             )}
           </nav>

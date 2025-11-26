@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { Home, Building2, Warehouse, ShoppingCart, Factory, Snowflake, Flame, Target, Diamond, Microscope, Bug, Rat, Sparkles, Calendar, CalendarCheck, FileText, User, Briefcase, Building, Phone } from "lucide-react";
 
 const Calculator = () => {
   const [area, setArea] = useState<number>(50);
@@ -107,12 +108,12 @@ const Calculator = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="apartment">🏠 Квартира</SelectItem>
-                    <SelectItem value="house">🏡 Дом</SelectItem>
-                    <SelectItem value="office">🏢 Офис</SelectItem>
-                    <SelectItem value="warehouse">📦 Склад</SelectItem>
-                    <SelectItem value="shop">🛒 Магазин</SelectItem>
-                    <SelectItem value="production">🏭 Производство</SelectItem>
+                    <SelectItem value="apartment"><Home className="w-4 h-4 inline mr-2" />Квартира</SelectItem>
+                    <SelectItem value="house"><Building2 className="w-4 h-4 inline mr-2" />Дом</SelectItem>
+                    <SelectItem value="office"><Building className="w-4 h-4 inline mr-2" />Офис</SelectItem>
+                    <SelectItem value="warehouse"><Warehouse className="w-4 h-4 inline mr-2" />Склад</SelectItem>
+                    <SelectItem value="shop"><ShoppingCart className="w-4 h-4 inline mr-2" />Магазин</SelectItem>
+                    <SelectItem value="production"><Factory className="w-4 h-4 inline mr-2" />Производство</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -136,10 +137,10 @@ const Calculator = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="cold">❄️ Холодный туман</SelectItem>
-                    <SelectItem value="hot">🔥 Горячий туман</SelectItem>
-                    <SelectItem value="spot">🎯 Точечная</SelectItem>
-                    <SelectItem value="complex">💎 Комплексная</SelectItem>
+                    <SelectItem value="cold"><Snowflake className="w-4 h-4 inline mr-2" />Холодный туман</SelectItem>
+                    <SelectItem value="hot"><Flame className="w-4 h-4 inline mr-2" />Горячий туман</SelectItem>
+                    <SelectItem value="spot"><Target className="w-4 h-4 inline mr-2" />Точечная</SelectItem>
+                    <SelectItem value="complex"><Diamond className="w-4 h-4 inline mr-2" />Комплексная</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -151,10 +152,10 @@ const Calculator = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="disinfection">🦠 Дезинфекция</SelectItem>
-                    <SelectItem value="disinsection">🐜 Дезинсекция</SelectItem>
-                    <SelectItem value="deratization">🐀 Дератизация</SelectItem>
-                    <SelectItem value="complex">✨ Комплекс</SelectItem>
+                    <SelectItem value="disinfection"><Microscope className="w-4 h-4 inline mr-2" />Дезинфекция</SelectItem>
+                    <SelectItem value="disinsection"><Bug className="w-4 h-4 inline mr-2" />Дезинсекция</SelectItem>
+                    <SelectItem value="deratization"><Rat className="w-4 h-4 inline mr-2" />Дератизация</SelectItem>
+                    <SelectItem value="complex"><Sparkles className="w-4 h-4 inline mr-2" />Комплекс</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -166,9 +167,9 @@ const Calculator = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="once">📅 Разово</SelectItem>
-                    <SelectItem value="monthly">📆 Ежемесячно</SelectItem>
-                    <SelectItem value="quarterly">📋 Ежеквартально</SelectItem>
+                    <SelectItem value="once"><Calendar className="w-4 h-4 inline mr-2" />Разово</SelectItem>
+                    <SelectItem value="monthly"><CalendarCheck className="w-4 h-4 inline mr-2" />Ежемесячно</SelectItem>
+                    <SelectItem value="quarterly"><FileText className="w-4 h-4 inline mr-2" />Ежеквартально</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -180,9 +181,9 @@ const Calculator = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="individual">👤 Физ. лицо</SelectItem>
-                    <SelectItem value="ip">💼 ИП</SelectItem>
-                    <SelectItem value="company">🏢 Юр. лицо</SelectItem>
+                    <SelectItem value="individual"><User className="w-4 h-4 inline mr-2" />Физ. лицо</SelectItem>
+                    <SelectItem value="ip"><Briefcase className="w-4 h-4 inline mr-2" />ИП</SelectItem>
+                    <SelectItem value="company"><Building className="w-4 h-4 inline mr-2" />Юр. лицо</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -209,7 +210,8 @@ const Calculator = () => {
               onClick={handleConsultation}
               className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-bold text-lg py-6 h-auto"
             >
-              📞 Заказать консультацию и расчёт
+              <Phone className="w-5 h-5 mr-2" />
+              Заказать консультацию и расчёт
             </Button>
           </div>
         </div>
