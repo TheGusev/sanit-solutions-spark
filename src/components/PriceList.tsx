@@ -92,12 +92,12 @@ const PriceList = () => {
         >
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <h2 className="text-3xl md:text-4xl font-bold">Цены на услуги</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">Цены на услуги</h2>
               <Badge className="bg-orange-500 text-white hover:bg-orange-600">
                 Скидка до 30%
               </Badge>
             </div>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
               Ориентировочные цены на наши услуги. Точную стоимость рассчитайте в калькуляторе ниже.
             </p>
           </div>

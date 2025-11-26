@@ -30,12 +30,12 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
 
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
             Полная дезинфекция помещений{" "}
             <span className="text-primary">для бизнеса и дома</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-muted-foreground mb-10">
+          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10">
             Безопасные профессиональные услуги для Москвы
           </p>
 
@@ -60,9 +60,9 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
             </Button>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-card p-6 rounded-2xl shadow-sm hover-lift">
-              <div className="w-12 h-12 mb-3 rounded-xl bg-primary/10 flex items-center justify-center">
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            <div className="bg-card p-4 md:p-6 lg:p-8 rounded-2xl shadow-sm hover-lift">
+              <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 mb-3 rounded-xl bg-primary/10 flex items-center justify-center">
                 <Zap className="w-6 h-6 text-primary" />
               </div>
               <h3 className="font-bold text-lg mb-2">Быстрый выезд</h3>

@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import AnimatedSection from "@/components/AnimatedSection";
 
 const faqs = [
   {
@@ -40,16 +41,16 @@ const FAQ = () => {
   return (
     <section id="faq" className="py-16 md:py-24 bg-muted/30">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <AnimatedSection animation="fade-up" className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Частые вопросы
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
             Ответы на самые популярные вопросы о наших услугах
           </p>
-        </div>
+        </AnimatedSection>
 
-        <div className="max-w-3xl mx-auto animate-slide-in">
+        <AnimatedSection animation="fade-up" delay={200} className="max-w-3xl mx-auto">
           <Accordion type="single" collapsible className="space-y-4">
             {faqs.map((faq, index) => (
               <AccordionItem 
@@ -66,7 +67,7 @@ const FAQ = () => {
               </AccordionItem>
             ))}
           </Accordion>
-        </div>
+        </AnimatedSection>
       </div>
     </section>
   );

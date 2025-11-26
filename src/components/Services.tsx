@@ -49,19 +49,19 @@ const Services = () => {
     <section id="services" className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
         <AnimatedSection animation="fade-up" className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
             Наши <span className="text-primary">услуги</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
             Комплексные решения для защиты вашего здоровья и бизнеса
           </p>
         </AnimatedSection>
 
-        <div ref={ref} className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children ${isVisible ? 'visible' : ''}`}>
+        <div ref={ref} className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 stagger-children ${isVisible ? 'visible' : ''}`}>
           {services.map((service, index) => (
           <div
             key={index}
-            className="bg-card p-4 md:p-8 rounded-xl md:rounded-2xl shadow-sm hover-lift relative overflow-hidden"
+            className="bg-card p-4 md:p-6 lg:p-8 rounded-xl md:rounded-2xl shadow-sm hover-lift relative overflow-hidden"
           >
             {service.isHit && (
               <div className="absolute -top-1 -right-12 gradient-accent text-accent-foreground px-12 py-1 text-xs font-bold rotate-45 shadow-lg">
@@ -69,8 +69,8 @@ const Services = () => {
               </div>
             )}
             <div className="flex items-center gap-3 md:block">
-              <div className="flex-shrink-0 md:w-20 md:h-20 md:mb-4 md:rounded-xl md:bg-primary/10 flex items-center justify-center">
-                <service.icon className={`w-8 h-8 md:w-10 md:h-10 ${service.color}`} />
+              <div className="flex-shrink-0 md:w-16 md:h-16 lg:w-20 lg:h-20 md:mb-4 md:rounded-xl md:bg-primary/10 flex items-center justify-center">
+                <service.icon className={`w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 ${service.color}`} />
               </div>
               <h3 className="text-xl md:text-2xl font-bold md:mb-3">{service.title}</h3>
             </div>
