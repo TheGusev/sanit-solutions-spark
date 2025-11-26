@@ -19,6 +19,7 @@ import {
 import { LeadFormModal } from "./LeadFormModal";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { supabase } from "@/integrations/supabase/client";
+import { trackGoal } from "@/lib/analytics";
 
 // Предустановки калькулятора по интентам
 const CALCULATOR_DEFAULTS_BY_INTENT: Record<string, Partial<{
@@ -274,7 +275,17 @@ const Calculator = () => {
 
   // Обработка заказа
   const handleOrder = () => {
-    // Логируем calc_submit перед открытием формы
+    // Трекаем цель в Яндекс.Метрике
+    trackGoal('calc_submit', {
+      intent: context?.intent,
+      variant: context?.variantId,
+      area,
+      premiseType,
+      serviceType,
+      finalPrice
+    });
+    
+    // Логируем calc_submit в Supabase
     if (context) {
       supabase.functions.invoke('log-traffic-event', {
         body: {

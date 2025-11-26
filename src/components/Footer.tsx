@@ -1,7 +1,18 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MessageCircle, Send, MapPin, Clock, Beaker } from "lucide-react";
+import { trackGoal } from "@/lib/analytics";
+import { useTraffic } from "@/contexts/TrafficContext";
 
 const Footer = () => {
+  const { context } = useTraffic();
+  
+  const handlePhoneClick = () => {
+    trackGoal('phone_click', {
+      intent: context?.intent,
+      variant: context?.variantId,
+      source: 'footer'
+    });
+  };
   return (
     <footer className="bg-foreground text-background py-12">
       <div className="container mx-auto px-4">
@@ -62,7 +73,7 @@ const Footer = () => {
             <ul className="space-y-3 text-sm opacity-80">
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 flex-shrink-0" />
-                <a href="tel:+79069989888" className="hover:opacity-100">
+                <a href="tel:+79069989888" onClick={handlePhoneClick} className="hover:opacity-100">
                   +7 (906) 998-98-88
                 </a>
               </li>

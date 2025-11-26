@@ -1,15 +1,28 @@
 import { useState } from "react";
+import { trackGoal } from "@/lib/analytics";
+import { useTraffic } from "@/contexts/TrafficContext";
 
 const FloatingButtons = () => {
+  const { context } = useTraffic();
   const [showTooltip, setShowTooltip] = useState(false);
   
   const handleWhatsAppClick = () => {
+    trackGoal('whatsapp_click', {
+      intent: context?.intent,
+      variant: context?.variantId
+    });
+    
     const phone = "79069989888";
     const message = encodeURIComponent("Здравствуйте! Интересует дезинфекция помещений.");
     window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
   };
 
   const handleTelegramClick = () => {
+    trackGoal('telegram_click', {
+      intent: context?.intent,
+      variant: context?.variantId
+    });
+    
     window.open("https://t.me/The_Suppor_t", "_blank");
   };
 

@@ -1,5 +1,7 @@
 // Обёртка для интеграции heatmap и session replay сервисов
 
+const YANDEX_COUNTER_ID = 105526356;
+
 interface AnalyticsConfig {
   provider: 'yandex_metrika' | 'hotjar' | 'posthog' | 'none';
   counterId?: string;
@@ -13,6 +15,8 @@ interface UserProperties {
   utm_source: string | null;
   utm_campaign: string | null;
   device_type: string;
+  ml_segment?: string;
+  p_conv?: number;
 }
 
 declare global {
@@ -26,15 +30,11 @@ declare global {
 let analyticsInitialized = false;
 
 // Абстракция для смены провайдера без изменения кода
+// Яндекс.Метрика загружается напрямую из index.html
 export function initAnalytics(config: AnalyticsConfig): void {
   if (analyticsInitialized) return;
   
   switch (config.provider) {
-    case 'yandex_metrika':
-      if (config.counterId) {
-        loadYandexMetrika(config.counterId);
-      }
-      break;
     case 'hotjar':
       if (config.apiKey) {
         loadHotjar(config.apiKey);
@@ -46,7 +46,9 @@ export function initAnalytics(config: AnalyticsConfig): void {
       }
       break;
     case 'none':
-      console.log('Analytics disabled');
+    case 'yandex_metrika':
+      // Яндекс.Метрика загружена в index.html, никаких действий не требуется
+      console.log('Analytics ready');
       break;
   }
   
@@ -57,11 +59,14 @@ export function setUserProperties(props: UserProperties): void {
   // Яндекс.Метрика
   if (window.ym && typeof window.ym === 'function') {
     try {
-      window.ym('userParams', {
+      window.ym(YANDEX_COUNTER_ID, 'userParams', {
         session_id: props.session_id,
         intent: props.intent || 'unknown',
         variant: props.variant_id,
+        ml_segment: props.ml_segment || 'unknown',
+        p_conv: props.p_conv || 0,
         utm_source: props.utm_source || 'direct',
+        utm_campaign: props.utm_campaign || 'none',
         device: props.device_type
       });
     } catch (err) {
@@ -97,40 +102,29 @@ export function setUserProperties(props: UserProperties): void {
   }
 }
 
-// Lazy loading Яндекс.Метрики (не блокирует рендеринг)
-function loadYandexMetrika(counterId: string): void {
-  const script = document.createElement('script');
-  script.async = true;
-  script.defer = true;
-  script.src = 'https://mc.yandex.ru/metrika/tag.js';
-  
-  script.onload = () => {
+// Трекинг целей (конверсий)
+export function trackGoal(goalName: string, params?: Record<string, any>): void {
+  if (window.ym && typeof window.ym === 'function') {
     try {
-      window.ym = window.ym || function() { 
-        (window.ym.a = window.ym.a || []).push(arguments); 
-      };
-      window.ym.l = Date.now();
-      
-      window.ym(counterId, 'init', {
-        clickmap: true,
-        trackLinks: true,
-        accurateTrackBounce: true,
-        webvisor: true,
-        trackHash: true
-      });
-      
-      console.log('Yandex.Metrika initialized');
+      window.ym(YANDEX_COUNTER_ID, 'reachGoal', goalName, params);
+      console.log(`Goal tracked: ${goalName}`, params);
     } catch (err) {
-      console.debug('Yandex.Metrika init error:', err);
+      console.debug('Yandex.Metrika goal error:', err);
     }
-  };
-  
-  script.onerror = () => {
-    console.debug('Failed to load Yandex.Metrika');
-  };
-  
-  document.head.appendChild(script);
+  }
 }
+
+// Трекинг просмотров страниц с параметрами
+export function trackPageView(url: string, params?: Record<string, any>): void {
+  if (window.ym && typeof window.ym === 'function') {
+    try {
+      window.ym(YANDEX_COUNTER_ID, 'hit', url, { params });
+    } catch (err) {
+      console.debug('Yandex.Metrika hit error:', err);
+    }
+  }
+}
+
 
 // Lazy loading Hotjar
 function loadHotjar(siteId: string): void {

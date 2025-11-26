@@ -8,6 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, Loader2 } from "lucide-react";
+import { trackGoal } from "@/lib/analytics";
+import { useTraffic } from "@/contexts/TrafficContext";
 
 interface LeadFormModalProps {
   open: boolean;
@@ -28,6 +30,7 @@ interface LeadFormModalProps {
 }
 
 export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }: LeadFormModalProps) {
+  const { context } = useTraffic();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("+7 ");
   const [email, setEmail] = useState("");
@@ -122,6 +125,14 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
       });
 
       if (error || !data?.success) throw error || new Error("Failed to submit lead");
+
+      // Трекаем цель в Яндекс.Метрике
+      trackGoal('lead_submit', {
+        intent: context?.intent,
+        variant: context?.variantId,
+        service_type: calculatorData.serviceType,
+        price: calculatorData.finalPrice
+      });
 
       toast({
         title: "Заявка принята!",
