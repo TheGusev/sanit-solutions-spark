@@ -98,27 +98,29 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
       // Get UTM parameters from URL
       const urlParams = new URLSearchParams(window.location.search);
 
-      // Save to database
-      const { error } = await supabase.from("leads").insert({
-        name: name.trim(),
-        phone,
-        email: email.trim() || null,
-        object_type: calculatorData.premiseType,
-        area_m2: calculatorData.area,
-        service: calculatorData.serviceType,
-        method: calculatorData.treatmentType,
-        frequency: calculatorData.period,
-        client_type: calculatorData.clientType,
-        base_price: calculatorData.totalPrice,
-        discount_percent: calculatorData.discount,
-        discount_amount: calculatorData.discountAmount,
-        final_price: calculatorData.finalPrice,
-        utm_source: urlParams.get("utm_source"),
-        utm_medium: urlParams.get("utm_medium"),
-        utm_campaign: urlParams.get("utm_campaign"),
+      // Call Edge Function to save lead and send notifications
+      const { data, error } = await supabase.functions.invoke("handle-lead", {
+        body: {
+          name: name.trim(),
+          phone,
+          email: email.trim() || null,
+          object_type: calculatorData.premiseType,
+          area_m2: calculatorData.area,
+          service: calculatorData.serviceType,
+          method: calculatorData.treatmentType,
+          frequency: calculatorData.period,
+          client_type: calculatorData.clientType,
+          base_price: calculatorData.totalPrice,
+          discount_percent: calculatorData.discount,
+          discount_amount: calculatorData.discountAmount,
+          final_price: calculatorData.finalPrice,
+          utm_source: urlParams.get("utm_source"),
+          utm_medium: urlParams.get("utm_medium"),
+          utm_campaign: urlParams.get("utm_campaign"),
+        }
       });
 
-      if (error) throw error;
+      if (error || !data?.success) throw error || new Error("Failed to submit lead");
 
       toast({
         title: "Заявка принята!",
