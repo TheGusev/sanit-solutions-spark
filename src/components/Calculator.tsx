@@ -99,6 +99,12 @@ const Calculator = () => {
     });
   };
 
+  // Calculate base values FIRST
+  const totalPrice = calculatePrice();
+  const discount = calculateDiscount();
+  const discountAmount = Math.round((totalPrice * discount) / 100);
+  const finalPrice = totalPrice - discountAmount;
+
   // Calculate prices for all treatment types for comparison
   const calculateComparisonPrices = () => {
     const treatmentTypes = [
@@ -125,11 +131,6 @@ const Calculator = () => {
 
   const chartData = generateChartData();
   const comparisonData = calculateComparisonPrices();
-
-  const totalPrice = calculatePrice();
-  const discount = calculateDiscount();
-  const discountAmount = Math.round((totalPrice * discount) / 100);
-  const finalPrice = totalPrice - discountAmount;
 
   const handleConsultation = () => {
     const phone = prompt("Введите ваш номер телефона для консультации:");
