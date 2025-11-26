@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.ml-predict]
 verify_jwt = false
+
+[functions.mvt-optimize]
+verify_jwt = false

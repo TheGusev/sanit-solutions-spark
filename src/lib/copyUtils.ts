@@ -5,7 +5,7 @@ import { copyMap, CopyVariant } from '@/config/copyMap';
 export function getCopy(
   section: string, 
   intent: string | null, 
-  variant: 'A' | 'B' = 'A'
+  variant: string = 'A' // Support any variant string
 ): CopyVariant {
   const sectionCopy = copyMap[section];
   
@@ -15,5 +15,8 @@ export function getCopy(
   }
   
   const intentKey = intent && sectionCopy[intent] ? intent : 'default';
-  return sectionCopy[intentKey][variant];
+  const intentData = sectionCopy[intentKey];
+  
+  // Fallback to variant A if requested variant doesn't exist
+  return intentData[variant] || intentData['A'] || copyMap.hero.default.A;
 }

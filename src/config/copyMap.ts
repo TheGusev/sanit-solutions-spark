@@ -13,8 +13,7 @@ export interface CopyVariant {
 
 export interface CopyMapSection {
   [intent: string]: {
-    A: CopyVariant;
-    B: CopyVariant;
+    [variant: string]: CopyVariant;  // Support any variant: A, B, C, D, original, urgent, etc.
   };
 }
 
@@ -129,6 +128,20 @@ export const copyMap: Record<string, CopyMapSection> = {
         highlight: "с гарантией результата",
         subtitle: "Комплексная дезинфекция, дезинсекция и дератизация в Москве и МО",
         cta_primary: "Заказать консультацию",
+        cta_secondary: "Узнать стоимость"
+      },
+      C: {
+        title: "Профессиональная дезинфекция",
+        highlight: "по доступным ценам",
+        subtitle: "Защитите ваше помещение от вирусов, бактерий и вредителей",
+        cta_primary: "Заказать со скидкой",
+        cta_secondary: "Рассчитать цену онлайн"
+      },
+      D: {
+        title: "Избавим от вредителей",
+        highlight: "за 1 визит",
+        subtitle: "Дезинфекция, дезинсекция, дератизация для вашего спокойствия",
+        cta_primary: "Вызвать специалиста",
         cta_secondary: "Узнать стоимость"
       }
     }

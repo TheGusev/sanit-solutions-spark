@@ -152,6 +152,45 @@ export type Database = {
         }
         Relationships: []
       }
+      mvt_test_config: {
+        Row: {
+          confidence_threshold: number | null
+          created_at: string | null
+          description: string | null
+          exploration_sessions_per_variant: number | null
+          id: string
+          is_active: boolean | null
+          test_name: string
+          updated_at: string | null
+          variants: Json
+          winner_variant: string | null
+        }
+        Insert: {
+          confidence_threshold?: number | null
+          created_at?: string | null
+          description?: string | null
+          exploration_sessions_per_variant?: number | null
+          id?: string
+          is_active?: boolean | null
+          test_name: string
+          updated_at?: string | null
+          variants?: Json
+          winner_variant?: string | null
+        }
+        Update: {
+          confidence_threshold?: number | null
+          created_at?: string | null
+          description?: string | null
+          exploration_sessions_per_variant?: number | null
+          id?: string
+          is_active?: boolean | null
+          test_name?: string
+          updated_at?: string | null
+          variants?: Json
+          winner_variant?: string | null
+        }
+        Relationships: []
+      }
       traffic_events: {
         Row: {
           device_type: string | null
