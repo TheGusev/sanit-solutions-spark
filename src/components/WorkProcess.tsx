@@ -81,30 +81,30 @@ const WorkProcess = () => {
         </div>
 
         {/* Mobile: Vertical Timeline */}
-        <div className="md:hidden space-y-8 max-w-md mx-auto">
+        <div className="md:hidden space-y-6 max-w-md mx-auto">
           {steps.map((step, index) => (
             <AnimatedSection
               key={index} 
               animation="fade-up"
               delay={index * 150}
-              className="flex gap-4"
+              className="flex gap-3"
             >
               {/* Left: Icon + Number */}
               <div className="flex flex-col items-center flex-shrink-0">
-                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                  <step.icon className={`w-9 h-9 ${step.color}`} />
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
+                  <step.icon className={`w-6 h-6 ${step.color}`} />
                 </div>
-                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-sm">
+                <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-xs">
                   {step.number}
                 </div>
                 {index < steps.length - 1 && (
-                  <div className="w-0.5 h-16 bg-border mt-2"></div>
+                  <div className="w-0.5 h-12 bg-border mt-2"></div>
                 )}
               </div>
 
               {/* Right: Content */}
-              <div className="pt-2 flex-1">
-                <h3 className="text-lg font-bold text-foreground mb-2">
+              <div className="flex-1">
+                <h3 className="text-base font-bold text-foreground mb-1">
                   {step.title}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
