@@ -10,8 +10,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Home, Building2, Warehouse, ShoppingCart, Factory, Snowflake, Flame, Target, Diamond, Microscope, Bug, Rat, Sparkles, Calendar, CalendarCheck, FileText, User, Briefcase, Building, Phone, Percent } from "lucide-react";
+import { Home, Building2, Warehouse, ShoppingCart, Factory, Snowflake, Flame, Target, Diamond, Microscope, Bug, Rat, Sparkles, Calendar, CalendarCheck, FileText, User, Briefcase, Building, Phone, Percent, TrendingUp } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const Calculator = () => {
   const [area, setArea] = useState<number>(50);
@@ -72,6 +81,50 @@ const Calculator = () => {
     const discount = Math.min(30, Math.floor((area / 100) * 10));
     return discount;
   };
+
+  // Generate chart data for price visualization
+  const generateChartData = () => {
+    const areas = [10, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500];
+    return areas.map(areaPoint => {
+      const discount = Math.min(30, Math.floor((areaPoint / 100) * 10));
+      const multiplier = (100 - discount) / 100;
+      
+      return {
+        area: areaPoint,
+        cold: Math.round(50 * areaPoint * 1.0 * multiplier),
+        hot: Math.round(50 * areaPoint * 1.3 * multiplier),
+        spot: Math.round(50 * areaPoint * 0.8 * multiplier),
+        complex: Math.round(50 * areaPoint * 1.5 * multiplier),
+      };
+    });
+  };
+
+  // Calculate prices for all treatment types for comparison
+  const calculateComparisonPrices = () => {
+    const treatmentTypes = [
+      { key: "cold", name: "❄️ Холодный туман", multiplier: 1.0 },
+      { key: "hot", name: "🔥 Горячий туман", multiplier: 1.3 },
+      { key: "spot", name: "🎯 Точечная", multiplier: 0.8 },
+      { key: "complex", name: "💎 Комплексная", multiplier: 1.5 },
+    ];
+
+    return treatmentTypes.map(treatment => {
+      const basePrice = Math.round(50 * area * treatment.multiplier);
+      const discountAmount = Math.round((basePrice * discount) / 100);
+      const finalPrice = basePrice - discountAmount;
+      
+      return {
+        ...treatment,
+        basePrice,
+        finalPrice,
+        savings: discountAmount,
+        isRecommended: treatment.key === "spot" && area < 100,
+      };
+    });
+  };
+
+  const chartData = generateChartData();
+  const comparisonData = calculateComparisonPrices();
 
   const totalPrice = calculatePrice();
   const discount = calculateDiscount();
@@ -179,6 +232,171 @@ const Calculator = () => {
                   🎉 Поздравляем! Вы получаете максимальную скидку 30%!
                 </div>
               )}
+            </div>
+
+            {/* График изменения цены */}
+            <div className="bg-gradient-to-r from-primary/5 to-accent/5 p-6 rounded-2xl mb-8">
+              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-primary" />
+                Как меняется цена в зависимости от площади
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis 
+                    dataKey="area" 
+                    label={{ value: 'Площадь (м²)', position: 'insideBottom', offset: -5 }}
+                    className="text-xs"
+                  />
+                  <YAxis 
+                    label={{ value: 'Цена (₽)', angle: -90, position: 'insideLeft' }}
+                    className="text-xs"
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      fontSize: '12px'
+                    }}
+                    formatter={(value: number) => `${value}₽`}
+                  />
+                  <Legend 
+                    wrapperStyle={{ fontSize: '12px' }}
+                    iconType="line"
+                  />
+                  <ReferenceLine 
+                    x={area} 
+                    stroke="hsl(var(--primary))" 
+                    strokeDasharray="3 3"
+                    label={{ value: 'Текущая', position: 'top', fill: 'hsl(var(--primary))' }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="cold" 
+                    stroke="#3B82F6" 
+                    strokeWidth={2}
+                    name="Холодный туман"
+                    dot={false}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="hot" 
+                    stroke="#EF4444" 
+                    strokeWidth={2}
+                    name="Горячий туман"
+                    dot={false}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="spot" 
+                    stroke="#22C55E" 
+                    strokeWidth={2}
+                    name="Точечная"
+                    dot={false}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="complex" 
+                    stroke="#A855F7" 
+                    strokeWidth={2}
+                    name="Комплексная"
+                    dot={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Таблица сравнения типов обработки */}
+            <div className="bg-gradient-to-r from-accent/5 to-success/5 p-6 rounded-2xl mb-8">
+              <h3 className="text-lg font-bold mb-4">
+                Сравнение типов обработки при площади {area} м²
+              </h3>
+              
+              {/* Десктопная таблица */}
+              <div className="hidden md:block overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="font-bold">Тип обработки</TableHead>
+                      <TableHead className="text-right font-bold">Базовая цена</TableHead>
+                      <TableHead className="text-right font-bold">Со скидкой</TableHead>
+                      <TableHead className="text-right font-bold">Экономия</TableHead>
+                      <TableHead className="text-center font-bold">Рекомендация</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {comparisonData.map((item) => (
+                      <TableRow key={item.key} className={item.key === treatmentType ? "bg-primary/5" : ""}>
+                        <TableCell className="font-medium">{item.name}</TableCell>
+                        <TableCell className="text-right text-muted-foreground line-through">
+                          {item.basePrice.toLocaleString()}₽
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-success">
+                          {item.finalPrice.toLocaleString()}₽
+                        </TableCell>
+                        <TableCell className="text-right text-success">
+                          -{item.savings.toLocaleString()}₽
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {item.isRecommended && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success/20 text-success">
+                              ВЫГОДНО
+                            </span>
+                          )}
+                          {item.key === treatmentType && !item.isRecommended && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/20 text-primary">
+                              ВЫБРАНО
+                            </span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Мобильные карточки */}
+              <div className="md:hidden space-y-3">
+                {comparisonData.map((item) => (
+                  <div 
+                    key={item.key} 
+                    className={`p-4 rounded-xl border ${
+                      item.key === treatmentType 
+                        ? "border-primary bg-primary/5" 
+                        : "border-border bg-card"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-bold">{item.name}</h4>
+                      {item.isRecommended && (
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-success/20 text-success">
+                          ВЫГОДНО
+                        </span>
+                      )}
+                      {item.key === treatmentType && !item.isRecommended && (
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-primary/20 text-primary">
+                          ВЫБРАНО
+                        </span>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <p className="text-muted-foreground">Базовая</p>
+                        <p className="font-medium line-through">{item.basePrice.toLocaleString()}₽</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Со скидкой</p>
+                        <p className="font-bold text-success">{item.finalPrice.toLocaleString()}₽</p>
+                      </div>
+                      <div className="col-span-2">
+                        <p className="text-muted-foreground">Экономия</p>
+                        <p className="font-medium text-success">-{item.savings.toLocaleString()}₽</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
