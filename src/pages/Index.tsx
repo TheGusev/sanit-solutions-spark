@@ -13,7 +13,6 @@ import ServiceAreaMap from "@/components/ServiceAreaMap";
 import FAQ from "@/components/FAQ";
 import BlogPreview from "@/components/BlogPreview";
 import Reviews from "@/components/Reviews";
-import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import FloatingButtons from "@/components/FloatingButtons";
 
@@ -50,7 +49,6 @@ const Index = () => {
       <FAQ />
       <BlogPreview />
       <Reviews />
-      <Contact />
       <Footer />
       
       <DiscountPopup 
