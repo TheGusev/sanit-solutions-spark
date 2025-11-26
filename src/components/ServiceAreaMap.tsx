@@ -79,13 +79,12 @@ const ServiceAreaMap = () => {
                       }
                     }}
                   >
-                    <span className="hidden sm:inline">Заказать выезд в {selectedArea.name}</span>
-                    <span className="sm:hidden">Заказать выезд</span>
+                    Заказать выезд
                   </Button>
                   <Button variant="outline" className="w-full text-sm whitespace-normal" asChild>
-                    <a href="tel:+79069989888">
+                    <a href="tel:+79069989888" className="flex items-center justify-center">
                       <Phone className="mr-2 h-4 w-4 flex-shrink-0" />
-                      <span>+7 (906) 998-98-88</span>
+                      +7 (906) 998-98-88
                     </a>
                   </Button>
                 </div>
