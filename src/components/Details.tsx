@@ -66,7 +66,7 @@ const Details = () => {
               key={index}
               className={`p-8 rounded-2xl shadow-sm hover-lift animate-scale-in ${
                 detail.isHighlight
-                  ? "bg-gradient-accent text-accent-foreground col-span-1 md:col-span-2 lg:col-span-3 border-4 border-accent/30"
+                  ? "bg-gradient-accent text-white col-span-1 md:col-span-2 lg:col-span-3 border-4 border-accent/30"
                   : "bg-card"
               }`}
               style={{ animationDelay: `${index * 0.1}s` }}
@@ -75,12 +75,12 @@ const Details = () => {
                 "w-16 h-16 mb-4 rounded-xl flex items-center justify-center",
                 detail.isHighlight ? "bg-accent/20 animate-pulse-attention" : "bg-primary/10"
               )}>
-                <detail.icon className={cn("w-8 h-8", detail.isHighlight ? "text-accent-foreground" : detail.color)} />
+                <detail.icon className={cn("w-8 h-8", detail.isHighlight ? "text-white" : detail.color)} />
               </div>
               <h3 className={`text-xl font-bold mb-3 ${detail.isHighlight ? "text-2xl" : ""}`}>
                 {detail.title}
               </h3>
-              <p className={`leading-relaxed ${detail.isHighlight ? "text-accent-foreground/90 text-lg" : "text-muted-foreground"}`}>
+              <p className={`leading-relaxed ${detail.isHighlight ? "text-white/90 text-lg" : "text-muted-foreground"}`}>
                 {detail.description}
               </p>
             </div>

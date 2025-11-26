@@ -70,7 +70,7 @@ const StatsCounter = () => {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="text-center text-primary-foreground animate-scale-in"
+              className="text-center text-white drop-shadow-md animate-scale-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="w-16 h-16 mx-auto mb-3 rounded-xl bg-white/20 flex items-center justify-center">
@@ -82,7 +82,7 @@ const StatsCounter = () => {
                   : Math.floor(counts[index])}
                 {stat.suffix}
               </div>
-              <div className="text-lg md:text-xl opacity-90">{stat.label}</div>
+              <div className="text-lg md:text-xl text-white/90">{stat.label}</div>
             </div>
           ))}
         </div>
