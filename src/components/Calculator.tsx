@@ -134,7 +134,25 @@ const Calculator = () => {
 
   const handleConsultation = () => {
     const phone = prompt("Введите ваш номер телефона для консультации:");
-    if (phone) {
+    if (phone && phone.trim()) {
+      // Формируем сообщение для WhatsApp
+      const message = `🔔 Новая заявка с калькулятора!
+    
+📱 Телефон клиента: ${phone}
+📐 Площадь: ${area} м²
+🏠 Тип помещения: ${premiseType === 'apartment' ? 'Квартира' : premiseType === 'house' ? 'Дом' : premiseType === 'office' ? 'Офис' : premiseType === 'warehouse' ? 'Склад' : premiseType === 'shop' ? 'Магазин' : 'Производство'}
+🔧 Услуга: ${serviceType === 'disinfection' ? 'Дезинфекция' : serviceType === 'disinsection' ? 'Дезинсекция' : serviceType === 'deratization' ? 'Дератизация' : 'Комплекс'}
+⚙️ Обработка: ${treatmentType === 'cold' ? 'Холодный туман' : treatmentType === 'hot' ? 'Горячий туман' : treatmentType === 'spot' ? 'Точечная' : 'Комплексная'}
+📅 Периодичность: ${period === 'once' ? 'Разово' : period === 'monthly' ? 'Ежемесячно' : 'Ежеквартально'}
+
+💰 Базовая цена: ${totalPrice}₽
+📉 Скидка: ${discount}% (-${discountAmount}₽)
+✅ Итого: ${finalPrice}₽`;
+
+      // Открываем WhatsApp с готовым сообщением
+      const whatsappUrl = `https://wa.me/79069989888?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+      
       toast.success("Спасибо! Мы свяжемся с вами в ближайшее время.", {
         description: `Расчёт: ${finalPrice}₽ (скидка ${discount}%)`,
       });
@@ -489,28 +507,28 @@ const Calculator = () => {
               </div>
             </div>
 
-            <div className="bg-muted/50 p-6 rounded-2xl mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div className="bg-muted/50 p-3 sm:p-6 rounded-2xl mb-4 sm:mb-6">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Базовая стоимость</p>
-                  <p className="text-2xl font-bold line-through text-muted-foreground">{totalPrice}₽</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-0.5 sm:mb-1">Базовая стоимость</p>
+                  <p className="text-base sm:text-2xl font-bold line-through text-muted-foreground">{totalPrice}₽</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Ваша скидка</p>
-                  <p className="text-2xl font-bold text-success">{discount}% (-{discountAmount}₽)</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-0.5 sm:mb-1">Ваша скидка</p>
+                  <p className="text-base sm:text-2xl font-bold text-success">{discount}% (-{discountAmount}₽)</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Итоговая цена</p>
-                  <p className="text-3xl font-bold text-primary">{finalPrice}₽</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-0.5 sm:mb-1">Итоговая цена</p>
+                  <p className="text-lg sm:text-3xl font-bold text-primary">{finalPrice}₽</p>
                 </div>
               </div>
             </div>
 
             <Button
               onClick={handleConsultation}
-              className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-bold text-lg py-6 h-auto"
+              className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-bold text-sm sm:text-lg py-4 sm:py-6 h-auto whitespace-normal"
             >
-              <Phone className="w-5 h-5 mr-2" />
+              <Phone className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
               Заказать консультацию и расчёт
             </Button>
           </div>
