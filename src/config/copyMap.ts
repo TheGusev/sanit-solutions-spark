@@ -17,6 +17,27 @@ export interface CopyMapSection {
   };
 }
 
+// TypeScript types for Hero section
+export interface HeroVariant {
+  title: string;
+  highlight?: string;
+  subtitle: string;
+  cta_primary: string;
+  cta_secondary: string;
+}
+
+export type HeroIntentVariants = Record<"A" | "B" | "C" | "D", HeroVariant>;
+
+export interface HeroCopyMap {
+  flat_bedbugs: HeroIntentVariants;
+  flat_cockroaches: HeroIntentVariants;
+  office_disinfection: HeroIntentVariants;
+  warehouse_deratization: HeroIntentVariants;
+  restaurant_disinfection: HeroIntentVariants;
+  ses_check_preparation: HeroIntentVariants;
+  default: HeroIntentVariants;
+}
+
 export const copyMap: Record<string, CopyMapSection> = {
   hero: {
     flat_bedbugs: {
@@ -35,18 +56,16 @@ export const copyMap: Record<string, CopyMapSection> = {
         cta_secondary: "Узнать цену"
       },
       C: {
-        title: "Избавим вашу квартиру от клопов",
-        highlight: "с гарантией до 30 дней",
-        subtitle: "Безопасные препараты, работа по СанПиН, выезд в день обращения по Москве и области",
-        cta_primary: "Рассчитать стоимость обработки",
-        cta_secondary: "Получить консультацию специалиста"
+        title: "Быстро избавим квартиру от клопов",
+        subtitle: "Выезд в день обращения, профессиональные препараты, аккуратная обработка без порчи мебели и ремонта",
+        cta_primary: "Рассчитать обработку квартиры",
+        cta_secondary: "Связаться со специалистом"
       },
       D: {
-        title: "Профессиональная обработка от клопов",
-        highlight: "за один визит",
-        subtitle: "Диагностика очагов, горячий или холодный туман на выбор, щадящие схемы для детей и животных",
-        cta_primary: "Заказать обработку квартиры",
-        cta_secondary: "Узнать, какой метод подойдёт"
+        title: "Клопы не уйдут сами — уберём их за один визит",
+        subtitle: "Диагностика очагов, холодный или горячий туман на выбор, рекомендации, как не допустить повторного заражения",
+        cta_primary: "Заказать обработку сейчас",
+        cta_secondary: "Узнать детали и гарантию"
       }
     },
     flat_cockroaches: {
@@ -254,22 +273,22 @@ export const copyMap: Record<string, CopyMapSection> = {
         ]
       },
       C: {
-        title: "Комплексная защита от клопов для вашей квартиры",
-        description: "Диагностика очагов заражения и барьерная обработка с длительным эффектом",
+        title: "Комплексная защита от клопов",
+        description: "Выявляем все очаги, обрабатываем мебель и щели, даём рекомендации по защите",
         features: [
-          "Современные препараты без запаха",
-          "Обработка матрасов и мягкой мебели",
-          "Рекомендации по предотвращению повторного заражения",
-          "Документы для управляющей компании"
+          "Препараты без запаха",
+          "Безопасно для детей и животных",
+          "Документы для УК при необходимости",
+          "Выезд в день обращения"
         ]
       },
       D: {
-        title: "Полное уничтожение клопов с первого раза",
-        description: "Используем горячий туман и препараты с овицидным действием против яиц клопов",
+        title: "Результат после первой обработки",
+        description: "Горячий туман + барьерная защита = максимальная эффективность",
         features: [
-          "Эффективность 98% после первой обработки",
-          "Щадящие методы для аллергиков",
-          "Контрольный выезд включён в стоимость",
+          "98% результат с первого раза",
+          "Контрольный выезд включён",
+          "Методы для аллергиков",
           "Работаем круглосуточно"
         ]
       }
@@ -393,12 +412,12 @@ export const copyMap: Record<string, CopyMapSection> = {
         subtitle: "Моментальный расчёт стоимости уничтожения клопов"
       },
       C: {
-        title: "Стоимость уничтожения клопов в вашей квартире",
-        subtitle: "Прозрачный расчёт с учётом всех факторов и скидок"
+        title: "Рассчитайте стоимость для вашей квартиры",
+        subtitle: "Цена зависит от площади и степени заражения"
       },
       D: {
-        title: "Сколько стоит избавиться от клопов?",
-        subtitle: "Узнайте точную цену с учётом метода обработки"
+        title: "Узнайте точную цену за 30 секунд",
+        subtitle: "Финальная стоимость без скрытых доплат"
       }
     },
     office_disinfection: {
@@ -446,6 +465,35 @@ export const copyMap: Record<string, CopyMapSection> = {
         title: "Узнайте цену услуги",
         subtitle: "Быстрый расчёт стоимости обработки"
       }
+    }
+  }
+};
+
+// Гайдлайны по длине и тону для контроля качества текстов
+export const copyGuidelines = {
+  hero: {
+    _defaults: {
+      titleMaxChars: 70,
+      subtitleMaxChars: 180,
+      ctaLabelMaxChars: 32
+    },
+    flat_bedbugs: {
+      tone: "деловой, уверенный, без запугивания; фокус на контроле ситуации и безопасности",
+      titleMaxChars: 70,
+      subtitleMaxChars: 180,
+      ctaLabelMaxChars: 32
+    },
+    office_disinfection: {
+      tone: "профессиональный, B2B-ориентированный; фокус на документах и соответствии нормам",
+      titleMaxChars: 70,
+      subtitleMaxChars: 180,
+      ctaLabelMaxChars: 32
+    },
+    warehouse_deratization: {
+      tone: "практичный, результат-ориентированный; фокус на безопасности товара и соответствии требованиям",
+      titleMaxChars: 70,
+      subtitleMaxChars: 180,
+      ctaLabelMaxChars: 32
     }
   }
 };
