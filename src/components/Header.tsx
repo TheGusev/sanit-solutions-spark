@@ -1,14 +1,25 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 const Header = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-      <div className="container mx-auto px-4 py-4">
+    <header className={`fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="text-3xl">🧪</div>
@@ -31,9 +42,14 @@ const Header = () => {
             <button onClick={() => scrollToSection("contact")} className="text-sm font-medium hover:text-primary transition-colors">
               Контакты
             </button>
+            {isScrolled && (
+              <a href="tel:+74951234567" className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors flex items-center gap-1 animate-fade-in">
+                📞 +7 (495) 123-45-67
+              </a>
+            )}
           </nav>
 
-          <Button 
+          <Button
             onClick={() => scrollToSection("calculator")} 
             className="bg-primary hover:bg-primary-dark text-primary-foreground font-semibold"
           >

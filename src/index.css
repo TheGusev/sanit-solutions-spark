@@ -148,4 +148,20 @@ All colors MUST be HSL.
       transform: scale(1.02);
     }
   }
+
+  /* Timeline animation for work process */
+  .timeline-line {
+    animation: drawLine 1.5s ease-out forwards;
+  }
+
+  @keyframes drawLine {
+    from {
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+    to {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+  }
 }
