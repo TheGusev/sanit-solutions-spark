@@ -14,7 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leads: {
+        Row: {
+          area_m2: number | null
+          base_price: number | null
+          client_type: string | null
+          created_at: string | null
+          discount_amount: number | null
+          discount_percent: number | null
+          email: string | null
+          final_price: number | null
+          frequency: string | null
+          id: string
+          method: string | null
+          name: string
+          object_type: string | null
+          phone: string
+          service: string | null
+          source: string | null
+          status: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          area_m2?: number | null
+          base_price?: number | null
+          client_type?: string | null
+          created_at?: string | null
+          discount_amount?: number | null
+          discount_percent?: number | null
+          email?: string | null
+          final_price?: number | null
+          frequency?: string | null
+          id?: string
+          method?: string | null
+          name: string
+          object_type?: string | null
+          phone: string
+          service?: string | null
+          source?: string | null
+          status?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          area_m2?: number | null
+          base_price?: number | null
+          client_type?: string | null
+          created_at?: string | null
+          discount_amount?: number | null
+          discount_percent?: number | null
+          email?: string | null
+          final_price?: number | null
+          frequency?: string | null
+          id?: string
+          method?: string | null
+          name?: string
+          object_type?: string | null
+          phone?: string
+          service?: string | null
+          source?: string | null
+          status?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -16,6 +16,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { LeadFormModal } from "./LeadFormModal";
 
 const Calculator = () => {
   // Основные параметры
@@ -32,6 +33,7 @@ const Calculator = () => {
   const [showChart, setShowChart] = useState(false);
   const [areaError, setAreaError] = useState<string | null>(null);
   const [areaValid, setAreaValid] = useState(true);
+  const [showLeadForm, setShowLeadForm] = useState(false);
 
   // Типы помещений с иконками
   const premiseTypes = [
@@ -190,28 +192,7 @@ const Calculator = () => {
 
   // Обработка заказа
   const handleOrder = () => {
-    const phone = prompt("Введите ваш номер телефона:");
-    if (phone && phone.trim()) {
-      const message = `🔔 Новая заявка с калькулятора!
-    
-📱 Телефон: ${phone}
-📐 Площадь: ${area} м²
-🏠 Помещение: ${getPremiseLabel()}
-🔧 Услуга: ${getServiceLabel()}
-⚙️ Обработка: ${getTreatmentLabel()}
-📅 Периодичность: ${getPeriodLabel()}
-
-💰 Базовая цена: ${totalPrice}₽
-📉 Скидка: ${discount}% (-${discountAmount}₽)
-✅ Итого: ${finalPrice}₽`;
-
-      const whatsappUrl = `https://wa.me/79069989888?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
-      
-      toast.success("Спасибо! Мы свяжемся с вами в ближайшее время.", {
-        description: `Расчёт: ${finalPrice}₽ (скидка ${discount}%)`,
-      });
-    }
+    setShowLeadForm(true);
   };
 
   // Получить КП
@@ -634,6 +615,24 @@ const Calculator = () => {
           </Button>
         </div>
       </div>
+
+      {/* Lead Form Modal */}
+      <LeadFormModal
+        open={showLeadForm}
+        onOpenChange={setShowLeadForm}
+        calculatorData={{
+          premiseType,
+          area,
+          serviceType,
+          treatmentType,
+          period,
+          clientType,
+          totalPrice,
+          discount,
+          discountAmount,
+          finalPrice,
+        }}
+      />
     </section>
   );
 };
