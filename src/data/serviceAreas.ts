@@ -6,6 +6,8 @@ export interface ServiceArea {
   price: string;
   responseTime?: string;
   distance?: string;
+  center?: [number, number];
+  color?: string;
 }
 
 export const moscowDistricts: ServiceArea[] = [
@@ -15,7 +17,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Центральный АО", 
     available: true, 
     price: "от 2500₽",
-    responseTime: "30-60 минут"
+    responseTime: "30-60 минут",
+    center: [55.7558, 37.6173],
+    color: "#4CAF50"
   },
   { 
     id: "sao", 
@@ -23,7 +27,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Северный АО", 
     available: true, 
     price: "от 2500₽",
-    responseTime: "30-60 минут"
+    responseTime: "30-60 минут",
+    center: [55.8058, 37.5973],
+    color: "#4CAF50"
   },
   { 
     id: "svao", 
@@ -31,7 +37,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Северо-Восточный АО", 
     available: true, 
     price: "от 2700₽",
-    responseTime: "40-90 минут"
+    responseTime: "40-90 минут",
+    center: [55.8358, 37.6873],
+    color: "#FFC107"
   },
   { 
     id: "vao", 
@@ -39,7 +47,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Восточный АО", 
     available: true, 
     price: "от 2700₽",
-    responseTime: "40-90 минут"
+    responseTime: "40-90 минут",
+    center: [55.7658, 37.7473],
+    color: "#FFC107"
   },
   { 
     id: "yuvao", 
@@ -47,7 +57,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Юго-Восточный АО", 
     available: true, 
     price: "от 2700₽",
-    responseTime: "40-90 минут"
+    responseTime: "40-90 минут",
+    center: [55.6858, 37.7573],
+    color: "#FFC107"
   },
   { 
     id: "yao", 
@@ -55,7 +67,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Южный АО", 
     available: true, 
     price: "от 2700₽",
-    responseTime: "40-90 минут"
+    responseTime: "40-90 минут",
+    center: [55.6158, 37.6473],
+    color: "#FFC107"
   },
   { 
     id: "yzao", 
@@ -63,7 +77,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Юго-Западный АО", 
     available: true, 
     price: "от 2700₽",
-    responseTime: "40-90 минут"
+    responseTime: "40-90 минут",
+    center: [55.6558, 37.5473],
+    color: "#FFC107"
   },
   { 
     id: "zao", 
@@ -71,7 +87,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Западный АО", 
     available: true, 
     price: "от 2700₽",
-    responseTime: "40-90 минут"
+    responseTime: "40-90 минут",
+    center: [55.7258, 37.4773],
+    color: "#FFC107"
   },
   { 
     id: "szao", 
@@ -79,7 +97,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Северо-Западный АО", 
     available: true, 
     price: "от 2700₽",
-    responseTime: "40-90 минут"
+    responseTime: "40-90 минут",
+    center: [55.8058, 37.5173],
+    color: "#FFC107"
   },
   { 
     id: "zelenograd", 
@@ -87,7 +107,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Зеленоградский АО", 
     available: true, 
     price: "от 3500₽",
-    responseTime: "90-120 минут"
+    responseTime: "90-120 минут",
+    center: [55.9858, 37.2473],
+    color: "#2196F3"
   },
   { 
     id: "novomoskovsk", 
@@ -95,7 +117,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Новомосковский АО", 
     available: true, 
     price: "от 3500₽",
-    responseTime: "90-120 минут"
+    responseTime: "90-120 минут",
+    center: [55.4358, 37.4973],
+    color: "#2196F3"
   },
   { 
     id: "troitsk", 
@@ -103,7 +127,9 @@ export const moscowDistricts: ServiceArea[] = [
     fullName: "Троицкий АО", 
     available: true, 
     price: "от 4000₽",
-    responseTime: "90-150 минут"
+    responseTime: "90-150 минут",
+    center: [55.4858, 37.3273],
+    color: "#2196F3"
   }
 ];
 
