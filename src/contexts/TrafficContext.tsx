@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { initializeTrafficContext, TrafficContext as TrafficContextType } from '@/hooks/useTrafficContext';
 import { supabase } from '@/integrations/supabase/client';
+import { initAnalytics, setUserProperties } from '@/lib/analytics';
 
 interface TrafficContextValue {
   context: TrafficContextType | null;
@@ -28,7 +29,27 @@ export function TrafficProvider({ children }: { children: React.ReactNode }) {
     const trafficContext = initializeTrafficContext();
     setContext(trafficContext);
     setIsLoading(false);
+    
+    // Инициализация аналитики (можно настроить через env)
+    initAnalytics({
+      provider: 'none', // Можно включить 'yandex_metrika', 'hotjar', 'posthog'
+      // counterId: import.meta.env.VITE_YANDEX_METRIKA_ID
+    });
   }, []);
+  
+  // Передача параметров в аналитику при готовности контекста
+  useEffect(() => {
+    if (context && context.initialized) {
+      setUserProperties({
+        session_id: context.sessionId,
+        intent: context.intent,
+        variant_id: context.variantId,
+        utm_source: context.utm_source,
+        utm_campaign: context.utm_campaign,
+        device_type: context.deviceType
+      });
+    }
+  }, [context?.initialized]);
 
   // Логирование page_view при каждой смене роута
   useEffect(() => {
@@ -50,6 +71,7 @@ export function TrafficProvider({ children }: { children: React.ReactNode }) {
             yclid: context.yclid,
             gclid: context.gclid,
             intent: context.intent,
+            variant_id: context.variantId,
             device_type: context.deviceType,
             event_type: 'page_view',
             event_data: {

@@ -19,6 +19,7 @@ interface TrafficEventData {
   yclid?: string;
   gclid?: string;
   intent?: string;
+  variant_id?: string;
   device_type?: string;
   event_type: string;
   event_data?: Record<string, any>;
@@ -26,6 +27,7 @@ interface TrafficEventData {
 
 const ALLOWED_EVENT_TYPES = [
   'page_view',
+  'hero_view',
   'scroll_depth',
   'calc_open',
   'calc_change',
@@ -34,7 +36,8 @@ const ALLOWED_EVENT_TYPES = [
   'popup_step_1',
   'popup_step_2',
   'popup_submit',
-  'form_submit'
+  'form_submit',
+  'ml_prediction'
 ];
 
 serve(async (req) => {
@@ -95,6 +98,7 @@ serve(async (req) => {
         yclid: eventData.yclid || null,
         gclid: eventData.gclid || null,
         intent: eventData.intent || null,
+        variant_id: eventData.variant_id || null,
         device_type: eventData.device_type || null,
         event_type: eventData.event_type,
         event_data: eventData.event_data || null,

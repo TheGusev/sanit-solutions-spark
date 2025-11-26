@@ -3,6 +3,9 @@ import { Microscope, Pill, Beaker, Gift, BarChart3, Zap, CheckCircle, Shield } f
 import AnimatedSection from "@/components/AnimatedSection";
 import { useParallax } from "@/hooks/useParallax";
 import { useTraffic } from "@/contexts/TrafficContext";
+import { getCopy } from "@/lib/copyUtils";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 
 interface HeroProps {
   onDiscountClick: () => void;
@@ -92,10 +95,32 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
   const { context } = useTraffic();
   const parallaxOffset = useParallax(0.3);
   
-  // Получаем контент в зависимости от интента
-  const heroContent = context?.intent && HERO_CONTENT_BY_INTENT[context.intent]
-    ? HERO_CONTENT_BY_INTENT[context.intent]
-    : DEFAULT_HERO_CONTENT;
+  // Получаем текст из централизованного словаря с A/B вариантом
+  const copy = getCopy('hero', context?.intent, context?.variantId || 'A');
+  
+  // Логируем показ hero для A/B анализа
+  useEffect(() => {
+    if (context && context.initialized) {
+      supabase.functions.invoke('log-traffic-event', {
+        body: {
+          session_id: context.sessionId,
+          page_url: window.location.href,
+          referrer: context.referrer,
+          utm_source: context.utm_source,
+          utm_medium: context.utm_medium,
+          utm_campaign: context.utm_campaign,
+          intent: context.intent,
+          variant_id: context.variantId,
+          device_type: context.deviceType,
+          event_type: 'hero_view',
+          event_data: {
+            intent: context.intent,
+            variant: context.variantId
+          }
+        }
+      }).catch(err => console.debug('Hero view logging failed:', err));
+    }
+  }, [context?.sessionId]);
   
   const scrollToCalculator = () => {
     const element = document.getElementById("calculator");
@@ -118,12 +143,12 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
-            {heroContent.title}{" "}
-            <span className="text-primary">{heroContent.highlight}</span>
+            {copy.title}{" "}
+            <span className="text-primary">{copy.highlight}</span>
           </h1>
           
           <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10">
-            {heroContent.subtitle}
+            {copy.subtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -133,7 +158,7 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
               className="gradient-accent hover:opacity-90 text-accent-foreground font-bold text-lg px-8 py-6 h-auto animate-pulse-attention"
             >
               <Gift className="w-5 h-5 mr-2" />
-              Получить скидку до 30%
+              {copy.cta_primary || "Получить скидку до 30%"}
             </Button>
             
             <Button 
@@ -143,7 +168,7 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
               className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold text-lg px-8 py-6 h-auto"
             >
               <BarChart3 className="w-5 h-5 mr-2" />
-              Рассчитать стоимость
+              {copy.cta_secondary || "Рассчитать стоимость"}
             </Button>
           </div>
 

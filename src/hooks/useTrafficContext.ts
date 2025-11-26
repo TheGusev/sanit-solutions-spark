@@ -24,6 +24,7 @@ export interface TrafficContext {
   yclid: string | null;
   gclid: string | null;
   intent: string | null;
+  variantId: 'A' | 'B';  // A/B тестирование
   initialized: boolean;
 }
 
@@ -45,6 +46,9 @@ export function initializeTrafficContext(): TrafficContext {
   const deviceType = getDeviceType();
   const intent = detectIntent(params, window.location.pathname);
   
+  // Случайный выбор варианта A/B при первом заходе
+  const variantId: 'A' | 'B' = Math.random() < 0.5 ? 'A' : 'B';
+  
   const newContext: TrafficContext = {
     sessionId: generateSessionId(),
     firstLandingUrl: window.location.href,
@@ -59,6 +63,7 @@ export function initializeTrafficContext(): TrafficContext {
     yclid: params.yclid || null,
     gclid: params.gclid || null,
     intent,
+    variantId,
     initialized: true
   };
   
