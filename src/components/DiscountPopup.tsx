@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 
 interface DiscountPopupProps {
@@ -15,86 +16,215 @@ interface DiscountPopupProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const services = [
+  { value: "disinfection", label: "Дезинфекция", icon: "🦠" },
+  { value: "desinsection", label: "Дезинсекция", icon: "🐜" },
+  { value: "deratization", label: "Дератизация", icon: "🐀" },
+  { value: "ozonation", label: "Озонирование", icon: "💨" },
+  { value: "complex", label: "Комплексная обработка", icon: "✨" }
+];
+
 const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
+  const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
+  const [selectedService, setSelectedService] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const formatPhone = (value: string) => {
+    const cleaned = value.replace(/\D/g, "");
+    if (!cleaned) return "";
+    
+    const match = cleaned.match(/^(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/);
+    if (!match) return value;
+    
+    const parts = [
+      "+7",
+      match[2] && ` (${match[2]}`,
+      match[3] && `) ${match[3]}`,
+      match[4] && `-${match[4]}`,
+      match[5] && `-${match[5]}`
+    ].filter(Boolean);
+    
+    return parts.join("");
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhone(e.target.value);
+    setPhone(formatted);
+  };
+
+  const handleStep1Submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name && phone) {
-      toast.success("Спасибо! Ваша заявка принята!", {
-        description: "Мы свяжемся с вами в ближайшее время для уточнения деталей.",
-      });
-      onOpenChange(false);
+    if (!name.trim()) {
+      toast.error("Пожалуйста, введите ваше имя");
+      return;
+    }
+    if (phone.length < 18) {
+      toast.error("Пожалуйста, введите корректный номер телефона");
+      return;
+    }
+    setStep(2);
+  };
+
+  const handleStep2Submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedService) {
+      toast.error("Пожалуйста, выберите услугу");
+      return;
+    }
+    setStep(3);
+  };
+
+  const handleClose = () => {
+    onOpenChange(false);
+    setTimeout(() => {
+      setStep(1);
       setName("");
       setPhone("");
-      setEmail("");
-    } else {
-      toast.error("Пожалуйста, заполните обязательные поля");
-    }
+      setSelectedService("");
+    }, 300);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">
-            🎁 Получите скидку до 30%!
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="bg-gradient-accent p-6 rounded-2xl text-accent-foreground text-center mb-4">
-          <p className="text-3xl font-bold mb-2">До -30%</p>
-          <p className="text-sm">на первый заказ при заявке сегодня</p>
+        {/* Progress Bar */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-muted rounded-t-lg overflow-hidden">
+          <div
+            className="h-full bg-gradient-accent transition-all duration-300"
+            style={{ width: `${(step / 3) * 100}%` }}
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="popup-name">Ваше имя *</Label>
-            <Input
-              id="popup-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Иван Иванов"
-              required
-            />
+        <DialogHeader className="pt-4">
+          <DialogTitle className="text-2xl font-bold text-center">
+            {step === 1 && "🎁 Получите скидку до 30%!"}
+            {step === 2 && "Выберите услугу"}
+            {step === 3 && "✅ Заявка принята!"}
+          </DialogTitle>
+        </DialogHeader>
+
+        {step === 1 && (
+          <>
+            <div className="bg-gradient-accent p-6 rounded-2xl text-accent-foreground text-center mb-4">
+              <p className="text-3xl font-bold mb-2">До -30%</p>
+              <p className="text-sm">на первый заказ при заявке сегодня</p>
+            </div>
+
+            <form onSubmit={handleStep1Submit} className="space-y-4">
+              <div>
+                <Label htmlFor="popup-name">Ваше имя *</Label>
+                <Input
+                  id="popup-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Иван Иванов"
+                  className={!name.trim() && name ? "border-destructive" : ""}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="popup-phone">Телефон *</Label>
+                <Input
+                  id="popup-phone"
+                  type="tel"
+                  value={phone}
+                  onChange={handlePhoneChange}
+                  placeholder="+7 (999) 123-45-67"
+                  className={phone && phone.length < 18 ? "border-destructive" : ""}
+                  required
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-bold text-lg py-6 h-auto"
+              >
+                Продолжить
+              </Button>
+
+              <p className="text-xs text-center text-muted-foreground">
+                Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
+              </p>
+            </form>
+          </>
+        )}
+
+        {step === 2 && (
+          <form onSubmit={handleStep2Submit} className="space-y-6">
+            <RadioGroup value={selectedService} onValueChange={setSelectedService}>
+              <div className="space-y-3">
+                {services.map((service) => (
+                  <div
+                    key={service.value}
+                    className={`flex items-center space-x-3 border-2 rounded-lg p-4 cursor-pointer transition-all ${
+                      selectedService === service.value
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                    onClick={() => setSelectedService(service.value)}
+                  >
+                    <RadioGroupItem value={service.value} id={service.value} />
+                    <Label
+                      htmlFor={service.value}
+                      className="flex items-center gap-3 cursor-pointer flex-1"
+                    >
+                      <span className="text-2xl">{service.icon}</span>
+                      <span className="font-medium">{service.label}</span>
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </RadioGroup>
+
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setStep(1)}
+                className="flex-1"
+              >
+                Назад
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 bg-primary hover:bg-primary-dark text-primary-foreground font-bold"
+              >
+                Отправить заявку
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {step === 3 && (
+          <div className="text-center py-6 space-y-6">
+            <div className="text-6xl mb-4">🎉</div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold">Спасибо, {name}!</h3>
+              <p className="text-muted-foreground">
+                Ваша заявка успешно принята. Наш менеджер свяжется с вами в течение 15 минут.
+              </p>
+            </div>
+
+            <div className="bg-muted p-4 rounded-lg">
+              <p className="text-sm font-medium mb-1">Наш телефон:</p>
+              <a
+                href="tel:+74951234567"
+                className="text-xl font-bold text-primary hover:underline"
+              >
+                +7 (495) 123-45-67
+              </a>
+            </div>
+
+            <Button
+              onClick={handleClose}
+              className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-bold py-6 h-auto"
+            >
+              Закрыть
+            </Button>
           </div>
-
-          <div>
-            <Label htmlFor="popup-phone">Телефон *</Label>
-            <Input
-              id="popup-phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+7 (999) 123-45-67"
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="popup-email">Email (опционально)</Label>
-            <Input
-              id="popup-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="example@mail.ru"
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-bold text-lg py-6 h-auto"
-          >
-            Получить скидку
-          </Button>
-
-          <p className="text-xs text-center text-muted-foreground">
-            Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
-          </p>
-        </form>
+        )}
       </DialogContent>
     </Dialog>
   );

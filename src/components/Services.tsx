@@ -7,7 +7,8 @@ const services = [
   {
     icon: "🐜",
     title: "Дезинсекция",
-    description: "Избавление от насекомых: тараканы, клопы, муравьи, комары"
+    description: "Избавление от насекомых: тараканы, клопы, муравьи, комары",
+    isHit: true
   },
   {
     icon: "🐀",
@@ -48,9 +49,14 @@ const Services = () => {
           {services.map((service, index) => (
             <div
               key={index}
-              className="bg-card p-8 rounded-2xl shadow-sm hover-lift animate-scale-in"
+              className="bg-card p-8 rounded-2xl shadow-sm hover-lift animate-scale-in relative overflow-hidden"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
+              {service.isHit && (
+                <div className="absolute -top-1 -right-12 bg-gradient-accent text-accent-foreground px-12 py-1 text-xs font-bold rotate-45 shadow-lg">
+                  ХИТ ПРОДАЖ
+                </div>
+              )}
               <div className="text-6xl mb-4">{service.icon}</div>
               <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
               <p className="text-muted-foreground">{service.description}</p>

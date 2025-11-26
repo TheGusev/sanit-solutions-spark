@@ -132,4 +132,20 @@ All colors MUST be HSL.
   .bg-pattern {
     background-image: var(--gradient-radial);
   }
+
+  /* Pulsing attention animation for CTA buttons */
+  .animate-pulse-attention {
+    animation: pulseAttention 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulseAttention {
+    0%, 100% {
+      box-shadow: 0 0 0 0 hsl(var(--accent) / 0.7);
+      transform: scale(1);
+    }
+    50% {
+      box-shadow: 0 0 0 15px hsl(var(--accent) / 0);
+      transform: scale(1.02);
+    }
+  }
 }
