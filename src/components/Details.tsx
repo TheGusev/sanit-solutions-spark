@@ -1,5 +1,11 @@
 const details = [
   {
+    icon: "🛡️",
+    title: "30-дневная гарантия результата",
+    description: "Гарантируем 100% результат на все виды услуг. Если проблема вернётся в течение 30 дней — повторная обработка бесплатно или полный возврат денег.",
+    isHighlight: true
+  },
+  {
     icon: "🔬",
     title: "Профессиональная диагностика",
     description: "Выезд специалиста для оценки ситуации и составления плана работ. Определяем масштаб проблемы и подбираем оптимальное решение."
@@ -48,12 +54,22 @@ const Details = () => {
           {details.map((detail, index) => (
             <div
               key={index}
-              className="bg-card p-8 rounded-2xl shadow-sm hover-lift animate-scale-in"
+              className={`p-8 rounded-2xl shadow-sm hover-lift animate-scale-in ${
+                detail.isHighlight
+                  ? "bg-gradient-accent text-accent-foreground col-span-1 md:col-span-2 lg:col-span-3 border-4 border-accent/30"
+                  : "bg-card"
+              }`}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="text-5xl mb-4">{detail.icon}</div>
-              <h3 className="text-xl font-bold mb-3">{detail.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{detail.description}</p>
+              <div className={`text-5xl mb-4 ${detail.isHighlight ? "animate-pulse-attention" : ""}`}>
+                {detail.icon}
+              </div>
+              <h3 className={`text-xl font-bold mb-3 ${detail.isHighlight ? "text-2xl" : ""}`}>
+                {detail.title}
+              </h3>
+              <p className={`leading-relaxed ${detail.isHighlight ? "text-accent-foreground/90 text-lg" : "text-muted-foreground"}`}>
+                {detail.description}
+              </p>
             </div>
           ))}
         </div>

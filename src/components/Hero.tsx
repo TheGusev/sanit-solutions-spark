@@ -35,7 +35,7 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
             <Button 
               onClick={onDiscountClick}
               size="lg"
-              className="gradient-accent hover:opacity-90 text-accent-foreground font-bold text-lg px-8 py-6 h-auto"
+              className="gradient-accent hover:opacity-90 text-accent-foreground font-bold text-lg px-8 py-6 h-auto animate-pulse-attention"
             >
               🎁 Получить скидку до 30%
             </Button>
