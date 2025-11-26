@@ -399,7 +399,7 @@ const Calculator = () => {
                       value={[area]}
                       onValueChange={(values) => handleAreaChange(values[0])}
                       min={10}
-                      max={500}
+                      max={1000}
                       step={10}
                       className="flex-1"
                     />
