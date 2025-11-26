@@ -24,7 +24,7 @@ export interface TrafficContext {
   yclid: string | null;
   gclid: string | null;
   intent: string | null;
-  variantId: 'A' | 'B';  // A/B тестирование
+  variantId: string;  // MVT: supports any variant (A, B, C, D, etc.)
   initialized: boolean;
 }
 
@@ -54,14 +54,14 @@ export async function initializeTrafficContext(): Promise<TrafficContext> {
   const intent = detectIntent(params, window.location.pathname);
   const sessionId = generateSessionId();
   
-  // Получаем оптимальный вариант A/B от ab-optimize
-  let variantId: 'A' | 'B' = 'A'; // fallback
+  // Получаем оптимальный вариант от MVT system
+  let variantId: string = 'A'; // fallback
   
   try {
     // Динамический импорт supabase только при необходимости
     const { supabase } = await import('@/integrations/supabase/client');
     
-    const { data, error } = await supabase.functions.invoke('ab-optimize', {
+    const { data, error } = await supabase.functions.invoke('mvt-optimize', {
       body: {
         test_name: 'main_variant',
         intent: intent || 'default',
@@ -71,16 +71,16 @@ export async function initializeTrafficContext(): Promise<TrafficContext> {
     
     if (!error && data && data.variant_id) {
       variantId = data.variant_id;
-      console.log(`✅ A/B variant selected: ${variantId} (confidence: ${data.confidence?.toFixed(2) || 'N/A'})`);
+      console.log(`✅ MVT variant selected: ${variantId} (confidence: ${data.confidence?.toFixed(2) || 'N/A'}, total variants: ${data.total_variants || 'N/A'})`);
     } else {
       // Fallback на случайный выбор
       variantId = Math.random() < 0.5 ? 'A' : 'B';
-      console.warn('⚠️ ab-optimize unavailable, using random variant:', variantId);
+      console.warn('⚠️ mvt-optimize unavailable, using random variant:', variantId);
     }
   } catch (err) {
     // Fallback на случайный выбор при ошибке
     variantId = Math.random() < 0.5 ? 'A' : 'B';
-    console.error('❌ Error calling ab-optimize, using random variant:', err);
+    console.error('❌ Error calling mvt-optimize, using random variant:', err);
   }
   
   const newContext: TrafficContext = {
