@@ -37,7 +37,8 @@ const ALLOWED_EVENT_TYPES = [
   'popup_step_2',
   'popup_submit',
   'form_submit',
-  'ml_prediction'
+  'ml_prediction',
+  'ab_test_debug'
 ];
 
 serve(async (req) => {
