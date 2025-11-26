@@ -23,16 +23,16 @@ const Header = () => {
   };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border transition-all duration-300 ${isScrolled ? 'py-1.5 md:py-2' : 'py-2 md:py-4'}`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Beaker className="w-6 h-6 text-primary" />
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/10 flex items-center justify-center">
+              <Beaker className="w-5 h-5 md:w-6 md:h-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-primary">Санитарные Решения</h1>
-              <p className="text-xs text-muted-foreground">Дезинфекция МСК • Юр.лица, ИП, физ.лица</p>
+              <h1 className="text-base md:text-xl font-bold text-primary leading-tight">Санитарные Решения</h1>
+              <p className="text-xs text-muted-foreground">Дезинфекция МСК и МО</p>
             </div>
           </div>
 
@@ -76,10 +76,13 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-2">
-            <ThemeToggle />
+            <div className="hidden md:block">
+              <ThemeToggle />
+            </div>
             <Button
               onClick={() => scrollToSection("calculator")} 
-              className="bg-primary hover:bg-primary-dark text-primary-foreground font-semibold"
+              size="sm"
+              className="bg-primary hover:bg-primary-dark text-primary-foreground font-semibold text-sm md:text-base px-3 md:px-4"
             >
               Рассчитать
             </Button>
