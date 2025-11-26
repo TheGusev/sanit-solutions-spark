@@ -26,8 +26,8 @@ const Footer = () => {
               ООО "Санитарные Решения" — профессиональные услуги дезинфекции, 
               дезинсекции и дератизации в Москве и Московской области.
             </p>
-            <p className="text-xs opacity-60">ИНН: 7701234567</p>
-            <p className="text-xs opacity-60">ОГРН: 1234567890123</p>
+            <p className="text-xs opacity-60">ИНН: 5410169338</p>
+            <p className="text-xs opacity-60">ОГРН: 1255400030555</p>
           </div>
 
           <div>
