@@ -12,6 +12,8 @@ const YandexMap = ({ selectedArea, onAreaSelect, districts, regions }: YandexMap
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // District coordinates (simplified polygons for Moscow districts)
   const districtCoordinates: Record<string, number[][][]> = {
@@ -30,78 +32,98 @@ const YandexMap = ({ selectedArea, onAreaSelect, districts, regions }: YandexMap
   };
 
   useEffect(() => {
-    if (!window.ymaps) {
-      console.error("Yandex Maps API not loaded");
-      return;
-    }
-
-    window.ymaps.ready(() => {
+    const initializeMap = () => {
       if (!mapRef.current) return;
 
-      const map = new window.ymaps.Map(mapRef.current, {
-        center: [55.7558, 37.6173], // Moscow center
-        zoom: 10,
-        controls: ['zoomControl', 'fullscreenControl', 'typeSelector']
-      });
-
-      // Add polygons for each district
-      districts.forEach((district) => {
-        const coords = districtCoordinates[district.id];
-        if (!coords) return;
-
-        const polygon = new window.ymaps.Polygon(
-          coords,
-          {
-            balloonContentHeader: district.fullName,
-            balloonContentBody: `<strong>Стоимость:</strong> ${district.price}<br/><strong>Время выезда:</strong> ${district.responseTime}`,
-            hintContent: district.fullName
-          },
-          {
-            fillColor: district.color + '66', // Add transparency
-            strokeColor: district.color,
-            strokeWidth: 2,
-            strokeOpacity: 0.8,
-            fillOpacity: 0.4
-          }
-        );
-
-        // Highlight on hover
-        polygon.events.add('mouseenter', () => {
-          polygon.options.set('fillOpacity', 0.6);
+      try {
+        const map = new window.ymaps.Map(mapRef.current, {
+          center: [55.7558, 37.6173], // Moscow center
+          zoom: 10,
+          controls: ['zoomControl', 'fullscreenControl', 'typeSelector']
         });
 
-        polygon.events.add('mouseleave', () => {
-          polygon.options.set('fillOpacity', 0.4);
+        // Add polygons for each district
+        districts.forEach((district) => {
+          const coords = districtCoordinates[district.id];
+          if (!coords) return;
+
+          const polygon = new window.ymaps.Polygon(
+            coords,
+            {
+              balloonContentHeader: district.fullName,
+              balloonContentBody: `<strong>Стоимость:</strong> ${district.price}<br/><strong>Время выезда:</strong> ${district.responseTime}`,
+              hintContent: district.fullName
+            },
+            {
+              fillColor: district.color + '66', // Add transparency
+              strokeColor: district.color,
+              strokeWidth: 2,
+              strokeOpacity: 0.8,
+              fillOpacity: 0.4
+            }
+          );
+
+          // Highlight on hover
+          polygon.events.add('mouseenter', () => {
+            polygon.options.set('fillOpacity', 0.6);
+          });
+
+          polygon.events.add('mouseleave', () => {
+            polygon.options.set('fillOpacity', 0.4);
+          });
+
+          // Select area on click
+          polygon.events.add('click', () => {
+            onAreaSelect(district);
+          });
+
+          map.geoObjects.add(polygon);
         });
 
-        // Select area on click
-        polygon.events.add('click', () => {
-          onAreaSelect(district);
-        });
+        // Highlight selected area
+        if (selectedArea && districtCoordinates[selectedArea.id]) {
+          const selectedPolygon = new window.ymaps.Polygon(
+            districtCoordinates[selectedArea.id],
+            {},
+            {
+              strokeColor: '#FF5722',
+              strokeWidth: 4,
+              strokeOpacity: 1,
+              fillOpacity: 0
+            }
+          );
+          map.geoObjects.add(selectedPolygon);
+        }
 
-        map.geoObjects.add(polygon);
-      });
-
-      // Highlight selected area
-      if (selectedArea && districtCoordinates[selectedArea.id]) {
-        const selectedPolygon = new window.ymaps.Polygon(
-          districtCoordinates[selectedArea.id],
-          {},
-          {
-            strokeColor: '#FF5722',
-            strokeWidth: 4,
-            strokeOpacity: 1,
-            fillOpacity: 0
-          }
-        );
-        map.geoObjects.add(selectedPolygon);
+        setMapInstance(map);
+        setIsLoaded(true);
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error initializing map:', err);
+        setError('Ошибка инициализации карты');
+        setIsLoading(false);
       }
+    };
 
-      setMapInstance(map);
-      setIsLoaded(true);
-    });
+    // Wait for Yandex Maps API to load with timeout
+    const checkApi = setInterval(() => {
+      if (window.ymaps) {
+        clearInterval(checkApi);
+        window.ymaps.ready(initializeMap);
+      }
+    }, 100);
+
+    const timeout = setTimeout(() => {
+      clearInterval(checkApi);
+      if (!window.ymaps) {
+        setError('Не удалось загрузить карту. Попробуйте обновить страницу.');
+        setIsLoading(false);
+      }
+    }, 5000);
 
     return () => {
+      clearInterval(checkApi);
+      clearTimeout(timeout);
       if (mapInstance) {
         mapInstance.destroy();
       }
@@ -137,27 +159,46 @@ const YandexMap = ({ selectedArea, onAreaSelect, districts, regions }: YandexMap
   }, [selectedArea, mapInstance, isLoaded]);
 
   return (
-    <div className="relative w-full h-full min-h-[500px]">
+    <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[500px]">
       <div ref={mapRef} className="w-full h-full rounded-lg" />
       
-      {/* Legend */}
-      <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm p-4 rounded-lg shadow-lg border">
-        <h4 className="font-semibold mb-2 text-sm">Легенда</h4>
-        <div className="space-y-2 text-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{ backgroundColor: '#4CAF50' }}></div>
-            <span>Быстрый выезд (30-60 мин)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{ backgroundColor: '#FFC107' }}></div>
-            <span>День в день (40-120 мин)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded" style={{ backgroundColor: '#2196F3' }}></div>
-            <span>Отдалённые (90-150 мин)</span>
+      {/* Loading state */}
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg">
+          <div className="flex items-center gap-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            <span className="text-sm">Загрузка карты...</span>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Error state */}
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg text-center p-4">
+          <p className="text-destructive text-sm">{error}</p>
+        </div>
+      )}
+      
+      {/* Legend */}
+      {!isLoading && !error && (
+        <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 bg-card/95 backdrop-blur-sm p-2 sm:p-4 rounded-lg shadow-lg border max-w-[200px] sm:max-w-none">
+          <h4 className="font-semibold mb-1 sm:mb-2 text-xs sm:text-sm">Легенда</h4>
+          <div className="space-y-1 sm:space-y-2 text-[10px] sm:text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 sm:w-4 sm:h-4 rounded" style={{ backgroundColor: '#4CAF50' }}></div>
+              <span>Быстрый выезд (30-60 мин)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 sm:w-4 sm:h-4 rounded" style={{ backgroundColor: '#FFC107' }}></div>
+              <span>День в день (40-120 мин)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 sm:w-4 sm:h-4 rounded" style={{ backgroundColor: '#2196F3' }}></div>
+              <span>Отдалённые (90-150 мин)</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

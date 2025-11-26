@@ -21,22 +21,10 @@ const ServiceAreaMap = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-12">
-          {/* Yandex Map */}
-          <div className="lg:col-span-2">
-            <Card className="p-0 overflow-hidden bg-muted/30">
-              <YandexMap 
-                selectedArea={selectedArea}
-                onAreaSelect={setSelectedArea}
-                districts={moscowDistricts}
-                regions={moscowRegion}
-              />
-            </Card>
-          </div>
-
-          {/* Info panel */}
-          <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-4 bg-card">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto mb-12">
+          {/* Info panel - first on mobile, second on desktop */}
+          <div className="order-1 lg:order-2 lg:col-span-1">
+            <Card className="p-4 lg:p-6 lg:sticky lg:top-4 bg-card">
               <div className="space-y-6">
                 <div>
                   <Badge variant="secondary" className="mb-3">
@@ -101,6 +89,18 @@ const ServiceAreaMap = () => {
                   </Button>
                 </div>
               </div>
+            </Card>
+          </div>
+
+          {/* Yandex Map - second on mobile, first on desktop */}
+          <div className="order-2 lg:order-1 lg:col-span-2">
+            <Card className="p-0 overflow-hidden bg-muted/30">
+              <YandexMap 
+                selectedArea={selectedArea}
+                onAreaSelect={setSelectedArea}
+                districts={moscowDistricts}
+                regions={moscowRegion}
+              />
             </Card>
           </div>
         </div>
