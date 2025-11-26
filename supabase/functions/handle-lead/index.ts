@@ -238,6 +238,7 @@ serve(async (req) => {
       gclid: leadData.gclid || null,
       session_id: leadData.session_id || null,
       intent: leadData.intent || null,
+      variant_id: leadData.variant_id || null,
       first_landing_url: leadData.first_landing_url || null,
       last_page_url: leadData.last_page_url || null,
       device_type: leadData.device_type || null,
