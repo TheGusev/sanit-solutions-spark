@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Beaker, Phone } from "lucide-react";
+import { Phone } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const Header = () => {
@@ -27,9 +27,6 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/10 flex items-center justify-center">
-              <Beaker className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-            </div>
             <div>
               <h1 className="text-base md:text-xl font-bold text-primary leading-tight">Санитарные Решения</h1>
               <p className="text-xs text-muted-foreground">Дезинфекция МСК и МО</p>
