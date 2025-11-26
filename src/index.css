@@ -51,11 +51,55 @@ All colors MUST be HSL.
     --gradient-success: linear-gradient(135deg, hsl(122 39% 49%) 0%, hsl(122 39% 59%) 100%);
     --gradient-radial: radial-gradient(circle at 50% 50%, hsl(207 90% 54% / 0.05) 0%, transparent 70%);
   }
+
+  .dark {
+    --background: 220 20% 10%;
+    --foreground: 210 20% 95%;
+
+    --card: 220 20% 14%;
+    --card-foreground: 210 20% 95%;
+
+    --popover: 220 20% 14%;
+    --popover-foreground: 210 20% 95%;
+
+    --primary: 207 90% 60%;
+    --primary-foreground: 220 20% 10%;
+    --primary-dark: 207 90% 50%;
+
+    --secondary: 36 100% 55%;
+    --secondary-foreground: 220 20% 10%;
+
+    --success: 122 39% 55%;
+    --success-foreground: 220 20% 10%;
+
+    --muted: 220 15% 20%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 36 100% 55%;
+    --accent-foreground: 220 20% 10%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 220 20% 10%;
+
+    --border: 220 15% 25%;
+    --input: 220 15% 25%;
+    --ring: 207 90% 60%;
+
+    /* Dark theme gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(207 90% 45%) 0%, hsl(207 90% 55%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(36 100% 50%) 0%, hsl(36 100% 60%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(122 39% 45%) 0%, hsl(122 39% 55%) 100%);
+    --gradient-radial: radial-gradient(circle at 50% 50%, hsl(207 90% 54% / 0.1) 0%, transparent 70%);
+  }
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
@@ -163,5 +207,45 @@ All colors MUST be HSL.
       transform: scaleX(1);
       transform-origin: left;
     }
+  }
+
+  /* Parallax background layer */
+  .parallax-bg {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  /* Staggered children animation */
+  .stagger-children > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .stagger-children.visible > *:nth-child(1) { transition-delay: 0ms; }
+  .stagger-children.visible > *:nth-child(2) { transition-delay: 100ms; }
+  .stagger-children.visible > *:nth-child(3) { transition-delay: 200ms; }
+  .stagger-children.visible > *:nth-child(4) { transition-delay: 300ms; }
+  .stagger-children.visible > *:nth-child(5) { transition-delay: 400ms; }
+  .stagger-children.visible > *:nth-child(6) { transition-delay: 500ms; }
+
+  .stagger-children.visible > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Section transition with parallax background */
+  .section-parallax {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-parallax::before {
+    content: '';
+    position: absolute;
+    inset: -50px;
+    background: var(--gradient-radial);
+    will-change: transform;
+    z-index: -1;
   }
 }

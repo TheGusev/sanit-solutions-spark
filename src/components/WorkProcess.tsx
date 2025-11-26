@@ -1,4 +1,5 @@
 import { Phone, Search, Beaker, CheckCircle } from "lucide-react";
+import AnimatedSection from "@/components/AnimatedSection";
 
 const steps = [
   {
@@ -35,14 +36,14 @@ const WorkProcess = () => {
   return (
     <section className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16 animate-fade-in">
+        <AnimatedSection animation="fade-up" className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Как мы работаем?
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Прозрачный процесс от заявки до гарантии результата
           </p>
-        </div>
+        </AnimatedSection>
 
         {/* Desktop: Horizontal Timeline */}
         <div className="hidden md:flex relative max-w-6xl mx-auto">
@@ -50,10 +51,11 @@ const WorkProcess = () => {
           <div className="absolute top-16 left-0 right-0 h-0.5 bg-border timeline-line"></div>
 
           {steps.map((step, index) => (
-            <div 
+            <AnimatedSection 
               key={index} 
-              className="flex-1 relative animate-slide-in"
-              style={{ animationDelay: `${index * 150}ms` }}
+              animation="scale"
+              delay={index * 150}
+              className="flex-1 relative"
             >
               <div className="flex flex-col items-center text-center px-4">
                 {/* Icon Circle */}
@@ -74,17 +76,18 @@ const WorkProcess = () => {
                   {step.description}
                 </p>
               </div>
-            </div>
+            </AnimatedSection>
           ))}
         </div>
 
         {/* Mobile: Vertical Timeline */}
         <div className="md:hidden space-y-8 max-w-md mx-auto">
           {steps.map((step, index) => (
-            <div 
+            <AnimatedSection
               key={index} 
-              className="flex gap-4 animate-slide-in"
-              style={{ animationDelay: `${index * 150}ms` }}
+              animation="fade-up"
+              delay={index * 150}
+              className="flex gap-4"
             >
               {/* Left: Icon + Number */}
               <div className="flex flex-col items-center flex-shrink-0">
@@ -108,7 +111,7 @@ const WorkProcess = () => {
                   {step.description}
                 </p>
               </div>
-            </div>
+            </AnimatedSection>
           ))}
         </div>
       </div>

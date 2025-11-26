@@ -1,4 +1,6 @@
 import { Bug, Rat, Wind, Flower, FileText, Microscope } from "lucide-react";
+import AnimatedSection from "@/components/AnimatedSection";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const services = [
   {
@@ -41,24 +43,25 @@ const services = [
 ];
 
 const Services = () => {
+  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
+
   return (
     <section id="services" className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16 animate-slide-in">
+        <AnimatedSection animation="fade-up" className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
             Наши <span className="text-primary">услуги</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Комплексные решения для защиты вашего здоровья и бизнеса
           </p>
-        </div>
+        </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div ref={ref} className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children ${isVisible ? 'visible' : ''}`}>
           {services.map((service, index) => (
             <div
               key={index}
-              className="bg-card p-8 rounded-2xl shadow-sm hover-lift animate-scale-in relative overflow-hidden"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className="bg-card p-8 rounded-2xl shadow-sm hover-lift relative overflow-hidden"
             >
               {service.isHit && (
                 <div className="absolute -top-1 -right-12 bg-gradient-accent text-accent-foreground px-12 py-1 text-xs font-bold rotate-45 shadow-lg">

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Beaker, Phone } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -77,12 +78,15 @@ const Header = () => {
             )}
           </nav>
 
-          <Button
-            onClick={() => scrollToSection("calculator")} 
-            className="bg-primary hover:bg-primary-dark text-primary-foreground font-semibold"
-          >
-            Рассчитать
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button
+              onClick={() => scrollToSection("calculator")} 
+              className="bg-primary hover:bg-primary-dark text-primary-foreground font-semibold"
+            >
+              Рассчитать
+            </Button>
+          </div>
         </div>
       </div>
     </header>
