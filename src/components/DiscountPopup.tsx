@@ -210,10 +210,10 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
             <div className="bg-muted p-4 rounded-lg">
               <p className="text-sm font-medium mb-1">Наш телефон:</p>
               <a
-                href="tel:+74951234567"
+                href="tel:+79069989888"
                 className="text-xl font-bold text-primary hover:underline"
               >
-                +7 (495) 123-45-67
+                +7 (906) 998-98-88
               </a>
             </div>
 

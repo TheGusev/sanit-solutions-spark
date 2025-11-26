@@ -38,10 +38,10 @@ const Contact = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <a 
-              href="tel:+74951234567"
+              href="tel:+79069989888"
               className="text-3xl font-bold text-primary hover:text-primary-dark transition-colors"
             >
-              +7 (495) 123-45-67
+              +7 (906) 998-98-88
             </a>
           </div>
 
@@ -54,13 +54,23 @@ const Contact = () => {
               Заказать звонок
             </Button>
 
-            <a href="https://wa.me/74951234567" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/79069989888" target="_blank" rel="noopener noreferrer">
               <Button
                 size="lg"
                 className="gradient-success hover:opacity-90 text-success-foreground font-bold text-lg px-8 py-6 h-auto w-full"
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
                 Написать в WhatsApp
+              </Button>
+            </a>
+
+            <a href="https://t.me/The_Suppor_t" target="_blank" rel="noopener noreferrer">
+              <Button
+                size="lg"
+                className="bg-[#0088cc] hover:bg-[#0077b5] text-white font-bold text-lg px-8 py-6 h-auto w-full"
+              >
+                <MessageCircle className="w-5 h-5 mr-2" />
+                Написать в Telegram
               </Button>
             </a>
           </div>
@@ -92,7 +102,9 @@ const Contact = () => {
               </div>
               <div>
                 <h4 className="font-bold mb-1">Email</h4>
-                <p className="text-sm text-muted-foreground">info@sanresheniya.ru</p>
+                <a href="mailto:west-centro@mail.ru" className="text-sm text-muted-foreground hover:text-primary">
+                  west-centro@mail.ru
+                </a>
               </div>
             </div>
 

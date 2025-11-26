@@ -249,9 +249,11 @@ const ServiceAreaMap = () => {
                   >
                     Заказать выезд в {selectedArea.name}
                   </Button>
-                  <Button variant="outline" className="w-full">
-                    <Phone className="mr-2 h-4 w-4" />
-                    +7 (495) 123-45-67
+                  <Button variant="outline" className="w-full" asChild>
+                    <a href="tel:+79069989888">
+                      <Phone className="mr-2 h-4 w-4" />
+                      +7 (906) 998-98-88
+                    </a>
                   </Button>
                 </div>
               </div>
