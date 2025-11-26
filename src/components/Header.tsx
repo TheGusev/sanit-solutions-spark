@@ -71,9 +71,9 @@ const Header = () => {
               </button>
             )}
             {isScrolled && (
-              <a href="tel:+74951234567" className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors flex items-center gap-1 animate-fade-in">
+              <a href="tel:+79069989888" className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors flex items-center gap-1 animate-fade-in">
                 <Phone className="w-4 h-4" />
-                +7 (495) 123-45-67
+                +7 (906) 998-98-88
               </a>
             )}
           </nav>

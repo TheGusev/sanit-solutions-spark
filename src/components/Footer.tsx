@@ -61,14 +61,26 @@ const Footer = () => {
             <ul className="space-y-3 text-sm opacity-80">
               <li className="flex items-center gap-2">
                 <span>📞</span>
-                <a href="tel:+74951234567" className="hover:opacity-100">
-                  +7 (495) 123-45-67
+                <a href="tel:+79069989888" className="hover:opacity-100">
+                  +7 (906) 998-98-88
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <span>📧</span>
-                <a href="mailto:info@sanresheniya.ru" className="hover:opacity-100">
-                  info@sanresheniya.ru
+                <a href="mailto:west-centro@mail.ru" className="hover:opacity-100">
+                  west-centro@mail.ru
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <span>💬</span>
+                <a href="https://wa.me/79069989888" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">
+                  WhatsApp
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <span>✈️</span>
+                <a href="https://t.me/The_Suppor_t" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">
+                  Telegram: @The_Suppor_t
                 </a>
               </li>
               <li className="flex items-center gap-2">
