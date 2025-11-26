@@ -52,9 +52,9 @@ const Details = () => {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
 
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="py-10 md:py-20 bg-muted/30">
       <div className="container mx-auto px-4">
-        <div className={`text-center mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`text-center mb-8 md:mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
             Почему <span className="text-primary">выбирают нас</span>
           </h2>

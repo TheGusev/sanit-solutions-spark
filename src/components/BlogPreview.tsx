@@ -10,7 +10,7 @@ const BlogPreview = () => {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
 
   return (
-    <section id="blog" className="py-20 px-4 bg-muted/30">
+    <section id="blog" className="py-10 md:py-20 px-4 bg-muted/30">
       <div className="container mx-auto max-w-6xl">
         <div className={`text-center mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <div className="flex items-center justify-center gap-3 mb-4">
