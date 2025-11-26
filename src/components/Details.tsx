@@ -105,7 +105,7 @@ const Details = () => {
                       Условия гарантии
                     </button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
+                  <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto mx-4 sm:mx-0">
                     <DialogHeader>
                       <DialogTitle className="text-2xl">Условия гарантийного сопровождения</DialogTitle>
                       <DialogDescription className="text-base mt-4">
@@ -143,6 +143,14 @@ const Details = () => {
                           <strong>Документальное оформление:</strong> Все детали и объём гарантий прописываются в договоре и акте осмотра объекта
                         </p>
                       </div>
+                    </div>
+                    <div className="mt-6 pt-4 border-t">
+                      <button 
+                        onClick={() => setIsGuaranteeDialogOpen(false)}
+                        className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                      >
+                        Понятно
+                      </button>
                     </div>
                   </DialogContent>
                 </Dialog>
