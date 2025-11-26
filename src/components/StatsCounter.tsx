@@ -70,19 +70,21 @@ const StatsCounter = () => {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="text-center text-white drop-shadow-md animate-scale-in"
+              className="flex items-center gap-3 md:flex-col md:text-center text-white drop-shadow-md animate-scale-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="w-16 h-16 mx-auto mb-3 rounded-xl bg-white/20 flex items-center justify-center">
-                <stat.icon className="w-8 h-8" />
+              <div className="w-12 h-12 md:w-16 md:h-16 md:mx-auto md:mb-3 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                <stat.icon className="w-6 h-6 md:w-8 md:h-8" />
               </div>
-              <div className="text-5xl md:text-6xl font-bold mb-2">
-                {stat.suffix === "%" 
-                  ? counts[index].toFixed(1) 
-                  : Math.floor(counts[index])}
-                {stat.suffix}
+              <div>
+                <div className="text-3xl md:text-5xl lg:text-6xl font-bold mb-1 md:mb-2">
+                  {stat.suffix === "%" 
+                    ? counts[index].toFixed(1) 
+                    : Math.floor(counts[index])}
+                  {stat.suffix}
+                </div>
+                <div className="text-sm md:text-lg lg:text-xl text-white/90">{stat.label}</div>
               </div>
-              <div className="text-lg md:text-xl text-white/90">{stat.label}</div>
             </div>
           ))}
         </div>
