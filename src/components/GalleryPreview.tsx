@@ -25,7 +25,7 @@ const GalleryPreview = () => {
             <Link
               key={item.id}
               to="/gallery"
-              className="group relative bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 animate-slide-in"
+              className="group relative bg-card rounded-2xl overflow-hidden shadow-sm hover-lift animate-slide-in"
             >
               {/* Визуальное сравнение */}
               <div className="flex items-center justify-center p-12 bg-gradient-to-br from-muted/30 to-muted/10">
