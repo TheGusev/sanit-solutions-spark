@@ -81,11 +81,13 @@ const ServiceAreaMap = () => {
                   >
                     Заказать выезд
                   </Button>
-                  <Button variant="outline" className="w-full text-sm whitespace-normal" asChild>
-                    <a href="tel:+79069989888" className="flex items-center justify-center">
-                      <Phone className="mr-2 h-4 w-4 flex-shrink-0" />
-                      +7 (906) 998-98-88
-                    </a>
+                  <Button 
+                    variant="outline" 
+                    className="w-full text-sm whitespace-normal" 
+                    onClick={() => window.location.href = 'tel:+79069989888'}
+                  >
+                    <Phone className="mr-2 h-4 w-4 flex-shrink-0" />
+                    +7 (906) 998-98-88
                   </Button>
                 </div>
               </div>
