@@ -99,9 +99,6 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
     setIsSubmitting(true);
 
     try {
-      // Get UTM parameters from URL
-      const urlParams = new URLSearchParams(window.location.search);
-
       // Call Edge Function to save lead and send notifications
       const { data, error } = await supabase.functions.invoke("handle-lead", {
         body: {
@@ -118,9 +115,21 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
           discount_percent: calculatorData.discount,
           discount_amount: calculatorData.discountAmount,
           final_price: calculatorData.finalPrice,
-          utm_source: urlParams.get("utm_source"),
-          utm_medium: urlParams.get("utm_medium"),
-          utm_campaign: urlParams.get("utm_campaign"),
+          // Pass all context data for analytics
+          session_id: context?.sessionId || null,
+          intent: context?.intent || null,
+          variant_id: context?.variantId || null,
+          device_type: context?.deviceType || null,
+          first_landing_url: context?.firstLandingUrl || null,
+          last_page_url: window.location.href,
+          utm_source: context?.utm_source || null,
+          utm_medium: context?.utm_medium || null,
+          utm_campaign: context?.utm_campaign || null,
+          utm_content: context?.utm_content || null,
+          utm_term: context?.utm_term || null,
+          keyword: context?.keyword || null,
+          yclid: context?.yclid || null,
+          gclid: context?.gclid || null,
         }
       });
 
