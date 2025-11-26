@@ -1,12 +1,21 @@
 import { Shield, Microscope, Pill, FileText, BadgeDollarSign, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const details = [
   {
     icon: Shield,
-    title: "30-дневная гарантия результата",
-    description: "Гарантируем 100% результат на все виды услуг. Если проблема вернётся в течение 30 дней — повторная обработка бесплатно или полный возврат денег.",
+    title: "До 30 дней гарантийного сопровождения",
+    description: "При лёгкой и средней степени заражения и соблюдении рекомендаций специалиста мы сопровождаем объект до 30 дней: при необходимости проводим повторную обработку тех же зон на льготных условиях или бесплатно — по решению мастера.",
     isHighlight: true,
     color: "text-accent"
   },
@@ -29,12 +38,6 @@ const details = [
     color: "text-green-600"
   },
   {
-    icon: Shield,
-    title: "Гарантия качества",
-    description: "Гарантируем результат на все виды услуг. При необходимости проводим повторную обработку бесплатно.",
-    color: "text-success"
-  },
-  {
     icon: BadgeDollarSign,
     title: "Гибкая система скидок",
     description: "Скидки от площади помещения, постоянным клиентам, при заключении договоров на обслуживание.",
@@ -50,6 +53,7 @@ const details = [
 
 const Details = () => {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
+  const [isGuaranteeDialogOpen, setIsGuaranteeDialogOpen] = useState(false);
 
   return (
     <section className="py-10 md:py-20 bg-muted/30">
@@ -90,6 +94,60 @@ const Details = () => {
             <p className={`leading-relaxed ${detail.isHighlight ? "text-white/90 md:text-lg" : "text-muted-foreground"}`}>
               {detail.description}
             </p>
+            {detail.isHighlight && (
+              <div className="mt-4 space-y-3">
+                <p className="text-xs text-white/70 leading-relaxed">
+                  * Точные условия гарантийного сопровождения (степень заражения, подготовка помещения, отсутствие самостоятельных обработок до нашего визита, наличие детей, пожилых людей и животных и др.) фиксируются в договоре и акте осмотра. Безопасность жильцов всегда имеет приоритет.
+                </p>
+                <Dialog open={isGuaranteeDialogOpen} onOpenChange={setIsGuaranteeDialogOpen}>
+                  <DialogTrigger asChild>
+                    <button className="text-sm text-white underline hover:text-white/80 transition-colors">
+                      Условия гарантии
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl">Условия гарантийного сопровождения</DialogTitle>
+                      <DialogDescription className="text-base mt-4">
+                        Для предоставления гарантийного сопровождения необходимо соблюдение следующих условий:
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 mt-4">
+                      <div className="flex gap-3">
+                        <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0">✓</span>
+                        <p className="text-muted-foreground leading-relaxed">
+                          <strong>Степень заражения:</strong> При первичной обработке степень заражения не выше 1 балла (не массовое заселение, нет старых очагов)
+                        </p>
+                      </div>
+                      <div className="flex gap-3">
+                        <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0">✓</span>
+                        <p className="text-muted-foreground leading-relaxed">
+                          <strong>Отсутствие самолечения:</strong> До нашего визита не проводились самостоятельные обработки бытовой химией, которые снижают эффективность профессиональных препаратов
+                        </p>
+                      </div>
+                      <div className="flex gap-3">
+                        <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0">✓</span>
+                        <p className="text-muted-foreground leading-relaxed">
+                          <strong>Подготовка помещения:</strong> Клиент подготовил помещение и соблюдает рекомендации мастера (уборка, доступ к зонам обработки, отсутствие повторного заноса и т.п.)
+                        </p>
+                      </div>
+                      <div className="flex gap-3">
+                        <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0">✓</span>
+                        <p className="text-muted-foreground leading-relaxed">
+                          <strong>Безопасность жильцов:</strong> При наличии грудных детей, беременных, пожилых, хронических заболеваний и животных схема обработки может быть щадящей, поэтому результат достигается поэтапно, с возможными повторными визитами
+                        </p>
+                      </div>
+                      <div className="flex gap-3">
+                        <span className="text-green-600 dark:text-green-400 font-bold flex-shrink-0">✓</span>
+                        <p className="text-muted-foreground leading-relaxed">
+                          <strong>Документальное оформление:</strong> Все детали и объём гарантий прописываются в договоре и акте осмотра объекта
+                        </p>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
           </div>
           ))}
         </div>
