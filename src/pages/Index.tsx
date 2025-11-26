@@ -16,10 +16,14 @@ import Reviews from "@/components/Reviews";
 import Footer from "@/components/Footer";
 import FloatingButtons from "@/components/FloatingButtons";
 import ABTestDebug from "@/components/ABTestDebug";
+import { useMLPrediction } from "@/hooks/useMLPrediction";
 
 const Index = () => {
   const [showDiscountPopup, setShowDiscountPopup] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
+  
+  // Integrate ML prediction in main flow for real-time personalization
+  const { prediction, isLoading: mlLoading } = useMLPrediction();
 
   useEffect(() => {
     const handleScroll = () => {

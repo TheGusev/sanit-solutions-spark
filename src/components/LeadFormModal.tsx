@@ -98,6 +98,11 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
 
     setIsSubmitting(true);
 
+    // Check if context is initialized to avoid missing tracking data
+    if (!context || !context.initialized) {
+      console.warn('⚠️ TrafficContext not initialized - lead may be missing tracking data');
+    }
+
     try {
       // Call Edge Function to save lead and send notifications
       const { data, error } = await supabase.functions.invoke("handle-lead", {
