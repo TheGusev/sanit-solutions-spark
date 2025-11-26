@@ -26,6 +26,44 @@ interface LeadData {
   website?: string; // Honeypot field
 }
 
+// Translation dictionaries
+const objectTypeLabels: Record<string, string> = {
+  apartment: "🏠 Квартира",
+  house: "🏡 Частный дом",
+  office: "🏢 Офис",
+  warehouse: "📦 Склад",
+  shop: "🛒 Магазин",
+  restaurant: "🍽️ Ресторан",
+  production: "🏭 Производство",
+  other: "📋 Другое"
+};
+
+const serviceLabels: Record<string, string> = {
+  disinfection: "🦠 Дезинфекция",
+  disinsection: "🐜 Дезинсекция",
+  deratization: "🐀 Дератизация",
+  complex: "✨ Комплексная обработка"
+};
+
+const methodLabels: Record<string, string> = {
+  cold: "❄️ Холодный туман",
+  hot: "🔥 Горячий туман",
+  spot: "🎯 Точечная обработка",
+  complex: "💎 Комплексная обработка"
+};
+
+const frequencyLabels: Record<string, string> = {
+  once: "Разовая",
+  monthly: "Ежемесячно",
+  quarterly: "Ежеквартально"
+};
+
+const clientTypeLabels: Record<string, string> = {
+  individual: "Физическое лицо",
+  ip: "ИП",
+  company: "Юридическое лицо"
+};
+
 async function sendTelegramNotification(lead: LeadData): Promise<boolean> {
   const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
   const chatId = Deno.env.get("TELEGRAM_CHAT_ID");
@@ -35,23 +73,30 @@ async function sendTelegramNotification(lead: LeadData): Promise<boolean> {
     return true;
   }
   
-  const message = `🔔 *Новая заявка с сайта!*
+  const message = `🔔 *НОВАЯ ЗАЯВКА*
+━━━━━━━━━━━━━━━━━
 
-👤 *Имя:* ${lead.name}
-📱 *Телефон:* ${lead.phone}
-${lead.email ? `📧 *Email:* ${lead.email}\n` : ""}
-🏠 *Помещение:* ${lead.object_type}
+👤 *Клиент:* ${lead.name}
+📱 *Телефон:* [${lead.phone}](tel:${lead.phone.replace(/[^+\d]/g, "")})
+${lead.email ? `📧 *Email:* ${lead.email}\n` : ""}━━━━━━━━━━━━━━━━━
+
+🏠 *Объект:* ${objectTypeLabels[lead.object_type] || lead.object_type}
 📐 *Площадь:* ${lead.area_m2} м²
-🔧 *Услуга:* ${lead.service}
-⚙️ *Метод:* ${lead.method}
-📅 *Периодичность:* ${lead.frequency}
-👔 *Тип клиента:* ${lead.client_type}
 
-💰 *Базовая цена:* ${lead.base_price.toLocaleString("ru-RU")}₽
-🎁 *Скидка:* ${lead.discount_percent}% (-${lead.discount_amount.toLocaleString("ru-RU")}₽)
-✅ *Итого:* ${lead.final_price.toLocaleString("ru-RU")}₽
-${lead.utm_source || lead.utm_medium || lead.utm_campaign ? `\n📊 *UTM:* ${lead.utm_source || "-"} / ${lead.utm_medium || "-"} / ${lead.utm_campaign || "-"}` : ""}
-🕐 ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })}`;
+🔧 *Услуга:* ${serviceLabels[lead.service] || lead.service}
+⚙️ *Метод:* ${methodLabels[lead.method] || lead.method}
+📅 *Периодичность:* ${frequencyLabels[lead.frequency] || lead.frequency}
+👔 *Тип клиента:* ${clientTypeLabels[lead.client_type] || lead.client_type}
+
+━━━━━━━━━━━━━━━━━
+💵 *СТОИМОСТЬ*
+
+💰 Базовая: ${lead.base_price.toLocaleString("ru-RU")} ₽
+🎁 Скидка: −${lead.discount_percent}% (−${lead.discount_amount.toLocaleString("ru-RU")} ₽)
+✅ *ИТОГО: ${lead.final_price.toLocaleString("ru-RU")} ₽*
+
+━━━━━━━━━━━━━━━━━
+${lead.utm_source || lead.utm_medium || lead.utm_campaign ? `📊 *UTM:* ${lead.utm_source || "—"} / ${lead.utm_medium || "—"} / ${lead.utm_campaign || "—"}\n` : ""}🕐 ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })}`;
 
   try {
     const response = await fetch(
