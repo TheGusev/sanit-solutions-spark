@@ -66,7 +66,12 @@ const BlogPost = () => {
       <section className="py-12 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-8">
-            <div className="text-7xl mb-6">{post.image}</div>
+            <div className="w-32 h-32 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+              {(() => {
+                const Icon = post.image;
+                return <Icon className="w-20 h-20 text-primary" />;
+              })()}
+            </div>
             <div className="flex items-center justify-center gap-3 mb-6">
               <span className="text-sm px-4 py-1.5 rounded-full bg-primary/10 text-primary font-medium">
                 {post.category}
@@ -138,7 +143,12 @@ const BlogPost = () => {
                 >
                   <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                     <CardHeader>
-                      <div className="text-5xl mb-4">{relatedPost.image}</div>
+                      <div className="w-full h-40 bg-gradient-to-br from-primary/10 to-primary/5 rounded-t-2xl flex items-center justify-center mb-4">
+                        {(() => {
+                          const Icon = relatedPost.image;
+                          return <Icon className="w-16 h-16 text-primary" />;
+                        })()}
+                      </div>
                       <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium inline-block mb-3">
                         {relatedPost.category}
                       </span>

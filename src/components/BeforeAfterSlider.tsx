@@ -69,7 +69,10 @@ const BeforeAfterSlider = ({
     >
       {/* После - полная ширина */}
       <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 flex flex-col items-center justify-center">
-        {<afterEmoji className="w-32 h-32 mb-4 animate-fade-in text-green-600" />}
+        {(() => {
+          const AfterIcon = afterEmoji;
+          return <AfterIcon className="w-32 h-32 mb-4 animate-fade-in text-green-600" />;
+        })()}
         <span className="bg-green-600 text-white px-4 py-2 rounded-full font-bold text-sm">
           {afterLabel}
         </span>
@@ -80,7 +83,10 @@ const BeforeAfterSlider = ({
         className="absolute inset-0 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950 dark:to-red-900 flex flex-col items-center justify-center"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       >
-        {<beforeEmoji className="w-32 h-32 mb-4 animate-fade-in text-red-600" />}
+        {(() => {
+          const BeforeIcon = beforeEmoji;
+          return <BeforeIcon className="w-32 h-32 mb-4 animate-fade-in text-red-600" />;
+        })()}
         <span className="bg-red-600 text-white px-4 py-2 rounded-full font-bold text-sm">
           {beforeLabel}
         </span>
