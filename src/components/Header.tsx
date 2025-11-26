@@ -77,9 +77,7 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center gap-2">
-            <div className="hidden md:block">
-              <ThemeToggle />
-            </div>
+            <ThemeToggle />
             <Button
               onClick={() => scrollToSection("calculator")} 
               size="sm"
