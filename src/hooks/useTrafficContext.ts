@@ -38,6 +38,12 @@ export function initializeTrafficContext(): TrafficContext {
   const existing = loadFromStorage<TrafficContext>(STORAGE_KEY);
   
   if (existing && existing.sessionId) {
+    // Проверяем, есть ли variantId в существующей сессии
+    if (!existing.variantId) {
+      // Присваиваем случайный вариант для старых сессий
+      existing.variantId = Math.random() < 0.5 ? 'A' : 'B';
+      saveToStorage(STORAGE_KEY, existing);
+    }
     return { ...existing, initialized: true };
   }
   
