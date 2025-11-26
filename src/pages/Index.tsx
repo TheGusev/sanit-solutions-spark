@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import StatsCounter from "@/components/StatsCounter";
 import TrustBadges from "@/components/TrustBadges";
+import IntentBanner from "@/components/IntentBanner";
 import Services from "@/components/Services";
 import WorkProcess from "@/components/WorkProcess";
 import Calculator from "@/components/Calculator";
@@ -39,6 +40,7 @@ const Index = () => {
       <Hero onDiscountClick={() => setShowDiscountPopup(true)} />
       <StatsCounter />
       <TrustBadges />
+      <IntentBanner />
       <Services />
       <WorkProcess />
       <Calculator />

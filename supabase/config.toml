@@ -2,3 +2,9 @@ project_id = "gimkzlozhwwgetlgtgvj"
 
 [functions.handle-lead]
 verify_jwt = false
+
+[functions.log-traffic-event]
+verify_jwt = false
+
+[functions.export-analytics]
+verify_jwt = false

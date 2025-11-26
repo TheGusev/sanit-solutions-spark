@@ -24,6 +24,16 @@ interface LeadData {
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
+  utm_content?: string; // Новое поле
+  utm_term?: string; // Новое поле
+  keyword?: string; // Новое поле
+  yclid?: string; // Новое поле
+  gclid?: string; // Новое поле
+  session_id?: string; // Новое поле
+  intent?: string; // Новое поле
+  first_landing_url?: string; // Новое поле
+  last_page_url?: string; // Новое поле
+  device_type?: string; // Новое поле
   website?: string; // Honeypot field
 }
 
@@ -220,6 +230,16 @@ serve(async (req) => {
       utm_source: leadData.utm_source || null,
       utm_medium: leadData.utm_medium || null,
       utm_campaign: leadData.utm_campaign || null,
+      utm_content: leadData.utm_content || null,
+      utm_term: leadData.utm_term || null,
+      keyword: leadData.keyword || null,
+      yclid: leadData.yclid || null,
+      gclid: leadData.gclid || null,
+      session_id: leadData.session_id || null,
+      intent: leadData.intent || null,
+      first_landing_url: leadData.first_landing_url || null,
+      last_page_url: leadData.last_page_url || null,
+      device_type: leadData.device_type || null,
     }).select().single();
     
     if (error) {

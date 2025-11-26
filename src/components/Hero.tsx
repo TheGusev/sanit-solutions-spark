@@ -2,13 +2,100 @@ import { Button } from "@/components/ui/button";
 import { Microscope, Pill, Beaker, Gift, BarChart3, Zap, CheckCircle, Shield } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useParallax } from "@/hooks/useParallax";
+import { useTraffic } from "@/contexts/TrafficContext";
 
 interface HeroProps {
   onDiscountClick: () => void;
 }
 
+interface HeroContent {
+  title: string;
+  highlight: string;
+  subtitle: string;
+}
+
+const HERO_CONTENT_BY_INTENT: Record<string, HeroContent> = {
+  flat_bedbugs: {
+    title: "Профессиональная дезинсекция квартир",
+    highlight: "в Москве и МО",
+    subtitle: "Уничтожаем клопов, тараканов и других насекомых с гарантией результата"
+  },
+  flat_cockroaches: {
+    title: "Профессиональная дезинсекция квартир",
+    highlight: "в Москве и МО",
+    subtitle: "Уничтожаем клопов, тараканов и других насекомых с гарантией результата"
+  },
+  flat_general: {
+    title: "Дезинфекция и дезинсекция квартир",
+    highlight: "для жителей Москвы",
+    subtitle: "Безопасные профессиональные услуги с гарантией до 30 дней"
+  },
+  office_disinfection: {
+    title: "Дезинфекция и дезинсекция офисов",
+    highlight: "для юридических лиц",
+    subtitle: "Работаем по договорам, готовим документы для СЭС и Роспотребнадзора"
+  },
+  office_general: {
+    title: "Санитарные услуги для офисов",
+    highlight: "и бизнес-центров",
+    subtitle: "Комплексная обработка коммерческих помещений с полным пакетом документов"
+  },
+  warehouse_deratization: {
+    title: "Дератизация и защита складов",
+    highlight: "от грызунов и птиц",
+    subtitle: "Комплексные решения для логистических центров и складских комплексов"
+  },
+  warehouse_general: {
+    title: "Санитарная обработка складов",
+    highlight: "и промышленных объектов",
+    subtitle: "Профессиональная дезинфекция и дезинсекция для бизнеса"
+  },
+  restaurant_disinfection: {
+    title: "Дезинфекция для предприятий общепита",
+    highlight: "в соответствии с СЭС",
+    subtitle: "Санитарная обработка ресторанов, кафе и кухонь с документами"
+  },
+  restaurant_general: {
+    title: "Санитарные услуги для общепита",
+    highlight: "в Москве и МО",
+    subtitle: "Полный комплекс услуг для ресторанов, кафе и пищевых производств"
+  },
+  ses_check_preparation: {
+    title: "Подготовка к проверке СЭС",
+    highlight: "срочная обработка",
+    subtitle: "Дезинфекция с полным пакетом документов для Роспотребнадзора"
+  },
+  b2b_general: {
+    title: "Санитарные услуги для бизнеса",
+    highlight: "договоры и документы",
+    subtitle: "Профессиональная обработка объектов для юридических лиц и ИП"
+  },
+  production_facility: {
+    title: "Обработка промышленных объектов",
+    highlight: "и производств",
+    subtitle: "Дезинфекция, дезинсекция, дератизация для заводов и цехов"
+  },
+  shop_store: {
+    title: "Санитарная обработка магазинов",
+    highlight: "и торговых площадей",
+    subtitle: "Дезинфекция торговых залов и складов с сертификатами"
+  }
+};
+
+const DEFAULT_HERO_CONTENT: HeroContent = {
+  title: "Полная дезинфекция помещений",
+  highlight: "для бизнеса и дома",
+  subtitle: "Безопасные профессиональные услуги для Москвы"
+};
+
 const Hero = ({ onDiscountClick }: HeroProps) => {
+  const { context } = useTraffic();
   const parallaxOffset = useParallax(0.3);
+  
+  // Получаем контент в зависимости от интента
+  const heroContent = context?.intent && HERO_CONTENT_BY_INTENT[context.intent]
+    ? HERO_CONTENT_BY_INTENT[context.intent]
+    : DEFAULT_HERO_CONTENT;
   
   const scrollToCalculator = () => {
     const element = document.getElementById("calculator");
@@ -31,12 +118,12 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
-            Полная дезинфекция помещений{" "}
-            <span className="text-primary">для бизнеса и дома</span>
+            {heroContent.title}{" "}
+            <span className="text-primary">{heroContent.highlight}</span>
           </h1>
           
           <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10">
-            Безопасные профессиональные услуги для Москвы
+            {heroContent.subtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
