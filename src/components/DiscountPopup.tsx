@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import PrivacyPolicyModal from "@/components/PrivacyPolicyModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +36,7 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
   const [phone, setPhone] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [consent, setConsent] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [website, setWebsite] = useState(""); // Honeypot field
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -225,9 +226,12 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   Согласен с{" "}
-                  <Link to="/privacy" className="text-primary hover:underline" target="_blank">
+                  <span
+                    onClick={() => setPrivacyModalOpen(true)}
+                    className="text-primary hover:underline cursor-pointer"
+                  >
                     политикой конфиденциальности
-                  </Link>{" "}
+                  </span>{" "}
                   <span className="text-destructive">*</span>
                 </label>
               </div>
@@ -317,6 +321,14 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
             </Button>
           </div>
         )}
+
+        <PrivacyPolicyModal
+          open={privacyModalOpen}
+          onOpenChange={setPrivacyModalOpen}
+          onAccept={() => {
+            setConsent(true);
+          }}
+        />
       </DialogContent>
     </Dialog>
   );
