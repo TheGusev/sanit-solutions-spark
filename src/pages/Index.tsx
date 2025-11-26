@@ -5,6 +5,7 @@ import StatsCounter from "@/components/StatsCounter";
 import TrustBadges from "@/components/TrustBadges";
 import Services from "@/components/Services";
 import WorkProcess from "@/components/WorkProcess";
+import GalleryPreview from "@/components/GalleryPreview";
 import Calculator from "@/components/Calculator";
 import DiscountPopup from "@/components/DiscountPopup";
 import Details from "@/components/Details";
@@ -41,6 +42,7 @@ const Index = () => {
       <TrustBadges />
       <Services />
       <WorkProcess />
+      <GalleryPreview />
       <Calculator />
       <Details />
       <FAQ />
