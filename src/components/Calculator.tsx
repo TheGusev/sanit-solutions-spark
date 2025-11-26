@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,8 +17,34 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { LeadFormModal } from "./LeadFormModal";
+import { useTraffic } from "@/contexts/TrafficContext";
+import { supabase } from "@/integrations/supabase/client";
+
+// Предустановки калькулятора по интентам
+const CALCULATOR_DEFAULTS_BY_INTENT: Record<string, Partial<{
+  premiseType: string;
+  serviceType: string;
+  clientType: string;
+  treatmentType: string;
+}>> = {
+  flat_bedbugs: { premiseType: 'apartment', serviceType: 'disinsection', clientType: 'individual' },
+  flat_cockroaches: { premiseType: 'apartment', serviceType: 'disinsection', clientType: 'individual' },
+  flat_general: { premiseType: 'apartment', serviceType: 'disinfection', clientType: 'individual' },
+  office_disinfection: { premiseType: 'office', serviceType: 'disinfection', clientType: 'company' },
+  office_general: { premiseType: 'office', serviceType: 'disinfection', clientType: 'company' },
+  warehouse_deratization: { premiseType: 'warehouse', serviceType: 'deratization', clientType: 'company' },
+  warehouse_general: { premiseType: 'warehouse', serviceType: 'disinfection', clientType: 'company' },
+  restaurant_disinfection: { premiseType: 'restaurant', serviceType: 'disinfection', clientType: 'company' },
+  restaurant_general: { premiseType: 'restaurant', serviceType: 'complex', clientType: 'company' },
+  ses_check_preparation: { premiseType: 'office', serviceType: 'disinfection', clientType: 'company', treatmentType: 'complex' },
+  b2b_general: { clientType: 'company', serviceType: 'complex' },
+  production_facility: { premiseType: 'production', serviceType: 'complex', clientType: 'company' },
+  shop_store: { premiseType: 'shop', serviceType: 'disinfection', clientType: 'company' }
+};
 
 const Calculator = () => {
+  const { context } = useTraffic();
+  
   // Основные параметры
   const [area, setArea] = useState<number>(50);
   const [premiseType, setPremiseType] = useState<string>("apartment");
@@ -26,6 +52,7 @@ const Calculator = () => {
   const [serviceType, setServiceType] = useState<string>("disinfection");
   const [period, setPeriod] = useState<string>("once");
   const [clientType, setClientType] = useState<string>("individual");
+  const [initialized, setInitialized] = useState(false);
   
   // UI состояния
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -34,6 +61,61 @@ const Calculator = () => {
   const [areaError, setAreaError] = useState<string | null>(null);
   const [areaValid, setAreaValid] = useState(true);
   const [showLeadForm, setShowLeadForm] = useState(false);
+
+  // Предзаполнение калькулятора на основе интента (только при первой загрузке)
+  useEffect(() => {
+    if (!initialized && context?.intent) {
+      const defaults = CALCULATOR_DEFAULTS_BY_INTENT[context.intent];
+      if (defaults) {
+        if (defaults.premiseType) setPremiseType(defaults.premiseType);
+        if (defaults.serviceType) setServiceType(defaults.serviceType);
+        if (defaults.clientType) setClientType(defaults.clientType);
+        if (defaults.treatmentType) setTreatmentType(defaults.treatmentType);
+        
+        console.log(`Calculator initialized with intent: ${context.intent}`, defaults);
+      }
+      setInitialized(true);
+    }
+  }, [context, initialized]);
+
+  // Логирование calc_change при изменении ключевых полей (с debounce)
+  useEffect(() => {
+    if (!context || !initialized) return;
+
+    const timeoutId = setTimeout(() => {
+      supabase.functions.invoke('log-traffic-event', {
+        body: {
+          session_id: context.sessionId,
+          page_url: window.location.href,
+          referrer: context.referrer,
+          utm_source: context.utm_source,
+          utm_medium: context.utm_medium,
+          utm_campaign: context.utm_campaign,
+          utm_content: context.utm_content,
+          utm_term: context.utm_term,
+          keyword_raw: context.keyword,
+          yclid: context.yclid,
+          gclid: context.gclid,
+          intent: context.intent,
+          device_type: context.deviceType,
+          event_type: 'calc_change',
+          event_data: {
+            area,
+            premiseType,
+            serviceType,
+            treatmentType,
+            period,
+            clientType,
+            totalPrice: calculatePrice(),
+            discount: calculateDiscount(),
+            finalPrice: calculatePrice() - Math.round((calculatePrice() * calculateDiscount()) / 100)
+          }
+        }
+      }).catch(err => console.debug('Traffic event logging failed:', err));
+    }, 2000); // Debounce 2 секунды
+
+    return () => clearTimeout(timeoutId);
+  }, [area, premiseType, serviceType, treatmentType, period, clientType, context, initialized]);
 
   // Типы помещений с иконками
   const premiseTypes = [
@@ -192,6 +274,33 @@ const Calculator = () => {
 
   // Обработка заказа
   const handleOrder = () => {
+    // Логируем calc_submit перед открытием формы
+    if (context) {
+      supabase.functions.invoke('log-traffic-event', {
+        body: {
+          session_id: context.sessionId,
+          page_url: window.location.href,
+          utm_source: context.utm_source,
+          utm_medium: context.utm_medium,
+          utm_campaign: context.utm_campaign,
+          utm_content: context.utm_content,
+          utm_term: context.utm_term,
+          keyword_raw: context.keyword,
+          intent: context.intent,
+          device_type: context.deviceType,
+          event_type: 'calc_submit',
+          event_data: {
+            area,
+            premiseType,
+            serviceType,
+            totalPrice,
+            discount,
+            finalPrice
+          }
+        }
+      }).catch(err => console.debug('Traffic event logging failed:', err));
+    }
+    
     setShowLeadForm(true);
   };
 

@@ -20,66 +20,156 @@ export type Database = {
           base_price: number | null
           client_type: string | null
           created_at: string | null
+          device_type: string | null
           discount_amount: number | null
           discount_percent: number | null
           email: string | null
           final_price: number | null
+          first_landing_url: string | null
           frequency: string | null
+          gclid: string | null
           id: string
+          intent: string | null
+          keyword: string | null
+          last_page_url: string | null
           method: string | null
           name: string
           object_type: string | null
           phone: string
           service: string | null
+          session_id: string | null
           source: string | null
           status: string | null
           utm_campaign: string | null
+          utm_content: string | null
           utm_medium: string | null
           utm_source: string | null
+          utm_term: string | null
+          yclid: string | null
         }
         Insert: {
           area_m2?: number | null
           base_price?: number | null
           client_type?: string | null
           created_at?: string | null
+          device_type?: string | null
           discount_amount?: number | null
           discount_percent?: number | null
           email?: string | null
           final_price?: number | null
+          first_landing_url?: string | null
           frequency?: string | null
+          gclid?: string | null
           id?: string
+          intent?: string | null
+          keyword?: string | null
+          last_page_url?: string | null
           method?: string | null
           name: string
           object_type?: string | null
           phone: string
           service?: string | null
+          session_id?: string | null
           source?: string | null
           status?: string | null
           utm_campaign?: string | null
+          utm_content?: string | null
           utm_medium?: string | null
           utm_source?: string | null
+          utm_term?: string | null
+          yclid?: string | null
         }
         Update: {
           area_m2?: number | null
           base_price?: number | null
           client_type?: string | null
           created_at?: string | null
+          device_type?: string | null
           discount_amount?: number | null
           discount_percent?: number | null
           email?: string | null
           final_price?: number | null
+          first_landing_url?: string | null
           frequency?: string | null
+          gclid?: string | null
           id?: string
+          intent?: string | null
+          keyword?: string | null
+          last_page_url?: string | null
           method?: string | null
           name?: string
           object_type?: string | null
           phone?: string
           service?: string | null
+          session_id?: string | null
           source?: string | null
           status?: string | null
           utm_campaign?: string | null
+          utm_content?: string | null
           utm_medium?: string | null
           utm_source?: string | null
+          utm_term?: string | null
+          yclid?: string | null
+        }
+        Relationships: []
+      }
+      traffic_events: {
+        Row: {
+          device_type: string | null
+          event_data: Json | null
+          event_type: string
+          gclid: string | null
+          id: string
+          intent: string | null
+          keyword_raw: string | null
+          page_url: string
+          referrer: string | null
+          session_id: string
+          timestamp: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          yclid: string | null
+        }
+        Insert: {
+          device_type?: string | null
+          event_data?: Json | null
+          event_type: string
+          gclid?: string | null
+          id?: string
+          intent?: string | null
+          keyword_raw?: string | null
+          page_url: string
+          referrer?: string | null
+          session_id: string
+          timestamp?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          yclid?: string | null
+        }
+        Update: {
+          device_type?: string | null
+          event_data?: Json | null
+          event_type?: string
+          gclid?: string | null
+          id?: string
+          intent?: string | null
+          keyword_raw?: string | null
+          page_url?: string
+          referrer?: string | null
+          session_id?: string
+          timestamp?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          yclid?: string | null
         }
         Relationships: []
       }
