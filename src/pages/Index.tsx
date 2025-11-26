@@ -9,6 +9,7 @@ import Calculator from "@/components/Calculator";
 import DiscountPopup from "@/components/DiscountPopup";
 import Details from "@/components/Details";
 import FAQ from "@/components/FAQ";
+import BlogPreview from "@/components/BlogPreview";
 import Reviews from "@/components/Reviews";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
@@ -43,6 +44,7 @@ const Index = () => {
       <Calculator />
       <Details />
       <FAQ />
+      <BlogPreview />
       <Reviews />
       <Contact />
       <Footer />

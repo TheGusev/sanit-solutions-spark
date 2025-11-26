@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,18 +33,36 @@ const Header = () => {
           </div>
 
           <nav className="hidden md:flex items-center gap-6">
-            <button onClick={() => scrollToSection("services")} className="text-sm font-medium hover:text-primary transition-colors">
-              Услуги
-            </button>
-            <button onClick={() => scrollToSection("calculator")} className="text-sm font-medium hover:text-primary transition-colors">
-              Калькулятор
-            </button>
-            <button onClick={() => scrollToSection("reviews")} className="text-sm font-medium hover:text-primary transition-colors">
-              Отзывы
-            </button>
-            <button onClick={() => scrollToSection("contact")} className="text-sm font-medium hover:text-primary transition-colors">
-              Контакты
-            </button>
+            {isHomePage ? (
+              <>
+                <button onClick={() => scrollToSection("services")} className="text-sm font-medium hover:text-primary transition-colors">
+                  Услуги
+                </button>
+                <button onClick={() => scrollToSection("calculator")} className="text-sm font-medium hover:text-primary transition-colors">
+                  Калькулятор
+                </button>
+                <button onClick={() => scrollToSection("reviews")} className="text-sm font-medium hover:text-primary transition-colors">
+                  Отзывы
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
+                  Главная
+                </Link>
+                <Link to="/#services" className="text-sm font-medium hover:text-primary transition-colors">
+                  Услуги
+                </Link>
+              </>
+            )}
+            <Link to="/blog" className="text-sm font-medium hover:text-primary transition-colors">
+              Блог
+            </Link>
+            {isHomePage && (
+              <button onClick={() => scrollToSection("contact")} className="text-sm font-medium hover:text-primary transition-colors">
+                Контакты
+              </button>
+            )}
             {isScrolled && (
               <a href="tel:+74951234567" className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors flex items-center gap-1 animate-fade-in">
                 📞 +7 (495) 123-45-67
