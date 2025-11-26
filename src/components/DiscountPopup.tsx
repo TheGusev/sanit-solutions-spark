@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useTraffic } from "@/contexts/TrafficContext";
+import { trackGoal } from "@/lib/analytics";
 
 interface DiscountPopupProps {
   open: boolean;
@@ -118,6 +119,13 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
       if (error) throw error;
 
       if (data?.success) {
+        // Трекаем цель в Яндекс.Метрике
+        trackGoal('popup_submit', {
+          intent: context?.intent,
+          variant: context?.variantId,
+          service: selectedService
+        });
+        
         setStep(3);
         toast.success("Заявка успешно отправлена!");
       } else {

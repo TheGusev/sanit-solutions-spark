@@ -3,11 +3,22 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Phone } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
+import { trackGoal } from "@/lib/analytics";
+import { useTraffic } from "@/contexts/TrafficContext";
 
 const Header = () => {
+  const { context } = useTraffic();
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  
+  const handlePhoneClick = () => {
+    trackGoal('phone_click', {
+      intent: context?.intent,
+      variant: context?.variantId,
+      source: 'header'
+    });
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,7 +77,8 @@ const Header = () => {
             )}
             {isScrolled && (
               <a 
-                href="tel:+79069989888" 
+                href="tel:+79069989888"
+                onClick={handlePhoneClick}
                 className="whitespace-nowrap flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary font-semibold text-sm hover:bg-primary/20 transition-colors animate-fade-in"
               >
                 <Phone className="w-4 h-4 flex-shrink-0" />

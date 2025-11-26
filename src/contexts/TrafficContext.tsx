@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { initializeTrafficContext, TrafficContext as TrafficContextType } from '@/hooks/useTrafficContext';
 import { supabase } from '@/integrations/supabase/client';
-import { initAnalytics, setUserProperties } from '@/lib/analytics';
+import { setUserProperties, trackPageView } from '@/lib/analytics';
 
 interface TrafficContextValue {
   context: TrafficContextType | null;
@@ -29,12 +29,6 @@ export function TrafficProvider({ children }: { children: React.ReactNode }) {
     const trafficContext = initializeTrafficContext();
     setContext(trafficContext);
     setIsLoading(false);
-    
-    // Инициализация аналитики (можно настроить через env)
-    initAnalytics({
-      provider: 'none', // Можно включить 'yandex_metrika', 'hotjar', 'posthog'
-      // counterId: import.meta.env.VITE_YANDEX_METRIKA_ID
-    });
   }, []);
   
   // Передача параметров в аналитику при готовности контекста
@@ -57,6 +51,14 @@ export function TrafficProvider({ children }: { children: React.ReactNode }) {
 
     const logPageView = async () => {
       try {
+        // Передаём page_view в Яндекс.Метрику с параметрами
+        trackPageView(window.location.href, {
+          intent: context.intent,
+          variant: context.variantId,
+          device: context.deviceType
+        });
+        
+        // Также логируем в Supabase
         await supabase.functions.invoke('log-traffic-event', {
           body: {
             session_id: context.sessionId,
