@@ -61,28 +61,46 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
           </div>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            <div className="bg-card p-4 md:p-6 lg:p-8 rounded-2xl shadow-sm hover-lift">
-              <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 mb-3 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Zap className="w-6 h-6 text-primary" />
+            <div className="bg-card p-3 md:p-6 lg:p-8 rounded-xl shadow-sm hover-lift flex md:flex-col items-center md:items-start justify-between md:justify-start">
+              <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
+                <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-primary/10 md:flex md:items-center md:justify-center">
+                  <Zap className="w-5 h-5 md:w-6 md:h-6 text-primary flex-shrink-0" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm md:text-lg md:mb-2">
+                    Быстрый выезд <span className="text-muted-foreground font-normal md:hidden">— В течение 2-х часов</span>
+                  </h3>
+                  <p className="hidden md:block text-sm text-muted-foreground">В течение 2-х часов по Москве</p>
+                </div>
               </div>
-              <h3 className="font-bold text-lg mb-2">Быстрый выезд</h3>
-              <p className="text-sm text-muted-foreground">В течение 2-х часов по Москве</p>
             </div>
             
-            <div className="bg-card p-6 rounded-2xl shadow-sm hover-lift">
-              <div className="w-12 h-12 mb-3 rounded-xl bg-success/10 flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-success" />
+            <div className="bg-card p-3 md:p-6 lg:p-8 rounded-xl shadow-sm hover-lift flex md:flex-col items-center md:items-start justify-between md:justify-start">
+              <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
+                <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-success/10 md:flex md:items-center md:justify-center">
+                  <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-success flex-shrink-0" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm md:text-lg md:mb-2">
+                    Сертификаты <span className="text-muted-foreground font-normal md:hidden">— Все документы</span>
+                  </h3>
+                  <p className="hidden md:block text-sm text-muted-foreground">Все необходимые документы</p>
+                </div>
               </div>
-              <h3 className="font-bold text-lg mb-2">Сертификаты</h3>
-              <p className="text-sm text-muted-foreground">Все необходимые документы</p>
             </div>
             
-            <div className="bg-card p-6 rounded-2xl shadow-sm hover-lift">
-              <div className="w-12 h-12 mb-3 rounded-xl bg-accent/10 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-accent" />
+            <div className="bg-card p-3 md:p-6 lg:p-8 rounded-xl shadow-sm hover-lift flex md:flex-col items-center md:items-start justify-between md:justify-start">
+              <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
+                <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-accent/10 md:flex md:items-center md:justify-center">
+                  <Shield className="w-5 h-5 md:w-6 md:h-6 text-accent flex-shrink-0" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm md:text-lg md:mb-2">
+                    Гарантия <span className="text-muted-foreground font-normal md:hidden">— На все работы</span>
+                  </h3>
+                  <p className="hidden md:block text-sm text-muted-foreground">На все виды работ</p>
+                </div>
               </div>
-              <h3 className="font-bold text-lg mb-2">Гарантия</h3>
-              <p className="text-sm text-muted-foreground">На все виды работ</p>
             </div>
           </div>
         </AnimatedSection>
