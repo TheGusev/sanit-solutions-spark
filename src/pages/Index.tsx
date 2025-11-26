@@ -7,8 +7,10 @@ import Services from "@/components/Services";
 import WorkProcess from "@/components/WorkProcess";
 import GalleryPreview from "@/components/GalleryPreview";
 import Calculator from "@/components/Calculator";
+import Certificates from "@/components/Certificates";
 import DiscountPopup from "@/components/DiscountPopup";
 import Details from "@/components/Details";
+import ServiceAreaMap from "@/components/ServiceAreaMap";
 import FAQ from "@/components/FAQ";
 import BlogPreview from "@/components/BlogPreview";
 import Reviews from "@/components/Reviews";
@@ -44,7 +46,9 @@ const Index = () => {
       <WorkProcess />
       <GalleryPreview />
       <Calculator />
+      <Certificates />
       <Details />
+      <ServiceAreaMap />
       <FAQ />
       <BlogPreview />
       <Reviews />
