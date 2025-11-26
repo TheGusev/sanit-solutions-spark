@@ -38,9 +38,6 @@ const BlogPreview = () => {
             >
               <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardHeader className="p-4 md:p-6">
-                  <div className="w-12 h-12 md:w-16 md:h-16 mb-4 rounded-xl bg-primary/10 flex items-center justify-center">
-                    {<post.image className="w-6 h-6 md:w-8 md:h-8 text-primary" />}
-                  </div>
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
                       {post.category}
