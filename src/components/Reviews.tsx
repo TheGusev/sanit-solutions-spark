@@ -1,4 +1,6 @@
 import { Star } from "lucide-react";
+import AnimatedSection from "@/components/AnimatedSection";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const reviews = [
   {
@@ -28,24 +30,25 @@ const reviews = [
 ];
 
 const Reviews = () => {
+  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
+
   return (
     <section id="reviews" className="py-20 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16 animate-slide-in">
+        <AnimatedSection animation="fade-up" className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
             Отзывы наших <span className="text-primary">клиентов</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Более 1000 довольных клиентов по всей Москве
           </p>
-        </div>
+        </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <div ref={ref} className={`grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto stagger-children ${isVisible ? 'visible' : ''}`}>
           {reviews.map((review, index) => (
             <div
               key={index}
-              className="bg-card p-8 rounded-2xl shadow-sm hover-lift animate-scale-in"
-              style={{ animationDelay: `${index * 0.15}s` }}
+              className="bg-card p-8 rounded-2xl shadow-sm hover-lift"
             >
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary">

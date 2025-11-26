@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Phone, MessageCircle, MapPin, Clock, Mail, Car } from "lucide-react";
+import AnimatedSection from "@/components/AnimatedSection";
+import { useParallax } from "@/hooks/useParallax";
 
 const Contact = () => {
+  const parallaxOffset = useParallax(0.2);
+
   const handleCallRequest = () => {
     const phone = prompt("Введите ваш номер телефона:");
     if (phone) {
@@ -13,9 +17,13 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-20 bg-pattern">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto bg-card rounded-3xl shadow-xl p-8 md:p-12 text-center">
+    <section id="contact" className="py-20 bg-pattern relative overflow-hidden">
+      <div 
+        className="absolute inset-0 bg-pattern parallax-bg"
+        style={{ transform: `translateY(${parallaxOffset}px)` }}
+      />
+      <div className="container mx-auto px-4 relative z-10">
+        <AnimatedSection animation="scale" className="max-w-4xl mx-auto bg-card rounded-3xl shadow-xl p-8 md:p-12 text-center">
           <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
             <Phone className="w-10 h-10 text-primary" />
           </div>
@@ -98,7 +106,7 @@ const Contact = () => {
               </div>
             </div>
           </div>
-        </div>
+        </AnimatedSection>
       </div>
     </section>
   );
