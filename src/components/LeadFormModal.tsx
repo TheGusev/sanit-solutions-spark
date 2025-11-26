@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -250,7 +251,11 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
                 htmlFor="consent"
                 className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Согласен с обработкой персональных данных <span className="text-destructive">*</span>
+                Согласен с{" "}
+                <Link to="/privacy" className="text-primary hover:underline" target="_blank">
+                  политикой конфиденциальности
+                </Link>{" "}
+                <span className="text-destructive">*</span>
               </label>
             </div>
             {errors.consent && <p className="text-sm text-destructive">{errors.consent}</p>}

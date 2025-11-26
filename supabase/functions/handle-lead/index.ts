@@ -23,6 +23,7 @@ interface LeadData {
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
+  website?: string; // Honeypot field
 }
 
 async function sendTelegramNotification(lead: LeadData): Promise<boolean> {
@@ -116,6 +117,16 @@ serve(async (req) => {
   try {
     console.log("📥 Received lead request");
     const leadData: LeadData = await req.json();
+    
+    // Honeypot protection: if website field is filled, it's a bot
+    if (leadData.website) {
+      console.log("🤖 Bot detected via honeypot field");
+      // Return success to not reveal the honeypot
+      return new Response(
+        JSON.stringify({ success: true }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,

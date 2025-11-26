@@ -53,6 +53,11 @@ const Footer = () => {
                   • Борьба с тараканами
                 </Link>
               </li>
+              <li>
+                <Link to="/privacy" className="hover:opacity-100">
+                  • Политика конфиденциальности
+                </Link>
+              </li>
             </ul>
           </div>
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 
@@ -29,6 +31,8 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedService, setSelectedService] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [website, setWebsite] = useState(""); // Honeypot field
 
   const formatPhone = (value: string) => {
     const cleaned = value.replace(/\D/g, "");
@@ -63,6 +67,10 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
       toast.error("Пожалуйста, введите корректный номер телефона");
       return;
     }
+    if (!consent) {
+      toast.error("Необходимо согласие с политикой конфиденциальности");
+      return;
+    }
     setStep(2);
   };
 
@@ -82,6 +90,8 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
       setName("");
       setPhone("");
       setSelectedService("");
+      setConsent(false);
+      setWebsite("");
     }, 300);
   };
 
@@ -112,6 +122,17 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
             </div>
 
             <form onSubmit={handleStep1Submit} className="space-y-4">
+              {/* Honeypot field - hidden from users */}
+              <input
+                type="text"
+                name="website"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                style={{ display: 'none' }}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+
               <div>
                 <Label htmlFor="popup-name">Ваше имя *</Label>
                 <Input
@@ -137,16 +158,30 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
                 />
               </div>
 
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="popup-consent"
+                  checked={consent}
+                  onCheckedChange={(checked) => setConsent(checked as boolean)}
+                />
+                <label
+                  htmlFor="popup-consent"
+                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Согласен с{" "}
+                  <Link to="/privacy" className="text-primary hover:underline" target="_blank">
+                    политикой конфиденциальности
+                  </Link>{" "}
+                  <span className="text-destructive">*</span>
+                </label>
+              </div>
+
               <Button
                 type="submit"
                 className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-bold text-lg py-6 h-auto"
               >
                 Продолжить
               </Button>
-
-              <p className="text-xs text-center text-muted-foreground">
-                Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
-              </p>
             </form>
           </>
         )}
