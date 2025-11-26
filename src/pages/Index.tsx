@@ -4,9 +4,11 @@ import Hero from "@/components/Hero";
 import StatsCounter from "@/components/StatsCounter";
 import TrustBadges from "@/components/TrustBadges";
 import Services from "@/components/Services";
+import WorkProcess from "@/components/WorkProcess";
 import Calculator from "@/components/Calculator";
 import DiscountPopup from "@/components/DiscountPopup";
 import Details from "@/components/Details";
+import FAQ from "@/components/FAQ";
 import Reviews from "@/components/Reviews";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
@@ -37,8 +39,10 @@ const Index = () => {
       <StatsCounter />
       <TrustBadges />
       <Services />
+      <WorkProcess />
       <Calculator />
       <Details />
+      <FAQ />
       <Reviews />
       <Contact />
       <Footer />
