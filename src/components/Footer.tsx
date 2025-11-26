@@ -31,11 +31,16 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-bold mb-4">Блог</h4>
+            <h4 className="font-bold mb-4">Информация</h4>
             <ul className="space-y-2 text-sm opacity-80">
               <li>
+                <Link to="/gallery" className="hover:opacity-100">
+                  • Наши работы
+                </Link>
+              </li>
+              <li>
                 <Link to="/blog" className="hover:opacity-100">
-                  • Все статьи
+                  • Блог и статьи
                 </Link>
               </li>
               <li>
@@ -46,11 +51,6 @@ const Footer = () => {
               <li>
                 <Link to="/blog/borba-s-tarakanami" className="hover:opacity-100">
                   • Борьба с тараканами
-                </Link>
-              </li>
-              <li>
-                <Link to="/blog/ozonirovaniye-pomeshcheniy" className="hover:opacity-100">
-                  • Об озонировании
                 </Link>
               </li>
             </ul>

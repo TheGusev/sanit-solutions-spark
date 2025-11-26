@@ -55,6 +55,9 @@ const Header = () => {
                 </Link>
               </>
             )}
+            <Link to="/gallery" className="text-sm font-medium hover:text-primary transition-colors">
+              Работы
+            </Link>
             <Link to="/blog" className="text-sm font-medium hover:text-primary transition-colors">
               Блог
             </Link>
