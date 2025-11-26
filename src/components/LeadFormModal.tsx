@@ -122,7 +122,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
           final_price: calculatorData.finalPrice,
           // Pass all context data for analytics
           session_id: context?.sessionId || null,
-          intent: context?.intent || null,
+          intent: context?.intent || 'default',
           variant_id: context?.variantId || null,
           device_type: context?.deviceType || null,
           first_landing_url: context?.firstLandingUrl || null,
