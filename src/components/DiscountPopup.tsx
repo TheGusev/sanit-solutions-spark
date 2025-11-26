@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useTraffic } from "@/contexts/TrafficContext";
 
 interface DiscountPopupProps {
   open: boolean;
@@ -28,6 +29,7 @@ const services = [
 ];
 
 const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
+  const { context } = useTraffic();
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -86,17 +88,26 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
     setIsSubmitting(true);
 
     try {
-      // Get UTM parameters from URL
-      const urlParams = new URLSearchParams(window.location.search);
-
       const leadData = {
         name: name.trim(),
         phone,
         service: selectedService,
         source: "website_discount_popup",
-        utm_source: urlParams.get("utm_source") || undefined,
-        utm_medium: urlParams.get("utm_medium") || undefined,
-        utm_campaign: urlParams.get("utm_campaign") || undefined,
+        // Прокидываем все UTM и контекст
+        utm_source: context?.utm_source || undefined,
+        utm_medium: context?.utm_medium || undefined,
+        utm_campaign: context?.utm_campaign || undefined,
+        utm_content: context?.utm_content || undefined,
+        utm_term: context?.utm_term || undefined,
+        keyword: context?.keyword || undefined,
+        yclid: context?.yclid || undefined,
+        gclid: context?.gclid || undefined,
+        session_id: context?.sessionId || undefined,
+        intent: context?.intent || undefined,
+        variant_id: context?.variantId || undefined,
+        device_type: context?.deviceType || undefined,
+        first_landing_url: context?.firstLandingUrl || undefined,
+        last_page_url: window.location.href,
         website, // honeypot
       };
 

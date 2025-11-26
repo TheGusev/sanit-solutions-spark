@@ -45,6 +45,7 @@ export type Database = {
           utm_medium: string | null
           utm_source: string | null
           utm_term: string | null
+          variant_id: string | null
           yclid: string | null
         }
         Insert: {
@@ -77,6 +78,7 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          variant_id?: string | null
           yclid?: string | null
         }
         Update: {
@@ -109,6 +111,7 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          variant_id?: string | null
           yclid?: string | null
         }
         Relationships: []
@@ -131,6 +134,7 @@ export type Database = {
           utm_medium: string | null
           utm_source: string | null
           utm_term: string | null
+          variant_id: string | null
           yclid: string | null
         }
         Insert: {
@@ -150,6 +154,7 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          variant_id?: string | null
           yclid?: string | null
         }
         Update: {
@@ -169,6 +174,7 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           utm_term?: string | null
+          variant_id?: string | null
           yclid?: string | null
         }
         Relationships: []

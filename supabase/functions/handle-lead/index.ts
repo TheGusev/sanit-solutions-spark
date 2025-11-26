@@ -26,14 +26,15 @@ interface LeadData {
   utm_campaign?: string;
   utm_content?: string; // Новое поле
   utm_term?: string; // Новое поле
-  keyword?: string; // Новое поле
-  yclid?: string; // Новое поле
-  gclid?: string; // Новое поле
-  session_id?: string; // Новое поле
-  intent?: string; // Новое поле
-  first_landing_url?: string; // Новое поле
-  last_page_url?: string; // Новое поле
-  device_type?: string; // Новое поле
+  keyword?: string;
+  yclid?: string;
+  gclid?: string;
+  session_id?: string;
+  intent?: string;
+  variant_id?: string;
+  first_landing_url?: string;
+  last_page_url?: string;
+  device_type?: string;
   website?: string; // Honeypot field
 }
 
