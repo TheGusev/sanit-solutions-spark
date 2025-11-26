@@ -104,6 +104,15 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
     }
 
     try {
+      // Debug log before submission
+      console.log('📤 Lead submission payload:', {
+        session_id: context?.sessionId,
+        intent: context?.intent || 'default',
+        variant_id: context?.variantId,
+        utm_source: context?.utm_source,
+        device_type: context?.deviceType
+      });
+
       // Call Edge Function to save lead and send notifications
       const { data, error } = await supabase.functions.invoke("handle-lead", {
         body: {

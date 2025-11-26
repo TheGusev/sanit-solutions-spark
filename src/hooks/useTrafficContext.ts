@@ -98,7 +98,7 @@ export async function initializeTrafficContext(): Promise<TrafficContext> {
     keyword: params.keyword || null,
     yclid: params.yclid || null,
     gclid: params.gclid || null,
-    intent,
+    intent: intent || 'default',
     variantId,
     initialized: true
   };
