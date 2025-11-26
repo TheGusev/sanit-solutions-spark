@@ -24,44 +24,44 @@ const ServiceAreaMap = () => {
         <div className="grid lg:grid-cols-3 gap-4 lg:gap-8 max-w-7xl mx-auto mb-8 lg:mb-12">
           {/* Info panel - first on mobile, second on desktop */}
           <div className="order-1 lg:order-2 lg:col-span-1">
-            <Card className="p-3 sm:p-4 lg:p-6 lg:sticky lg:top-4 bg-card overflow-hidden">
-              <div className="space-y-4 sm:space-y-6">
+            <Card className="p-2 sm:p-4 lg:p-6 lg:sticky lg:top-4 bg-card overflow-hidden">
+              <div className="space-y-3 sm:space-y-6">
                 <div>
-                  <Badge variant="secondary" className="mb-3">
+                  <Badge variant="secondary" className="mb-2 text-xs sm:text-sm">
                     {selectedArea.name}
                   </Badge>
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2">
+                  <h3 className="text-lg sm:text-2xl font-bold mb-1 sm:mb-2">
                     {selectedArea.fullName}
                   </h3>
                 </div>
 
-                <div className="space-y-3 sm:space-y-4">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                <div className="space-y-2 sm:space-y-4">
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold">Обслуживаем</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm sm:text-base font-semibold">Обслуживаем</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         Выполняем все виды работ
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-primary mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold">{selectedArea.price}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm sm:text-base font-semibold">{selectedArea.price}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         {selectedArea.distance || "Центральная Москва"}
                       </p>
                     </div>
                   </div>
 
                   {selectedArea.responseTime && (
-                    <div className="flex items-start gap-3">
-                      <Clock className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-primary mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="font-semibold">Время выезда</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm sm:text-base font-semibold">Время выезда</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground">
                           {selectedArea.responseTime}
                         </p>
                       </div>
@@ -69,7 +69,7 @@ const ServiceAreaMap = () => {
                   )}
                 </div>
 
-                <div className="pt-3 sm:pt-4 space-y-2 sm:space-y-3">
+                <div className="pt-2 sm:pt-4 space-y-1.5 sm:space-y-3">
                   <Button 
                     className="w-full text-sm whitespace-normal"
                     onClick={() => {
