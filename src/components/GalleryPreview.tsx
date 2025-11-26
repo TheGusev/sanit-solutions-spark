@@ -29,13 +29,9 @@ const GalleryPreview = () => {
             >
               {/* Визуальное сравнение */}
               <div className="flex items-center justify-center p-12 bg-gradient-to-br from-muted/30 to-muted/10">
-                <span className="text-6xl transition-transform group-hover:scale-110 duration-300">
-                  {item.beforeEmoji}
-                </span>
+                <item.beforeEmoji className="w-16 h-16 transition-transform group-hover:scale-110 duration-300 text-red-500" />
                 <span className="mx-6 text-3xl text-primary font-bold">→</span>
-                <span className="text-6xl transition-transform group-hover:scale-110 duration-300">
-                  {item.afterEmoji}
-                </span>
+                <item.afterEmoji className="w-16 h-16 transition-transform group-hover:scale-110 duration-300 text-green-500" />
               </div>
 
               {/* Информация */}

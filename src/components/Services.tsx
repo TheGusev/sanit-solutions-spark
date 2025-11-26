@@ -1,34 +1,42 @@
+import { Bug, Rat, Wind, Flower, FileText, Microscope } from "lucide-react";
+
 const services = [
   {
-    icon: "🦠",
+    icon: Microscope,
     title: "Дезинфекция",
-    description: "Уничтожение вирусов, бактерий и грибков профессиональными средствами"
+    description: "Уничтожение вирусов, бактерий и грибков профессиональными средствами",
+    color: "text-primary"
   },
   {
-    icon: "🐜",
+    icon: Bug,
     title: "Дезинсекция",
     description: "Избавление от насекомых: тараканы, клопы, муравьи, комары",
-    isHit: true
+    isHit: true,
+    color: "text-orange-500"
   },
   {
-    icon: "🐀",
+    icon: Rat,
     title: "Дератизация",
-    description: "Борьба с грызунами: крысы, мыши, полёвки"
+    description: "Борьба с грызунами: крысы, мыши, полёвки",
+    color: "text-amber-700"
   },
   {
-    icon: "💨",
+    icon: Wind,
     title: "Озонирование",
-    description: "Глубокая очистка воздуха и устранение запахов"
+    description: "Глубокая очистка воздуха и устранение запахов",
+    color: "text-sky-400"
   },
   {
-    icon: "🌸",
+    icon: Flower,
     title: "Дезодорация",
-    description: "Устранение неприятных запахов любой интенсивности"
+    description: "Устранение неприятных запахов любой интенсивности",
+    color: "text-pink-400"
   },
   {
-    icon: "📋",
+    icon: FileText,
     title: "Сертификация",
-    description: "Полный пакет документов для проверяющих органов"
+    description: "Полный пакет документов для проверяющих органов",
+    color: "text-green-600"
   }
 ];
 
@@ -57,7 +65,9 @@ const Services = () => {
                   ХИТ ПРОДАЖ
                 </div>
               )}
-              <div className="text-6xl mb-4">{service.icon}</div>
+              <div className="w-20 h-20 mb-4 rounded-xl bg-primary/10 flex items-center justify-center">
+                <service.icon className={`w-10 h-10 ${service.color}`} />
+              </div>
               <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
               <p className="text-muted-foreground">{service.description}</p>
             </div>

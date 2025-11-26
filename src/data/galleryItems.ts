@@ -1,10 +1,13 @@
+import { Bug, Microscope, Rat, Sparkles, Hospital, Shield, Bed, Palette, Wind, Baby, Bug as Ant, HomeIcon, MousePointer, Utensils, Flame } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
 export interface GalleryItem {
   id: number;
   category: "Дезинфекция" | "Дезинсекция" | "Дератизация" | "Озонирование";
   title: string;
   description: string;
-  beforeEmoji: string;
-  afterEmoji: string;
+  beforeEmoji: LucideIcon;
+  afterEmoji: LucideIcon;
   location: string;
   date: string;
   problem: string;
@@ -17,8 +20,8 @@ export const galleryItems: GalleryItem[] = [
     category: "Дезинсекция",
     title: "Уничтожение тараканов в ресторане",
     description: "Полная обработка кухни и подсобных помещений",
-    beforeEmoji: "🪳",
-    afterEmoji: "✨",
+    beforeEmoji: Bug,
+    afterEmoji: Sparkles,
     location: "Москва, ЦАО",
     date: "Ноябрь 2024",
     problem: "Массовое заражение тараканами кухонной зоны ресторана. Насекомые были обнаружены в области хранения продуктов, за оборудованием и в вентиляции.",
@@ -29,8 +32,8 @@ export const galleryItems: GalleryItem[] = [
     category: "Дезинфекция",
     title: "Дезинфекция медицинского центра",
     description: "Обработка всех помещений клиники",
-    beforeEmoji: "🦠",
-    afterEmoji: "🏥",
+    beforeEmoji: Microscope,
+    afterEmoji: Hospital,
     location: "Москва, СВАО",
     date: "Октябрь 2024",
     problem: "Необходимость проведения профилактической дезинфекции медицинского учреждения в соответствии с требованиями СанПиН.",
@@ -41,8 +44,8 @@ export const galleryItems: GalleryItem[] = [
     category: "Дератизация",
     title: "Борьба с грызунами на складе",
     description: "Ликвидация крыс в складских помещениях",
-    beforeEmoji: "🐀",
-    afterEmoji: "🛡️",
+    beforeEmoji: Rat,
+    afterEmoji: Shield,
     location: "Московская область",
     date: "Сентябрь 2024",
     problem: "Обнаружены следы жизнедеятельности крыс на продуктовом складе площадью 500 м². Повреждение упаковок и риск загрязнения товаров.",
@@ -53,8 +56,8 @@ export const galleryItems: GalleryItem[] = [
     category: "Дезинсекция",
     title: "Уничтожение клопов в квартире",
     description: "Обработка спальни и гостиной",
-    beforeEmoji: "🐛",
-    afterEmoji: "🛏️",
+    beforeEmoji: Bug,
+    afterEmoji: Bed,
     location: "Москва, ЗАО",
     date: "Ноябрь 2024",
     problem: "Жильцы обнаружили постельных клопов в спальне. Укусы, бессонница, дискомфорт для всей семьи.",
@@ -65,8 +68,8 @@ export const galleryItems: GalleryItem[] = [
     category: "Озонирование",
     title: "Озонирование офиса после ремонта",
     description: "Устранение запаха краски и химии",
-    beforeEmoji: "🎨",
-    afterEmoji: "💨",
+    beforeEmoji: Palette,
+    afterEmoji: Wind,
     location: "Москва, ЦАО",
     date: "Октябрь 2024",
     problem: "После ремонта в офисе остался сильный запах краски и растворителей, который мешал работе сотрудников.",
@@ -77,8 +80,8 @@ export const galleryItems: GalleryItem[] = [
     category: "Дезинфекция",
     title: "Дезинфекция детского сада",
     description: "Обработка всех групп и игровых зон",
-    beforeEmoji: "🧸",
-    afterEmoji: "🧼",
+    beforeEmoji: Baby,
+    afterEmoji: Sparkles,
     location: "Москва, ВАО",
     date: "Сентябрь 2024",
     problem: "Плановая сезонная дезинфекция дошкольного учреждения перед началом учебного года.",
@@ -89,8 +92,8 @@ export const galleryItems: GalleryItem[] = [
     category: "Дезинсекция",
     title: "Обработка от муравьев в загородном доме",
     description: "Уничтожение муравейника и барьерная защита",
-    beforeEmoji: "🐜",
-    afterEmoji: "🏡",
+    beforeEmoji: Ant,
+    afterEmoji: HomeIcon,
     location: "Московская область",
     date: "Август 2024",
     problem: "Рыжие домовые муравьи образовали колонию в стенах дома и активно проникали в жилые помещения.",
@@ -101,8 +104,8 @@ export const galleryItems: GalleryItem[] = [
     category: "Дератизация",
     title: "Дератизация ресторана",
     description: "Профилактика и защита от грызунов",
-    beforeEmoji: "🐭",
-    afterEmoji: "🍽️",
+    beforeEmoji: MousePointer,
+    afterEmoji: Utensils,
     location: "Москва, ЦАО",
     date: "Октябрь 2024",
     problem: "Необходимость соблюдения санитарных норм и защиты заведения общественного питания от проникновения грызунов.",
@@ -113,8 +116,8 @@ export const galleryItems: GalleryItem[] = [
     category: "Озонирование",
     title: "Устранение запаха в квартире после пожара",
     description: "Дезодорация и очистка воздуха",
-    beforeEmoji: "🔥",
-    afterEmoji: "🌬️",
+    beforeEmoji: Flame,
+    afterEmoji: Wind,
     location: "Москва, ЮЗАО",
     date: "Сентябрь 2024",
     problem: "После локального возгорания в квартире остался едкий запах гари, который впитался в стены, мебель и текстиль.",
@@ -125,8 +128,8 @@ export const galleryItems: GalleryItem[] = [
     category: "Дезинфекция",
     title: "Дезинфекция фитнес-клуба",
     description: "Обработка тренажерного зала и раздевалок",
-    beforeEmoji: "💪",
-    afterEmoji: "✅",
+    beforeEmoji: Microscope,
+    afterEmoji: Sparkles,
     location: "Москва, САО",
     date: "Ноябрь 2024",
     problem: "Регулярная профилактическая дезинфекция спортивного клуба для обеспечения безопасности посетителей.",

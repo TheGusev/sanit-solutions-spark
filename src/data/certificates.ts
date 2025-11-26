@@ -1,10 +1,13 @@
+import { FileText, ScrollText, Award, UserCheck, Beaker, Shield } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
 export interface Certificate {
   id: number;
   title: string;
   issuer: string;
   date: string;
   description: string;
-  icon: string;
+  icon: LucideIcon;
   number: string;
 }
 
@@ -15,7 +18,7 @@ export const certificates: Certificate[] = [
     issuer: "Роспотребнадзор",
     date: "2020",
     description: "Официальная регистрация в Роспотребнадзоре для осуществления дезинфекционной деятельности на территории Москвы и Московской области",
-    icon: "📋",
+    icon: FileText,
     number: "№ 77.01.03.001.Т.000123.01.20"
   },
   {
@@ -24,7 +27,7 @@ export const certificates: Certificate[] = [
     issuer: "СЭС Москвы",
     date: "2019",
     description: "Лицензия на осуществление дезинфекционной, дезинсекционной и дератизационной деятельности",
-    icon: "📜",
+    icon: ScrollText,
     number: "№ ЛО-77-01-012345"
   },
   {
@@ -33,7 +36,7 @@ export const certificates: Certificate[] = [
     issuer: "TÜV SÜD",
     date: "2023",
     description: "Международный сертификат системы менеджмента качества. Подтверждает соответствие стандартам качества услуг",
-    icon: "🏆",
+    icon: Award,
     number: "№ 12345678"
   },
   {
@@ -42,7 +45,7 @@ export const certificates: Certificate[] = [
     issuer: "Минздрав РФ",
     date: "2024",
     description: "Аттестация дезинфекторов высшей категории. Все специалисты прошли обучение и сертификацию",
-    icon: "👨‍⚕️",
+    icon: UserCheck,
     number: "№ АТТ-2024-0567"
   },
   {
@@ -51,7 +54,7 @@ export const certificates: Certificate[] = [
     issuer: "Роспотребнадзор",
     date: "2024",
     description: "Государственная регистрация используемых дезинфекционных средств. Все препараты безопасны и сертифицированы",
-    icon: "🧪",
+    icon: Beaker,
     number: "№ РОСС RU.0001.11АБ12"
   },
   {
@@ -60,7 +63,7 @@ export const certificates: Certificate[] = [
     issuer: "СК Альфа",
     date: "2024",
     description: "Полис страхования профессиональной ответственности на сумму 10 млн рублей. Гарантия возмещения убытков",
-    icon: "🛡️",
+    icon: Shield,
     number: "№ СТР-77-2024-890"
   }
 ];
