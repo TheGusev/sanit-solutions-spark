@@ -59,12 +59,6 @@ const Blog = () => {
               >
                 <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                   <CardHeader>
-                    <div className="w-full h-48 bg-gradient-to-br from-primary/10 to-primary/5 rounded-t-2xl flex items-center justify-center mb-4">
-                      {(() => {
-                        const Icon = post.image;
-                        return <Icon className="w-20 h-20 text-primary" />;
-                      })()}
-                    </div>
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
                         {post.category}
