@@ -32,8 +32,9 @@ const STORAGE_KEY = 'traffic_context';
 
 /**
  * Инициализация контекста трафика при первом заходе
+ * Теперь использует ab-optimize для получения оптимального варианта
  */
-export function initializeTrafficContext(): TrafficContext {
+export async function initializeTrafficContext(): Promise<TrafficContext> {
   // Пытаемся загрузить существующий контекст
   const existing = loadFromStorage<TrafficContext>(STORAGE_KEY);
   
@@ -51,12 +52,39 @@ export function initializeTrafficContext(): TrafficContext {
   const params = extractUrlParams(window.location.href);
   const deviceType = getDeviceType();
   const intent = detectIntent(params, window.location.pathname);
+  const sessionId = generateSessionId();
   
-  // Случайный выбор варианта A/B при первом заходе
-  const variantId: 'A' | 'B' = Math.random() < 0.5 ? 'A' : 'B';
+  // Получаем оптимальный вариант A/B от ab-optimize
+  let variantId: 'A' | 'B' = 'A'; // fallback
+  
+  try {
+    // Динамический импорт supabase только при необходимости
+    const { supabase } = await import('@/integrations/supabase/client');
+    
+    const { data, error } = await supabase.functions.invoke('ab-optimize', {
+      body: {
+        test_name: 'main_variant',
+        intent: intent || 'default',
+        session_id: sessionId
+      }
+    });
+    
+    if (!error && data && data.variant_id) {
+      variantId = data.variant_id;
+      console.log(`✅ A/B variant selected: ${variantId} (confidence: ${data.confidence?.toFixed(2) || 'N/A'})`);
+    } else {
+      // Fallback на случайный выбор
+      variantId = Math.random() < 0.5 ? 'A' : 'B';
+      console.warn('⚠️ ab-optimize unavailable, using random variant:', variantId);
+    }
+  } catch (err) {
+    // Fallback на случайный выбор при ошибке
+    variantId = Math.random() < 0.5 ? 'A' : 'B';
+    console.error('❌ Error calling ab-optimize, using random variant:', err);
+  }
   
   const newContext: TrafficContext = {
-    sessionId: generateSessionId(),
+    sessionId,
     firstLandingUrl: window.location.href,
     referrer: document.referrer || '',
     deviceType,
@@ -86,8 +114,31 @@ export function useTrafficContext() {
   const [context, setContext] = useState<TrafficContext | null>(null);
   
   useEffect(() => {
-    const trafficContext = initializeTrafficContext();
-    setContext(trafficContext);
+    // Теперь initializeTrafficContext асинхронный
+    initializeTrafficContext().then(trafficContext => {
+      setContext(trafficContext);
+    }).catch(error => {
+      console.error('Failed to initialize traffic context:', error);
+      // Создаём базовый контекст при ошибке
+      const fallbackContext: TrafficContext = {
+        sessionId: generateSessionId(),
+        firstLandingUrl: window.location.href,
+        referrer: document.referrer || '',
+        deviceType: getDeviceType(),
+        utm_source: null,
+        utm_medium: null,
+        utm_campaign: null,
+        utm_content: null,
+        utm_term: null,
+        keyword: null,
+        yclid: null,
+        gclid: null,
+        intent: null,
+        variantId: 'A',
+        initialized: true
+      };
+      setContext(fallbackContext);
+    });
   }, []);
   
   return context;

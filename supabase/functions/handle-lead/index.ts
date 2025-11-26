@@ -251,6 +251,22 @@ serve(async (req) => {
     
     console.log("✅ Lead saved to database:", data.id);
     
+    // Инкрементируем счётчик конверсий в A/B статистике
+    if (leadData.variant_id && leadData.intent) {
+      try {
+        await supabase.rpc('increment_ab_conversion', {
+          p_test_name: 'main_variant',
+          p_intent: leadData.intent || 'default',
+          p_variant_id: leadData.variant_id,
+          p_revenue: leadData.final_price || 0
+        });
+        console.log(`✅ A/B conversion tracked: variant ${leadData.variant_id}, intent ${leadData.intent}`);
+      } catch (convError) {
+        console.error("⚠️ Failed to track A/B conversion:", convError);
+        // Не падаем если не удалось записать A/B статистику
+      }
+    }
+    
     await Promise.all([
       sendTelegramNotification(leadData),
       sendLeadToCrm(leadData)
