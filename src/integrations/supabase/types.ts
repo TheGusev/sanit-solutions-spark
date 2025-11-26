@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      ab_test_stats: {
+        Row: {
+          conversions_count: number | null
+          created_at: string | null
+          id: string
+          intent: string
+          revenue_sum: number | null
+          sessions_count: number | null
+          test_name: string
+          updated_at: string | null
+          variant_id: string
+        }
+        Insert: {
+          conversions_count?: number | null
+          created_at?: string | null
+          id?: string
+          intent?: string
+          revenue_sum?: number | null
+          sessions_count?: number | null
+          test_name: string
+          updated_at?: string | null
+          variant_id: string
+        }
+        Update: {
+          conversions_count?: number | null
+          created_at?: string | null
+          id?: string
+          intent?: string
+          revenue_sum?: number | null
+          sessions_count?: number | null
+          test_name?: string
+          updated_at?: string | null
+          variant_id?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           area_m2: number | null
@@ -211,6 +247,19 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_ab_conversion: {
+        Args: {
+          p_intent: string
+          p_revenue?: number
+          p_test_name: string
+          p_variant_id: string
+        }
+        Returns: undefined
+      }
+      increment_ab_session: {
+        Args: { p_intent: string; p_test_name: string; p_variant_id: string }
+        Returns: undefined
       }
     }
     Enums: {

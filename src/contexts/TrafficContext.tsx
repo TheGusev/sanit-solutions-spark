@@ -26,9 +26,13 @@ export function TrafficProvider({ children }: { children: React.ReactNode }) {
 
   // Инициализация контекста при первой загрузке
   useEffect(() => {
-    const trafficContext = initializeTrafficContext();
-    setContext(trafficContext);
-    setIsLoading(false);
+    initializeTrafficContext().then(trafficContext => {
+      setContext(trafficContext);
+      setIsLoading(false);
+    }).catch(error => {
+      console.error('Failed to initialize traffic context:', error);
+      setIsLoading(false);
+    });
   }, []);
   
   // Передача параметров в аналитику при готовности контекста
