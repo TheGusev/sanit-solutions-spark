@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
+
 const Footer = () => {
   return (
     <footer className="bg-foreground text-background py-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="text-3xl">🧪</div>
@@ -25,6 +27,32 @@ const Footer = () => {
               <li>• Озонирование</li>
               <li>• Дезодорация</li>
               <li>• Сертификация</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-4">Блог</h4>
+            <ul className="space-y-2 text-sm opacity-80">
+              <li>
+                <Link to="/blog" className="hover:opacity-100">
+                  • Все статьи
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog/kak-podgotovit-pomeshchenie" className="hover:opacity-100">
+                  • Подготовка к дезинфекции
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog/borba-s-tarakanami" className="hover:opacity-100">
+                  • Борьба с тараканами
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog/ozonirovaniye-pomeshcheniy" className="hover:opacity-100">
+                  • Об озонировании
+                </Link>
+              </li>
             </ul>
           </div>
 
