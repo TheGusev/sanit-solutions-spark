@@ -10,16 +10,17 @@ interface LeadData {
   name: string;
   phone: string;
   email?: string;
-  object_type: string;
-  area_m2: number;
-  service: string;
-  method: string;
-  frequency: string;
-  client_type: string;
-  base_price: number;
-  discount_percent: number;
-  discount_amount: number;
-  final_price: number;
+  object_type?: string;
+  area_m2?: number;
+  service?: string;
+  method?: string;
+  frequency?: string;
+  client_type?: string;
+  base_price?: number;
+  discount_percent?: number;
+  discount_amount?: number;
+  final_price?: number;
+  source?: string;
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
@@ -42,6 +43,7 @@ const serviceLabels: Record<string, string> = {
   disinfection: "🦠 Дезинфекция",
   disinsection: "🐜 Дезинсекция",
   deratization: "🐀 Дератизация",
+  ozonation: "💨 Озонирование",
   complex: "✨ Комплексная обработка"
 };
 
@@ -73,30 +75,51 @@ async function sendTelegramNotification(lead: LeadData): Promise<boolean> {
     return true;
   }
   
-  const message = `🔔 *НОВАЯ ЗАЯВКА*
+  // Check if this is a discount popup lead (without calculator data)
+  const isDiscountPopup = lead.source === "website_discount_popup";
+  
+  let message: string;
+  
+  if (isDiscountPopup) {
+    // Simplified message for discount popup leads
+    message = `🎁 *ЗАЯВКА НА СКИДКУ*
+━━━━━━━━━━━━━━━━━
+
+👤 *Клиент:* ${lead.name}
+📱 *Телефон:* [${lead.phone}](tel:${lead.phone.replace(/[^+\d]/g, "")})
+${lead.email ? `📧 *Email:* ${lead.email}\n` : ""}
+🔧 *Интересует:* ${lead.service ? (serviceLabels[lead.service] || lead.service) : "Не указана"}
+
+━━━━━━━━━━━━━━━━━
+📍 *Источник:* Попап со скидкой
+${lead.utm_source || lead.utm_medium || lead.utm_campaign ? `📊 *UTM:* ${lead.utm_source || "—"} / ${lead.utm_medium || "—"} / ${lead.utm_campaign || "—"}\n` : ""}🕐 ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })}`;
+  } else {
+    // Full message for calculator leads
+    message = `🔔 *НОВАЯ ЗАЯВКА*
 ━━━━━━━━━━━━━━━━━
 
 👤 *Клиент:* ${lead.name}
 📱 *Телефон:* [${lead.phone}](tel:${lead.phone.replace(/[^+\d]/g, "")})
 ${lead.email ? `📧 *Email:* ${lead.email}\n` : ""}━━━━━━━━━━━━━━━━━
 
-🏠 *Объект:* ${objectTypeLabels[lead.object_type] || lead.object_type}
-📐 *Площадь:* ${lead.area_m2} м²
+🏠 *Объект:* ${lead.object_type ? (objectTypeLabels[lead.object_type] || lead.object_type) : "—"}
+📐 *Площадь:* ${lead.area_m2 || 0} м²
 
-🔧 *Услуга:* ${serviceLabels[lead.service] || lead.service}
-⚙️ *Метод:* ${methodLabels[lead.method] || lead.method}
-📅 *Периодичность:* ${frequencyLabels[lead.frequency] || lead.frequency}
-👔 *Тип клиента:* ${clientTypeLabels[lead.client_type] || lead.client_type}
+🔧 *Услуга:* ${lead.service ? (serviceLabels[lead.service] || lead.service) : "—"}
+⚙️ *Метод:* ${lead.method ? (methodLabels[lead.method] || lead.method) : "—"}
+📅 *Периодичность:* ${lead.frequency ? (frequencyLabels[lead.frequency] || lead.frequency) : "—"}
+👔 *Тип клиента:* ${lead.client_type ? (clientTypeLabels[lead.client_type] || lead.client_type) : "—"}
 
 ━━━━━━━━━━━━━━━━━
 💵 *СТОИМОСТЬ*
 
-💰 Базовая: ${lead.base_price.toLocaleString("ru-RU")} ₽
-🎁 Скидка: −${lead.discount_percent}% (−${lead.discount_amount.toLocaleString("ru-RU")} ₽)
-✅ *ИТОГО: ${lead.final_price.toLocaleString("ru-RU")} ₽*
+💰 Базовая: ${(lead.base_price || 0).toLocaleString("ru-RU")} ₽
+🎁 Скидка: −${lead.discount_percent || 0}% (−${(lead.discount_amount || 0).toLocaleString("ru-RU")} ₽)
+✅ *ИТОГО: ${(lead.final_price || 0).toLocaleString("ru-RU")} ₽*
 
 ━━━━━━━━━━━━━━━━━
 ${lead.utm_source || lead.utm_medium || lead.utm_campaign ? `📊 *UTM:* ${lead.utm_source || "—"} / ${lead.utm_medium || "—"} / ${lead.utm_campaign || "—"}\n` : ""}🕐 ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })}`;
+  }
 
   try {
     const response = await fetch(
@@ -183,16 +206,17 @@ serve(async (req) => {
       name: leadData.name,
       phone: leadData.phone,
       email: leadData.email || null,
-      object_type: leadData.object_type,
-      area_m2: leadData.area_m2,
-      service: leadData.service,
-      method: leadData.method,
-      frequency: leadData.frequency,
-      client_type: leadData.client_type,
-      base_price: leadData.base_price,
-      discount_percent: leadData.discount_percent,
-      discount_amount: leadData.discount_amount,
-      final_price: leadData.final_price,
+      object_type: leadData.object_type || null,
+      area_m2: leadData.area_m2 || null,
+      service: leadData.service || null,
+      method: leadData.method || null,
+      frequency: leadData.frequency || null,
+      client_type: leadData.client_type || null,
+      base_price: leadData.base_price || null,
+      discount_percent: leadData.discount_percent || null,
+      discount_amount: leadData.discount_amount || null,
+      final_price: leadData.final_price || null,
+      source: leadData.source || "website_calculator",
       utm_source: leadData.utm_source || null,
       utm_medium: leadData.utm_medium || null,
       utm_campaign: leadData.utm_campaign || null,

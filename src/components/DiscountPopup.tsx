@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DiscountPopupProps {
   open: boolean;
@@ -20,7 +21,7 @@ interface DiscountPopupProps {
 
 const services = [
   { value: "disinfection", label: "Дезинфекция", icon: "🦠" },
-  { value: "desinsection", label: "Дезинсекция", icon: "🐜" },
+  { value: "disinsection", label: "Дезинсекция", icon: "🐜" },
   { value: "deratization", label: "Дератизация", icon: "🐀" },
   { value: "ozonation", label: "Озонирование", icon: "💨" },
   { value: "complex", label: "Комплексная обработка", icon: "✨" }
@@ -33,6 +34,7 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
   const [selectedService, setSelectedService] = useState("");
   const [consent, setConsent] = useState(false);
   const [website, setWebsite] = useState(""); // Honeypot field
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formatPhone = (value: string) => {
     const cleaned = value.replace(/\D/g, "");
@@ -74,13 +76,48 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
     setStep(2);
   };
 
-  const handleStep2Submit = (e: React.FormEvent) => {
+  const handleStep2Submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedService) {
       toast.error("Пожалуйста, выберите услугу");
       return;
     }
-    setStep(3);
+
+    setIsSubmitting(true);
+
+    try {
+      // Get UTM parameters from URL
+      const urlParams = new URLSearchParams(window.location.search);
+
+      const leadData = {
+        name: name.trim(),
+        phone,
+        service: selectedService,
+        source: "website_discount_popup",
+        utm_source: urlParams.get("utm_source") || undefined,
+        utm_medium: urlParams.get("utm_medium") || undefined,
+        utm_campaign: urlParams.get("utm_campaign") || undefined,
+        website, // honeypot
+      };
+
+      const { data, error } = await supabase.functions.invoke("handle-lead", {
+        body: leadData,
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        setStep(3);
+        toast.success("Заявка успешно отправлена!");
+      } else {
+        throw new Error(data?.error || "Ошибка при отправке заявки");
+      }
+    } catch (error) {
+      console.error("Error submitting discount popup form:", error);
+      toast.error("Не удалось отправить заявку. Пожалуйста, попробуйте позже.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
@@ -225,8 +262,9 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
               <Button
                 type="submit"
                 className="flex-1 bg-primary hover:bg-primary-dark text-primary-foreground font-bold"
+                disabled={isSubmitting}
               >
-                Отправить заявку
+                {isSubmitting ? "Отправка..." : "Отправить заявку"}
               </Button>
             </div>
           </form>
