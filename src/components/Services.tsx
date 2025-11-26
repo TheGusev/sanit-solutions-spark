@@ -64,7 +64,7 @@ const Services = () => {
               className="bg-card p-8 rounded-2xl shadow-sm hover-lift relative overflow-hidden"
             >
               {service.isHit && (
-                <div className="absolute -top-1 -right-12 bg-gradient-accent text-accent-foreground px-12 py-1 text-xs font-bold rotate-45 shadow-lg">
+                <div className="absolute -top-1 -right-12 gradient-accent text-accent-foreground px-12 py-1 text-xs font-bold rotate-45 shadow-lg">
                   ХИТ ПРОДАЖ
                 </div>
               )}

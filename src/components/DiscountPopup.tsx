@@ -91,7 +91,7 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
         {/* Progress Bar */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-muted rounded-t-lg overflow-hidden">
           <div
-            className="h-full bg-gradient-accent transition-all duration-300"
+            className="h-full gradient-accent transition-all duration-300"
             style={{ width: `${(step / 3) * 100}%` }}
           />
         </div>
@@ -106,7 +106,7 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
 
         {step === 1 && (
           <>
-            <div className="bg-gradient-accent p-6 rounded-2xl text-accent-foreground text-center mb-4">
+            <div className="gradient-accent p-6 rounded-2xl text-accent-foreground text-center mb-4">
               <p className="text-3xl font-bold mb-2">До -30%</p>
               <p className="text-sm">на первый заказ при заявке сегодня</p>
             </div>

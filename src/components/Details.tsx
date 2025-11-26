@@ -66,7 +66,7 @@ const Details = () => {
               key={index}
               className={`p-8 rounded-2xl shadow-sm hover-lift animate-scale-in ${
                 detail.isHighlight
-                  ? "bg-gradient-accent text-white col-span-1 md:col-span-2 lg:col-span-3 border-4 border-accent/30"
+                  ? "gradient-accent text-white col-span-1 md:col-span-2 lg:col-span-3 border-4 border-accent/30"
                   : "bg-card"
               }`}
               style={{ animationDelay: `${index * 0.1}s` }}
