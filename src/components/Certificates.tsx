@@ -43,8 +43,11 @@ const Certificates = () => {
               style={{ animationDelay: `${index * 100}ms` }}
               onClick={() => openCertificate(cert)}
             >
-              <div className="text-6xl mb-4 group-hover:scale-110 transition-transform">
-                {cert.icon}
+              <div className="w-16 h-16 mb-4 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-all group-hover:scale-110">
+                {(() => {
+                  const Icon = cert.icon;
+                  return <Icon className="w-8 h-8 text-primary" />;
+                })()}
               </div>
               <Badge variant="secondary" className="mb-3">
                 {cert.date}
@@ -93,8 +96,11 @@ const Certificates = () => {
               </div>
 
               <div className="text-center py-12 bg-muted/30 rounded-xl">
-                <div className="text-9xl mb-6">
-                  {selectedCertificate.icon}
+                <div className="w-32 h-32 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  {(() => {
+                    const Icon = selectedCertificate.icon;
+                    return <Icon className="w-20 h-20 text-primary" />;
+                  })()}
                 </div>
                 <h2 className="text-3xl font-bold mb-2">
                   {selectedCertificate.title}
