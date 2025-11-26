@@ -159,7 +159,7 @@ const YandexMap = ({ selectedArea, onAreaSelect, districts, regions }: YandexMap
   }, [selectedArea, mapInstance, isLoaded]);
 
   return (
-    <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[500px]">
+    <div className="relative w-full" style={{ height: 'clamp(260px, 50vh, 420px)' }}>
       <div ref={mapRef} className="w-full h-full rounded-lg" />
       
       {/* Loading state */}

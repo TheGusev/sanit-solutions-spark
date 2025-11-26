@@ -21,9 +21,9 @@ const ServiceAreaMap = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-4 lg:gap-8 max-w-7xl mx-auto mb-8 lg:mb-12">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 max-w-7xl mx-auto mb-8 lg:mb-12">
           {/* Info panel - first on mobile, second on desktop */}
-          <div className="order-1 lg:order-2 lg:col-span-1">
+          <div className="order-1 lg:order-2 w-full lg:w-[350px] lg:flex-shrink-0">
             <Card className="p-2 sm:p-4 lg:p-6 lg:sticky lg:top-4 bg-card overflow-hidden">
               <div className="space-y-3 sm:space-y-6">
                 <div>
@@ -95,7 +95,7 @@ const ServiceAreaMap = () => {
           </div>
 
           {/* Yandex Map - second on mobile, first on desktop */}
-          <div className="order-2 lg:order-1 lg:col-span-2">
+          <div className="order-2 lg:order-1 w-full lg:flex-1">
             <Card className="p-0 overflow-hidden bg-muted/30">
               <YandexMap 
                 selectedArea={selectedArea}
