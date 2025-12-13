@@ -45,7 +45,7 @@ const FloatingButtons = () => {
           onClick={handlePhoneClick}
           onMouseEnter={() => setShowPhoneTooltip(true)}
           onMouseLeave={() => setShowPhoneTooltip(false)}
-          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110"
+          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 animate-pulse-attention"
           aria-label="Позвонить"
         >
           <Phone className="w-6 h-6 md:w-7 md:h-7" />
@@ -89,7 +89,7 @@ const FloatingButtons = () => {
       <div className="relative">
         <button
           onClick={handleWhatsAppClick}
-          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#25D366] hover:bg-[#20BA59] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 animate-pulse-attention"
+          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#25D366] hover:bg-[#20BA59] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110"
           aria-label="Написать в WhatsApp"
         >
           <svg
