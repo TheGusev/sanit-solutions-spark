@@ -1,11 +1,22 @@
 import { useState } from "react";
+import { Phone } from "lucide-react";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 
 const FloatingButtons = () => {
   const { context } = useTraffic();
-  const [showTooltip, setShowTooltip] = useState(false);
-  
+  const [showPhoneTooltip, setShowPhoneTooltip] = useState(false);
+  const [showTelegramTooltip, setShowTelegramTooltip] = useState(false);
+
+  const handlePhoneClick = () => {
+    trackGoal('phone_click', {
+      intent: context?.intent,
+      variant: context?.variantId
+    });
+    
+    window.location.href = "tel:+79069989888";
+  };
+
   const handleWhatsAppClick = () => {
     trackGoal('whatsapp_click', {
       intent: context?.intent,
@@ -27,17 +38,38 @@ const FloatingButtons = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5">
+      {/* Phone Button */}
+      <div className="relative">
+        <button
+          onClick={handlePhoneClick}
+          onMouseEnter={() => setShowPhoneTooltip(true)}
+          onMouseLeave={() => setShowPhoneTooltip(false)}
+          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110"
+          aria-label="Позвонить"
+        >
+          <Phone className="w-6 h-6 md:w-7 md:h-7" />
+        </button>
+
+        {showPhoneTooltip && (
+          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium shadow-lg animate-fade-in">
+            Позвонить
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full border-8 border-transparent border-l-foreground"></div>
+          </div>
+        )}
+      </div>
+
+      {/* Telegram Button */}
       <div className="relative">
         <button
           onClick={handleTelegramClick}
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
-          className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#0088cc] hover:bg-[#0077b5] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110"
+          onMouseEnter={() => setShowTelegramTooltip(true)}
+          onMouseLeave={() => setShowTelegramTooltip(false)}
+          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#0088cc] hover:bg-[#0077b5] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110"
           aria-label="Написать в Telegram"
         >
           <svg
-            className="w-8 h-8 md:w-10 md:h-10"
+            className="w-6 h-6 md:w-7 md:h-7"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
@@ -45,7 +77,7 @@ const FloatingButtons = () => {
           </svg>
         </button>
 
-        {showTooltip && (
+        {showTelegramTooltip && (
           <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium shadow-lg animate-fade-in">
             Написать в Telegram
             <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full border-8 border-transparent border-l-foreground"></div>
@@ -53,14 +85,15 @@ const FloatingButtons = () => {
         )}
       </div>
 
+      {/* WhatsApp Button */}
       <div className="relative">
         <button
           onClick={handleWhatsAppClick}
-          className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#25D366] hover:bg-[#20BA59] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 animate-pulse-attention"
+          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#25D366] hover:bg-[#20BA59] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 animate-pulse-attention"
           aria-label="Написать в WhatsApp"
         >
           <svg
-            className="w-8 h-8 md:w-10 md:h-10"
+            className="w-6 h-6 md:w-7 md:h-7"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
