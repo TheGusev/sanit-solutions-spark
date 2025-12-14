@@ -1,5 +1,30 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_MVT_REQUESTS_PER_WINDOW = 20; // max MVT requests per session per minute
+
+// In-memory cache for rate limits
+const rateLimitCache = new Map<string, { count: number; windowStart: number }>();
+
+// Check rate limit
+function checkRateLimit(sessionId: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitCache.get(sessionId);
+  
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    rateLimitCache.set(sessionId, { count: 1, windowStart: now });
+    return true;
+  }
+  
+  if (entry.count >= MAX_MVT_REQUESTS_PER_WINDOW) {
+    return false;
+  }
+  
+  entry.count++;
+  return true;
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -129,11 +154,27 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const { test_name, intent, session_id, device_type, utm_source }: MVTRequest = await req.json();
+
+    // Rate limit check
+    if (session_id && !checkRateLimit(session_id)) {
+      console.log(`⚠️ Rate limit exceeded for session ${session_id}`);
+      return new Response(
+        JSON.stringify({
+          variant_id: 'A',
+          confidence: 0.5,
+          winner_declared: false,
+          total_variants: 2,
+          stats: {},
+          error: 'rate_limit_exceeded'
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
-
-    const { test_name, intent, session_id, device_type, utm_source }: MVTRequest = await req.json();
     const intentKey = intent || 'default';
 
     console.log('MVT Optimize request:', { test_name, intent: intentKey, session_id });
