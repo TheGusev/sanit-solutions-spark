@@ -1,5 +1,30 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_PREDICTIONS_PER_WINDOW = 20; // max predictions per session per minute
+
+// In-memory cache for rate limits
+const rateLimitCacheRL = new Map<string, { count: number; windowStart: number }>();
+
+// Check rate limit
+function checkRateLimit(sessionId: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitCacheRL.get(sessionId);
+  
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    rateLimitCacheRL.set(sessionId, { count: 1, windowStart: now });
+    return true;
+  }
+  
+  if (entry.count >= MAX_PREDICTIONS_PER_WINDOW) {
+    return false;
+  }
+  
+  entry.count++;
+  return true;
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -236,6 +261,20 @@ serve(async (req) => {
 
   try {
     const requestData: PredictRequest = await req.json();
+
+    // Rate limit check (before validation to prevent abuse)
+    if (requestData.session_id && !checkRateLimit(requestData.session_id)) {
+      console.log(`⚠️ Rate limit exceeded for session ${requestData.session_id}`);
+      return new Response(
+        JSON.stringify({ 
+          error: "rate_limit_exceeded",
+          p_conv: 0.25,
+          segment: 'mid',
+          model_version: 'rate_limited'
+        }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Валидация обязательных полей
     if (!requestData.session_id || !requestData.device_type) {

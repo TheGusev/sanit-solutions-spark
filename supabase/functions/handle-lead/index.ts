@@ -1,6 +1,31 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_LEADS_PER_WINDOW = 5; // max leads per IP per minute
+
+// In-memory cache for rate limits
+const rateLimitCache = new Map<string, { count: number; windowStart: number }>();
+
+// Check rate limit
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitCache.get(ip);
+  
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    rateLimitCache.set(ip, { count: 1, windowStart: now });
+    return true;
+  }
+  
+  if (entry.count >= MAX_LEADS_PER_WINDOW) {
+    return false;
+  }
+  
+  entry.count++;
+  return true;
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -191,6 +216,20 @@ async function sendLeadToCrm(lead: LeadData): Promise<boolean> {
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+  
+  // Extract client IP for rate limiting
+  const ip = req.headers.get("x-real-ip") || 
+             req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || 
+             "unknown";
+
+  // Rate limit check
+  if (!checkRateLimit(ip)) {
+    console.log(`⚠️ Rate limit exceeded for ${ip}`);
+    return new Response(
+      JSON.stringify({ success: false, error: "rate_limit_exceeded" }),
+      { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
   
   try {
