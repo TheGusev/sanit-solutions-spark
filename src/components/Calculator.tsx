@@ -79,9 +79,41 @@ const Calculator = () => {
     }
   }, [context, initialized]);
 
-  // Логирование calc_change при изменении ключевых полей (с debounce)
+  // Логирование calc_open при первом появлении калькулятора в viewport
+  useEffect(() => {
+    const calcElement = document.getElementById('calculator');
+    if (!calcElement || !context) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          trackGoal('calc_open', {
+            intent: context?.intent,
+            variant: context?.variantId
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(calcElement);
+    return () => observer.disconnect();
+  }, [context]);
+
+  // Логирование calc_calculate при изменении ключевых полей (с debounce)
   useEffect(() => {
     if (!context || !initialized) return;
+
+    // Трекаем calc_calculate при любом изменении
+    trackGoal('calc_calculate', {
+      intent: context?.intent,
+      variant: context?.variantId,
+      area,
+      premiseType,
+      serviceType,
+      finalPrice: calculatePrice() - Math.round((calculatePrice() * calculateDiscount()) / 100)
+    });
 
     const timeoutId = setTimeout(() => {
       supabase.functions.invoke('log-traffic-event', {

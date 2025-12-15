@@ -6,6 +6,7 @@ import { useTraffic } from "@/contexts/TrafficContext";
 import { getCopy } from "@/lib/copyUtils";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
+import { trackGoal } from "@/lib/analytics";
 
 interface HeroProps {
   onDiscountClick: () => void;
@@ -153,7 +154,14 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
-              onClick={onDiscountClick}
+              onClick={() => {
+                trackGoal('hero_cta_click', {
+                  intent: context?.intent,
+                  variant: context?.variantId,
+                  button: 'discount'
+                });
+                onDiscountClick();
+              }}
               size="lg"
               className="gradient-accent hover:opacity-90 text-accent-foreground font-bold text-lg px-8 py-6 h-auto animate-pulse-attention"
             >
@@ -162,7 +170,14 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
             </Button>
             
             <Button 
-              onClick={scrollToCalculator}
+              onClick={() => {
+                trackGoal('hero_cta_click', {
+                  intent: context?.intent,
+                  variant: context?.variantId,
+                  button: 'calculator'
+                });
+                scrollToCalculator();
+              }}
               size="lg"
               variant="outline"
               className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold text-lg px-8 py-6 h-auto"
