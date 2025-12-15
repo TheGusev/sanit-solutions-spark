@@ -17,6 +17,7 @@ import Footer from "@/components/Footer";
 import FloatingButtons from "@/components/FloatingButtons";
 import ABTestDebug from "@/components/ABTestDebug";
 import { useMLPrediction } from "@/hooks/useMLPrediction";
+import { useScrollDepth } from "@/hooks/useScrollDepth";
 
 const Index = () => {
   const [showDiscountPopup, setShowDiscountPopup] = useState(false);
@@ -24,6 +25,9 @@ const Index = () => {
   
   // Integrate ML prediction in main flow for real-time personalization
   const { prediction, isLoading: mlLoading } = useMLPrediction();
+  
+  // Track scroll depth goals
+  useScrollDepth();
 
   useEffect(() => {
     const handleScroll = () => {

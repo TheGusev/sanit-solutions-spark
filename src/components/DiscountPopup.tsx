@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -39,6 +39,21 @@ const DiscountPopup = ({ open, onOpenChange }: DiscountPopupProps) => {
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [website, setWebsite] = useState(""); // Honeypot field
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [popupOpenTracked, setPopupOpenTracked] = useState(false);
+
+  // Track popup_open when dialog opens
+  useEffect(() => {
+    if (open && !popupOpenTracked) {
+      trackGoal('popup_open', {
+        intent: context?.intent,
+        variant: context?.variantId
+      });
+      setPopupOpenTracked(true);
+    }
+    if (!open) {
+      setPopupOpenTracked(false);
+    }
+  }, [open, popupOpenTracked, context]);
 
   const formatPhone = (value: string) => {
     const cleaned = value.replace(/\D/g, "");
