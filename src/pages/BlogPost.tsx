@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import DOMPurify from "dompurify";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { blogPosts } from "@/data/blogPosts";
@@ -101,21 +102,24 @@ const BlogPost = () => {
               prose-li:my-2
             "
             dangerouslySetInnerHTML={{ 
-              __html: post.content.split('\n').map(line => {
-                if (line.startsWith('## ')) {
-                  return `<h2>${line.replace('## ', '')}</h2>`;
-                } else if (line.startsWith('**') && line.endsWith('**')) {
-                  return `<p><strong>${line.replace(/\*\*/g, '')}</strong></p>`;
-                } else if (line.startsWith('✅') || line.startsWith('❌') || line.startsWith('📍') || line.startsWith('⚠️')) {
-                  return `<p>${line}</p>`;
-                } else if (line.startsWith('- ')) {
-                  return `<li>${line.replace('- ', '')}</li>`;
-                } else if (line.trim() === '') {
-                  return '';
-                } else {
-                  return `<p>${line}</p>`;
-                }
-              }).join('')
+              __html: DOMPurify.sanitize(
+                post.content.split('\n').map(line => {
+                  if (line.startsWith('## ')) {
+                    return `<h2>${line.replace('## ', '')}</h2>`;
+                  } else if (line.startsWith('**') && line.endsWith('**')) {
+                    return `<p><strong>${line.replace(/\*\*/g, '')}</strong></p>`;
+                  } else if (line.startsWith('✅') || line.startsWith('❌') || line.startsWith('📍') || line.startsWith('⚠️')) {
+                    return `<p>${line}</p>`;
+                  } else if (line.startsWith('- ')) {
+                    return `<li>${line.replace('- ', '')}</li>`;
+                  } else if (line.trim() === '') {
+                    return '';
+                  } else {
+                    return `<p>${line}</p>`;
+                  }
+                }).join(''),
+                { ALLOWED_TAGS: ['h2', 'p', 'strong', 'li', 'ul', 'ol', 'em', 'br'] }
+              )
             }}
           />
         </div>
