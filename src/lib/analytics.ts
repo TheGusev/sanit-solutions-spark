@@ -31,8 +31,11 @@ declare global {
         Event: (eventName: string) => void;
       };
     };
+    _tmr?: Array<{id: string; type: string; goal?: string; [key: string]: any}>;
   }
 }
+
+const TOP_MAIL_RU_ID = '3728465';
 
 let analyticsInitialized = false;
 
@@ -124,7 +127,6 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
   // VK Pixel - отправка конверсий
   if (window.VK?.Retargeting?.Event) {
     try {
-      // Маппинг целей на события VK
       const vkEventMap: Record<string, string> = {
         'lead_submit': 'lead',
         'popup_submit': 'lead',
@@ -141,6 +143,28 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
       }
     } catch (err) {
       console.debug('VK Pixel error:', err);
+    }
+  }
+  
+  // Top.Mail.Ru - отправка конверсий
+  if (window._tmr) {
+    try {
+      const tmrGoalMap: Record<string, string> = {
+        'lead_submit': 'lead',
+        'popup_submit': 'lead',
+        'calc_open': 'view_content',
+        'phone_click': 'contact',
+        'whatsapp_click': 'contact',
+        'telegram_click': 'contact'
+      };
+      
+      const tmrGoal = tmrGoalMap[goalName];
+      if (tmrGoal) {
+        window._tmr.push({ id: TOP_MAIL_RU_ID, type: 'reachGoal', goal: tmrGoal });
+        console.log(`Top.Mail.Ru goal tracked: ${tmrGoal}`);
+      }
+    } catch (err) {
+      console.debug('Top.Mail.Ru error:', err);
     }
   }
 }
