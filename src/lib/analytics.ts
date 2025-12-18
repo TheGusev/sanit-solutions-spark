@@ -24,6 +24,13 @@ declare global {
     ym?: any;
     hj?: any;
     posthog?: any;
+    VK?: {
+      Retargeting: {
+        Init: (pixelId: string) => void;
+        Hit: () => void;
+        Event: (eventName: string) => void;
+      };
+    };
   }
 }
 
@@ -104,12 +111,36 @@ export function setUserProperties(props: UserProperties): void {
 
 // Трекинг целей (конверсий)
 export function trackGoal(goalName: string, params?: Record<string, any>): void {
+  // Яндекс.Метрика
   if (window.ym && typeof window.ym === 'function') {
     try {
       window.ym(YANDEX_COUNTER_ID, 'reachGoal', goalName, params);
       console.log(`Goal tracked: ${goalName}`, params);
     } catch (err) {
       console.debug('Yandex.Metrika goal error:', err);
+    }
+  }
+  
+  // VK Pixel - отправка конверсий
+  if (window.VK?.Retargeting?.Event) {
+    try {
+      // Маппинг целей на события VK
+      const vkEventMap: Record<string, string> = {
+        'lead_submit': 'lead',
+        'popup_submit': 'lead',
+        'calc_open': 'view_content',
+        'phone_click': 'contact',
+        'whatsapp_click': 'contact',
+        'telegram_click': 'contact'
+      };
+      
+      const vkEvent = vkEventMap[goalName];
+      if (vkEvent) {
+        window.VK.Retargeting.Event(vkEvent);
+        console.log(`VK event tracked: ${vkEvent}`);
+      }
+    } catch (err) {
+      console.debug('VK Pixel error:', err);
     }
   }
 }
