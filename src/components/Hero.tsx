@@ -196,9 +196,9 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
                   </div>
                   <div>
                     <h3 className="font-bold text-sm md:text-lg md:mb-2">
-                      Быстрый выезд <span className="text-muted-foreground font-normal md:hidden">— В течение 2-х часов</span>
+                      Выезд за 15 минут <span className="text-muted-foreground font-normal md:hidden">— Самый быстрый в Москве</span>
                     </h3>
-                    <p className="hidden md:block text-sm text-muted-foreground">В течение 2-х часов по Москве</p>
+                    <p className="hidden md:block text-sm text-muted-foreground">Самый быстрый выезд в Москве</p>
                   </div>
                 </div>
               </div>
