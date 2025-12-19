@@ -17,6 +17,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { LeadFormModal } from "./LeadFormModal";
+import StickyCTA from "./StickyCTA";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { supabase } from "@/integrations/supabase/client";
 import { trackGoal } from "@/lib/analytics";
@@ -825,6 +826,13 @@ const Calculator = () => {
           discountAmount,
           finalPrice,
         }}
+      />
+
+      {/* Sticky CTA после прокрутки калькулятора */}
+      <StickyCTA 
+        price={finalPrice}
+        discount={discount}
+        onOrderClick={handleOrder}
       />
     </section>
   );

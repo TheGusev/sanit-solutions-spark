@@ -75,14 +75,23 @@ const ALLOWED_EVENT_TYPES = [
   'calc_open',
   'calc_change',
   'calc_submit',
+  'calc_auto_open',
   'popup_open',
   'popup_step_1',
   'popup_step_2',
   'popup_submit',
   'form_submit',
   'ml_prediction',
-  'ab_test_debug'
+  'ab_test_debug',
+  'exit_intent_shown',
+  'exit_intent_submit',
+  'sticky_cta_view',
+  'sticky_cta_click',
+  'sticky_cta_call'
 ];
+
+// События, которые НЕ учитываются при расчёте bounce rate
+const BOT_OR_SYNTHETIC_EVENTS = ['ml_prediction', 'ab_test_debug'];
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -140,6 +149,10 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Определяем, является ли событие "синтетическим" (не учитывается в bounce rate)
+    const isSyntheticEvent = BOT_OR_SYNTHETIC_EVENTS.includes(eventData.event_type) || 
+                             !eventData.device_type;
+
     // Вставка события в таблицу traffic_events с санитизацией
     const { data, error } = await supabase
       .from("traffic_events")
@@ -157,7 +170,7 @@ serve(async (req) => {
         gclid: sanitizeUtmParam(eventData.gclid),
         intent: sanitizeUtmParam(eventData.intent) || 'default',
         variant_id: sanitizeUtmParam(eventData.variant_id),
-        device_type: sanitizeUtmParam(eventData.device_type),
+        device_type: isSyntheticEvent ? 'synthetic' : sanitizeUtmParam(eventData.device_type),
         event_type: eventData.event_type,
         event_data: eventData.event_data || null,
       })
