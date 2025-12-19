@@ -8,6 +8,7 @@ import Services from "@/components/Services";
 import WorkProcess from "@/components/WorkProcess";
 import Calculator from "@/components/Calculator";
 import DiscountPopup from "@/components/DiscountPopup";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
 import Details from "@/components/Details";
 import ServiceAreaMap from "@/components/ServiceAreaMap";
 import FAQ from "@/components/FAQ";
@@ -77,6 +78,7 @@ const Index = () => {
         open={showDiscountPopup} 
         onOpenChange={setShowDiscountPopup}
       />
+      <ExitIntentPopup />
       <FloatingButtons />
       
       {/* A/B Test Debug Panel - Ctrl+Shift+D to toggle */}
