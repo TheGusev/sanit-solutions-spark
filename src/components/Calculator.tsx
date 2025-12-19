@@ -62,6 +62,10 @@ const Calculator = () => {
   const [areaError, setAreaError] = useState<string | null>(null);
   const [areaValid, setAreaValid] = useState(true);
   const [showLeadForm, setShowLeadForm] = useState(false);
+  
+  // Автооткрытие формы заявки
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [autoOpenTriggered, setAutoOpenTriggered] = useState(false);
 
   // Предзаполнение калькулятора на основе интента (только при первой загрузке)
   useEffect(() => {
@@ -150,6 +154,30 @@ const Calculator = () => {
     return () => clearTimeout(timeoutId);
   }, [area, premiseType, serviceType, treatmentType, period, clientType, context, initialized]);
 
+  // Автооткрытие формы заявки через 3 секунды после взаимодействия
+  useEffect(() => {
+    // Не открывать если: нет взаимодействия, уже триггерили, форма открыта, площадь невалидна
+    if (!hasInteracted || autoOpenTriggered || showLeadForm || !areaValid || !initialized) return;
+
+    const timeoutId = setTimeout(() => {
+      setAutoOpenTriggered(true);
+      setShowLeadForm(true);
+      
+      // Трекаем автооткрытие
+      trackGoal('calc_auto_open', {
+        intent: context?.intent,
+        variant: context?.variantId,
+        area,
+        premiseType,
+        finalPrice: calculatePrice() - Math.round((calculatePrice() * calculateDiscount()) / 100)
+      });
+      
+      console.log('Auto-opened lead form after 3s of inactivity');
+    }, 3000);
+
+    return () => clearTimeout(timeoutId);
+  }, [area, premiseType, clientType, hasInteracted, autoOpenTriggered, showLeadForm, areaValid, initialized, context]);
+
   // Типы помещений с иконками
   const premiseTypes = [
     { key: 'apartment', label: 'Квартира', icon: Home },
@@ -227,6 +255,7 @@ const Calculator = () => {
   // Валидация площади
   const handleAreaChange = (value: number) => {
     setArea(value);
+    setHasInteracted(true);
     if (value < 10 || value > 5000) {
       setAreaError('Допустимый диапазон 10–5000 м²');
       setAreaValid(false);
@@ -396,7 +425,10 @@ const Calculator = () => {
                     return (
                       <button
                         key={type.key}
-                        onClick={() => setPremiseType(type.key)}
+                        onClick={() => {
+                          setPremiseType(type.key);
+                          setHasInteracted(true);
+                        }}
                         className={`px-3 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
                           premiseType === type.key
                             ? 'bg-primary text-primary-foreground shadow-md'
@@ -461,7 +493,10 @@ const Calculator = () => {
                 <Label className="text-base font-bold mb-3 block">Кто вы?</Label>
                 <div className="flex flex-wrap gap-2">
                   <button
-                    onClick={() => setClientType('individual')}
+                    onClick={() => {
+                      setClientType('individual');
+                      setHasInteracted(true);
+                    }}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
                       clientType === 'individual'
                         ? 'bg-primary text-primary-foreground shadow-md'
@@ -472,7 +507,10 @@ const Calculator = () => {
                     Физ. лицо
                   </button>
                   <button
-                    onClick={() => setClientType('ip')}
+                    onClick={() => {
+                      setClientType('ip');
+                      setHasInteracted(true);
+                    }}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
                       clientType === 'ip'
                         ? 'bg-primary text-primary-foreground shadow-md'
@@ -483,7 +521,10 @@ const Calculator = () => {
                     ИП
                   </button>
                   <button
-                    onClick={() => setClientType('company')}
+                    onClick={() => {
+                      setClientType('company');
+                      setHasInteracted(true);
+                    }}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
                       clientType === 'company'
                         ? 'bg-primary text-primary-foreground shadow-md'
