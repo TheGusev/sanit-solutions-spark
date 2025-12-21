@@ -5,10 +5,26 @@ import { useMLPrediction } from "@/hooks/useMLPrediction";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Database, Brain, TestTube } from "lucide-react";
+import { RefreshCw, Database, Brain, TestTube, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
+
+// Функция для очистки кэша A/B/MVT тестов
+const clearABTestCache = () => {
+  const keysToRemove: string[] = [];
+  
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && (key.startsWith('ab_variant_') || key.startsWith('mvt_variant_') || key.startsWith('traffic_context'))) {
+      keysToRemove.push(key);
+    }
+  }
+  
+  keysToRemove.forEach(key => localStorage.removeItem(key));
+  
+  return keysToRemove.length;
+};
 
 export default function ABTestDebug() {
   const { context, isLoading: contextLoading } = useTraffic();
@@ -86,6 +102,12 @@ export default function ABTestDebug() {
       console.error("Test event error:", error);
       toast.error("Failed to log test event");
     }
+  };
+
+  const handleClearCache = () => {
+    const count = clearABTestCache();
+    toast.success(`🗑️ Cleared ${count} cached items. Reloading...`);
+    setTimeout(() => window.location.reload(), 500);
   };
 
   if (contextLoading) {
@@ -202,6 +224,15 @@ export default function ABTestDebug() {
         >
           <TestTube className="w-3 h-3 mr-1" />
           {testingLead ? "Creating..." : "Create Test Lead"}
+        </Button>
+        <Button
+          size="sm"
+          variant="destructive"
+          className="w-full text-xs h-7"
+          onClick={handleClearCache}
+        >
+          <Trash2 className="w-3 h-3 mr-1" />
+          Clear Cache & Reload
         </Button>
       </div>
 
