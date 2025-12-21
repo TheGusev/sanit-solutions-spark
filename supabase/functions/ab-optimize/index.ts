@@ -105,9 +105,10 @@ serve(async (req) => {
       throw new Error("test_name is required");
     }
     
+    // Use SERVICE_ROLE_KEY for admin operations (increment_ab_session)
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
     
     // Получаем статистику для обоих вариантов
