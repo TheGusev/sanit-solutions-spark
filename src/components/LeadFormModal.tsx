@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, MessageCircle, Clock, Shield } from "lucide-react";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 
@@ -33,8 +33,8 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
   const { context } = useTraffic();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("+7 ");
-  const [email, setEmail] = useState("");
-  const [consent, setConsent] = useState(false);
+  // Email removed - not needed for conversion
+  const [consent, setConsent] = useState(true); // Auto-selected for better conversion
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -78,10 +78,6 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
       newErrors.phone = "Введите корректный номер телефона";
     }
 
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Введите корректный email";
-    }
-
     if (!consent) {
       newErrors.consent = "Необходимо согласие на обработку данных";
     }
@@ -99,13 +95,11 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
 
     setIsSubmitting(true);
 
-    // Check if context is initialized to avoid missing tracking data
     if (!context || !context.initialized) {
       console.warn('⚠️ TrafficContext not initialized - lead may be missing tracking data');
     }
 
     try {
-      // Debug log before submission
       console.log('📤 Lead submission payload:', {
         session_id: context?.sessionId,
         intent: context?.intent || 'default',
@@ -114,12 +108,11 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
         device_type: context?.deviceType
       });
 
-      // Call Edge Function to save lead and send notifications
       const { data, error } = await supabase.functions.invoke("handle-lead", {
         body: {
           name: name.trim(),
           phone,
-          email: email.trim() || null,
+          email: null,
           object_type: calculatorData.premiseType,
           area_m2: calculatorData.area,
           service: calculatorData.serviceType,
@@ -130,7 +123,6 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
           discount_percent: calculatorData.discount,
           discount_amount: calculatorData.discountAmount,
           final_price: calculatorData.finalPrice,
-          // Pass all context data for analytics
           session_id: context?.sessionId || null,
           intent: context?.intent || 'default',
           variant_id: context?.variantId || null,
@@ -150,7 +142,6 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
 
       if (error || !data?.success) throw error || new Error("Failed to submit lead");
 
-      // Трекаем цель в Яндекс.Метрике
       trackGoal('lead_submit', {
         intent: context?.intent,
         variant: context?.variantId,
@@ -163,11 +154,8 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
         description: "Перезвоним в течение 15 минут",
       });
 
-      // Reset form
       setName("");
       setPhone("+7 ");
-      setEmail("");
-      setConsent(false);
       setErrors({});
 
       onOpenChange(false);
@@ -184,16 +172,32 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
     }
   };
 
+  const handleWhatsApp = () => {
+    trackGoal('whatsapp_click', {
+      intent: context?.intent,
+      variant: context?.variantId,
+      price: calculatorData.finalPrice,
+      source: 'lead_modal'
+    });
+
+    const message = `Здравствуйте! Хочу заказать обработку.
+📐 Площадь: ${calculatorData.area} м²
+💰 Цена: ${calculatorData.finalPrice}₽`;
+    
+    window.open(`https://wa.me/79069989888?text=${encodeURIComponent(message)}`, '_blank');
+    onOpenChange(false);
+  };
+
   const isNameValid = name.trim().length >= 2;
   const isPhoneValid = phone.length === 18;
-  const isEmailValid = !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[420px]">
         <DialogHeader>
           <DialogTitle className="text-2xl">🎯 Оформить заявку</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-success" />
             Перезвоним в течение 15 минут
           </DialogDescription>
         </DialogHeader>
@@ -214,11 +218,11 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
                     setErrors(prev => ({ ...prev, name: "" }));
                   }
                 }}
-                placeholder="Иван Иванов"
-                className={errors.name ? "border-destructive" : isNameValid && name ? "border-green-500" : ""}
+                placeholder="Ваше имя"
+                className={`h-12 ${errors.name ? "border-destructive" : isNameValid && name ? "border-success" : ""}`}
               />
               {isNameValid && name && (
-                <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-success" />
               )}
             </div>
             {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
@@ -234,106 +238,92 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
                 id="phone"
                 value={phone}
                 onChange={handlePhoneChange}
-                placeholder="+7 (906) 998-98-88"
-                className={errors.phone ? "border-destructive" : isPhoneValid ? "border-green-500" : ""}
+                placeholder="+7 (___) ___-__-__"
+                className={`h-12 text-base ${errors.phone ? "border-destructive" : isPhoneValid ? "border-success" : ""}`}
               />
               {isPhoneValid && (
-                <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+                <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-success" />
               )}
             </div>
             {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
           </div>
 
-          {/* Email field */}
-          <div className="space-y-2">
-            <Label htmlFor="email">Email (необязательно)</Label>
-            <div className="relative">
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (!e.target.value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)) {
-                    setErrors(prev => ({ ...prev, email: "" }));
-                  }
-                }}
-                placeholder="ivan@mail.ru"
-                className={errors.email ? "border-destructive" : isEmailValid && email ? "border-green-500" : ""}
-              />
-              {isEmailValid && email && (
-                <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+          {/* Calculator summary - compact */}
+          <div className="bg-muted/50 p-3 rounded-xl flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground">Площадь: {calculatorData.area} м²</p>
+              {calculatorData.discount > 0 && (
+                <p className="text-xs text-success">Скидка {calculatorData.discount}%</p>
               )}
             </div>
-            {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+            <p className="text-2xl font-bold text-primary">
+              {calculatorData.finalPrice.toLocaleString("ru-RU")}₽
+            </p>
           </div>
 
-          {/* Consent checkbox */}
-          <div className="space-y-2">
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="consent"
-                checked={consent}
-                onCheckedChange={(checked) => {
-                  setConsent(checked as boolean);
-                  if (checked) {
-                    setErrors(prev => ({ ...prev, consent: "" }));
-                  }
-                }}
-                className={errors.consent ? "border-destructive" : ""}
-              />
-              <label
-                htmlFor="consent"
-                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          {/* Consent - auto-selected with link */}
+          <div className="flex items-start space-x-2">
+            <Checkbox
+              id="consent"
+              checked={consent}
+              onCheckedChange={(checked) => {
+                setConsent(checked as boolean);
+                if (checked) {
+                  setErrors(prev => ({ ...prev, consent: "" }));
+                }
+              }}
+              className={errors.consent ? "border-destructive" : ""}
+            />
+            <label
+              htmlFor="consent"
+              className="text-xs text-muted-foreground leading-tight"
+            >
+              Согласен с{" "}
+              <span
+                onClick={() => setPrivacyModalOpen(true)}
+                className="text-primary hover:underline cursor-pointer"
               >
-                Согласен с{" "}
-                <span
-                  onClick={() => setPrivacyModalOpen(true)}
-                  className="text-primary hover:underline cursor-pointer"
-                >
-                  политикой конфиденциальности
-                </span>{" "}
-                <span className="text-destructive">*</span>
-              </label>
-            </div>
-            {errors.consent && <p className="text-sm text-destructive">{errors.consent}</p>}
-          </div>
-
-          {/* Calculator summary */}
-          <div className="bg-muted p-4 rounded-lg space-y-1 text-sm">
-            <p className="flex justify-between">
-              <span className="text-muted-foreground">📐 Площадь:</span>
-              <span className="font-medium">{calculatorData.area} м²</span>
-            </p>
-            <p className="flex justify-between">
-              <span className="text-muted-foreground">💰 Итого:</span>
-              <span className="font-medium text-lg">
-                {calculatorData.finalPrice.toLocaleString("ru-RU")}₽
-                {calculatorData.discount > 0 && (
-                  <span className="text-green-600 ml-2">
-                    (скидка {calculatorData.discount}%)
-                  </span>
-                )}
+                политикой конфиденциальности
               </span>
-            </p>
+            </label>
           </div>
+          {errors.consent && <p className="text-sm text-destructive">{errors.consent}</p>}
 
-          {/* Submit button */}
+          {/* Submit button - larger and more prominent */}
           <Button
             type="submit"
-            className="w-full"
+            className="w-full h-14 text-lg font-bold"
             size="lg"
             disabled={isSubmitting}
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Отправка...
               </>
             ) : (
               "Отправить заявку"
             )}
           </Button>
+
+          {/* WhatsApp alternative */}
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full h-11 text-success border-success/30 hover:bg-success/10"
+            onClick={handleWhatsApp}
+          >
+            <MessageCircle className="w-5 h-5 mr-2" />
+            Написать в WhatsApp
+          </Button>
+
+          {/* Trust badges */}
+          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground pt-2">
+            <Shield className="w-3 h-3" />
+            <span>Данные защищены</span>
+            <span>•</span>
+            <span>Без спама</span>
+          </div>
         </form>
 
         <PrivacyPolicyModal
