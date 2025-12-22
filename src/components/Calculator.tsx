@@ -4,10 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { 
-  Home, Building2, Warehouse, ShoppingCart, Factory, 
+  Home, Building2, Warehouse, Factory, 
   Snowflake, Flame, Target, Diamond, Microscope, Bug, Rat, Sparkles, 
   Calendar, CalendarCheck, FileText, User, Briefcase, Building, Phone, 
-  Percent, TrendingUp, Check, ChevronDown, MoreHorizontal, UtensilsCrossed 
+  Percent, TrendingUp, Check, ChevronDown, MoreHorizontal
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
@@ -17,6 +17,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { LeadFormModal } from "./LeadFormModal";
+import { QuickCallForm } from "./QuickCallForm";
 import StickyCTA from "./StickyCTA";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,12 +37,12 @@ const CALCULATOR_DEFAULTS_BY_INTENT: Record<string, Partial<{
   office_general: { premiseType: 'office', serviceType: 'disinfection', clientType: 'company' },
   warehouse_deratization: { premiseType: 'warehouse', serviceType: 'deratization', clientType: 'company' },
   warehouse_general: { premiseType: 'warehouse', serviceType: 'disinfection', clientType: 'company' },
-  restaurant_disinfection: { premiseType: 'restaurant', serviceType: 'disinfection', clientType: 'company' },
-  restaurant_general: { premiseType: 'restaurant', serviceType: 'complex', clientType: 'company' },
+  restaurant_disinfection: { premiseType: 'office', serviceType: 'disinfection', clientType: 'company' },
+  restaurant_general: { premiseType: 'office', serviceType: 'complex', clientType: 'company' },
   ses_check_preparation: { premiseType: 'office', serviceType: 'disinfection', clientType: 'company', treatmentType: 'complex' },
   b2b_general: { clientType: 'company', serviceType: 'complex' },
   production_facility: { premiseType: 'production', serviceType: 'complex', clientType: 'company' },
-  shop_store: { premiseType: 'shop', serviceType: 'disinfection', clientType: 'company' }
+  shop_store: { premiseType: 'office', serviceType: 'disinfection', clientType: 'company' }
 };
 
 const Calculator = () => {
@@ -63,10 +64,8 @@ const Calculator = () => {
   const [areaError, setAreaError] = useState<string | null>(null);
   const [areaValid, setAreaValid] = useState(true);
   const [showLeadForm, setShowLeadForm] = useState(false);
-  
-  // Автооткрытие формы заявки
+  const [showClientType, setShowClientType] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [autoOpenTriggered, setAutoOpenTriggered] = useState(false);
 
   // Предзаполнение калькулятора на основе интента (только при первой загрузке)
   useEffect(() => {
@@ -155,38 +154,14 @@ const Calculator = () => {
     return () => clearTimeout(timeoutId);
   }, [area, premiseType, serviceType, treatmentType, period, clientType, context, initialized]);
 
-  // Автооткрытие формы заявки через 3 секунды после взаимодействия
-  useEffect(() => {
-    // Не открывать если: нет взаимодействия, уже триггерили, форма открыта, площадь невалидна
-    if (!hasInteracted || autoOpenTriggered || showLeadForm || !areaValid || !initialized) return;
+  // Убрано агрессивное автооткрытие - вместо этого показываем inline форму
 
-    const timeoutId = setTimeout(() => {
-      setAutoOpenTriggered(true);
-      setShowLeadForm(true);
-      
-      // Трекаем автооткрытие
-      trackGoal('calc_auto_open', {
-        intent: context?.intent,
-        variant: context?.variantId,
-        area,
-        premiseType,
-        finalPrice: calculatePrice() - Math.round((calculatePrice() * calculateDiscount()) / 100)
-      });
-      
-      console.log('Auto-opened lead form after 3s of inactivity');
-    }, 3000);
-
-    return () => clearTimeout(timeoutId);
-  }, [area, premiseType, clientType, hasInteracted, autoOpenTriggered, showLeadForm, areaValid, initialized, context]);
-
-  // Типы помещений с иконками
+  // Типы помещений с иконками (упрощено до 5 самых популярных)
   const premiseTypes = [
     { key: 'apartment', label: 'Квартира', icon: Home },
-    { key: 'house', label: 'Частный дом', icon: Building2 },
-    { key: 'office', label: 'Офис', icon: Building },
+    { key: 'house', label: 'Дом', icon: Building2 },
+    { key: 'office', label: 'Офис/Магазин', icon: Building },
     { key: 'warehouse', label: 'Склад', icon: Warehouse },
-    { key: 'shop', label: 'Магазин', icon: ShoppingCart },
-    { key: 'restaurant', label: 'Ресторан', icon: UtensilsCrossed },
     { key: 'production', label: 'Производство', icon: Factory },
     { key: 'other', label: 'Другое', icon: MoreHorizontal },
   ];
@@ -489,54 +464,63 @@ const Calculator = () => {
                 </div>
               </div>
 
-              {/* Кто вы? */}
-              <div>
-                <Label className="text-base font-bold mb-3 block">Кто вы?</Label>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => {
-                      setClientType('individual');
-                      setHasInteracted(true);
-                    }}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                      clientType === 'individual'
-                        ? 'bg-primary text-primary-foreground shadow-md'
-                        : 'bg-muted hover:bg-muted/80'
-                    }`}
-                  >
-                    <User className="w-4 h-4" />
-                    Физ. лицо
-                  </button>
-                  <button
-                    onClick={() => {
-                      setClientType('ip');
-                      setHasInteracted(true);
-                    }}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                      clientType === 'ip'
-                        ? 'bg-primary text-primary-foreground shadow-md'
-                        : 'bg-muted hover:bg-muted/80'
-                    }`}
-                  >
-                    <Briefcase className="w-4 h-4" />
-                    ИП
-                  </button>
-                  <button
-                    onClick={() => {
-                      setClientType('company');
-                      setHasInteracted(true);
-                    }}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                      clientType === 'company'
-                        ? 'bg-primary text-primary-foreground shadow-md'
-                        : 'bg-muted hover:bg-muted/80'
-                    }`}
-                  >
-                    <Building className="w-4 h-4" />
-                    Компания
-                  </button>
+              {/* Кто вы? - скрыто по умолчанию для физлиц */}
+              {showClientType ? (
+                <div>
+                  <Label className="text-base font-bold mb-3 block">Кто вы?</Label>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => {
+                        setClientType('individual');
+                        setHasInteracted(true);
+                      }}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                        clientType === 'individual'
+                          ? 'bg-primary text-primary-foreground shadow-md'
+                          : 'bg-muted hover:bg-muted/80'
+                      }`}
+                    >
+                      <User className="w-4 h-4" />
+                      Физ. лицо
+                    </button>
+                    <button
+                      onClick={() => {
+                        setClientType('ip');
+                        setHasInteracted(true);
+                      }}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                        clientType === 'ip'
+                          ? 'bg-primary text-primary-foreground shadow-md'
+                          : 'bg-muted hover:bg-muted/80'
+                      }`}
+                    >
+                      <Briefcase className="w-4 h-4" />
+                      ИП
+                    </button>
+                    <button
+                      onClick={() => {
+                        setClientType('company');
+                        setHasInteracted(true);
+                      }}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                        clientType === 'company'
+                          ? 'bg-primary text-primary-foreground shadow-md'
+                          : 'bg-muted hover:bg-muted/80'
+                      }`}
+                    >
+                      <Building className="w-4 h-4" />
+                      Компания
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <button
+                  onClick={() => setShowClientType(true)}
+                  className="text-sm text-muted-foreground hover:text-primary underline underline-offset-2"
+                >
+                  Я представляю компанию или ИП →
+                </button>
+              )}
 
               {/* Блок результата */}
               <div className="bg-gradient-to-br from-primary/5 to-success/5 p-4 sm:p-6 rounded-2xl space-y-3">
@@ -561,27 +545,41 @@ const Calculator = () => {
                 </div>
               </div>
 
-              {/* Кнопки действий */}
-              <div className="space-y-2">
-                <Button
+              {/* Inline Quick Call Form - главный CTA */}
+              <QuickCallForm
+                calculatorData={{
+                  premiseType,
+                  area,
+                  serviceType,
+                  treatmentType,
+                  period,
+                  clientType,
+                  totalPrice,
+                  discount,
+                  discountAmount,
+                  finalPrice,
+                }}
+              />
+
+              {/* Альтернативная кнопка для полной формы */}
+              <div className="text-center">
+                <button
                   onClick={handleOrder}
-                  className="w-full text-base py-6 h-auto whitespace-normal"
-                  size="lg"
+                  className="text-sm text-muted-foreground hover:text-primary underline underline-offset-2"
                 >
-                  <Phone className="w-5 h-5 mr-2 flex-shrink-0" />
-                  Заказать обработку
-                </Button>
-                
-                {(clientType === 'ip' || clientType === 'company') && (
-                  <Button
-                    onClick={handleGetOffer}
-                    variant="outline"
-                    className="w-full text-base py-4 h-auto whitespace-normal"
-                  >
-                    Получить коммерческое предложение
-                  </Button>
-                )}
+                  Заполнить полную форму заявки
+                </button>
               </div>
+              
+              {(clientType === 'ip' || clientType === 'company') && (
+                <Button
+                  onClick={handleGetOffer}
+                  variant="outline"
+                  className="w-full text-base py-4 h-auto whitespace-normal"
+                >
+                  Получить коммерческое предложение
+                </Button>
+              )}
 
             </div>
 
@@ -796,15 +794,24 @@ const Calculator = () => {
         </div>
       </div>
 
-      {/* Липкий нижний бар на мобильных */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg p-3 md:hidden z-50 animate-slide-up">
-        <div className="container mx-auto flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs text-muted-foreground">Итого:</p>
-            <p className="text-xl font-bold text-primary">{finalPrice}₽</p>
+      {/* Улучшенный липкий нижний бар на мобильных */}
+      <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t shadow-2xl p-4 md:hidden z-50 animate-slide-up">
+        <div className="container mx-auto flex items-center justify-between gap-4">
+          <div className="flex-shrink-0">
+            <div className="flex items-baseline gap-2">
+              <p className="text-2xl font-bold text-primary">{finalPrice}₽</p>
+              {discount > 0 && (
+                <span className="text-xs text-success font-medium">-{discount}%</span>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">Перезвоним за 15 мин</p>
           </div>
-          <Button onClick={handleOrder} className="flex-1 max-w-[180px]">
-            <Phone className="w-4 h-4 mr-2" />
+          <Button 
+            onClick={handleOrder} 
+            size="lg"
+            className="flex-1 max-w-[200px] h-12 text-base font-bold animate-pulse hover:animate-none"
+          >
+            <Phone className="w-5 h-5 mr-2" />
             Заказать
           </Button>
         </div>
