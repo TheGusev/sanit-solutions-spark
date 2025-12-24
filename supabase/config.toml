@@ -14,3 +14,12 @@ verify_jwt = false
 
 [functions.mvt-optimize]
 verify_jwt = false
+
+[functions.generate-review-code]
+verify_jwt = false
+
+[functions.validate-review-code]
+verify_jwt = false
+
+[functions.submit-review]
+verify_jwt = false

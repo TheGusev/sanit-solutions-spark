@@ -77,7 +77,7 @@ const AdminLeads = () => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setLeads(data || []);
+      setLeads((data || []) as unknown as Lead[]);
     } catch (error: any) {
       toast.error('Ошибка загрузки заявок');
     } finally {

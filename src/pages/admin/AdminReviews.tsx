@@ -43,7 +43,7 @@ const AdminReviews = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setReviews((data || []) as Review[]);
+      setReviews((data || []) as unknown as Review[]);
     } catch (error: any) {
       toast.error('Ошибка загрузки отзывов');
     } finally {

@@ -108,8 +108,12 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-background/20 pt-8 text-center text-sm opacity-60">
-          <p>© 2024 ООО "Санитарные Решения". Все права защищены.</p>
+          <p>© {new Date().getFullYear()} ООО "Санитарные Решения". Все права защищены.</p>
           <p className="mt-2">Деятельность по дезинфекции, дезинсекции и дератизации подлежит лицензированию. Компания внесена в реестр Роспотребнадзора.</p>
+          <p className="mt-2">
+            ИНН: 5410169338 | ОГРН: 1255400030555
+            <a href="/admin/login" className="ml-2 opacity-30 hover:opacity-100 transition-opacity">◊</a>
+          </p>
         </div>
       </div>
     </footer>
