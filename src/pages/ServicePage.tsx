@@ -112,6 +112,7 @@ const ServicePage = () => {
         <title>{service.metaTitle}</title>
         <meta name="description" content={service.metaDescription} />
         <link rel="canonical" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
+        <link rel="alternate" hrefLang="ru" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
         
         {/* Open Graph */}
         <meta property="og:type" content="website" />
