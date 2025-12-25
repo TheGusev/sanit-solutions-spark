@@ -53,9 +53,29 @@ const faqs = [
   }
 ];
 
+// Generate FAQPage Schema.org structured data
+const generateFAQSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+});
+
 const FAQ = () => {
   return (
     <section id="faq" className="py-8 md:py-24 bg-muted/30">
+      {/* FAQPage Schema for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(generateFAQSchema()) }}
+      />
+      
       <div className="container mx-auto px-4">
         <AnimatedSection animation="fade-up" className="text-center mb-6 md:mb-12">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
