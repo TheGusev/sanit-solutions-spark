@@ -54,6 +54,7 @@ const BlogPost = () => {
         <meta property="og:url" content={`https://goruslugimsk.ru/blog/${post.slug}`} />
         <meta property="og:title" content={`${post.title} | Санитарные Решения`} />
         <meta property="og:description" content={post.excerpt} />
+        {/* BlogPosting Schema */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -71,6 +72,33 @@ const BlogPost = () => {
               "url": "https://goruslugimsk.ru"
             },
             "mainEntityOfPage": `https://goruslugimsk.ru/blog/${post.slug}`
+          })}
+        </script>
+        {/* BreadcrumbList Schema for SEO */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Главная",
+                "item": "https://goruslugimsk.ru"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Блог",
+                "item": "https://goruslugimsk.ru/blog"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": post.title,
+                "item": `https://goruslugimsk.ru/blog/${post.slug}`
+              }
+            ]
           })}
         </script>
       </Helmet>
