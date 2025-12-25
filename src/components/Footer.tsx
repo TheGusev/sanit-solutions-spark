@@ -33,9 +33,21 @@ const Footer = () => {
           <div>
             <h4 className="font-bold mb-4">Услуги</h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li>• Дезинфекция помещений</li>
-              <li>• Дезинсекция (уничтожение насекомых)</li>
-              <li>• Дератизация (борьба с грызунами)</li>
+              <li>
+                <Link to="/uslugi/dezinfekciya" className="hover:opacity-100">
+                  • Дезинфекция помещений
+                </Link>
+              </li>
+              <li>
+                <Link to="/uslugi/dezinsekciya" className="hover:opacity-100">
+                  • Дезинсекция (уничтожение насекомых)
+                </Link>
+              </li>
+              <li>
+                <Link to="/uslugi/deratizaciya" className="hover:opacity-100">
+                  • Дератизация (борьба с грызунами)
+                </Link>
+              </li>
               <li>• Озонирование</li>
               <li>• Дезодорация</li>
               <li>• Сертификация</li>

@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Phone } from "lucide-react";
+import { Phone, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import ThemeToggle from "@/components/ThemeToggle";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
@@ -33,23 +39,46 @@ const Header = () => {
     element?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const services = [
+    { title: "Дезинфекция", href: "/uslugi/dezinfekciya" },
+    { title: "Дезинсекция", href: "/uslugi/dezinsekciya" },
+    { title: "Дератизация", href: "/uslugi/deratizaciya" },
+  ];
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border transition-all duration-300 ${isScrolled ? 'py-1.5 md:py-2 min-h-[56px]' : 'py-2 md:py-4'}`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div>
+            <Link to="/">
               <h1 className="text-base md:text-xl font-bold text-primary leading-tight">Санитарные Решения</h1>
               <p className="text-xs text-muted-foreground">Дезинфекция МСК и МО</p>
-            </div>
+            </Link>
           </div>
 
           <nav className="hidden md:flex flex-wrap items-center gap-x-4 lg:gap-x-6 gap-y-2">
             {isHomePage ? (
               <>
-                <button onClick={() => scrollToSection("services")} className="text-sm font-medium hover:text-primary transition-colors">
-                  Услуги
-                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium hover:text-primary transition-colors">
+                    Услуги
+                    <ChevronDown className="w-4 h-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
+                    {services.map((service) => (
+                      <DropdownMenuItem key={service.href} asChild>
+                        <Link to={service.href} className="cursor-pointer">
+                          {service.title}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuItem asChild>
+                      <button onClick={() => scrollToSection("services")} className="w-full text-left cursor-pointer text-muted-foreground">
+                        Все услуги
+                      </button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <button onClick={() => scrollToSection("calculator")} className="text-sm font-medium hover:text-primary transition-colors">
                   Калькулятор
                 </button>
@@ -62,9 +91,21 @@ const Header = () => {
                 <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
                   Главная
                 </Link>
-                <Link to="/#services" className="text-sm font-medium hover:text-primary transition-colors">
-                  Услуги
-                </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium hover:text-primary transition-colors">
+                    Услуги
+                    <ChevronDown className="w-4 h-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
+                    {services.map((service) => (
+                      <DropdownMenuItem key={service.href} asChild>
+                        <Link to={service.href} className="cursor-pointer">
+                          {service.title}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             )}
             <Link to="/blog" className="text-sm font-medium hover:text-primary transition-colors">

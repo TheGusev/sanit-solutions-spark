@@ -1,4 +1,5 @@
 import { Bug, Rat, Wind, Flower, FileText, Microscope } from "lucide-react";
+import { Link } from "react-router-dom";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
@@ -7,20 +8,23 @@ const services = [
     icon: Microscope,
     title: "Дезинфекция",
     description: "Уничтожение вирусов, бактерий и грибков профессиональными средствами",
-    color: "text-primary"
+    color: "text-primary",
+    link: "/uslugi/dezinfekciya"
   },
   {
     icon: Bug,
     title: "Дезинсекция",
     description: "Избавление от насекомых: тараканы, клопы, муравьи, комары",
     isHit: true,
-    color: "text-orange-500"
+    color: "text-orange-500",
+    link: "/uslugi/dezinsekciya"
   },
   {
     icon: Rat,
     title: "Дератизация",
     description: "Борьба с грызунами: крысы, мыши, полёвки",
-    color: "text-amber-700"
+    color: "text-amber-700",
+    link: "/uslugi/deratizaciya"
   },
   {
     icon: Wind,
@@ -58,25 +62,50 @@ const Services = () => {
         </AnimatedSection>
 
         <div ref={ref} className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 stagger-children ${isVisible ? 'visible' : ''}`}>
-          {services.map((service, index) => (
-          <div
-            key={index}
-            className="bg-card p-4 md:p-6 lg:p-8 rounded-xl md:rounded-2xl shadow-sm hover-lift relative overflow-hidden"
-          >
-            {service.isHit && (
-              <div className="absolute -top-1 -right-12 gradient-accent text-accent-foreground px-12 py-1 text-xs font-bold rotate-45 shadow-lg">
-                ХИТ ПРОДАЖ
+          {services.map((service, index) => {
+            const CardContent = (
+              <>
+                {service.isHit && (
+                  <div className="absolute -top-1 -right-12 gradient-accent text-accent-foreground px-12 py-1 text-xs font-bold rotate-45 shadow-lg">
+                    ХИТ ПРОДАЖ
+                  </div>
+                )}
+                <div className="flex items-center gap-3 md:block">
+                  <div className="flex-shrink-0 md:w-16 md:h-16 lg:w-20 lg:h-20 md:mb-4 md:rounded-xl md:bg-primary/10 flex items-center justify-center">
+                    <service.icon className={`w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 ${service.color}`} />
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-bold md:mb-3">{service.title}</h3>
+                </div>
+                <p className="text-muted-foreground mt-2 md:mt-0">{service.description}</p>
+                {service.link && (
+                  <span className="inline-block mt-3 text-primary font-medium text-sm">
+                    Подробнее →
+                  </span>
+                )}
+              </>
+            );
+
+            if (service.link) {
+              return (
+                <Link
+                  key={index}
+                  to={service.link}
+                  className="bg-card p-4 md:p-6 lg:p-8 rounded-xl md:rounded-2xl shadow-sm hover-lift relative overflow-hidden block hover:shadow-md transition-shadow"
+                >
+                  {CardContent}
+                </Link>
+              );
+            }
+
+            return (
+              <div
+                key={index}
+                className="bg-card p-4 md:p-6 lg:p-8 rounded-xl md:rounded-2xl shadow-sm hover-lift relative overflow-hidden"
+              >
+                {CardContent}
               </div>
-            )}
-            <div className="flex items-center gap-3 md:block">
-              <div className="flex-shrink-0 md:w-16 md:h-16 lg:w-20 lg:h-20 md:mb-4 md:rounded-xl md:bg-primary/10 flex items-center justify-center">
-                <service.icon className={`w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 ${service.color}`} />
-              </div>
-              <h3 className="text-xl md:text-2xl font-bold md:mb-3">{service.title}</h3>
-            </div>
-            <p className="text-muted-foreground mt-2 md:mt-0">{service.description}</p>
-          </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
