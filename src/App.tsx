@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 
 // Admin pages
 import AdminLogin from "./pages/admin/Login";
+import AdminSetup from "./pages/admin/Setup";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminLeads from "./pages/admin/Leads";
 import AdminReviews from "./pages/admin/AdminReviews";
@@ -41,6 +42,7 @@ const App = () => (
                 <Route path="/uslugi/:slug" element={<ServicePage />} />
                 
                 {/* Admin routes */}
+                <Route path="/admin/setup" element={<AdminSetup />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/admin" element={<AdminDashboard />}>
                   <Route index element={<AdminLeads />} />
