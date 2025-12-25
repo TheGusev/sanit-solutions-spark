@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -44,8 +45,37 @@ const BlogPost = () => {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <Helmet>
+        <title>{post.title} | Санитарные Решения</title>
+        <meta name="description" content={post.excerpt} />
+        <link rel="canonical" href={`https://goruslugimsk.ru/blog/${post.slug}`} />
+        <link rel="alternate" hrefLang="ru" href={`https://goruslugimsk.ru/blog/${post.slug}`} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://goruslugimsk.ru/blog/${post.slug}`} />
+        <meta property="og:title" content={`${post.title} | Санитарные Решения`} />
+        <meta property="og:description" content={post.excerpt} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": post.title,
+            "description": post.excerpt,
+            "datePublished": post.date,
+            "author": {
+              "@type": "Organization",
+              "name": "ООО Санитарные Решения"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "ООО Санитарные Решения",
+              "url": "https://goruslugimsk.ru"
+            },
+            "mainEntityOfPage": `https://goruslugimsk.ru/blog/${post.slug}`
+          })}
+        </script>
+      </Helmet>
       
+      <Header />
       {/* Breadcrumbs */}
       <section className="pt-28 pb-8 px-4 border-b">
         <div className="container mx-auto max-w-4xl">

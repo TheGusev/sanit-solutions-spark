@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { blogPosts, categories } from "@/data/blogPosts";
@@ -15,8 +16,18 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <Helmet>
+        <title>Блог о дезинфекции | Санитарные Решения</title>
+        <meta name="description" content="Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды. Экспертные советы от специалистов ООО Санитарные Решения." />
+        <link rel="canonical" href="https://goruslugimsk.ru/blog" />
+        <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/blog" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://goruslugimsk.ru/blog" />
+        <meta property="og:title" content="Блог о дезинфекции | Санитарные Решения" />
+        <meta property="og:description" content="Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды." />
+      </Helmet>
       
+      <Header />
       {/* Hero Section */}
       <section className="pt-32 pb-16 px-4 bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto max-w-6xl text-center">
