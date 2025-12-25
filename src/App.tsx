@@ -12,6 +12,7 @@ import BlogPost from "./pages/BlogPost";
 import Privacy from "./pages/Privacy";
 import ServicePage from "./pages/ServicePage";
 import NotFound from "./pages/NotFound";
+import Contacts from "./pages/Contacts";
 
 // Admin pages
 import AdminLogin from "./pages/admin/Login";
@@ -40,6 +41,7 @@ const App = () => (
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/uslugi/:slug" element={<ServicePage />} />
+                <Route path="/contacts" element={<Contacts />} />
                 
                 {/* Admin routes */}
                 <Route path="/admin/setup" element={<AdminSetup />} />

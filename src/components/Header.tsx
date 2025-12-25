@@ -111,11 +111,9 @@ const Header = () => {
             <Link to="/blog" className="text-sm font-medium hover:text-primary transition-colors">
               Блог
             </Link>
-            {isHomePage && (
-              <button onClick={() => scrollToSection("contact")} className="text-sm font-medium hover:text-primary transition-colors">
-                Контакты
-              </button>
-            )}
+            <Link to="/contacts" className="text-sm font-medium hover:text-primary transition-colors">
+              Контакты
+            </Link>
             {isScrolled && (
               <a 
                 href="tel:+79069989888"
