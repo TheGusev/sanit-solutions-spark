@@ -112,6 +112,22 @@ const ServicePage = () => {
         <title>{service.metaTitle}</title>
         <meta name="description" content={service.metaDescription} />
         <link rel="canonical" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
+        <meta property="og:title" content={service.metaTitle} />
+        <meta property="og:description" content={service.metaDescription} />
+        <meta property="og:image" content="https://goruslugimsk.ru/og-image.jpg" />
+        <meta property="og:site_name" content="Санитарные Решения" />
+        <meta property="og:locale" content="ru_RU" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={service.metaTitle} />
+        <meta name="twitter:description" content={service.metaDescription} />
+        <meta name="twitter:image" content="https://goruslugimsk.ru/og-image.jpg" />
+        
         <script type="application/ld+json">
           {JSON.stringify(schemaMarkup)}
         </script>
