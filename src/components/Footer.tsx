@@ -77,6 +77,11 @@ const Footer = () => {
                   • Политика конфиденциальности
                 </Link>
               </li>
+              <li>
+                <Link to="/contacts" className="hover:opacity-100">
+                  • Контакты и реквизиты
+                </Link>
+              </li>
             </ul>
           </div>
 
