@@ -1,6 +1,6 @@
 // Обёртка для интеграции heatmap и session replay сервисов
 
-const YANDEX_COUNTER_ID = 105828040;
+const YANDEX_COUNTER_ID = 106001460;
 
 interface AnalyticsConfig {
   provider: 'yandex_metrika' | 'hotjar' | 'posthog' | 'none';
