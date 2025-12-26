@@ -19,6 +19,7 @@ import {
 import { LeadFormModal } from "./LeadFormModal";
 import { QuickCallForm } from "./QuickCallForm";
 import StickyCTA from "./StickyCTA";
+import DesktopStickySidebar from "./DesktopStickySidebar";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { supabase } from "@/integrations/supabase/client";
 import { trackGoal } from "@/lib/analytics";
@@ -378,17 +379,21 @@ const Calculator = () => {
   return (
     <section id="calculator" className="py-10 md:py-20 bg-background">
       <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-6 md:mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Рассчитайте <span className="text-primary">стоимость</span>
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Получите точную цену с учётом автоматической скидки
-            </p>
-          </div>
+        {/* Section header */}
+        <div className="text-center mb-6 md:mb-12 max-w-4xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            Рассчитайте <span className="text-primary">стоимость</span>
+          </h2>
+          <p className="text-xl text-muted-foreground">
+            Получите точную цену с учётом автоматической скидки
+          </p>
+        </div>
 
-          <div className="bg-card p-4 sm:p-8 rounded-3xl shadow-xl mb-20 md:mb-0">
+        {/* Split layout for desktop */}
+        <div className="max-w-6xl mx-auto lg:flex lg:gap-8">
+          {/* Left column - Main calculator */}
+          <div className="lg:w-7/12">
+            <div className="bg-card p-4 sm:p-8 rounded-3xl shadow-xl mb-20 lg:mb-0">
             {/* БЛОК 1: Базовый расчёт */}
             <div className="space-y-6">
               
@@ -790,6 +795,21 @@ const Calculator = () => {
               Нажимая кнопку, вы соглашаетесь с обработкой персональных данных
             </p>
 
+          </div>
+          </div>
+          
+          {/* Right column - Desktop Sticky Sidebar (hidden on mobile) */}
+          <div className="hidden lg:block lg:w-5/12">
+            <DesktopStickySidebar
+              finalPrice={finalPrice}
+              totalPrice={totalPrice}
+              discount={discount}
+              area={area}
+              premiseType={premiseType}
+              serviceType={serviceType}
+              getPremiseLabel={getPremiseLabel}
+              getServiceLabel={getServiceLabel}
+            />
           </div>
         </div>
       </div>
