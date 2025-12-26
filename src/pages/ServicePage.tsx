@@ -106,6 +106,31 @@ const ServicePage = () => {
     }))
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": "https://goruslugimsk.ru"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Услуги",
+        "item": "https://goruslugimsk.ru/#services"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": service.title,
+        "item": `https://goruslugimsk.ru/uslugi/${service.slug}`
+      }
+    ]
+  };
+
   return (
     <>
       <Helmet>
@@ -129,11 +154,15 @@ const ServicePage = () => {
         <meta name="twitter:description" content={service.metaDescription} />
         <meta name="twitter:image" content="https://goruslugimsk.ru/og-image.jpg" />
         
+        {/* Schema.org structured data */}
         <script type="application/ld+json">
           {JSON.stringify(schemaMarkup)}
         </script>
         <script type="application/ld+json">
           {JSON.stringify(faqSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
         </script>
       </Helmet>
 
