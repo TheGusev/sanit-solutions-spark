@@ -29,19 +29,22 @@ const services = [
     icon: Wind,
     title: "Озонирование",
     description: "Глубокая очистка воздуха и устранение запахов",
-    color: "text-sky-400"
+    color: "text-sky-400",
+    link: "/uslugi/ozonirovanie"
   },
   {
     icon: Flower,
     title: "Дезодорация",
     description: "Устранение неприятных запахов любой интенсивности",
-    color: "text-pink-400"
+    color: "text-pink-400",
+    link: "/uslugi/dezodoraciya"
   },
   {
     icon: FileText,
     title: "Сертификация",
     description: "Полный пакет документов для проверяющих органов",
-    color: "text-green-600"
+    color: "text-green-600",
+    link: "/uslugi/sertifikaciya"
   }
 ];
 
