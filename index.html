@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Санитарные Решения - Дезинфекция в Москве | Профессиональные услуги</title>
-    <meta name="description" content="ООО Санитарные Решения: профессиональная дезинфекция, дезинсекция, дератизация в Москве. Скидки до 30%. Выезд за 2 часа. Работаем с юр.лицами, ИП и физ.лицами.">
+    <meta name="description" content="ООО Санитарные Решения: профессиональная дезинфекция, дезинсекция, дератизация в Москве. Скидка 15%. Выезд в течение часа. Работаем с юр.лицами, ИП и физ.лицами.">
     <meta name="author" content="ООО Санитарные Решения" />
     <link rel="canonical" href="https://goruslugimsk.ru/" />
     <link rel="alternate" hreflang="ru" href="https://goruslugimsk.ru/" />
@@ -52,7 +52,7 @@
           "telephone": "+7-906-998-98-88",
           "email": "west-centro@mail.ru",
           "image": "https://storage.googleapis.com/gpt-engineer-file-uploads/uFFBSErXpLgk4mRuTAApiupSL4k2/social-images/social-1764192911016-photo_2025-11-11_19-21-13.jpg",
-          "description": "Профессиональная дезинфекция, дезинсекция, дератизация в Москве и Московской области. Выезд за 2 часа. Скидки до 30%.",
+          "description": "Профессиональная дезинфекция, дезинсекция, дератизация в Москве и Московской области. Выезд в течение часа. Скидка 15%.",
           "address": {
             "@type": "PostalAddress",
             "addressLocality": "Москва",
@@ -158,30 +158,135 @@
         },
         {
           "@type": "Service",
-          "serviceType": "Дезинфекция помещений",
+          "@id": "https://goruslugimsk.ru/uslugi/dezinfekciya#service",
+          "name": "Дезинфекция помещений",
+          "serviceType": "Дезинфекция",
+          "url": "https://goruslugimsk.ru/uslugi/dezinfekciya",
           "provider": {
             "@id": "https://goruslugimsk.ru/#organization"
           },
           "areaServed": "Москва и Московская область",
-          "description": "Профессиональная дезинфекция квартир, офисов и коммерческих помещений с гарантией результата"
+          "description": "Профессиональная дезинфекция квартир, офисов и коммерческих помещений. Уничтожение вирусов, бактерий, плесени с гарантией результата.",
+          "offers": {
+            "@type": "Offer",
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "price": "2000",
+              "priceCurrency": "RUB",
+              "minPrice": "2000"
+            },
+            "availability": "https://schema.org/InStock"
+          }
         },
         {
           "@type": "Service",
+          "@id": "https://goruslugimsk.ru/uslugi/dezinsekciya#service",
+          "name": "Дезинсекция — уничтожение насекомых",
           "serviceType": "Дезинсекция",
+          "url": "https://goruslugimsk.ru/uslugi/dezinsekciya",
           "provider": {
             "@id": "https://goruslugimsk.ru/#organization"
           },
           "areaServed": "Москва и Московская область",
-          "description": "Уничтожение тараканов, клопов, муравьёв и других насекомых сертифицированными препаратами"
+          "description": "Уничтожение тараканов, клопов, муравьёв и других насекомых сертифицированными препаратами. Гарантия до 1 года.",
+          "offers": {
+            "@type": "Offer",
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "price": "2500",
+              "priceCurrency": "RUB",
+              "minPrice": "2500"
+            },
+            "availability": "https://schema.org/InStock"
+          }
         },
         {
           "@type": "Service",
+          "@id": "https://goruslugimsk.ru/uslugi/deratizaciya#service",
+          "name": "Дератизация — борьба с грызунами",
           "serviceType": "Дератизация",
+          "url": "https://goruslugimsk.ru/uslugi/deratizaciya",
           "provider": {
             "@id": "https://goruslugimsk.ru/#organization"
           },
           "areaServed": "Москва и Московская область",
-          "description": "Уничтожение крыс, мышей и грызунов в жилых и коммерческих помещениях"
+          "description": "Уничтожение крыс, мышей и грызунов в жилых и коммерческих помещениях. Безопасные методы, документы для СЭС.",
+          "offers": {
+            "@type": "Offer",
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "price": "3000",
+              "priceCurrency": "RUB",
+              "minPrice": "3000"
+            },
+            "availability": "https://schema.org/InStock"
+          }
+        },
+        {
+          "@type": "Service",
+          "@id": "https://goruslugimsk.ru/uslugi/ozonirovanie#service",
+          "name": "Озонирование помещений",
+          "serviceType": "Озонирование",
+          "url": "https://goruslugimsk.ru/uslugi/ozonirovanie",
+          "provider": {
+            "@id": "https://goruslugimsk.ru/#organization"
+          },
+          "areaServed": "Москва и Московская область",
+          "description": "Глубокая очистка воздуха и поверхностей озоном. Устранение запахов, уничтожение бактерий и вирусов. Безопасно после проветривания.",
+          "offers": {
+            "@type": "Offer",
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "price": "3000",
+              "priceCurrency": "RUB",
+              "minPrice": "3000"
+            },
+            "availability": "https://schema.org/InStock"
+          }
+        },
+        {
+          "@type": "Service",
+          "@id": "https://goruslugimsk.ru/uslugi/dezodoraciya#service",
+          "name": "Дезодорация — устранение запахов",
+          "serviceType": "Дезодорация",
+          "url": "https://goruslugimsk.ru/uslugi/dezodoraciya",
+          "provider": {
+            "@id": "https://goruslugimsk.ru/#organization"
+          },
+          "areaServed": "Москва и Московская область",
+          "description": "Профессиональное устранение неприятных запахов: после пожара, от животных, табака, плесени. Нейтрализация на молекулярном уровне.",
+          "offers": {
+            "@type": "Offer",
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "price": "2500",
+              "priceCurrency": "RUB",
+              "minPrice": "2500"
+            },
+            "availability": "https://schema.org/InStock"
+          }
+        },
+        {
+          "@type": "Service",
+          "@id": "https://goruslugimsk.ru/uslugi/sertifikaciya#service",
+          "name": "Санитарная сертификация",
+          "serviceType": "Сертификация для СЭС",
+          "url": "https://goruslugimsk.ru/uslugi/sertifikaciya",
+          "provider": {
+            "@id": "https://goruslugimsk.ru/#organization"
+          },
+          "areaServed": "Москва и Московская область",
+          "description": "Подготовка документов для СЭС и Роспотребнадзора. Акты выполненных работ, сертификаты на препараты, журналы учёта. Помощь при проверках.",
+          "offers": {
+            "@type": "Offer",
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "price": "5000",
+              "priceCurrency": "RUB",
+              "minPrice": "5000"
+            },
+            "availability": "https://schema.org/InStock"
+          }
         }
       ]
     }
@@ -195,8 +300,8 @@
     <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/uFFBSErXpLgk4mRuTAApiupSL4k2/social-images/social-1764192911016-photo_2025-11-11_19-21-13.jpg">
     <meta property="og:title" content="Санитарные Решения - Дезинфекция в Москве | Профессиональные услуги">
     <meta name="twitter:title" content="Санитарные Решения - Дезинфекция в Москве | Профессиональные услуги">
-    <meta property="og:description" content="ООО Санитарные Решения: профессиональная дезинфекция, дезинсекция, дератизация в Москве. Скидки до 30%. Выезд за 2 часа. Работаем с юр.лицами, ИП и физ.лицами.">
-    <meta name="twitter:description" content="ООО Санитарные Решения: профессиональная дезинфекция, дезинсекция, дератизация в Москве. Скидки до 30%. Выезд за 2 часа. Работаем с юр.лицами, ИП и физ.лицами.">
+    <meta property="og:description" content="ООО Санитарные Решения: профессиональная дезинфекция, дезинсекция, дератизация в Москве. Скидка 15%. Выезд в течение часа. Работаем с юр.лицами, ИП и физ.лицами.">
+    <meta name="twitter:description" content="ООО Санитарные Решения: профессиональная дезинфекция, дезинсекция, дератизация в Москве. Скидка 15%. Выезд в течение часа. Работаем с юр.лицами, ИП и физ.лицами.">
     <link rel="icon" type="image/x-icon" href="https://storage.googleapis.com/gpt-engineer-file-uploads/uFFBSErXpLgk4mRuTAApiupSL4k2/uploads/1764192924993-photo_2025-11-11_19-21-13.jpg">
   </head>
 
@@ -204,12 +309,15 @@
     <noscript>
       <div style="padding: 40px; font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
         <h1>Профессиональная дезинфекция в Москве — Санитарные Решения</h1>
-        <p>ООО Санитарные Решения: дезинфекция, дезинсекция, дератизация в Москве и Московской области. Скидки до 30%. Выезд за 2 часа. Работаем круглосуточно.</p>
+        <p>ООО Санитарные Решения: дезинфекция, дезинсекция, дератизация в Москве и Московской области. Скидка 15%. Выезд в течение часа. Работаем круглосуточно.</p>
         <p><strong>Наши услуги:</strong></p>
         <ul>
-          <li>Дезинфекция помещений — уничтожение вирусов, бактерий, плесени</li>
-          <li>Дезинсекция — уничтожение тараканов, клопов, муравьёв</li>
-          <li>Дератизация — уничтожение крыс и мышей</li>
+          <li><a href="/uslugi/dezinfekciya">Дезинфекция помещений</a> — уничтожение вирусов, бактерий, плесени. От 2000₽</li>
+          <li><a href="/uslugi/dezinsekciya">Дезинсекция</a> — уничтожение тараканов, клопов, муравьёв. От 2500₽</li>
+          <li><a href="/uslugi/deratizaciya">Дератизация</a> — уничтожение крыс и мышей. От 3000₽</li>
+          <li><a href="/uslugi/ozonirovanie">Озонирование</a> — глубокая очистка воздуха озоном. От 3000₽</li>
+          <li><a href="/uslugi/dezodoraciya">Дезодорация</a> — устранение неприятных запахов. От 2500₽</li>
+          <li><a href="/uslugi/sertifikaciya">Санитарная сертификация</a> — документы для СЭС. От 5000₽</li>
         </ul>
         <p>Телефон: <a href="tel:+79069989888">+7 (906) 998-98-88</a></p>
         <p>Email: <a href="mailto:west-centro@mail.ru">west-centro@mail.ru</a></p>
@@ -221,7 +329,7 @@
     <div id="root">
       <!-- SSR fallback content for search bots -->
       <h1 style="font-size: 2rem; font-weight: bold; text-align: center; padding: 60px 20px 20px;">Дезинфекция, дезинсекция, дератизация в Москве — Санитарные Решения</h1>
-      <p style="text-align: center; padding: 0 20px; max-width: 600px; margin: 0 auto;">Профессиональные санитарные услуги для дома и бизнеса. Выезд за 2 часа. Скидки до 30%. Работаем круглосуточно.</p>
+      <p style="text-align: center; padding: 0 20px; max-width: 600px; margin: 0 auto;">Профессиональные санитарные услуги для дома и бизнеса. Выезд в течение часа. Скидка 15%. Работаем круглосуточно.</p>
     </div>
     
     <!-- Main application script -->
