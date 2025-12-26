@@ -29,6 +29,7 @@ const Contacts = () => {
     "url": "https://goruslugimsk.ru/contacts",
     "mainEntity": {
       "@type": "LocalBusiness",
+      "@id": "https://goruslugimsk.ru/#organization",
       "name": "ООО Санитарные Решения",
       "description": "Профессиональные услуги дезинфекции, дезинсекции и дератизации для бизнеса и частных лиц в Москве и Московской области",
       "url": "https://goruslugimsk.ru",
