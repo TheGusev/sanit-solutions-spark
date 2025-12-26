@@ -39,13 +39,21 @@ const Index = () => {
   useScrollDepth();
 
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-      
-      // Show popup after 60% scroll, only once per session
-      if (scrollPercentage > 60 && !sessionStorage.getItem("discountShown")) {
-        setShowDiscountPopup(true);
-        sessionStorage.setItem("discountShown", "true");
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+          
+          // Show popup after 60% scroll, only once per session
+          if (scrollPercentage > 60 && !sessionStorage.getItem("discountShown")) {
+            setShowDiscountPopup(true);
+            sessionStorage.setItem("discountShown", "true");
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -57,7 +65,7 @@ const Index = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("scroll", handleScroll);

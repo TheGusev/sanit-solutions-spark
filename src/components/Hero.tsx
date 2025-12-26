@@ -5,7 +5,7 @@ import { useParallax } from "@/hooks/useParallax";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { getCopy } from "@/lib/copyUtils";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { trackGoal } from "@/lib/analytics";
 
 interface HeroProps {
@@ -95,13 +95,17 @@ const DEFAULT_HERO_CONTENT: HeroContent = {
 const Hero = ({ onDiscountClick }: HeroProps) => {
   const { context } = useTraffic();
   const parallaxOffset = useParallax(0.3);
+  const hasLoggedView = useRef(false);
   
   // Получаем текст из централизованного словаря с A/B вариантом
   const copy = getCopy('hero', context?.intent, context?.variantId || 'A');
   
-  // Логируем показ hero для A/B анализа
+  // Логируем показ hero для A/B анализа (один раз)
   useEffect(() => {
-    if (context && context.initialized) {
+    if (context && context.initialized && !hasLoggedView.current) {
+      hasLoggedView.current = true;
+      
+      // Fire and forget - не блокируем UI
       supabase.functions.invoke('log-traffic-event', {
         body: {
           session_id: context.sessionId,
@@ -119,9 +123,9 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
             variant: context.variantId
           }
         }
-      }).catch(err => console.debug('Hero view logging failed:', err));
+      }).catch(() => {}); // Silent fail
     }
-  }, [context?.sessionId]);
+  }, [context?.initialized]);
   
   const scrollToCalculator = () => {
     const element = document.getElementById("calculator");
