@@ -15,7 +15,6 @@ const services = [
     icon: Bug,
     title: "Дезинсекция",
     description: "Избавление от насекомых: тараканы, клопы, муравьи, комары",
-    isHit: true,
     color: "text-orange-500",
     link: "/uslugi/dezinsekciya"
   },
@@ -64,12 +63,7 @@ const Services = () => {
         <div ref={ref} className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 stagger-children ${isVisible ? 'visible' : ''}`}>
           {services.map((service, index) => {
             const CardContent = (
-              <>
-                {service.isHit && (
-                  <div className="absolute -top-1 -right-12 gradient-accent text-accent-foreground px-12 py-1 text-xs font-bold rotate-45 shadow-lg">
-                    ХИТ ПРОДАЖ
-                  </div>
-                )}
+            <>
                 <div className="flex items-center gap-3 md:block">
                   <div className="flex-shrink-0 md:w-16 md:h-16 lg:w-20 lg:h-20 md:mb-4 md:rounded-xl md:bg-primary/10 flex items-center justify-center">
                     <service.icon className={`w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 ${service.color}`} />
