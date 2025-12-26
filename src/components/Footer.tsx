@@ -48,9 +48,21 @@ const Footer = () => {
                   • Дератизация (борьба с грызунами)
                 </Link>
               </li>
-              <li>• Озонирование</li>
-              <li>• Дезодорация</li>
-              <li>• Сертификация</li>
+              <li>
+                <Link to="/uslugi/ozonirovanie" className="hover:opacity-100">
+                  • Озонирование
+                </Link>
+              </li>
+              <li>
+                <Link to="/uslugi/dezodoraciya" className="hover:opacity-100">
+                  • Дезодорация
+                </Link>
+              </li>
+              <li>
+                <Link to="/uslugi/sertifikaciya" className="hover:opacity-100">
+                  • Санитарная сертификация
+                </Link>
+              </li>
             </ul>
           </div>
 
