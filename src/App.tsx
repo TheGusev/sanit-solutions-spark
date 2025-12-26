@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,23 +7,28 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { HelmetProvider } from "react-helmet-async";
 import { TrafficProvider } from "@/contexts/TrafficContext";
-import Index from "./pages/Index";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import Privacy from "./pages/Privacy";
-import ServicePage from "./pages/ServicePage";
-import NotFound from "./pages/NotFound";
-import Contacts from "./pages/Contacts";
+import PageLoader from "@/components/PageLoader";
 
-// Admin pages
-import AdminLogin from "./pages/admin/Login";
-import AdminSetup from "./pages/admin/Setup";
-import AdminDashboard from "./pages/admin/Dashboard";
-import AdminLeads from "./pages/admin/Leads";
-import AdminReviews from "./pages/admin/AdminReviews";
-import AdminAnalytics from "./pages/admin/Analytics";
-import AdminMVT from "./pages/admin/MVT";
-import AdminSettings from "./pages/admin/Settings";
+// Critical - loads immediately (main landing page)
+import Index from "./pages/Index";
+
+// Lazy loaded pages - load on demand
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const ServicePage = lazy(() => import("./pages/ServicePage"));
+const Contacts = lazy(() => import("./pages/Contacts"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Admin pages - separate chunk, load on demand
+const AdminLogin = lazy(() => import("./pages/admin/Login"));
+const AdminSetup = lazy(() => import("./pages/admin/Setup"));
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+const AdminLeads = lazy(() => import("./pages/admin/Leads"));
+const AdminReviews = lazy(() => import("./pages/admin/AdminReviews"));
+const AdminAnalytics = lazy(() => import("./pages/admin/Analytics"));
+const AdminMVT = lazy(() => import("./pages/admin/MVT"));
+const AdminSettings = lazy(() => import("./pages/admin/Settings"));
 
 const queryClient = new QueryClient();
 
@@ -35,28 +41,30 @@ const App = () => (
           <Sonner />
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <TrafficProvider>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:slug" element={<BlogPost />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/uslugi/:slug" element={<ServicePage />} />
-                <Route path="/contacts" element={<Contacts />} />
-                
-                {/* Admin routes */}
-                <Route path="/admin/setup" element={<AdminSetup />} />
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin" element={<AdminDashboard />}>
-                  <Route index element={<AdminLeads />} />
-                  <Route path="reviews" element={<AdminReviews />} />
-                  <Route path="analytics" element={<AdminAnalytics />} />
-                  <Route path="mvt" element={<AdminMVT />} />
-                  <Route path="settings" element={<AdminSettings />} />
-                </Route>
-                
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/uslugi/:slug" element={<ServicePage />} />
+                  <Route path="/contacts" element={<Contacts />} />
+                  
+                  {/* Admin routes */}
+                  <Route path="/admin/setup" element={<AdminSetup />} />
+                  <Route path="/admin/login" element={<AdminLogin />} />
+                  <Route path="/admin" element={<AdminDashboard />}>
+                    <Route index element={<AdminLeads />} />
+                    <Route path="reviews" element={<AdminReviews />} />
+                    <Route path="analytics" element={<AdminAnalytics />} />
+                    <Route path="mvt" element={<AdminMVT />} />
+                    <Route path="settings" element={<AdminSettings />} />
+                  </Route>
+                  
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
             </TrafficProvider>
           </BrowserRouter>
         </TooltipProvider>
