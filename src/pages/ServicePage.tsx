@@ -222,7 +222,7 @@ const ServicePage = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-5 h-5 text-primary" />
-                    <span>Выезд за 2 часа</span>
+                    <span>Выезд в течение часа</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Award className="w-5 h-5 text-primary" />
@@ -375,7 +375,7 @@ const ServicePage = () => {
                 Закажите {service.title.toLowerCase()} сегодня
               </h2>
               <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
-                Оставьте заявку или позвоните — выезд мастера в течение 2 часов. 
+                Оставьте заявку или позвоните — выезд мастера в течение часа. 
                 Работаем круглосуточно без выходных.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
