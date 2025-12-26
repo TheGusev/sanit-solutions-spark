@@ -1,0 +1,12 @@
+# Security Contact Information for goruslugimsk.ru
+# If you have found a security vulnerability, please report it to us.
+
+Contact: mailto:west-centro@mail.ru
+Contact: tel:+79069989888
+Expires: 2026-12-31T23:59:59.000Z
+Preferred-Languages: ru, en
+Canonical: https://goruslugimsk.ru/.well-known/security.txt
+
+# ООО Санитарные Решения
+# ИНН: 5410169338
+# ОГРН: 1245400015653

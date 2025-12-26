@@ -33,6 +33,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
   const { context } = useTraffic();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("+7 ");
+  const [honeypot, setHoneypot] = useState(""); // Bot protection - hidden field
   // Email removed - not needed for conversion
   const [consent, setConsent] = useState(true); // Auto-selected for better conversion
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
@@ -88,6 +89,17 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Bot protection - if honeypot is filled, silently reject
+    if (honeypot) {
+      console.log('🤖 Bot detected via honeypot');
+      toast({
+        title: "Заявка принята!",
+        description: "Перезвоним в течение 15 минут",
+      });
+      onOpenChange(false);
+      return;
+    }
 
     if (!validateForm()) {
       return;
@@ -203,6 +215,18 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          {/* Honeypot field - hidden from users, only bots fill it */}
+          <input
+            type="text"
+            name="website"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+            style={{ display: 'none' }}
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+          />
+          
           {/* Name field */}
           <div className="space-y-2">
             <Label htmlFor="name">
