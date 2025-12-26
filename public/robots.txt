@@ -1,15 +1,20 @@
-# Block old WordPress URLs (zombie pages)
+# Block old WordPress URLs and admin panel
 User-agent: Yandex
+Allow: /
 Disallow: /2022/
 Disallow: /wp-admin/
 Disallow: /wp-content/
 Disallow: /wp-includes/
+Disallow: /admin/
+Host: goruslugimsk.ru
 
 User-agent: Googlebot
 Allow: /
+Disallow: /admin/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin/
 
 User-agent: Twitterbot
 Allow: /
@@ -23,6 +28,7 @@ Disallow: /2022/
 Disallow: /wp-admin/
 Disallow: /wp-content/
 Disallow: /wp-includes/
+Disallow: /admin/
 
 # Sitemap
 Sitemap: https://goruslugimsk.ru/sitemap.xml
