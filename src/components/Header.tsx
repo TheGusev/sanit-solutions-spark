@@ -27,10 +27,17 @@ const Header = () => {
   };
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 100);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 100);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -46,9 +53,13 @@ const Header = () => {
   ];
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border transition-all duration-300 ${isScrolled ? 'py-1.5 md:py-2 min-h-[56px]' : 'py-2 md:py-4'}`}>
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background/95 backdrop-blur-sm border-b border-border">
+      <div 
+        className={`h-full transition-transform duration-300 origin-top ${isScrolled ? 'scale-y-[0.875]' : 'scale-y-100'}`}
+        style={{ willChange: 'transform' }}
+      >
+      <div className="container mx-auto px-4 h-full">
+        <div className="flex items-center justify-between h-full">
           <div className="flex items-center gap-3">
             <Link to="/">
               <h1 className="text-base md:text-xl font-bold text-primary leading-tight">Санитарные Решения</h1>
@@ -138,6 +149,7 @@ const Header = () => {
             </Button>
           </div>
         </div>
+      </div>
       </div>
     </header>
   );
