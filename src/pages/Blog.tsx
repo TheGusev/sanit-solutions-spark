@@ -4,9 +4,12 @@ import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import StructuredData from "@/components/StructuredData";
 import { blogPosts, categories } from "@/data/blogPosts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
+const BASE_URL = "https://goruslugimsk.ru";
 
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
@@ -14,6 +17,15 @@ const Blog = () => {
   const filteredPosts = selectedCategory === "Все" 
     ? blogPosts 
     : blogPosts.filter(post => post.category === selectedCategory);
+
+  // ItemList data for Schema.org
+  const itemListData = blogPosts.map((post, index) => ({
+    name: post.title,
+    url: `${BASE_URL}/blog/${post.slug}`,
+    position: index + 1,
+    description: post.excerpt,
+    datePublished: post.date
+  }));
 
   return (
     <div className="min-h-screen">
@@ -27,6 +39,14 @@ const Blog = () => {
         <meta property="og:title" content="Блог о дезинфекции | Санитарные Решения" />
         <meta property="og:description" content="Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды." />
       </Helmet>
+
+      {/* ItemList Schema.org for blog articles */}
+      <StructuredData 
+        type="ItemList"
+        name="Блог о дезинфекции и борьбе с вредителями"
+        description="Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды от экспертов ООО Санитарные Решения"
+        items={itemListData}
+      />
       
       <Header />
 
