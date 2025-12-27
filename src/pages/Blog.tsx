@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { blogPosts, categories } from "@/data/blogPosts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -28,8 +29,16 @@ const Blog = () => {
       </Helmet>
       
       <Header />
+
+      {/* Breadcrumbs */}
+      <section className="pt-28 pb-4 px-4 border-b">
+        <div className="container mx-auto max-w-6xl">
+          <Breadcrumbs items={[{ label: "Блог" }]} />
+        </div>
+      </section>
+
       {/* Hero Section */}
-      <section className="pt-32 pb-16 px-4 bg-gradient-to-b from-primary/5 to-background">
+      <section className="pt-12 pb-16 px-4 bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto max-w-6xl text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
             📚 Полезные статьи
