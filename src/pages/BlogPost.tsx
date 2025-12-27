@@ -4,10 +4,10 @@ import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { blogPosts } from "@/data/blogPosts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ChevronRight } from "lucide-react";
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -74,50 +74,19 @@ const BlogPost = () => {
             "mainEntityOfPage": `https://goruslugimsk.ru/blog/${post.slug}`
           })}
         </script>
-        {/* BreadcrumbList Schema for SEO */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Главная",
-                "item": "https://goruslugimsk.ru"
-              },
-              {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Блог",
-                "item": "https://goruslugimsk.ru/blog"
-              },
-              {
-                "@type": "ListItem",
-                "position": 3,
-                "name": post.title,
-                "item": `https://goruslugimsk.ru/blog/${post.slug}`
-              }
-            ]
-          })}
-        </script>
       </Helmet>
       
       <Header />
+
       {/* Breadcrumbs */}
       <section className="pt-28 pb-8 px-4 border-b">
         <div className="container mx-auto max-w-4xl">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-primary">
-              Главная
-            </Link>
-            <ChevronRight className="w-4 h-4" />
-            <Link to="/blog" className="hover:text-primary">
-              Блог
-            </Link>
-            <ChevronRight className="w-4 h-4" />
-            <span className="text-foreground">{post.title}</span>
-          </div>
+          <Breadcrumbs 
+            items={[
+              { label: "Блог", href: "/blog" },
+              { label: post.title }
+            ]} 
+          />
         </div>
       </section>
 
