@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
 import Header from "@/components/Header";
@@ -7,9 +7,9 @@ import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import TableOfContents, { generateContentWithIds, extractHeadings } from "@/components/TableOfContents";
+import RelatedArticles from "@/components/RelatedArticles";
 import { blogPosts } from "@/data/blogPosts";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 const BASE_URL = "https://goruslugimsk.ru";
 
@@ -42,10 +42,6 @@ const BlogPost = () => {
       </div>
     );
   }
-
-  const relatedPosts = blogPosts
-    .filter((p) => p.category === post.category && p.id !== post.id)
-    .slice(0, 3);
 
   const headings = extractHeadings(post.content);
   const showToc = headings.length >= 3;
@@ -160,40 +156,12 @@ const BlogPost = () => {
       </section>
 
       {/* Related Articles */}
-      {relatedPosts.length > 0 && (
-        <section className="py-16 px-4 bg-muted/30">
-          <div className="container mx-auto max-w-6xl">
-            <h2 className="text-3xl font-bold text-center mb-12">
-              Похожие статьи
-            </h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              {relatedPosts.map((relatedPost) => (
-                <Link 
-                  key={relatedPost.id} 
-                  to={`/blog/${relatedPost.slug}`}
-                  className="group"
-                >
-                  <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                    <CardHeader>
-                      <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium inline-block mb-3">
-                        {relatedPost.category}
-                      </span>
-                      <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
-                        {relatedPost.title}
-                      </h3>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground line-clamp-3">
-                        {relatedPost.excerpt}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      <RelatedArticles
+        currentPostId={post.id}
+        category={post.category}
+        tags={post.tags}
+        maxItems={3}
+      />
 
       {/* CTA Section */}
       <section className="py-16 px-4 bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-primary-foreground">
