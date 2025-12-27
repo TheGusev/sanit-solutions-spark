@@ -12,6 +12,7 @@ export interface BlogPost {
   category: "Дезинфекция" | "Дезинсекция" | "Дератизация" | "Советы";
   date: string;
   readTime: string;
+  tags: string[];
 }
 
 export const blogPosts: BlogPost[] = [
@@ -24,6 +25,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-15",
     readTime: "5 мин",
     image: Home,
+    tags: ["подготовка", "советы", "чек-лист", "квартира", "офис"],
     content: `
 ## Зачем нужна подготовка?
 
@@ -61,6 +63,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-12",
     readTime: "6 мин",
     image: Wind,
+    tags: ["туман", "технологии", "методы", "инсектициды", "дезинфекция"],
     content: `
 ## Что такое туманная дезинфекция?
 
@@ -112,6 +115,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-10",
     readTime: "7 мин",
     image: Bug,
+    tags: ["тараканы", "насекомые", "мифы", "профилактика", "квартира"],
     content: `
 ## Миф 1: Тараканы заводятся только в грязных квартирах
 
@@ -156,6 +160,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-08",
     readTime: "5 мин",
     image: WindAlt,
+    tags: ["озонирование", "воздух", "ремонт", "запахи", "технологии"],
     content: `
 ## Что такое озонирование?
 
@@ -220,6 +225,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-05",
     readTime: "6 мин",
     image: Rat,
+    tags: ["грызуны", "мыши", "крысы", "профилактика", "методы"],
     content: `
 ## Почему грызуны опасны?
 
@@ -293,6 +299,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-03-01",
     readTime: "5 мин",
     image: Calendar,
+    tags: ["сезонность", "вредители", "профилактика", "календарь", "насекомые"],
     content: `
 ## Весна (март-май)
 
@@ -380,6 +387,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-02-28",
     readTime: "6 мин",
     image: ThermometerSun,
+    tags: ["офис", "бизнес", "дезинфекция", "санитария", "закон"],
     content: `
 ## Законодательные требования
 
@@ -477,6 +485,7 @@ export const blogPosts: BlogPost[] = [
     date: "2024-02-25",
     readTime: "8 мин",
     image: Bug,
+    tags: ["клопы", "насекомые", "квартира", "методы", "профилактика"],
     content: `
 ## Как выглядят клопы?
 
