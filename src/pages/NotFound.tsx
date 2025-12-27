@@ -7,17 +7,9 @@ const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Redirect old WordPress URLs to homepage
-    if (location.pathname.startsWith('/2022/') || 
-        location.pathname.startsWith('/wp-') ||
-        location.pathname.includes('привет-мир')) {
-      window.location.replace('/');
-      return;
-    }
-
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
 
-    // Add noindex meta tag for search engines
+    // Add noindex meta tag for search engines (важно для деиндексации старых WordPress страниц)
     const metaRobots = document.createElement('meta');
     metaRobots.name = 'robots';
     metaRobots.content = 'noindex, nofollow';
@@ -29,13 +21,6 @@ const NotFound = () => {
       }
     };
   }, [location.pathname]);
-
-  // Don't render anything if redirecting
-  if (location.pathname.startsWith('/2022/') || 
-      location.pathname.startsWith('/wp-') ||
-      location.pathname.includes('привет-мир')) {
-    return null;
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
