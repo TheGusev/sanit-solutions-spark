@@ -436,7 +436,6 @@ export type Database = {
         Args: { p_intent: string; p_test_name: string; p_variant_key: string }
         Returns: undefined
       }
-      verify_admin_access: { Args: never; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
