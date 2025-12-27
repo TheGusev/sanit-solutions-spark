@@ -9,7 +9,7 @@ import { useEffect, useRef } from "react";
 import { trackGoal } from "@/lib/analytics";
 
 interface HeroProps {
-  onDiscountClick: () => void;
+  onDiscountClick?: () => void;
 }
 
 interface HeroContent {

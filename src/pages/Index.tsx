@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { Helmet } from "react-helmet-async";
 import SectionLoader from "@/components/SectionLoader";
 import { useMLPrediction } from "@/hooks/useMLPrediction";
@@ -23,13 +23,13 @@ const Reviews = lazy(() => import("@/components/Reviews"));
 const Footer = lazy(() => import("@/components/Footer"));
 
 // Interactive components - lazy loaded
-const DiscountPopup = lazy(() => import("@/components/DiscountPopup"));
+const FlashDiscountBadge = lazy(() => import("@/components/FlashDiscountBadge"));
+const StickyDiscountBanner = lazy(() => import("@/components/StickyDiscountBanner"));
 const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
 const FloatingButtons = lazy(() => import("@/components/FloatingButtons"));
 const ABTestDebug = lazy(() => import("@/components/ABTestDebug"));
 
 const Index = () => {
-  const [showDiscountPopup, setShowDiscountPopup] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
   
   // Integrate ML prediction in main flow for real-time personalization
@@ -39,24 +39,6 @@ const Index = () => {
   useScrollDepth();
 
   useEffect(() => {
-    let ticking = false;
-    
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-          
-          // Show popup after 60% scroll, only once per session
-          if (scrollPercentage > 60 && !sessionStorage.getItem("discountShown")) {
-            setShowDiscountPopup(true);
-            sessionStorage.setItem("discountShown", "true");
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
     // Toggle debug panel with Ctrl+Shift+D
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'D') {
@@ -65,10 +47,8 @@ const Index = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
@@ -82,7 +62,7 @@ const Index = () => {
       
       {/* Critical - Above the fold */}
       <Header />
-      <Hero onDiscountClick={() => setShowDiscountPopup(true)} />
+      <Hero />
       <StatsCounter />
       <TrustBadges />
       <IntentBanner />
@@ -116,12 +96,12 @@ const Index = () => {
         <Footer />
       </Suspense>
       
-      {/* Interactive components */}
+      {/* Compact discount elements */}
       <Suspense fallback={null}>
-        <DiscountPopup 
-          open={showDiscountPopup} 
-          onOpenChange={setShowDiscountPopup}
-        />
+        <FlashDiscountBadge />
+      </Suspense>
+      <Suspense fallback={null}>
+        <StickyDiscountBanner />
       </Suspense>
       <Suspense fallback={null}>
         <ExitIntentPopup />
