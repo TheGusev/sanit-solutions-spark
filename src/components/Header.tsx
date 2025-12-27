@@ -62,7 +62,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-full">
           <div className="flex items-center gap-3">
             <Link to="/">
-              <h1 className="text-base md:text-xl font-bold text-primary leading-tight">Санитарные Решения</h1>
+              <span className="text-base md:text-xl font-bold text-primary leading-tight block">Санитарные Решения</span>
               <p className="text-xs text-muted-foreground">Дезинфекция МСК и МО</p>
             </Link>
           </div>
