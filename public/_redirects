@@ -1,0 +1,20 @@
+# ====================================
+# Редиректы для goruslugimsk.ru
+# ====================================
+
+# 410 Gone — старые WordPress URL (удалены навсегда)
+# Яндекс/Google видят 410 → быстро удаляют из индекса
+/2022/*              /404.html   410
+/wp-admin/*          /404.html   410
+/wp-content/*        /404.html   410
+/wp-includes/*       /404.html   410
+/wp-login.php        /404.html   410
+/xmlrpc.php          /404.html   410
+/feed/*              /404.html   410
+
+# 404 — попытки взлома (WordPress paths)
+/wp-json/*           /404.html   404
+/wp-cron.php         /404.html   404
+
+# SPA Fallback — все остальные роуты обрабатывает React Router
+/*                   /index.html  200
