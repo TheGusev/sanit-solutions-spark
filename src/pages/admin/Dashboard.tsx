@@ -40,15 +40,11 @@ const AdminDashboard = () => {
         return;
       }
 
-      // Check admin role
-      const { data: roleData } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', session.user.id)
-        .eq('role', 'admin')
-        .single();
+      // Server-side admin role verification via RPC
+      const { data, error } = await supabase.rpc('verify_admin_access');
+      const authResult = data as { authorized: boolean; role: string } | null;
 
-      if (!roleData) {
+      if (error || !authResult?.authorized) {
         toast.error('Нет прав доступа');
         await supabase.auth.signOut();
         navigate('/admin/login');
