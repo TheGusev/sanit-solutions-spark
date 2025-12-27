@@ -5,9 +5,13 @@ import DOMPurify from "dompurify";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import StructuredData from "@/components/StructuredData";
+import TableOfContents, { generateContentWithIds, extractHeadings } from "@/components/TableOfContents";
 import { blogPosts } from "@/data/blogPosts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
+const BASE_URL = "https://goruslugimsk.ru";
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -43,38 +47,33 @@ const BlogPost = () => {
     .filter((p) => p.category === post.category && p.id !== post.id)
     .slice(0, 3);
 
+  const headings = extractHeadings(post.content);
+  const showToc = headings.length >= 3;
+
   return (
     <div className="min-h-screen">
       <Helmet>
         <title>{post.title} | Санитарные Решения</title>
         <meta name="description" content={post.excerpt} />
-        <link rel="canonical" href={`https://goruslugimsk.ru/blog/${post.slug}`} />
-        <link rel="alternate" hrefLang="ru" href={`https://goruslugimsk.ru/blog/${post.slug}`} />
+        <link rel="canonical" href={`${BASE_URL}/blog/${post.slug}`} />
+        <link rel="alternate" hrefLang="ru" href={`${BASE_URL}/blog/${post.slug}`} />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={`https://goruslugimsk.ru/blog/${post.slug}`} />
+        <meta property="og:url" content={`${BASE_URL}/blog/${post.slug}`} />
         <meta property="og:title" content={`${post.title} | Санитарные Решения`} />
         <meta property="og:description" content={post.excerpt} />
-        {/* BlogPosting Schema */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            "headline": post.title,
-            "description": post.excerpt,
-            "datePublished": post.date,
-            "author": {
-              "@type": "Organization",
-              "name": "ООО Санитарные Решения"
-            },
-            "publisher": {
-              "@type": "Organization",
-              "name": "ООО Санитарные Решения",
-              "url": "https://goruslugimsk.ru"
-            },
-            "mainEntityOfPage": `https://goruslugimsk.ru/blog/${post.slug}`
-          })}
-        </script>
       </Helmet>
+
+      {/* BlogPosting Schema.org */}
+      <StructuredData 
+        type="BlogPosting"
+        post={{
+          title: post.title,
+          excerpt: post.excerpt,
+          date: post.date,
+          slug: post.slug
+        }}
+        baseUrl={BASE_URL}
+      />
       
       <Header />
 
@@ -116,39 +115,47 @@ const BlogPost = () => {
         </div>
       </section>
 
-      {/* Article Content */}
+      {/* Article Content with TOC */}
       <section className="pb-16 px-4">
-        <div className="container mx-auto max-w-3xl">
-          <div 
-            className="prose prose-lg max-w-none
-              prose-headings:text-foreground prose-headings:font-bold
-              prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-              prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
-              prose-strong:text-foreground prose-strong:font-semibold
-              prose-ul:text-muted-foreground prose-ul:my-4
-              prose-li:my-2
-            "
-            dangerouslySetInnerHTML={{ 
-              __html: DOMPurify.sanitize(
-                post.content.split('\n').map(line => {
-                  if (line.startsWith('## ')) {
-                    return `<h2>${line.replace('## ', '')}</h2>`;
-                  } else if (line.startsWith('**') && line.endsWith('**')) {
-                    return `<p><strong>${line.replace(/\*\*/g, '')}</strong></p>`;
-                  } else if (line.startsWith('✅') || line.startsWith('❌') || line.startsWith('📍') || line.startsWith('⚠️')) {
-                    return `<p>${line}</p>`;
-                  } else if (line.startsWith('- ')) {
-                    return `<li>${line.replace('- ', '')}</li>`;
-                  } else if (line.trim() === '') {
-                    return '';
-                  } else {
-                    return `<p>${line}</p>`;
-                  }
-                }).join(''),
-                { ALLOWED_TAGS: ['h2', 'p', 'strong', 'li', 'ul', 'ol', 'em', 'br'] }
-              )
-            }}
-          />
+        <div className="container mx-auto max-w-6xl">
+          <div className={showToc ? "grid lg:grid-cols-[250px_1fr] gap-8" : ""}>
+            {/* Table of Contents - Desktop Sidebar */}
+            {showToc && (
+              <aside className="hidden lg:block">
+                <div className="sticky top-28">
+                  <TableOfContents content={post.content} />
+                </div>
+              </aside>
+            )}
+
+            {/* Main Content */}
+            <div className="max-w-3xl mx-auto lg:mx-0">
+              {/* Mobile TOC */}
+              {showToc && (
+                <div className="lg:hidden mb-8">
+                  <TableOfContents content={post.content} />
+                </div>
+              )}
+
+              <div 
+                className="prose prose-lg max-w-none
+                  prose-headings:text-foreground prose-headings:font-bold prose-headings:scroll-mt-28
+                  prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                  prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                  prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
+                  prose-strong:text-foreground prose-strong:font-semibold
+                  prose-ul:text-muted-foreground prose-ul:my-4
+                  prose-li:my-2
+                "
+                dangerouslySetInnerHTML={{ 
+                  __html: DOMPurify.sanitize(
+                    generateContentWithIds(post.content),
+                    { ALLOWED_TAGS: ['h2', 'h3', 'p', 'strong', 'li', 'ul', 'ol', 'em', 'br'], ALLOWED_ATTR: ['id'] }
+                  )
+                }}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
