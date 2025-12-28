@@ -12,7 +12,11 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 
-const Header = () => {
+interface HeaderProps {
+  onCalculatorClick?: () => void;
+}
+
+const Header = ({ onCalculatorClick }: HeaderProps) => {
   const { context } = useTraffic();
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
@@ -44,6 +48,14 @@ const Header = () => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleCalculatorClick = () => {
+    if (onCalculatorClick) {
+      onCalculatorClick();
+    } else {
+      scrollToSection("calculator");
+    }
   };
 
   const services = [
@@ -90,7 +102,7 @@ const Header = () => {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <button onClick={() => scrollToSection("calculator")} className="text-sm font-medium hover:text-primary transition-colors">
+                <button onClick={handleCalculatorClick} className="text-sm font-medium hover:text-primary transition-colors">
                   Калькулятор
                 </button>
                 <button onClick={() => scrollToSection("reviews")} className="text-sm font-medium hover:text-primary transition-colors">
@@ -141,7 +153,7 @@ const Header = () => {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <Button
-              onClick={() => scrollToSection("calculator")} 
+              onClick={handleCalculatorClick} 
               size="sm"
               className="bg-primary hover:bg-primary-dark text-primary-foreground font-semibold text-sm md:text-base px-3 md:px-4"
             >

@@ -73,7 +73,7 @@ const PricingByArea = () => {
   };
 
   return (
-    <section className="py-16 bg-muted/30" id="pricing-area">
+    <section className="py-16 bg-muted/30" id="pricing-by-area">
       <div className="container mx-auto px-4">
         {/* СЕКЦИЯ 1: БАЗОВЫЕ ЦЕНЫ */}
         <div className="text-center mb-12">

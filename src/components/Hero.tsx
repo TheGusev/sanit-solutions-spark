@@ -10,6 +10,7 @@ import { trackGoal } from "@/lib/analytics";
 
 interface HeroProps {
   onDiscountClick?: () => void;
+  onCalculatorClick?: () => void;
 }
 
 interface HeroContent {
@@ -92,7 +93,7 @@ const DEFAULT_HERO_CONTENT: HeroContent = {
   subtitle: "Безопасные профессиональные услуги для Москвы"
 };
 
-const Hero = ({ onDiscountClick }: HeroProps) => {
+const Hero = ({ onDiscountClick, onCalculatorClick }: HeroProps) => {
   const { context } = useTraffic();
   const parallaxOffset = useParallax(0.3);
   const hasLoggedView = useRef(false);
@@ -127,9 +128,13 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
     }
   }, [context?.initialized]);
   
-  const scrollToCalculator = () => {
-    const element = document.getElementById("calculator");
-    element?.scrollIntoView({ behavior: "smooth" });
+  const handleCalculatorClick = () => {
+    if (onCalculatorClick) {
+      onCalculatorClick();
+    } else {
+      const element = document.getElementById("calculator");
+      element?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -180,7 +185,7 @@ const Hero = ({ onDiscountClick }: HeroProps) => {
                   variant: context?.variantId,
                   button: 'calculator'
                 });
-                scrollToCalculator();
+                handleCalculatorClick();
               }}
               size="lg"
               variant="outline"
