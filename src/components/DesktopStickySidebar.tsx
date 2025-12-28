@@ -65,7 +65,7 @@ const DesktopStickySidebar = ({
     });
     
     const message = `Здравствуйте! Хочу заказать ${getServiceLabel().toLowerCase()} для ${getPremiseLabel().toLowerCase()}, площадь ${area} м². Расчётная стоимость: ${finalPrice}₽ (скидка ${discount}%)`;
-    window.open(`https://wa.me/79069989888?text=${encodeURIComponent(message)}`, '_blank');
+    window.open(`https://wa.me/79939289488?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const handlePhone = () => {
@@ -74,7 +74,7 @@ const DesktopStickySidebar = ({
       variant: context?.variantId,
       action: 'phone'
     });
-    window.location.href = 'tel:+79069989888';
+    window.location.href = 'tel:+79939289488';
   };
 
   return (

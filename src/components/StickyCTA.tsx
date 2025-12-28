@@ -68,7 +68,7 @@ const StickyCTA = ({ price, discount, onOrderClick }: StickyCTAProps) => {
       intent: context?.intent,
       variant: context?.variantId
     });
-    window.location.href = "tel:+79069989888";
+    window.location.href = "tel:+79939289488";
   };
 
   // Восстанавливаем состояние при монтировании

@@ -176,7 +176,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
       console.error("Error submitting lead:", error);
       toast({
         title: "Не удалось отправить заявку",
-        description: "Позвоните нам: +7 (906) 998-98-88",
+        description: "Позвоните нам: +7 (993) 928-94-88",
         variant: "destructive",
       });
     } finally {
@@ -196,7 +196,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
 📐 Площадь: ${calculatorData.area} м²
 💰 Цена: ${calculatorData.finalPrice}₽`;
     
-    window.open(`https://wa.me/79069989888?text=${encodeURIComponent(message)}`, '_blank');
+    window.open(`https://wa.me/79939289488?text=${encodeURIComponent(message)}`, '_blank');
     onOpenChange(false);
   };
 
