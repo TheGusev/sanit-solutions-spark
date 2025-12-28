@@ -3,7 +3,7 @@ export interface ServiceArea {
   name: string;
   fullName: string;
   available: boolean;
-  price: string;
+  surcharge: string;
   responseTime?: string;
   distance?: string;
   center?: [number, number];
@@ -16,7 +16,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "ЦАО", 
     fullName: "Центральный АО", 
     available: true, 
-    price: "от 1500₽",
+    surcharge: "Бесплатно",
     responseTime: "15-30 минут",
     center: [55.7558, 37.6173],
     color: "#4CAF50"
@@ -26,7 +26,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "САО", 
     fullName: "Северный АО", 
     available: true, 
-    price: "от 1500₽",
+    surcharge: "Бесплатно",
     responseTime: "15-30 минут",
     center: [55.8058, 37.5973],
     color: "#4CAF50"
@@ -36,7 +36,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "СВАО", 
     fullName: "Северо-Восточный АО", 
     available: true, 
-    price: "от 1800₽",
+    surcharge: "+500 ₽",
     responseTime: "20-40 минут",
     center: [55.8358, 37.6873],
     color: "#FFC107"
@@ -46,7 +46,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "ВАО", 
     fullName: "Восточный АО", 
     available: true, 
-    price: "от 1800₽",
+    surcharge: "+500 ₽",
     responseTime: "20-40 минут",
     center: [55.7658, 37.7473],
     color: "#FFC107"
@@ -56,7 +56,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "ЮВАО", 
     fullName: "Юго-Восточный АО", 
     available: true, 
-    price: "от 1800₽",
+    surcharge: "+500 ₽",
     responseTime: "20-40 минут",
     center: [55.6858, 37.7573],
     color: "#FFC107"
@@ -66,7 +66,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "ЮАО", 
     fullName: "Южный АО", 
     available: true, 
-    price: "от 1800₽",
+    surcharge: "+500 ₽",
     responseTime: "20-40 минут",
     center: [55.6158, 37.6473],
     color: "#FFC107"
@@ -76,7 +76,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "ЮЗАО", 
     fullName: "Юго-Западный АО", 
     available: true, 
-    price: "от 1800₽",
+    surcharge: "+500 ₽",
     responseTime: "20-40 минут",
     center: [55.6558, 37.5473],
     color: "#FFC107"
@@ -86,7 +86,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "ЗАО", 
     fullName: "Западный АО", 
     available: true, 
-    price: "от 1800₽",
+    surcharge: "+500 ₽",
     responseTime: "20-40 минут",
     center: [55.7258, 37.4773],
     color: "#FFC107"
@@ -96,7 +96,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "СЗАО", 
     fullName: "Северо-Западный АО", 
     available: true, 
-    price: "от 1800₽",
+    surcharge: "+500 ₽",
     responseTime: "20-40 минут",
     center: [55.8058, 37.5173],
     color: "#FFC107"
@@ -106,7 +106,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "ЗелАО", 
     fullName: "Зеленоградский АО", 
     available: true, 
-    price: "от 2500₽",
+    surcharge: "+1000 ₽",
     responseTime: "40-60 минут",
     center: [55.9858, 37.2473],
     color: "#2196F3"
@@ -116,7 +116,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "НАО", 
     fullName: "Новомосковский АО", 
     available: true, 
-    price: "от 2500₽",
+    surcharge: "+1000 ₽",
     responseTime: "40-60 минут",
     center: [55.4358, 37.4973],
     color: "#2196F3"
@@ -126,7 +126,7 @@ export const moscowDistricts: ServiceArea[] = [
     name: "ТАО", 
     fullName: "Троицкий АО", 
     available: true, 
-    price: "от 3000₽",
+    surcharge: "+1500 ₽",
     responseTime: "60-90 минут",
     center: [55.4858, 37.3273],
     color: "#2196F3"
@@ -139,7 +139,7 @@ export const moscowRegion: ServiceArea[] = [
     name: "Ближнее Подмосковье", 
     fullName: "Ближнее Подмосковье (до 30 км)", 
     available: true, 
-    price: "от 2000₽",
+    surcharge: "+1000 ₽",
     distance: "до 30 км от МКАД",
     responseTime: "30-60 минут"
   },
@@ -148,7 +148,7 @@ export const moscowRegion: ServiceArea[] = [
     name: "Дальнее Подмосковье", 
     fullName: "Дальнее Подмосковье (30-50 км)", 
     available: true, 
-    price: "от 2500₽",
+    surcharge: "+1500 ₽",
     distance: "30-50 км от МКАД",
     responseTime: "60-90 минут"
   },
@@ -157,7 +157,7 @@ export const moscowRegion: ServiceArea[] = [
     name: "Отдалённые районы", 
     fullName: "Отдалённые районы МО (50+ км)", 
     available: true, 
-    price: "по запросу",
+    surcharge: "По запросу",
     distance: "более 50 км от МКАД",
     responseTime: "по согласованию"
   }

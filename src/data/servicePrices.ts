@@ -1,0 +1,142 @@
+export interface ServicePrice {
+  id: string;
+  service: string;
+  object: string;
+  price: string;
+  category: 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya' | 'ozonirovanie' | 'dezodoraciya' | 'sertifikaciya';
+}
+
+export const servicePrices: ServicePrice[] = [
+  // Дезинфекция
+  { 
+    id: "dez-1k", 
+    service: "Дезинфекция", 
+    object: "1-комнатная квартира", 
+    price: "от 2000 ₽",
+    category: "dezinfekciya"
+  },
+  { 
+    id: "dez-2k", 
+    service: "Дезинфекция", 
+    object: "2-3 комнатная квартира", 
+    price: "от 3000 ₽",
+    category: "dezinfekciya"
+  },
+  { 
+    id: "dez-office", 
+    service: "Дезинфекция", 
+    object: "Офис до 50 м²", 
+    price: "от 3500 ₽",
+    category: "dezinfekciya"
+  },
+  { 
+    id: "dez-sklad", 
+    service: "Дезинфекция", 
+    object: "Склад от 100 м²", 
+    price: "от 5000 ₽",
+    category: "dezinfekciya"
+  },
+  
+  // Дезинсекция
+  { 
+    id: "dins-1k", 
+    service: "Дезинсекция", 
+    object: "1-комнатная квартира", 
+    price: "от 2500 ₽",
+    category: "dezinsekciya"
+  },
+  { 
+    id: "dins-2k", 
+    service: "Дезинсекция", 
+    object: "2-3 комнатная квартира", 
+    price: "от 3500 ₽",
+    category: "dezinsekciya"
+  },
+  { 
+    id: "dins-dom", 
+    service: "Дезинсекция", 
+    object: "Частный дом", 
+    price: "от 4000 ₽",
+    category: "dezinsekciya"
+  },
+  
+  // Дератизация
+  { 
+    id: "derat-kvart", 
+    service: "Дератизация", 
+    object: "Квартира", 
+    price: "от 3000 ₽",
+    category: "deratizaciya"
+  },
+  { 
+    id: "derat-dom", 
+    service: "Дератизация", 
+    object: "Частный дом", 
+    price: "от 4000 ₽",
+    category: "deratizaciya"
+  },
+  { 
+    id: "derat-sklad", 
+    service: "Дератизация", 
+    object: "Склад / подвал", 
+    price: "от 5000 ₽",
+    category: "deratizaciya"
+  },
+  
+  // Озонирование
+  { 
+    id: "ozon-kvart", 
+    service: "Озонирование", 
+    object: "Квартира до 50 м²", 
+    price: "от 3000 ₽",
+    category: "ozonirovanie"
+  },
+  { 
+    id: "ozon-office", 
+    service: "Озонирование", 
+    object: "Офис 50–100 м²", 
+    price: "от 4500 ₽",
+    category: "ozonirovanie"
+  },
+  
+  // Дезодорация
+  { 
+    id: "dezod-kvart", 
+    service: "Дезодорация", 
+    object: "Квартира", 
+    price: "от 2500 ₽",
+    category: "dezodoraciya"
+  },
+  { 
+    id: "dezod-pozhar", 
+    service: "Дезодорация", 
+    object: "После пожара / затопления", 
+    price: "от 5000 ₽",
+    category: "dezodoraciya"
+  },
+  
+  // Сертификация
+  { 
+    id: "sert-doc", 
+    service: "Сертификация", 
+    object: "Документы для СЭС", 
+    price: "от 5000 ₽",
+    category: "sertifikaciya"
+  }
+];
+
+export const includedServices = [
+  "Бесплатный выезд и диагностика (для ЦАО/САО)",
+  "Обработка помещения (холодный/горячий туман)",
+  "Безопасные препараты IV класса опасности",
+  "Гарантия результата до 1 года",
+  "Договор и акт выполненных работ",
+  "Консультация специалиста 24/7"
+];
+
+export const discounts = [
+  { icon: "🎁", text: "15% при заказе 2 и более услуг" },
+  { icon: "🎁", text: "10% для постоянных клиентов" },
+  { icon: "🎁", text: "5% при оплате онлайн" },
+  { icon: "🎁", text: "Бесплатная повторная обработка по гарантии" }
+];
