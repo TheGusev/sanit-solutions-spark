@@ -46,7 +46,11 @@ const CALCULATOR_DEFAULTS_BY_INTENT: Record<string, Partial<{
   shop_store: { premiseType: 'office', serviceType: 'disinfection', clientType: 'company' }
 };
 
-const Calculator = () => {
+interface CalculatorProps {
+  isModal?: boolean;
+}
+
+const Calculator = ({ isModal = false }: CalculatorProps) => {
   const { context } = useTraffic();
   
   // Основные параметры
@@ -376,24 +380,31 @@ const Calculator = () => {
     }
   };
 
+  // Wrapper based on mode
+  const Wrapper = isModal ? 'div' : 'section';
+  const wrapperProps = isModal ? {} : { id: 'calculator' };
+  const wrapperClassName = isModal ? '' : 'py-10 md:py-20 bg-background';
+
   return (
-    <section id="calculator" className="py-10 md:py-20 bg-background">
-      <div className="container mx-auto px-4">
-        {/* Section header */}
-        <div className="text-center mb-6 md:mb-12 max-w-4xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Рассчитайте <span className="text-primary">стоимость</span>
-          </h2>
-          <p className="text-xl text-muted-foreground">
-            Получите точную цену с учётом автоматической скидки
-          </p>
-        </div>
+    <Wrapper {...wrapperProps} className={wrapperClassName}>
+      <div className={isModal ? '' : 'container mx-auto px-4'}>
+        {/* Section header - hide in modal */}
+        {!isModal && (
+          <div className="text-center mb-6 md:mb-12 max-w-4xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Рассчитайте <span className="text-primary">стоимость</span>
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Получите точную цену с учётом автоматической скидки
+            </p>
+          </div>
+        )}
 
         {/* Split layout for desktop */}
-        <div className="max-w-6xl mx-auto lg:flex lg:gap-8">
+        <div className={isModal ? '' : 'max-w-6xl mx-auto lg:flex lg:gap-8'}>
           {/* Left column - Main calculator */}
-          <div className="lg:w-7/12">
-            <div className="bg-card p-4 sm:p-8 rounded-3xl shadow-xl mb-20 lg:mb-0">
+          <div className={isModal ? 'w-full' : 'lg:w-7/12'}>
+            <div className={isModal ? 'space-y-6' : 'bg-card p-4 sm:p-8 rounded-3xl shadow-xl mb-20 lg:mb-0'}>
             {/* БЛОК 1: Базовый расчёт */}
             <div className="space-y-6">
               
@@ -798,44 +809,48 @@ const Calculator = () => {
           </div>
           </div>
           
-          {/* Right column - Desktop Sticky Sidebar (hidden on mobile) */}
-          <div className="hidden lg:block lg:w-5/12">
-            <DesktopStickySidebar
-              finalPrice={finalPrice}
-              totalPrice={totalPrice}
-              discount={discount}
-              area={area}
-              premiseType={premiseType}
-              serviceType={serviceType}
-              getPremiseLabel={getPremiseLabel}
-              getServiceLabel={getServiceLabel}
-            />
-          </div>
+          {/* Right column - Desktop Sticky Sidebar (hidden on mobile and in modal) */}
+          {!isModal && (
+            <div className="hidden lg:block lg:w-5/12">
+              <DesktopStickySidebar
+                finalPrice={finalPrice}
+                totalPrice={totalPrice}
+                discount={discount}
+                area={area}
+                premiseType={premiseType}
+                serviceType={serviceType}
+                getPremiseLabel={getPremiseLabel}
+                getServiceLabel={getServiceLabel}
+              />
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Улучшенный липкий нижний бар на мобильных */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t shadow-2xl p-4 md:hidden z-50 animate-slide-up">
-        <div className="container mx-auto flex items-center justify-between gap-4">
-          <div className="flex-shrink-0">
-            <div className="flex items-baseline gap-2">
-              <p className="text-2xl font-bold text-primary">{finalPrice}₽</p>
-              {discount > 0 && (
-                <span className="text-xs text-success font-medium">-{discount}%</span>
-              )}
+      {/* Улучшенный липкий нижний бар на мобильных - только для страницы */}
+      {!isModal && (
+        <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t shadow-2xl p-4 md:hidden z-50 animate-slide-up">
+          <div className="container mx-auto flex items-center justify-between gap-4">
+            <div className="flex-shrink-0">
+              <div className="flex items-baseline gap-2">
+                <p className="text-2xl font-bold text-primary">{finalPrice}₽</p>
+                {discount > 0 && (
+                  <span className="text-xs text-success font-medium">-{discount}%</span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">Перезвоним за 15 мин</p>
             </div>
-            <p className="text-xs text-muted-foreground">Перезвоним за 15 мин</p>
+            <Button 
+              onClick={handleOrder} 
+              size="lg"
+              className="flex-1 max-w-[200px] h-12 text-base font-bold animate-pulse hover:animate-none"
+            >
+              <Phone className="w-5 h-5 mr-2" />
+              Заказать
+            </Button>
           </div>
-          <Button 
-            onClick={handleOrder} 
-            size="lg"
-            className="flex-1 max-w-[200px] h-12 text-base font-bold animate-pulse hover:animate-none"
-          >
-            <Phone className="w-5 h-5 mr-2" />
-            Заказать
-          </Button>
         </div>
-      </div>
+      )}
 
       {/* Lead Form Modal */}
       <LeadFormModal
@@ -855,13 +870,15 @@ const Calculator = () => {
         }}
       />
 
-      {/* Sticky CTA после прокрутки калькулятора */}
-      <StickyCTA 
-        price={finalPrice}
-        discount={discount}
-        onOrderClick={handleOrder}
-      />
-    </section>
+      {/* Sticky CTA после прокрутки калькулятора - только для страницы */}
+      {!isModal && (
+        <StickyCTA 
+          price={finalPrice}
+          discount={discount}
+          onOrderClick={handleOrder}
+        />
+      )}
+    </Wrapper>
   );
 };
 

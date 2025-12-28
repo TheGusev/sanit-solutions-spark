@@ -7,32 +7,25 @@ import { useScrollDepth } from "@/hooks/useScrollDepth";
 // Critical components - above the fold, load immediately
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import StatsCounter from "@/components/StatsCounter";
-import TrustBadges from "@/components/TrustBadges";
-import IntentBanner from "@/components/IntentBanner";
 
-// Below-the-fold components - lazy loaded
-const Services = lazy(() => import("@/components/Services"));
+// New components for restructured layout
+const MiniPricing = lazy(() => import("@/components/MiniPricing"));
 const WhyUsExtended = lazy(() => import("@/components/WhyUsExtended"));
-const WorkProcess = lazy(() => import("@/components/WorkProcess"));
-const Calculator = lazy(() => import("@/components/Calculator"));
-const Details = lazy(() => import("@/components/Details"));
-const ServiceAreaMap = lazy(() => import("@/components/ServiceAreaMap"));
 const PricingByArea = lazy(() => import("@/components/PricingByArea"));
-const FAQ = lazy(() => import("@/components/FAQ"));
-const BlogPreview = lazy(() => import("@/components/BlogPreview"));
+const ServiceAreaMap = lazy(() => import("@/components/ServiceAreaMap"));
 const Reviews = lazy(() => import("@/components/Reviews"));
+const FAQ = lazy(() => import("@/components/FAQ"));
+const FinalCTA = lazy(() => import("@/components/FinalCTA"));
 const Footer = lazy(() => import("@/components/Footer"));
 
-// Interactive components - lazy loaded
-const FlashDiscountBadge = lazy(() => import("@/components/FlashDiscountBadge"));
-const StickyDiscountBanner = lazy(() => import("@/components/StickyDiscountBanner"));
-const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
+// Modal components
+const CalculatorModal = lazy(() => import("@/components/CalculatorModal"));
 const FloatingButtons = lazy(() => import("@/components/FloatingButtons"));
 const ABTestDebug = lazy(() => import("@/components/ABTestDebug"));
 
 const Index = () => {
   const [showDebug, setShowDebug] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
   
   // Integrate ML prediction in main flow for real-time personalization
   const { prediction, isLoading: mlLoading } = useMLPrediction();
@@ -55,6 +48,10 @@ const Index = () => {
     };
   }, []);
 
+  const handleOpenCalculator = () => {
+    setShowCalculator(true);
+  };
+
   return (
     <div className="min-h-screen">
       <Helmet>
@@ -63,57 +60,58 @@ const Index = () => {
       </Helmet>
       
       {/* Critical - Above the fold */}
-      <Header />
-      <Hero />
-      <StatsCounter />
-      <TrustBadges />
-      <IntentBanner />
+      <Header onCalculatorClick={handleOpenCalculator} />
+      <Hero onCalculatorClick={handleOpenCalculator} />
       
-      {/* Below the fold - Lazy loaded */}
+      {/* Mini pricing - immediately after hero */}
       <Suspense fallback={<SectionLoader />}>
-        <Services />
+        <MiniPricing />
       </Suspense>
+      
+      {/* Short "Why Us" block */}
       <Suspense fallback={<SectionLoader />}>
         <WhyUsExtended />
       </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <WorkProcess />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <Calculator />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <Details />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <ServiceAreaMap />
-      </Suspense>
+      
+      {/* Full pricing tables with surcharges */}
       <Suspense fallback={<SectionLoader />}>
         <PricingByArea />
       </Suspense>
+      
+      {/* Service area map */}
       <Suspense fallback={<SectionLoader />}>
-        <FAQ />
+        <ServiceAreaMap />
       </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <BlogPreview />
-      </Suspense>
+      
+      {/* Reviews */}
       <Suspense fallback={<SectionLoader />}>
         <Reviews />
       </Suspense>
+      
+      {/* FAQ */}
+      <Suspense fallback={<SectionLoader />}>
+        <FAQ />
+      </Suspense>
+      
+      {/* Final CTA */}
+      <Suspense fallback={<SectionLoader />}>
+        <FinalCTA onOpenCalculator={handleOpenCalculator} />
+      </Suspense>
+      
+      {/* Footer */}
       <Suspense fallback={<SectionLoader />}>
         <Footer />
       </Suspense>
       
-      {/* Compact discount elements */}
+      {/* Calculator Modal */}
       <Suspense fallback={null}>
-        <FlashDiscountBadge />
+        <CalculatorModal 
+          open={showCalculator} 
+          onOpenChange={setShowCalculator} 
+        />
       </Suspense>
-      <Suspense fallback={null}>
-        <StickyDiscountBanner />
-      </Suspense>
-      <Suspense fallback={null}>
-        <ExitIntentPopup />
-      </Suspense>
+      
+      {/* Floating action buttons */}
       <Suspense fallback={null}>
         <FloatingButtons />
       </Suspense>
