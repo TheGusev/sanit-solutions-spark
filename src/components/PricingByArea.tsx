@@ -1,8 +1,12 @@
 import { MapPin, Clock, Banknote, Phone, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { moscowDistricts, moscowRegion } from "@/data/serviceAreas";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const PricingByArea = () => {
+  const { ref: tableRef, isVisible } = useScrollAnimation({ threshold: 0.1 });
+  const { ref: regionRef, isVisible: isRegionVisible } = useScrollAnimation({ threshold: 0.1 });
+
   const scrollToCalculator = () => {
     document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth" });
   };
@@ -34,7 +38,7 @@ const PricingByArea = () => {
 
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
           {/* Moscow Districts Table */}
-          <div className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border">
+          <div ref={tableRef} className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border">
             <div className="bg-primary/10 px-6 py-4 border-b border-border">
               <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-primary" />
@@ -53,8 +57,16 @@ const PricingByArea = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {moscowDistricts.map((district) => (
-                    <tr key={district.id} className="hover:bg-muted/30 transition-colors">
+                  {moscowDistricts.map((district, index) => (
+                    <tr 
+                      key={district.id} 
+                      className={`hover:bg-muted/30 transition-all duration-500 ${
+                        isVisible 
+                          ? 'opacity-100 translate-y-0' 
+                          : 'opacity-0 translate-y-4'
+                      }`}
+                      style={{ transitionDelay: `${index * 80}ms` }}
+                    >
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <span className={`px-2 py-1 rounded-md text-xs font-medium ${getZoneColor(district.id)}`}>
@@ -82,8 +94,16 @@ const PricingByArea = () => {
 
             {/* Mobile Cards */}
             <div className="md:hidden divide-y divide-border">
-              {moscowDistricts.map((district) => (
-                <div key={district.id} className="p-4 hover:bg-muted/30 transition-colors">
+              {moscowDistricts.map((district, index) => (
+                <div 
+                  key={district.id} 
+                  className={`p-4 hover:bg-muted/30 transition-all duration-500 ${
+                    isVisible 
+                      ? 'opacity-100 translate-y-0' 
+                      : 'opacity-0 translate-y-4'
+                  }`}
+                  style={{ transitionDelay: `${index * 80}ms` }}
+                >
                   <div className="flex items-center justify-between mb-2">
                     <span className={`px-2 py-1 rounded-md text-xs font-medium ${getZoneColor(district.id)}`}>
                       {district.name}
@@ -103,7 +123,7 @@ const PricingByArea = () => {
           </div>
 
           {/* Moscow Region Table */}
-          <div className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border">
+          <div ref={regionRef} className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border">
             <div className="bg-primary/10 px-6 py-4 border-b border-border">
               <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-primary" />
@@ -122,8 +142,16 @@ const PricingByArea = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {moscowRegion.map((region) => (
-                    <tr key={region.id} className="hover:bg-muted/30 transition-colors">
+                  {moscowRegion.map((region, index) => (
+                    <tr 
+                      key={region.id} 
+                      className={`hover:bg-muted/30 transition-all duration-500 ${
+                        isRegionVisible 
+                          ? 'opacity-100 translate-y-0' 
+                          : 'opacity-0 translate-y-4'
+                      }`}
+                      style={{ transitionDelay: `${index * 100}ms` }}
+                    >
                       <td className="px-4 py-3">
                         <div>
                           <span className={`px-2 py-1 rounded-md text-xs font-medium ${getRegionColor(region.id)}`}>
@@ -149,8 +177,16 @@ const PricingByArea = () => {
 
             {/* Mobile Cards */}
             <div className="md:hidden divide-y divide-border">
-              {moscowRegion.map((region) => (
-                <div key={region.id} className="p-4 hover:bg-muted/30 transition-colors">
+              {moscowRegion.map((region, index) => (
+                <div 
+                  key={region.id} 
+                  className={`p-4 hover:bg-muted/30 transition-all duration-500 ${
+                    isRegionVisible 
+                      ? 'opacity-100 translate-y-0' 
+                      : 'opacity-0 translate-y-4'
+                  }`}
+                  style={{ transitionDelay: `${index * 100}ms` }}
+                >
                   <div className="flex items-center justify-between mb-2">
                     <span className={`px-2 py-1 rounded-md text-xs font-medium ${getRegionColor(region.id)}`}>
                       {region.name}
