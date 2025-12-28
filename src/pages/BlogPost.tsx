@@ -51,8 +51,10 @@ const BlogPost = () => {
       <Helmet>
         <title>{post.title} | Санитарные Решения</title>
         <meta name="description" content={post.excerpt} />
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
         <link rel="canonical" href={`${BASE_URL}/blog/${post.slug}`} />
         <link rel="alternate" hrefLang="ru" href={`${BASE_URL}/blog/${post.slug}`} />
+        <link rel="alternate" hrefLang="x-default" href={`${BASE_URL}/blog/${post.slug}`} />
         <meta property="og:type" content="article" />
         <meta property="og:url" content={`${BASE_URL}/blog/${post.slug}`} />
         <meta property="og:title" content={`${post.title} | Санитарные Решения`} />
