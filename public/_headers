@@ -1,0 +1,30 @@
+# ====================================
+# HTTP Headers для goruslugimsk.ru
+# ====================================
+
+# Деиндексация старых WordPress URL
+/2022/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store, no-cache, must-revalidate
+
+/wp-admin/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/wp-content/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/wp-includes/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/feed/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+# Security headers для всего сайта
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
