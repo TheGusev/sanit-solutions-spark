@@ -51,7 +51,7 @@ const YandexMap = ({ selectedArea, onAreaSelect, districts, regions }: YandexMap
             coords,
             {
               balloonContentHeader: district.fullName,
-              balloonContentBody: `<strong>Стоимость:</strong> ${district.price}<br/><strong>Время выезда:</strong> ${district.responseTime}`,
+              balloonContentBody: `<strong>Доплата за выезд:</strong> ${district.surcharge}<br/><strong>Время выезда:</strong> ${district.responseTime}`,
               hintContent: district.fullName
             },
             {

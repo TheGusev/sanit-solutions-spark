@@ -66,7 +66,7 @@ const ServiceAreaMap = () => {
                   <div className="flex items-start gap-2 sm:gap-3">
                     <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-primary mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm sm:text-base font-semibold">{selectedArea.price}</p>
+                      <p className="text-sm sm:text-base font-semibold">Доплата: {selectedArea.surcharge}</p>
                       <p className="text-xs sm:text-sm text-muted-foreground">
                         {selectedArea.distance || "Центральная Москва"}
                       </p>
