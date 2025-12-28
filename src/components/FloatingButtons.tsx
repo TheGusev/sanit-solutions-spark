@@ -14,7 +14,7 @@ const FloatingButtons = () => {
       variant: context?.variantId
     });
     
-    window.location.href = "tel:+79069989888";
+    window.location.href = "tel:+79939289488";
   };
 
   const handleWhatsAppClick = () => {

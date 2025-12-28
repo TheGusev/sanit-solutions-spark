@@ -101,10 +101,10 @@ const ServiceAreaMap = () => {
                   <Button 
                     variant="outline" 
                     className="w-full text-sm whitespace-normal" 
-                    onClick={() => window.location.href = 'tel:+79069989888'}
+                    onClick={() => window.location.href = 'tel:+79939289488'}
                   >
                     <Phone className="mr-2 h-4 w-4 flex-shrink-0" />
-                    +7 (906) 998-98-88
+                    +7 (993) 928-94-88
                   </Button>
                 </div>
               </div>
