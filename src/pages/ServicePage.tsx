@@ -136,8 +136,10 @@ const ServicePage = () => {
       <Helmet>
         <title>{service.metaTitle}</title>
         <meta name="description" content={service.metaDescription} />
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
         <link rel="canonical" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
         <link rel="alternate" hrefLang="ru" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
+        <link rel="alternate" hrefLang="x-default" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
         
         {/* Open Graph */}
         <meta property="og:type" content="website" />
