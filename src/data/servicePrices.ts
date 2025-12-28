@@ -4,6 +4,8 @@ export interface ServicePrice {
   object: string;
   price: string;
   category: 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya' | 'ozonirovanie' | 'dezodoraciya' | 'sertifikaciya';
+  isPopular?: boolean;
+  icon?: string;
 }
 
 export const servicePrices: ServicePrice[] = [
@@ -13,7 +15,9 @@ export const servicePrices: ServicePrice[] = [
     service: "Дезинфекция", 
     object: "1-комнатная квартира", 
     price: "от 2000 ₽",
-    category: "dezinfekciya"
+    category: "dezinfekciya",
+    isPopular: true,
+    icon: "🧹"
   },
   { 
     id: "dez-2k", 
@@ -40,10 +44,12 @@ export const servicePrices: ServicePrice[] = [
   // Дезинсекция
   { 
     id: "dins-1k", 
-    service: "Дезинсекция", 
+    service: "Дезинсекция (клопы, тараканы)", 
     object: "1-комнатная квартира", 
     price: "от 2500 ₽",
-    category: "dezinsekciya"
+    category: "dezinsekciya",
+    isPopular: true,
+    icon: "🐜"
   },
   { 
     id: "dins-2k", 
@@ -63,10 +69,12 @@ export const servicePrices: ServicePrice[] = [
   // Дератизация
   { 
     id: "derat-kvart", 
-    service: "Дератизация", 
+    service: "Дератизация (мыши, крысы)", 
     object: "Квартира", 
     price: "от 3000 ₽",
-    category: "deratizaciya"
+    category: "deratizaciya",
+    isPopular: true,
+    icon: "🐀"
   },
   { 
     id: "derat-dom", 
@@ -89,7 +97,9 @@ export const servicePrices: ServicePrice[] = [
     service: "Озонирование", 
     object: "Квартира до 50 м²", 
     price: "от 3000 ₽",
-    category: "ozonirovanie"
+    category: "ozonirovanie",
+    isPopular: true,
+    icon: "🌬️"
   },
   { 
     id: "ozon-office", 
@@ -105,7 +115,9 @@ export const servicePrices: ServicePrice[] = [
     service: "Дезодорация", 
     object: "Квартира", 
     price: "от 2500 ₽",
-    category: "dezodoraciya"
+    category: "dezodoraciya",
+    isPopular: true,
+    icon: "💨"
   },
   { 
     id: "dezod-pozhar", 
@@ -121,7 +133,9 @@ export const servicePrices: ServicePrice[] = [
     service: "Сертификация", 
     object: "Документы для СЭС", 
     price: "от 5000 ₽",
-    category: "sertifikaciya"
+    category: "sertifikaciya",
+    isPopular: true,
+    icon: "📋"
   }
 ];
 
