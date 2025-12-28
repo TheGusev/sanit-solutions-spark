@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallax } from "@/hooks/useParallax";
@@ -11,7 +12,15 @@ interface AnimatedSectionProps {
   delay?: number;
 }
 
-const AnimatedSection = ({
+const animationClasses = {
+  "fade-up": "translate-y-10 opacity-0",
+  "fade-left": "-translate-x-10 opacity-0",
+  "fade-right": "translate-x-10 opacity-0",
+  "scale": "scale-95 opacity-0",
+  "none": ""
+} as const;
+
+const AnimatedSection = memo(({
   children,
   className,
   animation = "fade-up",
@@ -20,15 +29,12 @@ const AnimatedSection = ({
   delay = 0
 }: AnimatedSectionProps) => {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
-  const parallaxOffset = useParallax(parallaxSpeed);
+  const parallaxOffset = useParallax(parallaxSpeed, parallax);
 
-  const animationClasses = {
-    "fade-up": "translate-y-10 opacity-0",
-    "fade-left": "-translate-x-10 opacity-0",
-    "fade-right": "translate-x-10 opacity-0",
-    "scale": "scale-95 opacity-0",
-    "none": ""
-  };
+  const style = useMemo(() => ({
+    transitionDelay: `${delay}ms`,
+    ...(parallax && parallaxOffset ? { transform: `translateY(${parallaxOffset}px)` } : {})
+  }), [delay, parallax, parallaxOffset]);
 
   return (
     <div
@@ -39,14 +45,13 @@ const AnimatedSection = ({
         isVisible && "translate-y-0 translate-x-0 scale-100 opacity-100",
         className
       )}
-      style={{
-        transitionDelay: `${delay}ms`,
-        ...(parallax && { transform: `translateY(${parallaxOffset}px)` })
-      }}
+      style={style}
     >
       {children}
     </div>
   );
-};
+});
+
+AnimatedSection.displayName = "AnimatedSection";
 
 export default AnimatedSection;

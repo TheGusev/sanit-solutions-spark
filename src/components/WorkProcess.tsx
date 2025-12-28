@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Phone, Search, Beaker, CheckCircle } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -32,7 +33,7 @@ const steps = [
   }
 ];
 
-const WorkProcess = () => {
+const WorkProcess = memo(() => {
   return (
     <section className="py-8 md:py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -117,6 +118,8 @@ const WorkProcess = () => {
       </div>
     </section>
   );
-};
+});
+
+WorkProcess.displayName = "WorkProcess";
 
 export default WorkProcess;
