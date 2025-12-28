@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Microscope, Pill, Beaker, Gift, BarChart3, Zap, CheckCircle, Shield } from "lucide-react";
+import { Microscope, Pill, Beaker, Phone, BarChart3, Zap, CheckCircle, Shield } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useParallax } from "@/hooks/useParallax";
 import { useTraffic } from "@/contexts/TrafficContext";
@@ -9,7 +9,6 @@ import { useEffect, useRef } from "react";
 import { trackGoal } from "@/lib/analytics";
 
 interface HeroProps {
-  onDiscountClick?: () => void;
   onCalculatorClick?: () => void;
 }
 
@@ -93,7 +92,7 @@ const DEFAULT_HERO_CONTENT: HeroContent = {
   subtitle: "Безопасные профессиональные услуги для Москвы"
 };
 
-const Hero = ({ onDiscountClick, onCalculatorClick }: HeroProps) => {
+const Hero = ({ onCalculatorClick }: HeroProps) => {
   const { context } = useTraffic();
   const parallaxOffset = useParallax(0.3);
   const hasLoggedView = useRef(false);
@@ -167,15 +166,15 @@ const Hero = ({ onDiscountClick, onCalculatorClick }: HeroProps) => {
                 trackGoal('hero_cta_click', {
                   intent: context?.intent,
                   variant: context?.variantId,
-                  button: 'discount'
+                  button: 'order'
                 });
-                onDiscountClick();
+                handleCalculatorClick();
               }}
               size="lg"
-              className="gradient-accent hover:opacity-90 text-accent-foreground font-bold text-lg px-8 py-6 h-auto animate-pulse-attention"
+              className="gradient-accent hover:opacity-90 text-accent-foreground font-bold text-lg px-8 py-6 h-auto"
             >
-              <Gift className="w-5 h-5 mr-2" />
-              {copy.cta_primary || "Получить скидку до 30%"}
+              <Phone className="w-5 h-5 mr-2" />
+              Заказать обработку
             </Button>
             
             <Button 
