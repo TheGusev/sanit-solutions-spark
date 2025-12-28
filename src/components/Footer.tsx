@@ -1,9 +1,10 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { Phone, Mail, MessageCircle, Send, MapPin, Clock, Beaker } from "lucide-react";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 
-const Footer = () => {
+const Footer = memo(() => {
   const { context } = useTraffic();
   
   const handlePhoneClick = () => {
@@ -147,6 +148,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = "Footer";
 
 export default Footer;
