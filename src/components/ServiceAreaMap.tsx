@@ -12,12 +12,29 @@ const ServiceAreaMap = () => {
   return (
     <section className="py-10 md:py-20 bg-background" id="service-areas">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12 animate-fade-in">
+        <div className="text-center mb-8 animate-fade-in">
           <h2 className="text-4xl font-bold mb-4">
             🗺️ Зоны обслуживания
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-6">
             Работаем по всей Москве и Московской области с быстрым выездом
+          </p>
+        </div>
+        
+        {/* SEO text block */}
+        <div className="max-w-4xl mx-auto mb-10 space-y-4 text-muted-foreground">
+          <p className="leading-relaxed">
+            <strong className="text-foreground">Работаем во всех округах Москвы</strong> — от центра до МКАД. 
+            Время выезда специалиста в пределах МКАД составляет от 30 минут до 1 часа. 
+            По Московской области время выезда — от 1 до 3 часов в зависимости от удалённости населённого пункта. 
+            Обслуживаем Подольск, Мытищи, Химки, Балашиху, Королёв, Люберцы и другие города ближнего и дальнего Подмосковья.
+          </p>
+          <p className="leading-relaxed">
+            <strong className="text-foreground">Особенности работы в частном секторе:</strong> для владельцев 
+            загородных домов, коттеджей и дач предлагаем комплексные решения — дополнительно обрабатываем 
+            прилегающую территорию, подвалы, чердаки, хозяйственные постройки, погреба. Устанавливаем 
+            барьерную защиту периметра участка от грызунов и насекомых. Стоимость выезда за МКАД — от 500₽ 
+            в зависимости от расстояния.
           </p>
         </div>
 

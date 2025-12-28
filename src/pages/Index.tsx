@@ -13,6 +13,7 @@ import IntentBanner from "@/components/IntentBanner";
 
 // Below-the-fold components - lazy loaded
 const Services = lazy(() => import("@/components/Services"));
+const WhyUsExtended = lazy(() => import("@/components/WhyUsExtended"));
 const WorkProcess = lazy(() => import("@/components/WorkProcess"));
 const Calculator = lazy(() => import("@/components/Calculator"));
 const Details = lazy(() => import("@/components/Details"));
@@ -70,6 +71,9 @@ const Index = () => {
       {/* Below the fold - Lazy loaded */}
       <Suspense fallback={<SectionLoader />}>
         <Services />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <WhyUsExtended />
       </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <WorkProcess />
