@@ -3,7 +3,7 @@
   <!-- Главная страница -->
   <url>
     <loc>https://goruslugimsk.ru/</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -11,42 +11,42 @@
   <!-- Страницы услуг -->
   <url>
     <loc>https://goruslugimsk.ru/uslugi/dezinfekciya</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/uslugi/dezinsekciya</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/uslugi/deratizaciya</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/uslugi/ozonirovanie</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/uslugi/dezodoraciya</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/uslugi/sertifikaciya</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -54,7 +54,7 @@
   <!-- Блог -->
   <url>
     <loc>https://goruslugimsk.ru/blog</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -62,56 +62,56 @@
   <!-- Статьи блога -->
   <url>
     <loc>https://goruslugimsk.ru/blog/kak-podgotovit-pomeshchenie</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/vidy-dezinfekcii</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/borba-s-tarakanami</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/ozonirovaniye-pomeshcheniy</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/gryzuny-v-dome</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/sezonnost-vreditelej</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/dezinfekciya-ofisa</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/klopy-v-kvartire</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -119,7 +119,7 @@
   <!-- Контакты -->
   <url>
     <loc>https://goruslugimsk.ru/contacts</loc>
-    <lastmod>2025-12-26</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -127,7 +127,7 @@
   <!-- Политика конфиденциальности -->
   <url>
     <loc>https://goruslugimsk.ru/privacy</loc>
-    <lastmod>2025-01-01</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
