@@ -18,6 +18,7 @@ const WorkProcess = lazy(() => import("@/components/WorkProcess"));
 const Calculator = lazy(() => import("@/components/Calculator"));
 const Details = lazy(() => import("@/components/Details"));
 const ServiceAreaMap = lazy(() => import("@/components/ServiceAreaMap"));
+const PricingByArea = lazy(() => import("@/components/PricingByArea"));
 const FAQ = lazy(() => import("@/components/FAQ"));
 const BlogPreview = lazy(() => import("@/components/BlogPreview"));
 const Reviews = lazy(() => import("@/components/Reviews"));
@@ -86,6 +87,9 @@ const Index = () => {
       </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <ServiceAreaMap />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <PricingByArea />
       </Suspense>
       <Suspense fallback={<SectionLoader />}>
         <FAQ />
