@@ -35,6 +35,9 @@
       .header-fixed { height: var(--header-height); position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
       /* Font display swap for system fonts */
       @font-face { font-display: swap; }
+      /* Скрываем SSR fallback контент до загрузки React - предотвращает FOUC */
+      #root > div { opacity: 0; visibility: hidden; transition: none; }
+      #root.app-loaded > div { opacity: 1; visibility: visible; }
     </style>
     
     <!-- Schema.org JSON-LD разметка -->
