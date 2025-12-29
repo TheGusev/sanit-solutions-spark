@@ -3,13 +3,34 @@ import { useEffect } from "react";
 import { Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+// Паттерны старых WordPress URL для редиректа
+const OLD_WORDPRESS_PATTERNS = ['/2022/', '/wp-admin', '/wp-content', '/wp-includes', '/feed/'];
+
 const NotFound = () => {
   const location = useLocation();
+  
+  // Проверка на старый WordPress URL
+  const isOldWordPress = OLD_WORDPRESS_PATTERNS.some(pattern => 
+    location.pathname.startsWith(pattern)
+  );
 
   useEffect(() => {
+    // Редирект старых WordPress URL на главную для SEO
+    if (isOldWordPress) {
+      // Добавляем canonical перед редиректом
+      const link = document.createElement('link');
+      link.rel = 'canonical';
+      link.href = 'https://goruslugimsk.ru/';
+      document.head.appendChild(link);
+      
+      // Редирект на главную
+      window.location.replace('/');
+      return;
+    }
+
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
 
-    // Add noindex meta tag for search engines (важно для деиндексации старых WordPress страниц)
+    // Add noindex meta tag for search engines
     const metaRobots = document.createElement('meta');
     metaRobots.name = 'robots';
     metaRobots.content = 'noindex, nofollow';
@@ -20,7 +41,10 @@ const NotFound = () => {
         document.head.removeChild(metaRobots);
       }
     };
-  }, [location.pathname]);
+  }, [location.pathname, isOldWordPress]);
+
+  // Не рендерим UI для старых WordPress URL (редирект в useEffect)
+  if (isOldWordPress) return null;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
