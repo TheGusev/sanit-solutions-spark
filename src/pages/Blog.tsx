@@ -42,6 +42,10 @@ const Blog = () => {
         <meta property="og:image" content="https://storage.googleapis.com/msgsndr/TPScApsdHM0g97SZIF3E/media/67627bc8700fb0e19a0b3c10.jpeg" />
         <meta property="og:site_name" content="Санитарные Решения" />
         <meta property="og:locale" content="ru_RU" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Блог о дезинфекции | Санитарные Решения" />
+        <meta name="twitter:description" content="Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды." />
+        <meta name="twitter:image" content="https://storage.googleapis.com/msgsndr/TPScApsdHM0g97SZIF3E/media/67627bc8700fb0e19a0b3c10.jpeg" />
         <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/blog" />
       </Helmet>
 
