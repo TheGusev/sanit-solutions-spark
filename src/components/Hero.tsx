@@ -92,12 +92,19 @@ const DEFAULT_HERO_CONTENT: HeroContent = {
   subtitle: "Безопасные профессиональные услуги для Москвы"
 };
 
+// ⚠️ SEO: H1 фиксирован для стабильности индексации
+// Бот Яндекса/Google должен видеть одинаковый H1 при каждом визите
+// A/B тестирование работает только на subtitle и CTA (безопасно для SEO)
+const SEO_H1_TITLE = "Профессиональная дезинфекция, дезинсекция и дератизация";
+const SEO_H1_HIGHLIGHT = "в Москве и МО";
+
 const Hero = ({ onCalculatorClick }: HeroProps) => {
   const { context } = useTraffic();
   const parallaxOffset = useParallax(0.3);
   const hasLoggedView = useRef(false);
   
   // Получаем текст из централизованного словаря с A/B вариантом
+  // ⚠️ Используется только для subtitle и CTA, НЕ для H1
   const copy = getCopy('hero', context?.intent, context?.variantId || 'A');
   
   // Логируем показ hero для A/B анализа (один раз)
@@ -151,9 +158,10 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
 
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">
+          {/* H1 фиксирован для SEO - не меняется между визитами */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
-            {copy.title}{" "}
-            <span className="text-primary">{copy.highlight}</span>
+            {SEO_H1_TITLE}{" "}
+            <span className="text-primary">{SEO_H1_HIGHLIGHT}</span>
           </h1>
           
           <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10">
