@@ -130,7 +130,7 @@ export function QuickCallForm({ calculatorData, onSuccess }: QuickCallFormProps)
       onSuccess?.();
     } catch (err) {
       console.error("Quick call error:", err);
-      setError("Ошибка. Позвоните: +7 (993) 928-94-88");
+      setError("Ошибка. Позвоните: +7 (906) 998-98-88");
     } finally {
       setIsSubmitting(false);
     }
@@ -147,7 +147,7 @@ export function QuickCallForm({ calculatorData, onSuccess }: QuickCallFormProps)
 📐 Площадь: ${calculatorData.area} м²
 💰 Цена: ${calculatorData.finalPrice}₽`;
     
-    window.open(`https://wa.me/79939289488?text=${encodeURIComponent(message)}`, '_blank');
+    window.open(`https://wa.me/79069989888?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   if (isSuccess) {

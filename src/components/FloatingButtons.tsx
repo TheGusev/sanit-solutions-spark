@@ -14,7 +14,7 @@ const FloatingButtons = () => {
       variant: context?.variantId
     });
     
-    window.location.href = "tel:+79939289488";
+    window.location.href = "tel:+79069989888";
   };
 
   const handleWhatsAppClick = () => {
@@ -23,7 +23,7 @@ const FloatingButtons = () => {
       variant: context?.variantId
     });
     
-    const phone = "79939289488";
+    const phone = "79069989888";
     const message = encodeURIComponent("Здравствуйте! Интересует дезинфекция помещений.");
     window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
   };
