@@ -208,9 +208,17 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
       <DialogContent className="sm:max-w-[420px]">
         <DialogHeader>
           <DialogTitle className="text-2xl">🎯 Оформить заявку</DialogTitle>
-          <DialogDescription className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-success" />
-            Перезвоним в течение 15 минут
+          <DialogDescription className="flex flex-col gap-1">
+            <span className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-success" />
+              Перезвоним в течение 15 минут
+            </span>
+            <a 
+              href="tel:+79939289488" 
+              className="text-primary font-bold hover:underline"
+            >
+              или позвоните: +7 (993) 928-94-88
+            </a>
           </DialogDescription>
         </DialogHeader>
 

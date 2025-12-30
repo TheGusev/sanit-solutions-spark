@@ -7,6 +7,7 @@ import { useScrollDepth } from "@/hooks/useScrollDepth";
 // Critical components - above the fold, load immediately
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import MobileQuickCTA from "@/components/MobileQuickCTA";
 
 // New components for restructured layout
 const MiniPricing = lazy(() => import("@/components/MiniPricing"));
@@ -18,9 +19,10 @@ const FAQ = lazy(() => import("@/components/FAQ"));
 const FinalCTA = lazy(() => import("@/components/FinalCTA"));
 const Footer = lazy(() => import("@/components/Footer"));
 
-// Modal components
+// Modal and floating components
 const CalculatorModal = lazy(() => import("@/components/CalculatorModal"));
 const FloatingButtons = lazy(() => import("@/components/FloatingButtons"));
+const StickyCTA = lazy(() => import("@/components/StickyCTA"));
 const ABTestDebug = lazy(() => import("@/components/ABTestDebug"));
 
 const Index = () => {
@@ -69,6 +71,9 @@ const Index = () => {
       {/* Critical - Above the fold */}
       <Header onCalculatorClick={handleOpenCalculator} />
       <Hero onCalculatorClick={handleOpenCalculator} />
+      
+      {/* Mobile Quick CTA - right after hero for mobile users */}
+      <MobileQuickCTA onCalculatorClick={handleOpenCalculator} />
       
       {/* Mini pricing - immediately after hero */}
       <Suspense fallback={<SectionLoader />}>
@@ -121,6 +126,15 @@ const Index = () => {
       {/* Floating action buttons */}
       <Suspense fallback={null}>
         <FloatingButtons />
+      </Suspense>
+      
+      {/* Sticky CTA for mobile - shows after 40% scroll */}
+      <Suspense fallback={null}>
+        <StickyCTA 
+          price={2500} 
+          discount={15} 
+          onOrderClick={handleOpenCalculator} 
+        />
       </Suspense>
       
       {/* A/B Test Debug Panel - Ctrl+Shift+D to toggle */}
