@@ -18,18 +18,15 @@ const StickyCTA = ({ price, discount, onOrderClick }: StickyCTAProps) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Показываем после прокрутки мимо калькулятора
-      const calculatorEl = document.getElementById('calculator');
-      if (!calculatorEl) return;
-      
-      const rect = calculatorEl.getBoundingClientRect();
-      const isCalculatorPassed = rect.bottom < 0;
+      // Показываем после прокрутки 40% страницы
+      const scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      const isScrolledPast40 = scrollPercent > 0.4;
       
       // Скрываем в футере
       const footerEl = document.querySelector('footer');
       const isInFooter = footerEl && footerEl.getBoundingClientRect().top < window.innerHeight;
       
-      setIsVisible(isCalculatorPassed && !isInFooter && !isDismissed);
+      setIsVisible(isScrolledPast40 && !isInFooter && !isDismissed);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
