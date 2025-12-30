@@ -54,7 +54,7 @@
   <!-- Блог -->
   <url>
     <loc>https://goruslugimsk.ru/blog</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2025-01-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -62,56 +62,56 @@
   <!-- Статьи блога -->
   <url>
     <loc>https://goruslugimsk.ru/blog/kak-podgotovit-pomeshchenie</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2025-01-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/vidy-dezinfekcii</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2025-01-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/borba-s-tarakanami</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2024-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/ozonirovaniye-pomeshcheniy</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2024-12-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/gryzuny-v-dome</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2024-12-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/sezonnost-vreditelej</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2024-12-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/dezinfekciya-ofisa</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2024-12-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://goruslugimsk.ru/blog/klopy-v-kvartire</loc>
-    <lastmod>2025-12-28</lastmod>
+    <lastmod>2024-11-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
