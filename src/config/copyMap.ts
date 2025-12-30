@@ -1,5 +1,24 @@
-// Централизованный словарь всех текстов для A/B тестирования и персонализации
-// Структура: copyMap[section][intent][variant][stringId]
+/**
+ * Централизованный словарь всех текстов для A/B тестирования и персонализации
+ * Структура: copyMap[section][intent][variant][stringId]
+ * 
+ * ⚠️ SEO GUIDELINES (важно для индексации Яндекс/Google):
+ * 
+ * НЕ ТЕСТИРОВАТЬ (SEO-критично):
+ * - H1 заголовок — фиксирован в Hero.tsx, поля title/highlight здесь игнорируются
+ * - <title> и <meta description> — стабильны в Helmet
+ * - <link rel="canonical"> — никогда не менять
+ * - JSON-LD микроразметка — стабильная
+ * 
+ * БЕЗОПАСНО ТЕСТИРОВАТЬ (UX):
+ * - subtitle — подзаголовок под H1
+ * - cta_primary, cta_secondary — текст кнопок
+ * - discount_text — текст скидки
+ * - Порядок секций, дизайн, модальные окна
+ * 
+ * Варианты E/F используют urgency-messaging (ограничено по времени/скидке)
+ * но не должны содержать ложных дедлайнов или манипулятивного FOMO.
+ */
 
 export interface CopyVariant {
   title: string;
