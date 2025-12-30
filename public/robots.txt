@@ -1,8 +1,8 @@
 # Block old WordPress URLs and admin panel
-# ВРЕМЕННО разблокировано для деиндексации (вернуть через 3-5 дней)
+# Блокируем старые WordPress URL (отдают 410 Gone)
 User-agent: Yandex
 Allow: /
-# Disallow: /2022/
+Disallow: /2022/
 Disallow: /wp-admin/
 Disallow: /wp-content/
 Disallow: /wp-includes/
@@ -26,7 +26,7 @@ Allow: /
 
 User-agent: *
 Allow: /
-# Disallow: /2022/
+Disallow: /2022/
 Disallow: /wp-admin/
 Disallow: /wp-content/
 Disallow: /wp-includes/
