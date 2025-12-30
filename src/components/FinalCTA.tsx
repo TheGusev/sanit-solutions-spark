@@ -7,12 +7,12 @@ interface FinalCTAProps {
 
 const FinalCTA = ({ onOpenCalculator }: FinalCTAProps) => {
   const handleCall = () => {
-    window.location.href = "tel:+79939289488";
+    window.location.href = "tel:+79069989888";
   };
 
   const handleWhatsApp = () => {
     window.open(
-      "https://wa.me/79939289488?text=Здравствуйте! Хочу заказать обработку.",
+      "https://wa.me/79069989888?text=Здравствуйте! Хочу заказать обработку.",
       "_blank"
     );
   };

@@ -103,8 +103,8 @@ const Footer = memo(() => {
             <ul className="space-y-3 text-sm opacity-80">
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 flex-shrink-0" />
-                <a href="tel:+79939289488" onClick={handlePhoneClick} className="hover:opacity-100">
-                  +7 (993) 928-94-88
+                <a href="tel:+79069989888" onClick={handlePhoneClick} className="hover:opacity-100">
+                  +7 (906) 998-98-88
                 </a>
               </li>
               <li className="flex items-center gap-2">

@@ -16,7 +16,7 @@ const PrivacyPolicyContent = () => {
             <li><strong>ОГРН:</strong> 1255400030555</li>
             <li><strong>Адрес:</strong> Москва, Центральный округ</li>
             <li><strong>Email:</strong> west-centro@mail.ru</li>
-            <li><strong>Телефон:</strong> +7 (993) 928-94-88</li>
+            <li><strong>Телефон:</strong> +7 (906) 998-98-88</li>
           </ul>
         </div>
       </section>
@@ -121,7 +121,7 @@ const PrivacyPolicyContent = () => {
           <p className="font-medium">Для реализации своих прав обратитесь к Оператору:</p>
           <ul className="list-none space-y-1 mt-2">
             <li>📧 Email: <a href="mailto:west-centro@mail.ru" className="text-primary hover:underline">west-centro@mail.ru</a></li>
-            <li>📞 Телефон: <a href="tel:+79939289488" className="text-primary hover:underline">+7 (993) 928-94-88</a></li>
+            <li>📞 Телефон: <a href="tel:+79069989888" className="text-primary hover:underline">+7 (906) 998-98-88</a></li>
           </ul>
         </div>
       </section>
@@ -191,8 +191,8 @@ const PrivacyPolicyContent = () => {
             </li>
             <li className="flex items-center gap-2">
               <span>📞</span>
-              <a href="tel:+79939289488" className="text-primary hover:underline">
-                +7 (993) 928-94-88
+              <a href="tel:+79069989888" className="text-primary hover:underline">
+                +7 (906) 998-98-88
               </a>
             </li>
             <li className="flex items-center gap-2">

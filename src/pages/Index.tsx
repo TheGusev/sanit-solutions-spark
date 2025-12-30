@@ -58,7 +58,7 @@ const Index = () => {
     <div className="min-h-screen">
       <Helmet>
         <title>Санитарные Решения - Дезинфекция в Москве | Профессиональные услуги</title>
-        <meta name="description" content="Дезинфекция, дезинсекция, дератизация в Москве от 1500₽. Выезд за 15 минут. Гарантия до 1 года. Документы для СЭС. Договор с юр.лицами. Звоните: +7 (993) 928-94-88" />
+        <meta name="description" content="Дезинфекция, дезинсекция, дератизация в Москве от 1500₽. Выезд за 15 минут. Гарантия до 1 года. Документы для СЭС. Договор с юр.лицами. Звоните: +7 (906) 998-98-88" />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
         <link rel="canonical" href="https://goruslugimsk.ru/" />
         <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/" />

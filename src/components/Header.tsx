@@ -139,12 +139,12 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
             </Link>
             {isScrolled && (
               <a 
-                href="tel:+79939289488"
+                href="tel:+79069989888"
                 onClick={handlePhoneClick}
                 className="whitespace-nowrap flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary font-semibold text-sm hover:bg-primary/20 transition-colors animate-fade-in"
               >
                 <Phone className="w-4 h-4 flex-shrink-0" />
-                <span className="hidden lg:inline">+7 (993) 928-94-88</span>
+                <span className="hidden lg:inline">+7 (906) 998-98-88</span>
                 <span className="lg:hidden">Позвонить</span>
               </a>
             )}

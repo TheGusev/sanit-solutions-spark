@@ -16,7 +16,7 @@ const MobileQuickCTA = ({ onCalculatorClick }: MobileQuickCTAProps) => {
       variant: context?.variantId,
       source: 'mobile_quick_cta'
     });
-    window.location.href = "tel:+79939289488";
+    window.location.href = "tel:+79069989888";
   };
 
   const handleWhatsApp = () => {
@@ -26,7 +26,7 @@ const MobileQuickCTA = ({ onCalculatorClick }: MobileQuickCTAProps) => {
       source: 'mobile_quick_cta'
     });
     window.open(
-      "https://wa.me/79939289488?text=Здравствуйте! Хочу заказать обработку.",
+      "https://wa.me/79069989888?text=Здравствуйте! Хочу заказать обработку.",
       "_blank"
     );
   };
