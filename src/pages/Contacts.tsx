@@ -89,7 +89,11 @@ const Contacts = () => {
         <meta property="og:description" content="Свяжитесь с нами для заказа услуг дезинфекции в Москве и МО" />
         <meta property="og:url" content="https://goruslugimsk.ru/contacts" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://storage.googleapis.com/msgsndr/TPScApsdHM0g97SZIF3E/media/67627bc8700fb0e19a0b3c10.jpeg" />
         <meta property="og:locale" content="ru_RU" />
+        <meta property="og:site_name" content="Санитарные Решения" />
+        <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/contacts" />
+        <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/contacts" />
         <meta name="geo.region" content="RU-MOW" />
         <meta name="geo.placename" content="Москва" />
         <meta name="geo.position" content="55.7558;37.6173" />
