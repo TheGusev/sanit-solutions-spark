@@ -11,6 +11,7 @@ const Privacy = () => {
         <meta name="description" content="Политика конфиденциальности ООО Санитарные Решения. Информация о сборе, использовании и защите персональных данных." />
         <link rel="canonical" href="https://goruslugimsk.ru/privacy" />
         <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/privacy" />
+        <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/privacy" />
         <meta name="robots" content="noindex, follow" />
       </Helmet>
       
