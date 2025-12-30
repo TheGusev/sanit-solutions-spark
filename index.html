@@ -36,9 +36,18 @@
       .header-fixed { height: var(--header-height); position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
       /* Font display swap for system fonts */
       @font-face { font-display: swap; }
-      /* Скрываем SSR fallback контент до загрузки React - предотвращает FOUC */
-      #root > div { opacity: 0; visibility: hidden; transition: none; }
-      #root.app-loaded > div { opacity: 1; visibility: visible; }
+      /* SSR fallback: скрыт визуально для пользователей, виден для SEO ботов */
+      .ssr-fallback {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+      }
     </style>
     
     <!-- Schema.org JSON-LD разметка -->
@@ -379,7 +388,7 @@
     </noscript>
     <div id="root">
       <!-- SSR fallback content for search bots (~1500 words) -->
-      <div style="max-width: 1200px; margin: 0 auto; padding: 60px 20px; font-family: Arial, sans-serif;">
+      <div class="ssr-fallback" style="max-width: 1200px; margin: 0 auto; padding: 60px 20px; font-family: Arial, sans-serif;">
         <div role="heading" aria-level="1" style="font-size: 2.5rem; font-weight: bold; text-align: center; margin-bottom: 20px;">
           Профессиональная дезинфекция помещений в Москве — Санитарные Решения
         </div>
