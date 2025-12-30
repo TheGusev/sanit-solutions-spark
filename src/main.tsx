@@ -10,7 +10,10 @@ if (import.meta.env.DEV) {
 
 const rootElement = document.getElementById("root")!;
 
-// Отмечаем загрузку React — SSR fallback контент становится видимым
-rootElement.classList.add('app-loaded');
+// Удаляем SSR fallback контент перед рендером React
+const ssrFallback = rootElement.querySelector('.ssr-fallback');
+if (ssrFallback) {
+  ssrFallback.remove();
+}
 
 createRoot(rootElement).render(<App />);
