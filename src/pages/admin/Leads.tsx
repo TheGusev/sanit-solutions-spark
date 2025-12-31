@@ -39,6 +39,7 @@ interface Lead {
   status: string | null;
   created_at: string | null;
   utm_source: string | null;
+  is_test: boolean | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -59,6 +60,7 @@ const AdminLeads = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
+  const [showTestLeads, setShowTestLeads] = useState(false);
   const [generatingCode, setGeneratingCode] = useState<string | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
@@ -69,6 +71,11 @@ const AdminLeads = () => {
         .from('leads')
         .select('*')
         .order('created_at', { ascending: false });
+
+      // Filter out test leads by default
+      if (!showTestLeads) {
+        query = query.or('is_test.is.null,is_test.eq.false');
+      }
 
       if (filter !== 'all') {
         query = query.eq('status', filter);
@@ -87,7 +94,7 @@ const AdminLeads = () => {
 
   useEffect(() => {
     fetchLeads();
-  }, [filter]);
+  }, [filter, showTestLeads]);
 
   const updateStatus = async (leadId: string, newStatus: string) => {
     try {
@@ -192,7 +199,7 @@ const AdminLeads = () => {
       </div>
 
       {/* Filter */}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Фильтр по статусу" />
@@ -205,6 +212,15 @@ const AdminLeads = () => {
             <SelectItem value="cancelled">Отменённые</SelectItem>
           </SelectContent>
         </Select>
+        <label className="flex items-center gap-2 text-sm cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showTestLeads}
+            onChange={(e) => setShowTestLeads(e.target.checked)}
+            className="rounded"
+          />
+          Показать тестовые
+        </label>
       </div>
 
       {/* Leads list */}
@@ -226,6 +242,11 @@ const AdminLeads = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <CardTitle className="text-lg">{lead.name}</CardTitle>
+                    {lead.is_test && (
+                      <Badge variant="outline" className="text-orange-600 border-orange-200">
+                        Тест
+                      </Badge>
+                    )}
                     <Badge variant="outline" className={statusColors[lead.status || 'new']}>
                       {statusLabels[lead.status || 'new']}
                     </Badge>

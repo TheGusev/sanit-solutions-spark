@@ -66,6 +66,7 @@ export type Database = {
           gclid: string | null
           id: string
           intent: string | null
+          is_test: boolean | null
           keyword: string | null
           last_page_url: string | null
           method: string | null
@@ -104,6 +105,7 @@ export type Database = {
           gclid?: string | null
           id?: string
           intent?: string | null
+          is_test?: boolean | null
           keyword?: string | null
           last_page_url?: string | null
           method?: string | null
@@ -142,6 +144,7 @@ export type Database = {
           gclid?: string | null
           id?: string
           intent?: string | null
+          is_test?: boolean | null
           keyword?: string | null
           last_page_url?: string | null
           method?: string | null
@@ -184,6 +187,7 @@ export type Database = {
           id: string
           impressions_count: number | null
           intent: string
+          is_active: boolean | null
           revenue_sum: number | null
           test_name: string
           updated_at: string | null
@@ -197,6 +201,7 @@ export type Database = {
           id?: string
           impressions_count?: number | null
           intent?: string
+          is_active?: boolean | null
           revenue_sum?: number | null
           test_name: string
           updated_at?: string | null
@@ -210,6 +215,7 @@ export type Database = {
           id?: string
           impressions_count?: number | null
           intent?: string
+          is_active?: boolean | null
           revenue_sum?: number | null
           test_name?: string
           updated_at?: string | null

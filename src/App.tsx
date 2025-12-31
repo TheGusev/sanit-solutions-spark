@@ -29,6 +29,7 @@ const AdminReviews = lazy(() => import("./pages/admin/AdminReviews"));
 const AdminAnalytics = lazy(() => import("./pages/admin/Analytics"));
 const AdminMVT = lazy(() => import("./pages/admin/MVT"));
 const AdminSettings = lazy(() => import("./pages/admin/Settings"));
+const AdminTestLeads = lazy(() => import("./pages/admin/TestLeads"));
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
                   <Route path="/admin/login" element={<AdminLogin />} />
                   <Route path="/admin" element={<AdminDashboard />}>
                     <Route index element={<AdminLeads />} />
+                    <Route path="test-leads" element={<AdminTestLeads />} />
                     <Route path="reviews" element={<AdminReviews />} />
                     <Route path="analytics" element={<AdminAnalytics />} />
                     <Route path="mvt" element={<AdminMVT />} />

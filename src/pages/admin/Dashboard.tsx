@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 
 const navItems = [
   { path: '/admin', icon: ClipboardList, label: 'Заявки', end: true },
+  { path: '/admin/test-leads', icon: Beaker, label: 'Тест-заявки' },
   { path: '/admin/reviews', icon: Star, label: 'Отзывы' },
   { path: '/admin/analytics', icon: BarChart3, label: 'Аналитика' },
   { path: '/admin/mvt', icon: FlaskConical, label: 'A/B тесты' },

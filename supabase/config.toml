@@ -29,3 +29,9 @@ verify_jwt = false
 
 [functions.add-admin-role]
 verify_jwt = false
+
+[functions.create-test-lead]
+verify_jwt = false
+
+[functions.manage-mvt]
+verify_jwt = false
