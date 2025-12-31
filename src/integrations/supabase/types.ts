@@ -74,6 +74,9 @@ export type Database = {
           name: string
           object_type: string | null
           phone: string
+          review_code: string | null
+          review_code_expires_at: string | null
+          review_code_used: boolean | null
           service: string | null
           session_id: string | null
           source: string | null
@@ -109,6 +112,9 @@ export type Database = {
           name: string
           object_type?: string | null
           phone: string
+          review_code?: string | null
+          review_code_expires_at?: string | null
+          review_code_used?: boolean | null
           service?: string | null
           session_id?: string | null
           source?: string | null
@@ -144,6 +150,9 @@ export type Database = {
           name?: string
           object_type?: string | null
           phone?: string
+          review_code?: string | null
+          review_code_expires_at?: string | null
+          review_code_used?: boolean | null
           service?: string | null
           session_id?: string | null
           source?: string | null
@@ -309,6 +318,56 @@ export type Database = {
           winner_variant?: string | null
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string | null
+          display_name: string
+          id: string
+          is_approved: boolean | null
+          is_rejected: boolean | null
+          lead_id: string | null
+          object_type: string | null
+          rating: number
+          text: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          display_name: string
+          id?: string
+          is_approved?: boolean | null
+          is_rejected?: boolean | null
+          lead_id?: string | null
+          object_type?: string | null
+          rating: number
+          text: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          display_name?: string
+          id?: string
+          is_approved?: boolean | null
+          is_rejected?: boolean | null
+          lead_id?: string | null
+          object_type?: string | null
+          rating?: number
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       traffic_events: {
         Row: {
