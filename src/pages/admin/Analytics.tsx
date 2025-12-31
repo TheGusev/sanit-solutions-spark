@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { 
   Users, 
   ClipboardList, 
@@ -9,9 +11,7 @@ import {
   DollarSign,
   RefreshCw,
   Loader2,
-  Smartphone,
-  Monitor,
-  Tablet
+  CalendarIcon
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -27,8 +27,9 @@ import {
   LineChart,
   Line
 } from 'recharts';
-import { format, subDays, startOfDay, endOfDay } from 'date-fns';
+import { format, subDays, startOfDay, endOfDay, differenceInDays } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 interface TrafficEvent {
   id: string;
@@ -46,6 +47,7 @@ interface Lead {
   status: string | null;
   device_type: string | null;
   utm_source: string | null;
+  is_test: boolean | null;
 }
 
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', '#10b981', '#f59e0b', '#ef4444'];
@@ -54,6 +56,8 @@ const AdminAnalytics = () => {
   const [events, setEvents] = useState<TrafficEvent[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [dateFrom, setDateFrom] = useState<Date>(subDays(new Date(), 30));
+  const [dateTo, setDateTo] = useState<Date>(new Date());
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -62,11 +66,15 @@ const AdminAnalytics = () => {
         supabase
           .from('traffic_events')
           .select('id, session_id, event_type, device_type, utm_source, timestamp')
-          .gte('timestamp', subDays(new Date(), 30).toISOString())
+          .gte('timestamp', startOfDay(dateFrom).toISOString())
+          .lte('timestamp', endOfDay(dateTo).toISOString())
           .order('timestamp', { ascending: false }),
         supabase
           .from('leads')
-          .select('id, created_at, final_price, status, device_type, utm_source')
+          .select('id, created_at, final_price, status, device_type, utm_source, is_test')
+          .eq('is_test', false)
+          .gte('created_at', startOfDay(dateFrom).toISOString())
+          .lte('created_at', endOfDay(dateTo).toISOString())
           .order('created_at', { ascending: false })
       ]);
 
@@ -84,7 +92,17 @@ const AdminAnalytics = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [dateFrom, dateTo]);
+
+  const setQuickPeriod = (days: number | null) => {
+    if (days === null) {
+      setDateFrom(new Date(2024, 0, 1));
+      setDateTo(new Date());
+    } else {
+      setDateFrom(subDays(new Date(), days));
+      setDateTo(new Date());
+    }
+  };
 
   // Calculate metrics
   const uniqueSessions = new Set(events.map(e => e.session_id)).size;
@@ -92,9 +110,12 @@ const AdminAnalytics = () => {
   const conversionRate = uniqueSessions > 0 ? ((totalLeads / uniqueSessions) * 100).toFixed(1) : '0';
   const totalRevenue = leads.reduce((sum, l) => sum + (l.final_price || 0), 0);
 
-  // Leads by day for chart
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
-    const date = subDays(new Date(), 6 - i);
+  // Leads by day for chart - dynamic based on selected period
+  const daysDiff = Math.max(1, differenceInDays(dateTo, dateFrom) + 1);
+  const chartDays = Math.min(daysDiff, 30);
+  
+  const leadsByDay = Array.from({ length: chartDays }, (_, i) => {
+    const date = subDays(dateTo, chartDays - 1 - i);
     const dayStart = startOfDay(date);
     const dayEnd = endOfDay(date);
     const count = leads.filter(l => {
@@ -146,15 +167,96 @@ const AdminAnalytics = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Аналитика</h1>
-          <p className="text-muted-foreground">Статистика за последние 30 дней</p>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Аналитика</h1>
+            <p className="text-muted-foreground">
+              {format(dateFrom, 'd MMM yyyy', { locale: ru })} — {format(dateTo, 'd MMM yyyy', { locale: ru })}
+            </p>
+          </div>
+          <Button variant="outline" onClick={fetchData} disabled={isLoading}>
+            <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            Обновить
+          </Button>
         </div>
-        <Button variant="outline" onClick={fetchData} disabled={isLoading}>
-          <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-          Обновить
-        </Button>
+
+        {/* Date filters */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex gap-1">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setQuickPeriod(7)}
+              className={daysDiff === 7 ? 'bg-primary text-primary-foreground' : ''}
+            >
+              7 дней
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setQuickPeriod(30)}
+              className={daysDiff === 30 ? 'bg-primary text-primary-foreground' : ''}
+            >
+              30 дней
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setQuickPeriod(90)}
+              className={daysDiff === 90 ? 'bg-primary text-primary-foreground' : ''}
+            >
+              90 дней
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setQuickPeriod(null)}
+            >
+              Всё время
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2 ml-auto">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className="w-[140px] justify-start text-left font-normal">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {format(dateFrom, 'dd.MM.yyyy')}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dateFrom}
+                  onSelect={(date) => date && setDateFrom(date)}
+                  disabled={(date) => date > dateTo || date > new Date()}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+            <span className="text-muted-foreground">—</span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className="w-[140px] justify-start text-left font-normal">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {format(dateTo, 'dd.MM.yyyy')}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  mode="single"
+                  selected={dateTo}
+                  onSelect={(date) => date && setDateTo(date)}
+                  disabled={(date) => date < dateFrom || date > new Date()}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
       </div>
 
       {isLoading ? (
@@ -182,7 +284,7 @@ const AdminAnalytics = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{totalLeads}</div>
-                <p className="text-xs text-muted-foreground">Всего заявок</p>
+                <p className="text-xs text-muted-foreground">Реальных заявок</p>
               </CardContent>
             </Card>
             <Card>
@@ -217,7 +319,7 @@ const AdminAnalytics = () => {
               <CardContent>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={last7Days}>
+                    <LineChart data={leadsByDay}>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                       <XAxis dataKey="date" className="text-xs" />
                       <YAxis className="text-xs" />
