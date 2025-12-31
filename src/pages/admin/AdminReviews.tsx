@@ -38,12 +38,12 @@ const AdminReviews = () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('reviews' as any)
+        .from('reviews')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setReviews((data || []) as unknown as Review[]);
+      setReviews(data || []);
     } catch (error: any) {
       toast.error('Ошибка загрузки отзывов');
     } finally {
@@ -59,7 +59,7 @@ const AdminReviews = () => {
     setActionLoading(reviewId);
     try {
       const { error } = await supabase
-        .from('reviews' as any)
+        .from('reviews')
         .update({ 
           is_approved: true, 
           is_rejected: false,
@@ -84,7 +84,7 @@ const AdminReviews = () => {
     setActionLoading(reviewId);
     try {
       const { error } = await supabase
-        .from('reviews' as any)
+        .from('reviews')
         .update({ is_approved: false, is_rejected: true })
         .eq('id', reviewId);
 
@@ -107,7 +107,7 @@ const AdminReviews = () => {
     setActionLoading(reviewId);
     try {
       const { error } = await supabase
-        .from('reviews' as any)
+        .from('reviews')
         .delete()
         .eq('id', reviewId);
 

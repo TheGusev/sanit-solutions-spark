@@ -55,14 +55,14 @@ const Reviews = () => {
     const fetchReviews = async () => {
       try {
         const { data, error } = await supabase
-          .from('reviews' as any)
+          .from('reviews')
           .select('id, display_name, text, rating, object_type')
           .eq('is_approved', true)
           .order('created_at', { ascending: false })
           .limit(8);
 
         if (!error && data) {
-          setDbReviews(data as unknown as Review[]);
+          setDbReviews(data);
         }
       } catch (e) {
         console.error('Error fetching reviews:', e);
