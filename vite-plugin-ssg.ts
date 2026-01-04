@@ -115,16 +115,7 @@ export function ssgPlugin(): Plugin {
           return;
         }
         
-        let template = readFileSync(templatePath, 'utf-8');
-        
-        // Ensure template has the <!--app-html--> placeholder
-        if (!template.includes('<!--app-html-->')) {
-          // If no placeholder, try to find the root div and add it
-          template = template.replace(
-            /<div id="root">([\s\S]*?)<\/div>/,
-            '<div id="root"><!--app-html--></div>'
-          );
-        }
+        const template = readFileSync(templatePath, 'utf-8');
         
         // Build SSR bundle
         const { build } = await import('vite');
@@ -175,8 +166,11 @@ export function ssgPlugin(): Plugin {
             // Render the route
             const result = render(route.path);
             
-            // Replace placeholder with rendered content
-            let html = template.replace('<!--app-html-->', result.html);
+            // Replace entire root div content (including SSR fallback) with rendered content
+            let html = template.replace(
+              /<div id="root">[\s\S]*?<\/div>/,
+              `<div id="root">${result.html}</div>`
+            );
             
             // Update head tags if helmet provided them
             if (result.helmet.title) {
