@@ -117,12 +117,17 @@ export function TrafficProvider({ children }: { children: React.ReactNode }) {
 
 /**
  * Хук для получения контекста трафика в компонентах
+ * SSR-safe: возвращает fallback вместо ошибки если контекст недоступен
  */
-export function useTraffic() {
+export function useTraffic(): TrafficContextValue {
   const value = useContext(TrafficContext);
   
+  // SSR fallback - возвращаем пустой контекст вместо ошибки
   if (!value) {
-    throw new Error('useTraffic must be used within TrafficProvider');
+    return {
+      context: null,
+      isLoading: true
+    };
   }
   
   return value;

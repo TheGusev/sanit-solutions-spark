@@ -166,11 +166,46 @@ export function ssgPlugin(): Plugin {
             // Render the route
             const result = render(route.path);
             
-            // Replace entire root div content (including SSR fallback) with rendered content
-            let html = template.replace(
-              /<div id="root">[\s\S]*?<\/div>/,
-              `<div id="root">${result.html}</div>`
-            );
+            // Replace entire root div content using indexOf for reliability
+            // The regex /<div id="root">[\s\S]*?<\/div>/ can be greedy with nested divs
+            const rootStartTag = '<div id="root">';
+            const rootStartIndex = template.indexOf(rootStartTag);
+            
+            // Find the matching closing </div> by counting nesting
+            let depth = 1;
+            let searchIndex = rootStartIndex + rootStartTag.length;
+            let rootEndIndex = -1;
+            
+            while (depth > 0 && searchIndex < template.length) {
+              const nextOpen = template.indexOf('<div', searchIndex);
+              const nextClose = template.indexOf('</div>', searchIndex);
+              
+              if (nextClose === -1) break;
+              
+              if (nextOpen !== -1 && nextOpen < nextClose) {
+                depth++;
+                searchIndex = nextOpen + 4;
+              } else {
+                depth--;
+                if (depth === 0) {
+                  rootEndIndex = nextClose + 6; // length of '</div>'
+                }
+                searchIndex = nextClose + 6;
+              }
+            }
+            
+            let html: string;
+            if (rootStartIndex !== -1 && rootEndIndex !== -1) {
+              html = template.substring(0, rootStartIndex) + 
+                     `<div id="root">${result.html}</div>` + 
+                     template.substring(rootEndIndex);
+            } else {
+              // Fallback to regex if parsing fails
+              html = template.replace(
+                /<div id="root">[\s\S]*?<\/div>/,
+                `<div id="root">${result.html}</div>`
+              );
+            }
             
             // Update head tags if helmet provided them
             if (result.helmet.title) {
