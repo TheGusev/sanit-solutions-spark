@@ -5,10 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Shield, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Shield, Eye, EyeOff, KeyRound, UserPlus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
+type Mode = 'create' | 'reset';
+
 const AdminSetup = () => {
+  const [mode, setMode] = useState<Mode>('create');
   const [secretCode, setSecretCode] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,10 +43,10 @@ const AdminSetup = () => {
       return;
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       toast({
         title: 'Ошибка',
-        description: 'Пароль должен содержать минимум 6 символов',
+        description: 'Пароль должен содержать минимум 8 символов',
         variant: 'destructive',
       });
       return;
@@ -52,33 +55,57 @@ const AdminSetup = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('create-admin', {
-        body: {
-          email: email.trim(),
-          password,
-          secret_code: secretCode.trim(),
-        },
-      });
+      if (mode === 'create') {
+        const { data, error } = await supabase.functions.invoke('create-admin', {
+          body: {
+            email: email.trim().toLowerCase(),
+            password,
+            secret_code: secretCode.trim(),
+          },
+        });
 
-      if (error) {
-        throw new Error(error.message);
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        toast({
+          title: 'Успешно',
+          description: 'Администратор создан. Теперь вы можете войти.',
+        });
+      } else {
+        // Reset password mode
+        const { data, error } = await supabase.functions.invoke('reset-admin-password', {
+          body: {
+            email: email.trim().toLowerCase(),
+            new_password: password,
+            secret_code: secretCode.trim(),
+          },
+        });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        toast({
+          title: 'Успешно',
+          description: data.message || 'Пароль успешно изменён. Теперь вы можете войти.',
+        });
       }
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      toast({
-        title: 'Успешно',
-        description: 'Администратор создан. Теперь вы можете войти.',
-      });
 
       navigate('/admin/login');
     } catch (error: any) {
-      console.error('Error creating admin:', error);
+      console.error('Error in admin setup:', error);
       toast({
         title: 'Ошибка',
-        description: error.message || 'Не удалось создать администратора',
+        description: error.message || 'Не удалось выполнить операцию',
         variant: 'destructive',
       });
     } finally {
@@ -86,19 +113,64 @@ const AdminSetup = () => {
     }
   };
 
+  const resetForm = () => {
+    setSecretCode('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+  };
+
+  const switchMode = (newMode: Mode) => {
+    setMode(newMode);
+    resetForm();
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-            <Shield className="h-6 w-6 text-primary" />
+            {mode === 'create' ? (
+              <Shield className="h-6 w-6 text-primary" />
+            ) : (
+              <KeyRound className="h-6 w-6 text-primary" />
+            )}
           </div>
-          <CardTitle className="text-2xl">Создание администратора</CardTitle>
+          <CardTitle className="text-2xl">
+            {mode === 'create' ? 'Создание администратора' : 'Сброс пароля администратора'}
+          </CardTitle>
           <CardDescription>
-            Введите секретный код и данные для нового администратора
+            {mode === 'create' 
+              ? 'Введите секретный код и данные для нового администратора'
+              : 'Введите секретный код и новый пароль для существующего администратора'
+            }
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Mode Toggle */}
+          <div className="flex gap-2 mb-6">
+            <Button
+              type="button"
+              variant={mode === 'create' ? 'default' : 'outline'}
+              className="flex-1"
+              onClick={() => switchMode('create')}
+              disabled={isLoading}
+            >
+              <UserPlus className="h-4 w-4 mr-2" />
+              Создать
+            </Button>
+            <Button
+              type="button"
+              variant={mode === 'reset' ? 'default' : 'outline'}
+              className="flex-1"
+              onClick={() => switchMode('reset')}
+              disabled={isLoading}
+            >
+              <KeyRound className="h-4 w-4 mr-2" />
+              Сбросить пароль
+            </Button>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="secretCode">Секретный код</Label>
@@ -127,12 +199,14 @@ const AdminSetup = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Пароль</Label>
+              <Label htmlFor="password">
+                {mode === 'create' ? 'Пароль' : 'Новый пароль'}
+              </Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Минимум 6 символов"
+                  placeholder="Минимум 8 символов"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
@@ -149,7 +223,9 @@ const AdminSetup = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Подтвердите пароль</Label>
+              <Label htmlFor="confirmPassword">
+                {mode === 'create' ? 'Подтвердите пароль' : 'Подтвердите новый пароль'}
+              </Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -174,10 +250,10 @@ const AdminSetup = () => {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Создание...
+                  {mode === 'create' ? 'Создание...' : 'Сброс...'}
                 </>
               ) : (
-                'Создать администратора'
+                mode === 'create' ? 'Создать администратора' : 'Сбросить пароль'
               )}
             </Button>
 
