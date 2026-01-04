@@ -26,14 +26,14 @@ const IndexSSR = () => {
         <title>Санитарные Решения — Дезинфекция в Москве и МО | От 1500₽</title>
         <meta name="description" content="Профессиональная дезинфекция, дезинсекция и дератизация в Москве и Московской области. Уничтожение тараканов, клопов, грызунов. Гарантия результата. Выезд за 15 минут." />
         <meta name="keywords" content="дезинфекция, дезинсекция, дератизация, Москва, МО, уничтожение тараканов, уничтожение клопов, санитарная обработка" />
-        <link rel="canonical" href="https://sanresh.ru/" />
+        <link rel="canonical" href="https://goruslugimsk.ru/" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="Санитарные Решения — Дезинфекция в Москве" />
         <meta property="og:description" content="Профессиональная дезинфекция, дезинсекция и дератизация. Гарантия результата." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://sanresh.ru/" />
-        <link rel="alternate" hrefLang="ru" href="https://sanresh.ru/" />
-        <link rel="alternate" hrefLang="x-default" href="https://sanresh.ru/" />
+        <meta property="og:url" content="https://goruslugimsk.ru/" />
+        <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/" />
+        <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/" />
       </Helmet>
 
       {/* StructuredData is already in index.html, no need to render here */}

@@ -93,6 +93,65 @@ function validateHtml(html: string, route: string): { valid: boolean; errors: st
   };
 }
 
+// Replace all head tags with helmet data
+function replaceHeadTags(html: string, helmet: { title: string; meta: string; link: string; script: string }): string {
+  // 1. Replace title
+  if (helmet.title) {
+    html = html.replace(/<title>.*?<\/title>/, helmet.title);
+  }
+  
+  // 2. Remove conflicting meta tags before inserting new ones
+  const metaTagsToRemove = [
+    /<meta name="description"[^>]*>/g,
+    /<meta name="keywords"[^>]*>/g,
+    /<meta name="robots"[^>]*>/g,
+    /<meta property="og:[^"]*"[^>]*>/g,
+    /<meta name="twitter:[^"]*"[^>]*>/g,
+  ];
+  
+  metaTagsToRemove.forEach(regex => {
+    html = html.replace(regex, '');
+  });
+  
+  // 3. Remove conflicting link tags
+  const linkTagsToRemove = [
+    /<link rel="canonical"[^>]*>/g,
+    /<link rel="alternate"[^>]*hreflang[^>]*>/gi,
+    /<link rel="alternate"[^>]*hrefLang[^>]*>/gi,
+  ];
+  
+  linkTagsToRemove.forEach(regex => {
+    html = html.replace(regex, '');
+  });
+  
+  // 4. Insert new helmet tags after </title>
+  const titleEndIndex = html.indexOf('</title>');
+  if (titleEndIndex !== -1) {
+    const insertPoint = titleEndIndex + 8; // length of '</title>'
+    const beforeTitle = html.substring(0, insertPoint);
+    const afterTitle = html.substring(insertPoint);
+    
+    const newTags = [
+      helmet.meta,
+      helmet.link,
+    ].filter(tag => tag && tag.trim()).join('\n    ');
+    
+    if (newTags) {
+      html = beforeTitle + '\n    ' + newTags + afterTitle;
+    }
+  }
+  
+  // 5. Add schema.org scripts if provided (insert before </head>)
+  if (helmet.script && helmet.script.trim()) {
+    html = html.replace('</head>', helmet.script + '\n  </head>');
+  }
+  
+  // 6. Clean up empty lines
+  html = html.replace(/\n\s*\n\s*\n/g, '\n\n');
+  
+  return html;
+}
+
 export function ssgPlugin(): Plugin {
   let distDir: string;
   
@@ -207,10 +266,8 @@ export function ssgPlugin(): Plugin {
               );
             }
             
-            // Update head tags if helmet provided them
-            if (result.helmet.title) {
-              html = html.replace(/<title>.*?<\/title>/, result.helmet.title);
-            }
+            // Update all head tags from helmet
+            html = replaceHeadTags(html, result.helmet);
             
             // Validate HTML quality
             const validation = validateHtml(html, route.path);
