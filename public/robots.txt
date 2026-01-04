@@ -3,6 +3,8 @@
 User-agent: Yandex
 Allow: /
 Disallow: /2022/
+Disallow: /2022/12/11/привет-мир/
+Disallow: /2022/12/11/%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82-%D0%BC%D0%B8%D1%80/
 Disallow: /wp-admin/
 Disallow: /wp-content/
 Disallow: /wp-includes/
@@ -12,10 +14,16 @@ Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term
 
 User-agent: Googlebot
 Allow: /
+Disallow: /2022/
+Disallow: /2022/12/11/привет-мир/
+Disallow: /2022/12/11/%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82-%D0%BC%D0%B8%D1%80/
 Disallow: /admin/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /2022/
+Disallow: /2022/12/11/привет-мир/
+Disallow: /2022/12/11/%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82-%D0%BC%D0%B8%D1%80/
 Disallow: /admin/
 
 User-agent: Twitterbot
@@ -27,6 +35,8 @@ Allow: /
 User-agent: *
 Allow: /
 Disallow: /2022/
+Disallow: /2022/12/11/привет-мир/
+Disallow: /2022/12/11/%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82-%D0%BC%D0%B8%D1%80/
 Disallow: /wp-admin/
 Disallow: /wp-content/
 Disallow: /wp-includes/
