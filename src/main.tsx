@@ -1,4 +1,4 @@
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { logCopyMapWarnings } from "./lib/validateCopyMap";
@@ -16,4 +16,15 @@ if (ssrFallback) {
   ssrFallback.remove();
 }
 
-createRoot(rootElement).render(<App />);
+// Check if we have SSG-rendered content to hydrate
+const hasSSGContent = rootElement.innerHTML.trim() && 
+  !rootElement.innerHTML.includes('<!--app-html-->') &&
+  !rootElement.querySelector('.ssr-fallback');
+
+if (hasSSGContent) {
+  // SSG mode - hydrate the pre-rendered content
+  hydrateRoot(rootElement, <App />);
+} else {
+  // CSR fallback - standard client-side rendering
+  createRoot(rootElement).render(<App />);
+}

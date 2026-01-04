@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { sitemapPlugin } from "./vite-plugin-sitemap";
+import { ssgPlugin } from "./vite-plugin-ssg";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -14,6 +15,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     mode === "production" && sitemapPlugin(),
+    mode === "production" && ssgPlugin(),
   ].filter(Boolean),
   resolve: {
     alias: {
@@ -46,4 +48,8 @@ export default defineConfig(({ mode }) => ({
     // Target modern browsers for smaller bundle
     target: 'es2020',
   },
+  // SSR configuration for server-side rendering
+  ssr: {
+    noExternal: ['react-helmet-async']
+  }
 }));
