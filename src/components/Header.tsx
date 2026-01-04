@@ -31,6 +31,9 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
   };
 
   useEffect(() => {
+    // SSR-safe: проверяем наличие window
+    if (typeof window === 'undefined') return;
+    
     let ticking = false;
     const handleScroll = () => {
       if (!ticking) {

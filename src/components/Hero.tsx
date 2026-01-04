@@ -109,6 +109,9 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
   
   // Логируем показ hero для A/B анализа (один раз)
   useEffect(() => {
+    // SSR-safe: проверяем наличие window
+    if (typeof window === 'undefined') return;
+    
     if (context && context.initialized && !hasLoggedView.current) {
       hasLoggedView.current = true;
       
@@ -137,7 +140,8 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
   const handleCalculatorClick = () => {
     if (onCalculatorClick) {
       onCalculatorClick();
-    } else {
+    } else if (typeof document !== 'undefined') {
+      // SSR-safe: проверяем наличие document
       const element = document.getElementById("calculator");
       element?.scrollIntoView({ behavior: "smooth" });
     }
