@@ -23,6 +23,33 @@
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
 
+# Статические ресурсы (JS, CSS) - долгое кэширование с immutable
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+# Изображения - долгое кэширование (30 дней)
+/*.jpg
+  Cache-Control: public, max-age=2592000
+/*.png
+  Cache-Control: public, max-age=2592000
+/*.ico
+  Cache-Control: public, max-age=2592000
+/*.svg
+  Cache-Control: public, max-age=2592000
+/*.webp
+  Cache-Control: public, max-age=2592000
+
+# HTML страницы - короткое кэширование (1 час)
+/*.html
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# Sitemap и robots - умеренное кэширование (1 день)
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+/robots.txt
+  Cache-Control: public, max-age=86400
+
 # Security headers для всего сайта
 /*
   X-Content-Type-Options: nosniff
