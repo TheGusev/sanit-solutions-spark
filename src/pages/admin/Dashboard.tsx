@@ -64,7 +64,7 @@ const AdminDashboard = () => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
-        navigate('/admin/login');
+        navigate('/');
       }
     });
 
@@ -74,7 +74,7 @@ const AdminDashboard = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast.success('Вы вышли из системы');
-    navigate('/admin/login');
+    navigate('/');
   };
 
   if (isLoading) {
