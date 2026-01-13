@@ -2,6 +2,13 @@
 # Редиректы для goruslugimsk.ru
 # ====================================
 
+# Статические файлы — отдаём напрямую (ПЕРЕД SPA fallback!)
+/robots.txt          /robots.txt          200
+/sitemap.xml         /sitemap.xml         200
+/favicon.ico         /favicon.ico         200
+/og-image.jpg        /og-image.jpg        200
+/.well-known/*       /.well-known/:splat  200
+
 # 410 Gone — старые WordPress URL навсегда удалены
 # Яндекс/Google быстро деиндексируют страницы с 410
 /2022/*              /410.html   410

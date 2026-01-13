@@ -55,7 +55,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Helmet>
         <title>Санитарные Решения - Дезинфекция в Москве | Профессиональные услуги</title>
         <meta name="description" content="Дезинфекция, дезинсекция, дератизация в Москве от 1500₽. Выезд за 15 минут. Гарантия до 1 года. Документы для СЭС. Договор с юр.лицами. Звоните: +7 (906) 998-98-88" />
