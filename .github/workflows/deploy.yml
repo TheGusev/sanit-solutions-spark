@@ -1,0 +1,23 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /root/goruslugimsk
+            git pull origin main
+            docker build -t goruslugimsk:latest .
+            docker stop goruslugimsk-main || true
+            docker rm goruslugimsk-main || true
+            docker run -d --name goruslugimsk-main --label "traefik.enable=true" --label "traefik.http.routers.goruslugimsk.rule=Host(\`goruslugimsk.ru\`)" --label "traefik.http.routers.goruslugimsk.entrypoints=web,websecure" --label "traefik.http.routers.goruslugimsk.tls=true" --label "traefik.http.routers.goruslugimsk.tls.certresolver=letsencrypt" --label "traefik.http.services.goruslugimsk.loadbalancer.server.port=80" --network dokploy-network goruslugimsk:latest
