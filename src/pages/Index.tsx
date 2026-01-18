@@ -14,6 +14,7 @@ const MiniPricing = lazy(() => import("@/components/MiniPricing"));
 const WhyUsExtended = lazy(() => import("@/components/WhyUsExtended"));
 const PricingByArea = lazy(() => import("@/components/PricingByArea"));
 const ServiceAreaMap = lazy(() => import("@/components/ServiceAreaMap"));
+const ServiceDistricts = lazy(() => import("@/components/ServiceDistricts"));
 const Reviews = lazy(() => import("@/components/Reviews"));
 const WorkGallery = lazy(() => import("@/components/WorkGallery"));
 const FAQ = lazy(() => import("@/components/FAQ"));
@@ -96,6 +97,11 @@ const Index = () => {
       {/* Service area map */}
       <Suspense fallback={<SectionLoader />}>
         <ServiceAreaMap />
+      </Suspense>
+      
+      {/* Districts Section */}
+      <Suspense fallback={<SectionLoader />}>
+        <ServiceDistricts />
       </Suspense>
       
       {/* Reviews */}
