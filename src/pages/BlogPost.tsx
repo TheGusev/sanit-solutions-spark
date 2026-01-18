@@ -61,9 +61,9 @@ const BlogPost = () => {
         <meta property="og:url" content={`${BASE_URL}/blog/${post.slug}`} />
         <meta property="og:title" content={`${post.title} | Санитарные Решения`} />
         <meta property="og:description" content={post.excerpt} />
-        <meta property="og:image" content="https://storage.googleapis.com/msgsndr/TPScApsdHM0g97SZIF3E/media/67627bc8700fb0e19a0b3c10.jpeg" />
+        <meta property="og:image" content="https://goruslugimsk.ru/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://storage.googleapis.com/msgsndr/TPScApsdHM0g97SZIF3E/media/67627bc8700fb0e19a0b3c10.jpeg" />
+        <meta name="twitter:image" content="https://goruslugimsk.ru/og-image.jpg" />
       </Helmet>
 
       {/* BlogPosting Schema.org */}

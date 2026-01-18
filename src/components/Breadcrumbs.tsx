@@ -29,7 +29,8 @@ const Breadcrumbs = ({ items, className = "" }: BreadcrumbsProps) => {
     ...items,
   ];
 
-  // Generate Schema.org BreadcrumbList
+  // Generate Schema.org BreadcrumbList (SSR-safe)
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -37,7 +38,7 @@ const Breadcrumbs = ({ items, className = "" }: BreadcrumbsProps) => {
       "@type": "ListItem",
       position: index + 1,
       name: item.label,
-      item: item.href ? `${BASE_URL}${item.href}` : `${BASE_URL}${window.location.pathname}`,
+      item: item.href ? `${BASE_URL}${item.href}` : `${BASE_URL}${currentPath}`,
     })),
   };
 
