@@ -22,7 +22,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WorkProcess from "@/components/WorkProcess";
 import AnimatedSection from "@/components/AnimatedSection";
-import { getServiceBySlug, servicePages } from "@/data/services";
+import RelatedArticles from "@/components/RelatedArticles";
+import { getServiceBySlug, servicePages, getRelatedArticlesForService } from "@/data/services";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 
@@ -394,6 +395,53 @@ const ServicePage = () => {
             </AnimatedSection>
           </div>
         </section>
+
+        {/* Related Articles */}
+        {(() => {
+          const relatedArticles = getRelatedArticlesForService(service.slug);
+          if (relatedArticles.length > 0) {
+            return (
+              <section className="py-12 md:py-20">
+                <div className="container mx-auto px-4">
+                  <AnimatedSection animation="fade-up" className="text-center mb-12">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                      Полезные статьи
+                    </h2>
+                    <p className="text-muted-foreground max-w-2xl mx-auto">
+                      Читайте материалы по теме для более глубокого понимания вопроса
+                    </p>
+                  </AnimatedSection>
+
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                    {relatedArticles.map((article, idx) => (
+                      <AnimatedSection key={article.slug} animation="fade-up" delay={idx * 100}>
+                        <Link to={`/blog/${article.slug}`}>
+                          <Card className="hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer h-full">
+                            <CardContent className="p-6">
+                              <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
+                                {article.category}
+                              </span>
+                              <h3 className="text-lg font-bold mt-3 mb-2 line-clamp-2">{article.title}</h3>
+                              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{article.excerpt}</p>
+                              <div className="flex items-center justify-between text-sm">
+                                <span className="text-muted-foreground">{article.readTime}</span>
+                                <span className="text-primary flex items-center gap-1">
+                                  Читать
+                                  <ChevronRight className="w-4 h-4" />
+                                </span>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      </AnimatedSection>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            );
+          }
+          return null;
+        })()}
 
         {/* Other Services */}
         <section className="py-12 md:py-20 bg-muted/30">
