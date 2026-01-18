@@ -1,29 +1,32 @@
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Clock, Shield, Phone, Check, Building, Home, Utensils } from 'lucide-react';
+import { MapPin, Clock, Check, Building, Home, Utensils, Phone } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import Breadcrumbs from '@/components/Breadcrumbs';
+import CalculatorModal from '@/components/CalculatorModal';
 import { getDistrictById, districtPages } from '@/data/districtPages';
+import { useState } from 'react';
+
+// New district components
+import DistrictHero from '@/components/district/DistrictHero';
+import DistrictSpecifics from '@/components/district/DistrictSpecifics';
+import DistrictPricing from '@/components/district/DistrictPricing';
+import DistrictCases from '@/components/district/DistrictCases';
+import DistrictReviews from '@/components/district/DistrictReviews';
+import DistrictCTA from '@/components/district/DistrictCTA';
 
 const DistrictPage = () => {
   const { districtId } = useParams<{ districtId: string }>();
   const district = districtId ? getDistrictById(districtId.replace("dezinfekciya-", "")) : undefined;
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   if (!district) {
     return <Navigate to="/uslugi/po-okrugam-moskvy" replace />;
   }
-
-  const breadcrumbItems = [
-    { label: "Главная", href: "/" },
-    { label: "Услуги", href: "/#services" },
-    { label: "По округам", href: "/uslugi/po-okrugam-moskvy" },
-    { label: district.name }
-  ];
 
   const services = [
     { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: 1000 + district.surcharge },
@@ -34,6 +37,48 @@ const DistrictPage = () => {
 
   const otherDistricts = districtPages.filter(d => d.id !== district.id).slice(0, 4);
 
+  // Schema.org with geo data
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Дезинфекция",
+    "name": `Дезинфекция в ${district.name} Москвы`,
+    "description": district.metaDescription,
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": "Санитарные Решения",
+      "telephone": "+7-906-998-98-88",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Москва",
+        "addressRegion": district.fullName
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": district.center[0],
+        "longitude": district.center[1]
+      }
+    },
+    "areaServed": {
+      "@type": "AdministrativeArea",
+      "name": district.fullName + ", Москва"
+    },
+    "priceRange": `от ${1000 + district.surcharge}₽`
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": district.faq.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  };
+
   return (
     <>
       <Helmet>
@@ -41,81 +86,32 @@ const DistrictPage = () => {
         <meta name="description" content={district.metaDescription} />
         <link rel="canonical" href={`https://goruslugimsk.ru/uslugi/${district.slug}`} />
         <meta name="robots" content="index, follow" />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            "name": "Санитарные Решения",
-            "description": district.metaDescription,
-            "areaServed": {
-              "@type": "AdministrativeArea",
-              "name": district.fullName + ", Москва"
-            },
-            "telephone": "+7-906-998-98-88",
-            "priceRange": `от ${1000 + district.surcharge}₽`
-          })}
-        </script>
+        <meta property="og:title" content={`Дезинфекция в ${district.name} Москвы — Санитарные Решения`} />
+        <meta property="og:description" content={district.metaDescription} />
+        <meta property="og:url" content={`https://goruslugimsk.ru/uslugi/${district.slug}`} />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
 
       <Header />
 
-      <main className="min-h-screen pt-20">
-        <div className="container mx-auto px-4 py-8">
-          <Breadcrumbs items={breadcrumbItems} />
+      <main className="min-h-screen">
+        {/* Hero with parallax */}
+        <DistrictHero 
+          district={district} 
+          onCalculatorOpen={() => setIsCalculatorOpen(true)} 
+        />
 
-          {/* Hero */}
-          <section className="mb-12">
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-              <Badge variant="secondary" className="text-sm">
-                <MapPin className="w-4 h-4 mr-1" />
-                {district.name}
-              </Badge>
-              <Badge variant="outline" className="text-sm">
-                <Clock className="w-4 h-4 mr-1" />
-                {district.responseTime}
-              </Badge>
-              {district.surcharge === 0 && (
-                <Badge className="bg-green-500 text-sm">Бесплатный выезд</Badge>
-              )}
-            </div>
+        {/* District specifics (2x3 grid) */}
+        <DistrictSpecifics district={district} />
 
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">{district.h1}</h1>
-            
-            <p className="text-lg text-muted-foreground max-w-3xl mb-6">
-              {district.description.split('\n\n')[0]}
-            </p>
-
-            <div className="flex flex-wrap gap-4">
-              <Button size="lg" asChild>
-                <a href="tel:+79069989888">
-                  <Phone className="w-5 h-5 mr-2" />
-                  Вызвать в {district.name}
-                </a>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <a href="https://wa.me/79069989888" target="_blank" rel="noopener noreferrer">
-                  WhatsApp
-                </a>
-              </Button>
-            </div>
-          </section>
-
-          {/* Features */}
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">Почему мы в {district.name}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {district.features.map((feature, idx) => (
-                <div key={idx} className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
-                  <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span>{feature}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Neighborhoods */}
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">Районы {district.name}, которые мы обслуживаем</h2>
+        {/* Neighborhoods */}
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">
+              Районы {district.name}, которые мы обслуживаем
+            </h2>
             <div className="flex flex-wrap gap-2">
               {district.neighborhoods.map((n, idx) => (
                 <Badge key={idx} variant="secondary" className="text-sm py-1.5 px-3">
@@ -123,15 +119,32 @@ const DistrictPage = () => {
                 </Badge>
               ))}
             </div>
-          </section>
+            
+            {/* Response time badge */}
+            <div className="mt-6 inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-4 py-2 rounded-lg">
+              <Clock className="w-5 h-5" />
+              <span className="font-medium">Среднее время выезда: {district.responseTime}</span>
+            </div>
+          </div>
+        </section>
 
-          {/* Services with prices */}
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">Услуги в {district.name}</h2>
+        {/* Pricing with tabs */}
+        <DistrictPricing district={district} />
+
+        {/* Cases */}
+        <DistrictCases district={district} />
+
+        {/* Reviews */}
+        <DistrictReviews district={district} />
+
+        {/* Services in district */}
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">Услуги в {district.name}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {services.map((service) => (
                 <Link key={service.href} to={service.href}>
-                  <Card className="h-full hover:shadow-md transition-shadow">
+                  <Card className="h-full hover:shadow-md transition-shadow hover:-translate-y-1">
                     <CardContent className="p-6 text-center">
                       <h3 className="font-bold text-lg mb-2">{service.title}</h3>
                       <p className="text-2xl font-bold text-primary">от {service.price}₽</p>
@@ -143,11 +156,13 @@ const DistrictPage = () => {
                 </Link>
               ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* Popular objects */}
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">Популярные объекты в {district.name}</h2>
+        {/* Popular objects */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">Популярные объекты в {district.name}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {district.popularObjects.map((obj, idx) => (
                 <Card key={idx}>
@@ -169,48 +184,32 @@ const DistrictPage = () => {
                 </Card>
               ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* Worked streets */}
-          <section className="mb-12 bg-muted/30 rounded-2xl p-6">
-            <h2 className="text-2xl font-bold mb-4">Мы уже работали на этих улицах</h2>
-            <p className="text-muted-foreground mb-4">
-              Вот некоторые адреса в {district.name}, где мы успешно провели обработку:
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {district.workedStreets.map((street, idx) => (
-                <Badge key={idx} variant="outline" className="text-sm">
-                  {street}
-                </Badge>
-              ))}
+        {/* Worked streets */}
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <div className="bg-muted/50 rounded-2xl p-6 md:p-8">
+              <h2 className="text-2xl font-bold mb-4">Мы уже работали на этих улицах</h2>
+              <p className="text-muted-foreground mb-4">
+                Вот некоторые адреса в {district.name}, где мы успешно провели обработку:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {district.workedStreets.map((street, idx) => (
+                  <Badge key={idx} variant="outline" className="text-sm">
+                    {street}
+                  </Badge>
+                ))}
+              </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* Cases */}
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">Реальные кейсы из {district.name}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {district.cases.map((c, idx) => (
-                <Card key={idx} className="border-l-4 border-l-primary">
-                  <CardContent className="p-6">
-                    <h3 className="font-bold mb-2">{c.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      <MapPin className="w-4 h-4 inline mr-1" />
-                      {c.location}
-                    </p>
-                    <p className="text-sm">
-                      <Check className="w-4 h-4 inline mr-1 text-green-500" />
-                      {c.result}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
-
-          {/* FAQ */}
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">Частые вопросы про {district.name}</h2>
+        {/* FAQ */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">Частые вопросы про {district.name}</h2>
             <Accordion type="single" collapsible className="max-w-3xl">
               {district.faq.map((item, idx) => (
                 <AccordionItem key={idx} value={`faq-${idx}`}>
@@ -219,15 +218,20 @@ const DistrictPage = () => {
                 </AccordionItem>
               ))}
             </Accordion>
-          </section>
+          </div>
+        </section>
 
-          {/* Other districts */}
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">Другие округа Москвы</h2>
+        {/* Final CTA with stats */}
+        <DistrictCTA district={district} />
+
+        {/* Other districts */}
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">Другие округа Москвы</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {otherDistricts.map((d) => (
                 <Link key={d.id} to={`/uslugi/${d.slug}`}>
-                  <Card className="hover:shadow-md transition-shadow">
+                  <Card className="hover:shadow-md transition-shadow hover:-translate-y-1">
                     <CardContent className="p-4 text-center">
                       <h3 className="font-bold text-primary">{d.name}</h3>
                       <p className="text-xs text-muted-foreground">{d.responseTime}</p>
@@ -236,37 +240,22 @@ const DistrictPage = () => {
                 </Link>
               ))}
             </div>
-            <div className="text-center mt-4">
-              <Link to="/uslugi/po-okrugam-moskvy" className="text-primary hover:underline">
+            <div className="text-center mt-6">
+              <Link to="/uslugi/po-okrugam-moskvy" className="text-primary hover:underline font-medium">
                 Все округа Москвы →
               </Link>
             </div>
-          </section>
-
-          {/* CTA */}
-          <section className="bg-primary text-primary-foreground rounded-2xl p-8 text-center">
-            <h2 className="text-2xl font-bold mb-4">Закажите обработку в {district.name}</h2>
-            <p className="opacity-90 mb-6">
-              Выезд {district.responseTime}. {district.surcharge === 0 ? "Без доплаты за выезд." : `Доплата за выезд: ${district.surcharge}₽.`}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" asChild>
-                <a href="tel:+79069989888">
-                  <Phone className="w-5 h-5 mr-2" />
-                  +7 (906) 998-98-88
-                </a>
-              </Button>
-              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" asChild>
-                <a href="https://wa.me/79069989888" target="_blank" rel="noopener noreferrer">
-                  Написать в WhatsApp
-                </a>
-              </Button>
-            </div>
-          </section>
-        </div>
+          </div>
+        </section>
       </main>
 
       <Footer />
+
+      {/* Calculator Modal */}
+      <CalculatorModal 
+        open={isCalculatorOpen} 
+        onOpenChange={setIsCalculatorOpen} 
+      />
     </>
   );
 };

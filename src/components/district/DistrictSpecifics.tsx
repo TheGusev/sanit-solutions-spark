@@ -1,0 +1,147 @@
+import { Building2, Landmark, UtensilsCrossed, Car, Hotel, Briefcase, Factory, TreePine, Users, Home, Warehouse, ShieldCheck } from 'lucide-react';
+import { DistrictPage } from '@/data/districtPages';
+
+// Icon mapping for specifics
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  'building': Building2,
+  'landmark': Landmark,
+  'restaurant': UtensilsCrossed,
+  'car': Car,
+  'hotel': Hotel,
+  'business': Briefcase,
+  'factory': Factory,
+  'park': TreePine,
+  'residential': Users,
+  'home': Home,
+  'warehouse': Warehouse,
+  'shield': ShieldCheck,
+};
+
+// Default specifics based on district characteristics
+const getDefaultSpecifics = (district: DistrictPage) => {
+  const specifics = [];
+  
+  // Based on district ID, generate relevant specifics
+  if (district.id === 'cao') {
+    specifics.push(
+      { icon: 'building', title: 'Много бизнес-центров', description: 'В ЦАО расположены крупнейшие офисные здания Москвы. Работаем в нерабочее время.' },
+      { icon: 'landmark', title: 'Исторические здания', description: 'Старый жилой фонд требует особого подхода. Знаем специфику сталинских домов.' },
+      { icon: 'restaurant', title: 'Рестораны и кафе', description: 'ЦАО — центр ресторанной жизни. Выдаём документы для Роспотребнадзора.' },
+      { icon: 'car', title: 'Быстрая доступность', description: 'Наша база в пределах ТТК. Добираемся за 20-30 минут даже в час пик.' },
+      { icon: 'hotel', title: 'Гостиницы и хостелы', description: 'Работаем с отелями любого класса. Дискретная обработка.' },
+      { icon: 'business', title: 'Корпоративные клиенты', description: 'Обслуживаем крупный бизнес. Договор с отсрочкой платежа.' }
+    );
+  } else if (district.id === 'sao') {
+    specifics.push(
+      { icon: 'residential', title: 'Спальные районы', description: 'Много жилых массивов с панельными домами 70-80-х годов.' },
+      { icon: 'warehouse', title: 'Склады и логистика', description: 'Близость к Ленинградке обеспечивает много складских комплексов.' },
+      { icon: 'park', title: 'Парковые зоны', description: 'Тимирязевский парк, Петровский парк — особые условия обработки.' },
+      { icon: 'home', title: 'Первые этажи', description: 'Особое внимание к квартирам над подвалами.' },
+      { icon: 'shield', title: 'Работа с ТСЖ', description: 'Заключаем договоры на регулярное обслуживание.' },
+      { icon: 'car', title: 'Быстрый выезд', description: 'Добираемся до Водного стадиона за 20 минут.' }
+    );
+  } else if (district.id === 'svao') {
+    specifics.push(
+      { icon: 'residential', title: 'Крупнейшие ЖК', description: 'СВАО — один из самых населённых округов. Много высоток.' },
+      { icon: 'landmark', title: 'ВДНХ и Останкино', description: 'Обрабатываем объекты рядом с главными достопримечательностями.' },
+      { icon: 'park', title: 'Лосиный остров', description: 'Безопасные средства для работы рядом с нацпарком.' },
+      { icon: 'home', title: 'Панельные дома', description: 'Опыт с панельками 70-80-х, обработка по стоякам.' },
+      { icon: 'business', title: 'Скидки пенсионерам', description: '10% скидка для пенсионеров по удостоверению.' },
+      { icon: 'car', title: 'Выезд на ВДНХ', description: 'Добираемся до ВДНХ за 30 минут.' }
+    );
+  } else if (district.id === 'vao') {
+    specifics.push(
+      { icon: 'park', title: 'Измайловский парк', description: 'Один из крупнейших парков Европы. Специфика лесных вредителей.' },
+      { icon: 'factory', title: 'Промышленные зоны', description: 'Перово, Соколиная гора — опыт работы с производствами.' },
+      { icon: 'home', title: 'Частный сектор', description: 'Обрабатываем частные дома в Косино-Ухтомском.' },
+      { icon: 'residential', title: 'Новостройки', description: 'Много новых ЖК в Новогиреево и Косино.' },
+      { icon: 'shield', title: 'Безопасные средства', description: 'Экологичные препараты для работы у парков.' },
+      { icon: 'car', title: 'Выезд в Новогиреево', description: 'Добираемся за 30 минут.' }
+    );
+  } else if (district.id === 'yuvao') {
+    specifics.push(
+      { icon: 'factory', title: 'Промзоны и склады', description: 'Много промышленных объектов требуют регулярной дератизации.' },
+      { icon: 'warehouse', title: 'Курьяновские очистные', description: 'Особый опыт работы рядом с очистными сооружениями.' },
+      { icon: 'residential', title: 'Спальные районы', description: 'Люблино, Марьино, Кузьминки — большие жилые массивы.' },
+      { icon: 'business', title: 'Договоры с УК', description: 'Работаем с управляющими компаниями крупных ЖК.' },
+      { icon: 'shield', title: 'Борьба с грызунами', description: 'Специализация на дератизации в промзонах.' },
+      { icon: 'car', title: 'Выезд в Люблино', description: 'Добираемся за 35 минут.' }
+    );
+  } else if (district.id === 'yao') {
+    specifics.push(
+      { icon: 'park', title: 'Царицыно и Коломенское', description: 'Музеи-заповедники требуют деликатного подхода.' },
+      { icon: 'residential', title: 'Крупнейший округ', description: 'ЮАО — самый большой по площади. Знаем все районы.' },
+      { icon: 'home', title: 'Дома у МКАД', description: 'Особый опыт с домами вдоль МКАД — проблема грызунов.' },
+      { icon: 'park', title: 'Битцевский лес', description: 'Обработка от клещей весной и летом.' },
+      { icon: 'shield', title: 'Зелёные зоны', description: 'Безопасные средства для работы у парков.' },
+      { icon: 'car', title: 'Выезд в Чертаново', description: 'Добираемся за 30 минут.' }
+    );
+  } else if (district.id === 'yzao') {
+    specifics.push(
+      { icon: 'residential', title: 'Престижные районы', description: 'МГУ, Воробьёвы горы — элитная недвижимость.' },
+      { icon: 'landmark', title: 'МГУ и научные центры', description: 'Обрабатываем общежития и научные институты.' },
+      { icon: 'park', title: 'Воробьёвы горы', description: 'Работа рядом с заповедной зоной.' },
+      { icon: 'home', title: 'Новая Москва', description: 'Обслуживаем присоединённые территории.' },
+      { icon: 'business', title: 'Академическая среда', description: 'Опыт работы с вузами и НИИ.' },
+      { icon: 'car', title: 'Выезд на Юго-Западную', description: 'Добираемся за 30 минут.' }
+    );
+  } else if (district.id === 'zao') {
+    specifics.push(
+      { icon: 'residential', title: 'Семейные районы', description: 'Много качественного жилья для семей с детьми.' },
+      { icon: 'business', title: 'Бизнес-парки', description: 'Сколково и IT-кластеры рядом.' },
+      { icon: 'park', title: 'Парк Победы', description: 'Поклонная гора и мемориальные комплексы.' },
+      { icon: 'home', title: 'Новостройки', description: 'Много современных ЖК комфорт и бизнес-класса.' },
+      { icon: 'shield', title: 'Экологичность', description: 'Один из самых зелёных округов Москвы.' },
+      { icon: 'car', title: 'Выезд на Кунцевскую', description: 'Добираемся за 35 минут.' }
+    );
+  } else if (district.id === 'szao') {
+    specifics.push(
+      { icon: 'park', title: 'Серебряный бор', description: 'Уникальная экологическая зона на северо-западе.' },
+      { icon: 'residential', title: 'Строгино', description: 'Спальный район с хорошей экологией.' },
+      { icon: 'home', title: 'Частный сектор', description: 'Обрабатываем коттеджи и таунхаусы.' },
+      { icon: 'park', title: 'Москва-река', description: 'Много объектов у воды — специфические вредители.' },
+      { icon: 'shield', title: 'Экологичные средства', description: 'Безопасные препараты для заповедных зон.' },
+      { icon: 'car', title: 'Выезд в Строгино', description: 'Добираемся за 40 минут.' }
+    );
+  }
+  
+  return specifics;
+};
+
+interface DistrictSpecificsProps {
+  district: DistrictPage;
+}
+
+const DistrictSpecifics = ({ district }: DistrictSpecificsProps) => {
+  const specifics = getDefaultSpecifics(district);
+
+  return (
+    <section className="py-12 bg-muted/30">
+      <div className="container mx-auto px-4">
+        <h2 className="text-2xl md:text-3xl font-bold mb-8">
+          Особенности дезинфекции в {district.name}
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {specifics.map((spec, idx) => {
+            const IconComponent = iconMap[spec.icon] || Building2;
+            return (
+              <div 
+                key={idx}
+                className="bg-background rounded-xl p-6 shadow-sm hover:shadow-md transition-all hover:-translate-y-1"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <IconComponent className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">{spec.title}</h3>
+                <p className="text-muted-foreground text-sm">{spec.description}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default DistrictSpecifics;
