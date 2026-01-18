@@ -63,6 +63,8 @@ export function sitemapPlugin(): Plugin {
         { category: 'dezinfekciya', slug: 'kvartir' },
         { category: 'dezinfekciya', slug: 'ofisov' },
         { category: 'dezinfekciya', slug: 'domov' },
+        { category: 'dezinfekciya', slug: 'skladov' },
+        { category: 'dezinfekciya', slug: 'magazinov' },
         { category: 'dezinfekciya', slug: 'holodnyj-tuman' },
         { category: 'dezinfekciya', slug: 'goryachij-tuman' },
         // Дезинсекция
@@ -70,7 +72,8 @@ export function sitemapPlugin(): Plugin {
         { category: 'dezinsekciya', slug: 'unichtozhenie-tarakanov' },
         { category: 'dezinsekciya', slug: 'unichtozhenie-muravev' },
         { category: 'dezinsekciya', slug: 'unichtozhenie-bloh' },
-        { category: 'dezinsekciya', slug: 'unichtozhenie-moli' },
+        { category: 'dezinsekciya', slug: 'unichtozhenie-komarov' },
+        { category: 'dezinsekciya', slug: 'unichtozhenie-muh' },
         // Дератизация
         { category: 'deratizaciya', slug: 'unichtozhenie-myshej' },
         { category: 'deratizaciya', slug: 'unichtozhenie-krys' },
