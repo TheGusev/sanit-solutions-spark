@@ -8,89 +8,96 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 210 25% 97%;
-    --foreground: 210 10% 15%;
+    /* New color scheme: Blue primary, Green accent */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 10% 15%;
+    --card-foreground: 0 0% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 10% 15%;
+    --popover-foreground: 0 0% 10%;
 
-    /* Medical blue primary */
-    --primary: 207 90% 54%;
+    /* Primary: #0066CC - Professional blue */
+    --primary: 210 100% 40%;
     --primary-foreground: 0 0% 100%;
-    --primary-dark: 207 90% 44%;
+    --primary-dark: 210 100% 32%;
 
-    /* Orange accent for discounts */
-    --secondary: 36 100% 50%;
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary: muted for backgrounds */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 0 0% 10%;
 
-    /* Green success */
-    --success: 122 39% 49%;
+    /* Accent: #00A86B - Success green for CTAs */
+    --accent: 152 100% 33%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Success green (same as accent for consistency) */
+    --success: 152 100% 33%;
     --success-foreground: 0 0% 100%;
 
-    --muted: 207 30% 94%;
-    --muted-foreground: 215 16% 47%;
-
-    --accent: 36 100% 50%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 207 90% 54%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 210 100% 40%;
 
     --radius: 0.75rem;
 
+    /* Header/Navigation heights */
+    --header-height: 70px;
+    --tab-nav-height: 56px;
+    --total-nav-height: 126px;
+
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(207 90% 54%) 0%, hsl(207 90% 64%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(36 100% 50%) 0%, hsl(36 100% 60%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(122 39% 49%) 0%, hsl(122 39% 59%) 100%);
-    --gradient-radial: radial-gradient(circle at 50% 50%, hsl(207 90% 54% / 0.05) 0%, transparent 70%);
+    --gradient-hero: linear-gradient(135deg, hsl(210 100% 40%) 0%, hsl(210 100% 50%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(152 100% 33%) 0%, hsl(152 100% 40%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(152 100% 33%) 0%, hsl(152 100% 40%) 100%);
+    --gradient-radial: radial-gradient(circle at 50% 50%, hsl(210 100% 40% / 0.05) 0%, transparent 70%);
   }
 
   .dark {
-    /* Elegant muted dark theme with soft blue/purple palette */
-    --background: 240 10% 8%;
+    /* Dark theme with matching blue/green palette */
+    --background: 222 47% 6%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 12%;
+    --card: 222 47% 10%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 14%;
+    --popover: 222 47% 12%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 220 70% 55%;
+    --primary: 210 100% 55%;
     --primary-foreground: 0 0% 100%;
-    --primary-dark: 220 70% 45%;
+    --primary-dark: 210 100% 45%;
 
-    --secondary: 340 50% 55%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 222 47% 16%;
+    --secondary-foreground: 0 0% 98%;
 
-    --success: 160 60% 45%;
+    --accent: 152 80% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --success: 152 80% 45%;
     --success-foreground: 0 0% 100%;
 
-    --muted: 240 10% 18%;
-    --muted-foreground: 240 5% 65%;
-
-    --accent: 260 50% 55%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 222 47% 16%;
+    --muted-foreground: 220 9% 65%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 10% 22%;
-    --input: 240 10% 18%;
-    --ring: 220 70% 55%;
+    --border: 222 47% 20%;
+    --input: 222 47% 16%;
+    --ring: 210 100% 55%;
 
-    /* Soft elegant gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(220 60% 45%) 0%, hsl(260 50% 40%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(260 50% 50%) 0%, hsl(280 45% 45%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(160 60% 40%) 0%, hsl(160 60% 50%) 100%);
-    --gradient-radial: radial-gradient(circle at 50% 50%, hsl(220 70% 55% / 0.1) 0%, transparent 70%);
+    /* Dark mode gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(210 100% 45%) 0%, hsl(210 100% 55%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(152 80% 40%) 0%, hsl(152 80% 50%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(152 80% 40%) 0%, hsl(152 80% 50%) 100%);
+    --gradient-radial: radial-gradient(circle at 50% 50%, hsl(210 100% 55% / 0.1) 0%, transparent 70%);
   }
 }
 
@@ -344,5 +351,15 @@ All colors MUST be HSL.
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* Hide scrollbar for tab navigation */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
