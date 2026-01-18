@@ -363,47 +363,40 @@ All colors MUST be HSL.
     display: none;
   }
 
-  /* Stacking Cards Effect */
+  /* Section Cards - Clean Layout */
   .stacking-container {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
 
   .stacking-card {
-    position: sticky;
-    top: 140px; /* header 70px + tabs 70px */
-    min-height: 100vh;
-    margin-bottom: calc(-100vh + 100px);
+    position: relative;
     background: hsl(var(--background));
-    border-radius: 24px 24px 0 0;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-    padding: 60px 40px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    will-change: transform;
+    padding: 48px 24px;
+    border-bottom: 1px solid hsl(var(--border));
   }
 
   .stacking-card:last-child {
-    margin-bottom: 0;
+    border-bottom: none;
   }
 
   .dark .stacking-card {
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    background: hsl(var(--background));
   }
 
-  /* Mobile: reduced padding and offset */
-  @media (max-width: 768px) {
+  /* Desktop: more padding */
+  @media (min-width: 768px) {
     .stacking-card {
-      padding: 32px 16px;
-      margin-bottom: calc(-100vh + 60px);
-      border-radius: 16px 16px 0 0;
-      min-height: auto;
+      padding: 64px 40px;
     }
   }
 
-  /* Tablet adjustments */
-  @media (min-width: 769px) and (max-width: 1024px) {
+  /* Large screens */
+  @media (min-width: 1024px) {
     .stacking-card {
-      padding: 40px 24px;
-      margin-bottom: calc(-100vh + 80px);
+      padding: 80px 48px;
     }
   }
 

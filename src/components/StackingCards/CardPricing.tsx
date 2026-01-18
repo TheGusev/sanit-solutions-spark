@@ -37,8 +37,7 @@ const CardPricing = ({ onCalculatorClick }: CardPricingProps) => {
   return (
     <section
       id="ceny"
-      className="stacking-card"
-      style={{ '--card-index': 4 } as React.CSSProperties}
+      className="stacking-card bg-muted/30"
     >
       <div className="max-w-5xl mx-auto">
         <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-8 md:mb-12 text-center">

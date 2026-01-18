@@ -55,8 +55,8 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
   };
 
   const services = [
-    { title: "Дезинфекция помещений", href: "/uslugi/dezinfekciya" },
     { title: "Дезинсекция", href: "/uslugi/dezinsekciya" },
+    { title: "Дезинфекция помещений", href: "/uslugi/dezinfekciya" },
     { title: "Дератизация", href: "/uslugi/deratizaciya" },
     { title: "Озонирование", href: "/uslugi/ozonirovanie" },
     { title: "Дезодорация", href: "/uslugi/dezodoraciya" },

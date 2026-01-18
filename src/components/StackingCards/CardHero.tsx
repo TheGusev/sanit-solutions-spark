@@ -13,18 +13,14 @@ const CardHero = ({ onCalculatorClick }: CardHeroProps) => {
   return (
     <section
       id="hero"
-      className="stacking-card relative overflow-hidden"
-      style={{ '--card-index': 0 } as React.CSSProperties}
+      className="stacking-card relative overflow-hidden py-12 md:py-20"
     >
-      {/* Background placeholder for AI image */}
+      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/10" />
       
-      {/* Overlay gradient */}
-      <div className="absolute inset-0 bg-white/95 dark:bg-background/95" />
-      
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center px-4">
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 max-w-4xl leading-tight">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center max-w-4xl mx-auto">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight">
           Профессиональная дезинфекция и дезинсекция в Москве
         </h1>
         
