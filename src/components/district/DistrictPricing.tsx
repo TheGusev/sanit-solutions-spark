@@ -21,24 +21,24 @@ const DistrictPricing = ({ district }: DistrictPricingProps) => {
   const surcharge = district.surcharge;
 
   const apartmentPrices = [
-    { type: '1-комнатная', area: '30-40 м²', price: 2000 + surcharge, time: '1-1.5 ч' },
-    { type: '2-комнатная', area: '45-60 м²', price: 3000 + surcharge, time: '1.5-2 ч', highlighted: true },
-    { type: '3-комнатная', area: '60-80 м²', price: 4000 + surcharge, time: '2-2.5 ч' },
-    { type: '4-комнатная', area: '80-100 м²', price: 5500 + surcharge, time: '2.5-3 ч' },
+    { type: '1-комнатная', area: '30-40 м²', price: 1000 + surcharge, time: '1-1.5 ч' },
+    { type: '2-комнатная', area: '45-60 м²', price: 1500 + surcharge, time: '1.5-2 ч', highlighted: true },
+    { type: '3-комнатная', area: '60-80 м²', price: 2000 + surcharge, time: '2-2.5 ч' },
+    { type: '4-комнатная', area: '80-100 м²', price: 2800 + surcharge, time: '2.5-3 ч' },
     { type: 'Более 100 м²', area: '100+ м²', price: null, time: 'от 3 ч' },
   ];
 
   const officePrices = [
-    { type: 'До 100 м²', price: 5000 + surcharge, time: '2-3 ч' },
-    { type: '100-300 м²', price: 12000 + surcharge, time: '4-5 ч', highlighted: true },
-    { type: '300-500 м²', price: 20000 + surcharge, time: '6-7 ч' },
+    { type: 'До 100 м²', price: 2500 + surcharge, time: '2-3 ч' },
+    { type: '100-300 м²', price: 6000 + surcharge, time: '4-5 ч', highlighted: true },
+    { type: '300-500 м²', price: 10000 + surcharge, time: '6-7 ч' },
     { type: 'Более 500 м²', price: null, time: 'от 8 ч' },
   ];
 
   const cafePrices = [
-    { type: 'Кафе / кофейня (до 50 м²)', price: 4000 + surcharge, period: 'Раз в месяц' },
-    { type: 'Ресторан (50-150 м²)', price: 8000 + surcharge, period: 'Раз в месяц', highlighted: true },
-    { type: 'Крупный ресторан (150+ м²)', price: 12000 + surcharge, period: 'Раз в 2 недели' },
+    { type: 'Кафе / кофейня (до 50 м²)', price: 2000 + surcharge, period: 'Раз в месяц' },
+    { type: 'Ресторан (50-150 м²)', price: 4000 + surcharge, period: 'Раз в месяц', highlighted: true },
+    { type: 'Крупный ресторан (150+ м²)', price: 6000 + surcharge, period: 'Раз в 2 недели' },
     { type: 'Фудкорт / столовая', price: null, period: 'По требованию СЭС' },
   ];
 

@@ -75,9 +75,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     slug: "kvartir",
     fullPath: "/uslugi/dezinfekciya/kvartir",
     title: "Дезинфекция квартир",
-    metaTitle: "Дезинфекция квартир в Москве от 2000₽ — Гарантия 1 год | Санитарные Решения",
-    metaDescription: "Профессиональная дезинфекция квартир в Москве ⚡ Уничтожение вирусов, бактерий, грибка ✅ Безопасные препараты ✅ Выезд за 30 минут ☎️ +7 (906) 998-98-88",
-    h1: "Дезинфекция квартир в Москве от 2000₽",
+    metaTitle: "Дезинфекция квартир в Москве от 1000₽ — Гарантия 1 год | Санитарные Решения",
+    metaDescription: "Профессиональная дезинфекция квартир в Москве от 1000₽ ⚡ Уничтожение вирусов, бактерий, грибка ✅ Безопасные препараты ✅ Выезд за 30 минут ☎️ +7 (906) 998-98-88",
+    h1: "Дезинфекция квартир в Москве от 1000₽",
     heroSubtitle: "Уничтожение вирусов, бактерий и грибков в квартирах любой площади. Выезд за 30 минут. Гарантия до 1 года.",
     
     whenNeeded: {
@@ -100,10 +100,10 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     pricing: [
-      { type: "1-комнатная", area: "30-40 м²", coldFog: "2 000 ₽", hotFog: "3 000 ₽", duration: "1-1.5 часа" },
-      { type: "2-комнатная", area: "45-60 м²", coldFog: "3 000 ₽", hotFog: "4 500 ₽", duration: "1.5-2 часа", highlighted: true },
-      { type: "3-комнатная", area: "60-80 м²", coldFog: "4 000 ₽", hotFog: "6 000 ₽", duration: "2-2.5 часа" },
-      { type: "4-комнатная", area: "80-100 м²", coldFog: "5 500 ₽", hotFog: "8 000 ₽", duration: "2.5-3 часа" },
+      { type: "1-комнатная", area: "30-40 м²", coldFog: "1 000 ₽", hotFog: "1 500 ₽", duration: "1-1.5 часа" },
+      { type: "2-комнатная", area: "45-60 м²", coldFog: "1 500 ₽", hotFog: "2 200 ₽", duration: "1.5-2 часа", highlighted: true },
+      { type: "3-комнатная", area: "60-80 м²", coldFog: "2 000 ₽", hotFog: "3 000 ₽", duration: "2-2.5 часа" },
+      { type: "4-комнатная", area: "80-100 м²", coldFog: "2 800 ₽", hotFog: "4 000 ₽", duration: "2.5-3 часа" },
       { type: "Более 100 м²", area: "100+ м²", coldFog: "Расчёт", hotFog: "Расчёт", duration: "от 3 часов" }
     ],
     
@@ -148,13 +148,13 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/dezinfekciya/ofisov", title: "Дезинфекция офисов", price: "от 3500₽", icon: "🏢" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 2500₽", icon: "🛏️" },
-      { slug: "/uslugi/ozonirovanie", title: "Озонирование", price: "от 3000₽", icon: "💨" }
+      { slug: "/uslugi/dezinfekciya/ofisov", title: "Дезинфекция офисов", price: "от 1800₽", icon: "🏢" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🛏️" },
+      { slug: "/uslugi/ozonirovanie", title: "Озонирование", price: "от 1500₽", icon: "💨" }
     ],
     
-    priceFrom: 2000,
-    priceRange: "2000-8000"
+    priceFrom: 1000,
+    priceRange: "1000-4000"
   },
   
   {
@@ -162,9 +162,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     slug: "ofisov",
     fullPath: "/uslugi/dezinfekciya/ofisov",
     title: "Дезинфекция офисов",
-    metaTitle: "Дезинфекция офисов в Москве от 3500₽ — Без остановки работы | Санитарные Решения",
-    metaDescription: "Профессиональная дезинфекция офисов в Москве ⚡ Ночная обработка ✅ Документы для бухгалтерии ✅ Выезд за 30 минут ☎️ +7 (906) 998-98-88",
-    h1: "Дезинфекция офисов в Москве от 3500₽",
+    metaTitle: "Дезинфекция офисов в Москве от 1800₽ — Без остановки работы | Санитарные Решения",
+    metaDescription: "Профессиональная дезинфекция офисов в Москве от 1800₽ ⚡ Ночная обработка ✅ Документы для бухгалтерии ✅ Выезд за 30 минут ☎️ +7 (906) 998-98-88",
+    h1: "Дезинфекция офисов в Москве от 1800₽",
     heroSubtitle: "Профессиональная дезинфекция офисных помещений без остановки бизнес-процессов. Ночная обработка. Полный пакет документов.",
     
     whenNeeded: {
@@ -187,9 +187,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     pricing: [
-      { type: "Малый офис", area: "до 100 м²", coldFog: "3 500 ₽", hotFog: "5 000 ₽", duration: "1-1.5 часа" },
-      { type: "Средний офис", area: "100-300 м²", coldFog: "5 000 ₽", hotFog: "7 500 ₽", duration: "2-3 часа", highlighted: true },
-      { type: "Большой офис", area: "300-500 м²", coldFog: "8 000 ₽", hotFog: "12 000 ₽", duration: "3-4 часа" },
+      { type: "Малый офис", area: "до 100 м²", coldFog: "1 800 ₽", hotFog: "2 500 ₽", duration: "1-1.5 часа" },
+      { type: "Средний офис", area: "100-300 м²", coldFog: "2 500 ₽", hotFog: "3 800 ₽", duration: "2-3 часа", highlighted: true },
+      { type: "Большой офис", area: "300-500 м²", coldFog: "4 000 ₽", hotFog: "6 000 ₽", duration: "3-4 часа" },
       { type: "Бизнес-центр", area: "500+ м²", coldFog: "Расчёт", hotFog: "Расчёт", duration: "По договорённости" }
     ],
     
@@ -232,13 +232,13 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартир", price: "от 2000₽", icon: "🏠" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Уничтожение тараканов", price: "от 2500₽", icon: "🪳" },
-      { slug: "/uslugi/ozonirovanie", title: "Озонирование", price: "от 3000₽", icon: "💨" }
+      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартир", price: "от 1000₽", icon: "🏠" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Уничтожение тараканов", price: "от 1200₽", icon: "🪳" },
+      { slug: "/uslugi/ozonirovanie", title: "Озонирование", price: "от 1500₽", icon: "💨" }
     ],
     
-    priceFrom: 3500,
-    priceRange: "3500-12000"
+    priceFrom: 1800,
+    priceRange: "1800-6000"
   },
 
   // === ДЕЗИНСЕКЦИЯ ===
@@ -247,9 +247,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     slug: "unichtozhenie-klopov",
     fullPath: "/uslugi/dezinsekciya/unichtozhenie-klopov",
     title: "Уничтожение клопов",
-    metaTitle: "Уничтожение клопов в Москве от 2500₽ — Гарантия 1 год | Санитарные Решения",
-    metaDescription: "Профессиональное уничтожение постельных клопов в Москве ⚡ Полное выведение за 1-2 обработки ✅ Безопасно ✅ Гарантия до 1 года ☎️ +7 (906) 998-98-88",
-    h1: "Уничтожение клопов в Москве от 2500₽",
+    metaTitle: "Уничтожение клопов в Москве от 1200₽ — Гарантия 1 год | Санитарные Решения",
+    metaDescription: "Профессиональное уничтожение постельных клопов в Москве от 1200₽ ⚡ Полное выведение за 1-2 обработки ✅ Безопасно ✅ Гарантия до 1 года ☎️ +7 (906) 998-98-88",
+    h1: "Уничтожение клопов в Москве от 1200₽",
     heroSubtitle: "Полное уничтожение постельных клопов за 1-2 обработки. Современные препараты. Гарантия до 1 года.",
     
     whenNeeded: {
@@ -272,10 +272,10 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     pricing: [
-      { type: "1-комнатная", area: "до 40 м²", coldFog: "2 500 ₽", hotFog: "3 500 ₽", duration: "1-1.5 часа" },
-      { type: "2-комнатная", area: "40-60 м²", coldFog: "3 500 ₽", hotFog: "4 500 ₽", duration: "1.5-2 часа", highlighted: true },
-      { type: "3-комнатная", area: "60-90 м²", coldFog: "4 500 ₽", hotFog: "6 000 ₽", duration: "2-2.5 часа" },
-      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 5 500 ₽", hotFog: "от 7 500 ₽", duration: "от 2.5 часов" }
+      { type: "1-комнатная", area: "до 40 м²", coldFog: "1 200 ₽", hotFog: "1 800 ₽", duration: "1-1.5 часа" },
+      { type: "2-комнатная", area: "40-60 м²", coldFog: "1 800 ₽", hotFog: "2 500 ₽", duration: "1.5-2 часа", highlighted: true },
+      { type: "3-комнатная", area: "60-90 м²", coldFog: "2 500 ₽", hotFog: "3 500 ₽", duration: "2-2.5 часа" },
+      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 3 000 ₽", hotFog: "от 4 000 ₽", duration: "от 2.5 часов" }
     ],
     
     includedInPrice: [
@@ -317,13 +317,13 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Уничтожение тараканов", price: "от 2500₽", icon: "🪳" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "от 2500₽", icon: "🐕" },
-      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартиры", price: "от 2000₽", icon: "🏠" }
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Уничтожение тараканов", price: "от 1200₽", icon: "🪳" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "от 1200₽", icon: "🐕" },
+      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартиры", price: "от 1000₽", icon: "🏠" }
     ],
     
-    priceFrom: 2500,
-    priceRange: "2500-7500"
+    priceFrom: 1200,
+    priceRange: "1200-4000"
   },
 
   {
@@ -331,9 +331,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     slug: "unichtozhenie-tarakanov",
     fullPath: "/uslugi/dezinsekciya/unichtozhenie-tarakanov",
     title: "Уничтожение тараканов",
-    metaTitle: "Уничтожение тараканов в Москве от 2500₽ — Гарантия 1 год | Санитарные Решения",
-    metaDescription: "Профессиональное уничтожение тараканов в Москве ⚡ Полное выведение за 1 обработку ✅ Гелевая приманка ✅ Гарантия до 1 года ☎️ +7 (906) 998-98-88",
-    h1: "Уничтожение тараканов в Москве от 2500₽",
+    metaTitle: "Уничтожение тараканов в Москве от 1200₽ — Гарантия 1 год | Санитарные Решения",
+    metaDescription: "Профессиональное уничтожение тараканов в Москве от 1200₽ ⚡ Полное выведение за 1 обработку ✅ Гелевая приманка ✅ Гарантия до 1 года ☎️ +7 (906) 998-98-88",
+    h1: "Уничтожение тараканов в Москве от 1200₽",
     heroSubtitle: "Полное уничтожение тараканов за 1 обработку. Препараты с пролонгированным действием. Гарантия до 1 года.",
     
     whenNeeded: {
@@ -356,10 +356,10 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     pricing: [
-      { type: "1-комнатная", area: "до 40 м²", coldFog: "2 500 ₽", hotFog: "3 500 ₽", duration: "1 час" },
-      { type: "2-комнатная", area: "40-60 м²", coldFog: "3 000 ₽", hotFog: "4 000 ₽", duration: "1-1.5 часа", highlighted: true },
-      { type: "3-комнатная", area: "60-90 м²", coldFog: "3 500 ₽", hotFog: "4 500 ₽", duration: "1.5-2 часа" },
-      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 4 000 ₽", hotFog: "от 5 000 ₽", duration: "от 2 часов" }
+      { type: "1-комнатная", area: "до 40 м²", coldFog: "1 200 ₽", hotFog: "1 800 ₽", duration: "1 час" },
+      { type: "2-комнатная", area: "40-60 м²", coldFog: "1 500 ₽", hotFog: "2 200 ₽", duration: "1-1.5 часа", highlighted: true },
+      { type: "3-комнатная", area: "60-90 м²", coldFog: "1 800 ₽", hotFog: "2 500 ₽", duration: "1.5-2 часа" },
+      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 2 200 ₽", hotFog: "от 3 000 ₽", duration: "от 2 часов" }
     ],
     
     includedInPrice: [
@@ -400,13 +400,13 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 2500₽", icon: "🛏️" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-muravev", title: "Уничтожение муравьёв", price: "от 2500₽", icon: "🐜" },
-      { slug: "/uslugi/deratizaciya", title: "Дератизация", price: "от 3000₽", icon: "🐀" }
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🛏️" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-muravev", title: "Уничтожение муравьёв", price: "от 1200₽", icon: "🐜" },
+      { slug: "/uslugi/deratizaciya", title: "Дератизация", price: "от 1400₽", icon: "🐀" }
     ],
     
-    priceFrom: 2500,
-    priceRange: "2500-5000"
+    priceFrom: 1200,
+    priceRange: "1200-3000"
   },
 
   // === ДЕРАТИЗАЦИЯ ===
@@ -415,9 +415,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     slug: "unichtozhenie-krys",
     fullPath: "/uslugi/deratizaciya/unichtozhenie-krys",
     title: "Уничтожение крыс",
-    metaTitle: "Уничтожение крыс в Москве от 3000₽ — Гарантия 1 год | Санитарные Решения",
-    metaDescription: "Профессиональное уничтожение крыс в Москве ⚡ Безопасные приманки ✅ Барьерная защита ✅ Гарантия до 1 года ☎️ +7 (906) 998-98-88",
-    h1: "Уничтожение крыс в Москве от 3000₽",
+    metaTitle: "Уничтожение крыс в Москве от 1400₽ — Гарантия 1 год | Санитарные Решения",
+    metaDescription: "Профессиональное уничтожение крыс в Москве от 1400₽ ⚡ Безопасные приманки ✅ Барьерная защита ✅ Гарантия до 1 года ☎️ +7 (906) 998-98-88",
+    h1: "Уничтожение крыс в Москве от 1400₽",
     heroSubtitle: "Профессиональная дератизация от крыс. Безопасные родентициды. Барьерная защита. Гарантия до 1 года.",
     
     whenNeeded: {
@@ -440,10 +440,10 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     pricing: [
-      { type: "Квартира", area: "любая", coldFog: "3 000 ₽", hotFog: "—", duration: "1-2 часа" },
-      { type: "Частный дом", area: "до 150 м²", coldFog: "5 000 ₽", hotFog: "—", duration: "2-3 часа", highlighted: true },
-      { type: "Частный дом", area: "150+ м²", coldFog: "от 7 000 ₽", hotFog: "—", duration: "от 3 часов" },
-      { type: "Склад/офис", area: "любая", coldFog: "от 5 000 ₽", hotFog: "—", duration: "По договорённости" }
+      { type: "Квартира", area: "любая", coldFog: "1 400 ₽", hotFog: "—", duration: "1-2 часа" },
+      { type: "Частный дом", area: "до 150 м²", coldFog: "2 500 ₽", hotFog: "—", duration: "2-3 часа", highlighted: true },
+      { type: "Частный дом", area: "150+ м²", coldFog: "от 3 500 ₽", hotFog: "—", duration: "от 3 часов" },
+      { type: "Склад/офис", area: "любая", coldFog: "от 2 500 ₽", hotFog: "—", duration: "По договорённости" }
     ],
     
     includedInPrice: [
@@ -484,13 +484,13 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/deratizaciya/unichtozhenie-myshej", title: "Уничтожение мышей", price: "от 3000₽", icon: "🐭" },
-      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция", price: "от 2000₽", icon: "🦠" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "от 2500₽", icon: "🐕" }
+      { slug: "/uslugi/deratizaciya/unichtozhenie-myshej", title: "Уничтожение мышей", price: "от 1400₽", icon: "🐭" },
+      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция", price: "от 1000₽", icon: "🦠" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "от 1200₽", icon: "🐕" }
     ],
     
-    priceFrom: 3000,
-    priceRange: "3000-7000"
+    priceFrom: 1400,
+    priceRange: "1400-3500"
   },
 
   {
