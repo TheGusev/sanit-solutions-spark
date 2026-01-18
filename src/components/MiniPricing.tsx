@@ -1,13 +1,14 @@
-import { Microscope, Bug, Rat, Sparkles, Wind, FileCheck } from "lucide-react";
+import { Microscope, Bug, Rat, Sparkles, Wind, FileCheck, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const services = [
-  { icon: Microscope, title: "Дезинфекция квартиры", price: "от 2 000 ₽" },
-  { icon: Bug, title: "Дезинсекция (тараканы, клопы)", price: "от 2 500 ₽" },
-  { icon: Rat, title: "Дератизация", price: "от 3 000 ₽" },
-  { icon: Sparkles, title: "Озонирование", price: "от 3 000 ₽" },
-  { icon: Wind, title: "Удаление запахов", price: "от 2 500 ₽" },
-  { icon: FileCheck, title: "Сертификация СЭС", price: "от 5 000 ₽" },
+  { icon: Microscope, title: "Дезинфекция квартиры", price: "от 2 000 ₽", href: "/uslugi/dezinfekciya" },
+  { icon: Bug, title: "Дезинсекция (тараканы, клопы)", price: "от 2 500 ₽", href: "/uslugi/dezinsekciya" },
+  { icon: Rat, title: "Дератизация", price: "от 3 000 ₽", href: "/uslugi/deratizaciya" },
+  { icon: Sparkles, title: "Озонирование", price: "от 3 000 ₽", href: "/uslugi/ozonirovanie" },
+  { icon: Wind, title: "Удаление запахов", price: "от 2 500 ₽", href: "/uslugi/dezodoraciya" },
+  { icon: FileCheck, title: "Сертификация СЭС", price: "от 5 000 ₽", href: "/uslugi/sertifikaciya" },
 ];
 
 const MiniPricing = () => {
@@ -29,18 +30,25 @@ const MiniPricing = () => {
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
-              <div
+              <Link
                 key={index}
-                className="bg-card rounded-xl p-4 text-center shadow-sm hover:shadow-md transition-shadow"
+                to={service.href}
+                className="group"
               >
-                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Icon className="w-6 h-6 text-primary" />
+                <div className="bg-card rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-primary/20 h-full flex flex-col">
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <Icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="text-sm font-medium text-foreground mb-2 leading-tight min-h-[2.5rem] group-hover:text-primary transition-colors">
+                    {service.title}
+                  </h3>
+                  <p className="text-lg font-bold text-primary mb-2">{service.price}</p>
+                  <span className="text-xs text-muted-foreground flex items-center justify-center gap-1 mt-auto group-hover:text-primary transition-colors">
+                    Подробнее
+                    <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  </span>
                 </div>
-                <h3 className="text-sm font-medium text-foreground mb-2 leading-tight min-h-[2.5rem]">
-                  {service.title}
-                </h3>
-                <p className="text-lg font-bold text-primary">{service.price}</p>
-              </div>
+              </Link>
             );
           })}
         </div>
