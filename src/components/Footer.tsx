@@ -131,8 +131,8 @@ const Footer = memo(() => {
               </li>
               <li className="flex items-center gap-2">
                 <Send className="h-4 w-4 flex-shrink-0" />
-                <a href="https://t.me/The_Suppor_t" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">
-                  Telegram: @The_Suppor_t
+                <a href="https://t.me/one_help" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">
+                  Telegram: @one_help
                 </a>
               </li>
               <li className="flex items-center gap-2">

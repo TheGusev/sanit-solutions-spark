@@ -203,8 +203,8 @@ const PrivacyPolicyContent = () => {
             </li>
             <li className="flex items-center gap-2">
               <span>✈️</span>
-              <a href="https://t.me/The_Suppor_t" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                Telegram: @The_Suppor_t
+              <a href="https://t.me/one_help" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                Telegram: @one_help
               </a>
             </li>
           </ul>

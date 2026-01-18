@@ -15,7 +15,7 @@ const Contacts = () => {
   };
 
   const handleTelegramClick = () => {
-    window.open("https://t.me/The_Suppor_t", "_blank");
+    window.open("https://t.me/one_help", "_blank");
   };
 
   const handleEmailClick = () => {
@@ -71,7 +71,7 @@ const Contacts = () => {
       "image": "https://goruslugimsk.ru/og-image.jpg",
       "sameAs": [
         "https://wa.me/79069989888",
-        "https://t.me/The_Suppor_t"
+        "https://t.me/one_help"
       ]
     }
   };
@@ -164,7 +164,7 @@ const Contacts = () => {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Telegram</p>
-                    <p className="text-lg font-medium text-foreground">@The_Suppor_t</p>
+                    <p className="text-lg font-medium text-foreground">@one_help</p>
                   </div>
                 </button>
 
