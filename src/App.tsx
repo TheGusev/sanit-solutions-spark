@@ -18,6 +18,7 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
 const DezinfekciyaPage = lazy(() => import("./pages/DezinfekciyaPage"));
+const ServiceSubpage = lazy(() => import("./pages/ServiceSubpage"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -50,6 +51,7 @@ const App = () => (
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/uslugi/dezinfekciya" element={<DezinfekciyaPage />} />
+                  <Route path="/uslugi/:category/:slug" element={<ServiceSubpage />} />
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
                   <Route path="/contacts" element={<Contacts />} />
                   
