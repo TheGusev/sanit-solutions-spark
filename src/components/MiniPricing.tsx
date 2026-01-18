@@ -36,9 +36,6 @@ const MiniPricing = () => {
                 className="group"
               >
                 <div className="bg-card rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-primary/20 h-full flex flex-col">
-                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Icon className="w-6 h-6 text-primary" />
-                  </div>
                   <h3 className="text-sm font-medium text-foreground mb-2 leading-tight min-h-[2.5rem] group-hover:text-primary transition-colors">
                     {service.title}
                   </h3>

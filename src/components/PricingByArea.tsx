@@ -2,7 +2,12 @@ import { useState } from "react";
 import { MapPin, Clock, Calculator, CheckCircle, Gift, Info, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { LeadFormModal } from "@/components/LeadFormModal";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 // Данные цен
 const servicePricesData = [
@@ -22,6 +27,16 @@ const servicePricesData = [
   { id: 14, service: "Дезодорация", object: "После пожара/затопления", price: "от 5000 ₽" },
   { id: 15, service: "Сертификация", object: "Документы для СЭС", price: "от 5000 ₽" },
 ];
+
+// Группировка услуг по типу для мобильного accordion
+const groupedServices = {
+  "Дезинфекция": servicePricesData.filter(s => s.service.startsWith("Дезинфекция")),
+  "Дезинсекция": servicePricesData.filter(s => s.service.startsWith("Дезинсекция")),
+  "Дератизация": servicePricesData.filter(s => s.service.startsWith("Дератизация")),
+  "Озонирование": servicePricesData.filter(s => s.service.startsWith("Озонирование")),
+  "Дезодорация": servicePricesData.filter(s => s.service.startsWith("Дезодорация")),
+  "Сертификация": servicePricesData.filter(s => s.service.startsWith("Сертификация")),
+};
 
 // Доплаты за выезд - Москва
 const moscowDistrictsData = [
@@ -50,16 +65,15 @@ const includedServicesData = [
 
 // Скидки и акции
 const discountsData = [
-  { icon: "🎁", text: "15% при заказе 2+ услуг" },
-  { icon: "🎁", text: "10% для постоянных клиентов" },
-  { icon: "🎁", text: "5% при оплате онлайн" },
-  { icon: "🎁", text: "Бесплатная повторная обработка (по гарантии)" },
+  { text: "15% при заказе 2+ услуг" },
+  { text: "10% для постоянных клиентов" },
+  { text: "5% при оплате онлайн" },
+  { text: "Бесплатная повторная обработка (по гарантии)" },
 ];
 
 const PricingByArea = () => {
   const { ref: tableRef, isVisible } = useScrollAnimation({ threshold: 0.1 });
   const { ref: surchargeRef, isVisible: isSurchargeVisible } = useScrollAnimation({ threshold: 0.1 });
-  const [showLeadForm, setShowLeadForm] = useState(false);
 
   const scrollToCalculator = () => {
     document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth" });
@@ -70,6 +84,10 @@ const PricingByArea = () => {
     if (surcharge === "По запросу") return "bg-blue-50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400";
     if (surcharge.includes("+1500") || surcharge.includes("+1000")) return "bg-blue-50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400";
     return "bg-yellow-50 dark:bg-yellow-900/10 text-yellow-700 dark:text-yellow-400";
+  };
+
+  const getMinPrice = (items: typeof servicePricesData) => {
+    return items[0]?.price || "";
   };
 
   return (
@@ -130,25 +148,32 @@ const PricingByArea = () => {
             </table>
           </div>
 
-          {/* Mobile Cards */}
-          <div className="md:hidden divide-y divide-border">
-            {servicePricesData.map((item, index) => (
-              <div 
-                key={item.id} 
-                className={`p-4 ${index % 2 === 0 ? 'bg-background' : 'bg-muted/10'} transition-all duration-500 ${
-                  isVisible 
-                    ? 'opacity-100 translate-y-0' 
-                    : 'opacity-0 translate-y-4'
-                }`}
-                style={{ transitionDelay: `${index * 50}ms` }}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-foreground">{item.service}</span>
-                  <span className="font-bold text-green-600 dark:text-green-400">{item.price}</span>
-                </div>
-                <span className="text-sm text-muted-foreground">{item.object}</span>
-              </div>
-            ))}
+          {/* Mobile Accordion */}
+          <div className="md:hidden">
+            <Accordion type="single" collapsible className="divide-y divide-border">
+              {Object.entries(groupedServices).map(([serviceName, items]) => (
+                <AccordionItem key={serviceName} value={serviceName} className="border-0">
+                  <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/30">
+                    <div className="flex items-center justify-between w-full pr-2">
+                      <span className="font-bold text-foreground text-left">{serviceName}</span>
+                      <span className="text-green-600 dark:text-green-400 font-bold text-sm">
+                        {getMinPrice(items)}
+                      </span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-0">
+                    <div className="divide-y divide-border/50">
+                      {items.map((item) => (
+                        <div key={item.id} className="px-4 py-2 flex justify-between bg-muted/20">
+                          <span className="text-muted-foreground text-sm">{item.object}</span>
+                          <span className="text-green-600 dark:text-green-400 font-semibold text-sm">{item.price}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
 
           {/* 4 примечания под таблицей */}
@@ -176,8 +201,8 @@ const PricingByArea = () => {
 
         {/* СЕКЦИЯ 2: ДОПЛАТЫ ЗА ВЫЕЗД */}
         <div className="mb-12">
-          <h3 className="text-2xl font-bold text-foreground mb-6 text-center flex items-center justify-center gap-2">
-            🚗 Стоимость выезда по районам
+          <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
+            Стоимость выезда по районам
           </h3>
           
           <div ref={surchargeRef} className="grid lg:grid-cols-2 gap-8">
@@ -320,7 +345,7 @@ const PricingByArea = () => {
             <ul className="space-y-3">
               {discountsData.map((item, index) => (
                 <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <span className="flex-shrink-0">{item.icon}</span>
+                  <span className="text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0">✅</span>
                   {item.text}
                 </li>
               ))}
@@ -328,8 +353,8 @@ const PricingByArea = () => {
           </div>
         </div>
 
-        {/* СЕКЦИЯ 4: CTA-КНОПКИ (только 2 кнопки) */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        {/* СЕКЦИЯ 4: CTA-КНОПКА */}
+        <div className="flex justify-center">
           <Button 
             size="lg" 
             onClick={scrollToCalculator}
@@ -338,35 +363,8 @@ const PricingByArea = () => {
             <Calculator className="w-5 h-5" />
             Рассчитать стоимость
           </Button>
-          <Button 
-            size="lg" 
-            variant="secondary"
-            onClick={() => setShowLeadForm(true)}
-            className="gap-2"
-          >
-            <Gift className="w-5 h-5" />
-            Заказать со скидкой 15%
-          </Button>
         </div>
       </div>
-
-      {/* Lead Form Modal */}
-      <LeadFormModal 
-        open={showLeadForm}
-        onOpenChange={setShowLeadForm}
-        calculatorData={{
-          premiseType: "По запросу",
-          area: 0,
-          serviceType: "Комплексный заказ",
-          treatmentType: "По согласованию",
-          period: "Разовая обработка",
-          clientType: "Физическое лицо",
-          totalPrice: 0,
-          discount: 15,
-          discountAmount: 0,
-          finalPrice: 0
-        }}
-      />
     </section>
   );
 };
