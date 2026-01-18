@@ -17,10 +17,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { getGeoPage, getGeoPageUrl } from '@/data/geoPages';
 
 export default function GeoServicePage() {
-  const { slug } = useParams<{ slug: string }>();
+  const { district } = useParams<{ district: string }>();
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
-  const page = getGeoPage(slug || '');
+  const slug = district ? `dezinfekciya-${district}` : '';
+  const page = getGeoPage(slug);
 
   if (!page) {
     return <Navigate to="/404" replace />;
