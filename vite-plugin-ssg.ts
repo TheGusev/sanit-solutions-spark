@@ -46,52 +46,52 @@ const districtSlugs = [
   'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao', 'nao', 'tao', 'zelao'
 ];
 
-// Районы Москвы (125 районов)
+// Районы Москвы (125 районов) - синхронизировано с src/data/neighborhoods.ts
 const neighborhoodSlugs = [
   // ЦАО (10)
-  'arbat', 'basmannyj', 'zamoskvorechye', 'krasnoselskij', 'meshchanskij',
-  'presnenskij', 'taganskij', 'tverskoy', 'hamovniki', 'yakimanka',
+  'arbat', 'basmannyy', 'zamoskvorechye', 'krasnoselsky', 'meshchansky',
+  'presnensky', 'tagansky', 'tverskoy', 'khamovniki', 'yakimanka',
   // САО (16)
-  'aeroport', 'begovoy', 'beskudnikovskij', 'vojkovskij', 'vostochnoe-degunino',
-  'golovinskij', 'dmitrovskij', 'zapadnoe-degunino', 'koptevo', 'levoberezhnyj',
-  'molzhaninovskij', 'savelovskij', 'sokol', 'timiryazevskij', 'hovrino', 'horoshevskij',
+  'aeroport', 'begovoy', 'beskudnikovsky', 'voykovskiy', 'vostochnoe-degunino',
+  'golovinsky', 'dmitrovsky', 'zapadnoe-degunino', 'koptevo', 'levoberezhny',
+  'molzhaninovsky', 'savelovsky', 'sokol', 'timiryazevsky', 'khovrino', 'khoroshevsky',
   // СВАО (17)
-  'altufevskij', 'babushkinskij', 'bibirevo', 'butyrskij', 'lianozovo',
-  'losinoostrovskij', 'marfino', 'marina-roshcha', 'ostankinskij', 'otradnoe',
-  'rostokino', 'sviblovo', 'severnyj', 'severnoe-medvedkovo', 'yuzhnoe-medvedkovo',
-  'yaroslavskij', 'alekseevskij',
+  'altufyevsky', 'babushkinsky', 'bibirevo', 'butyrsky', 'lianozovo',
+  'losinoostrovskiy', 'marfino', 'marina-roshcha', 'ostankinsky', 'otradnoe',
+  'rostokino', 'sviblovo', 'severny', 'severnoe-medvedkovo', 'yuzhnoe-medvedkovo',
+  'yaroslavsky', 'severny-rayon',
   // ВАО (16)
-  'bogorodskoe', 'veshnyaki', 'vostochnoe-izmajlovo', 'vostochnyj', 'golyanovo',
-  'ivanovskoe', 'izmajlovo', 'kosino-uhtomskij', 'metrogorodok', 'novogireevo',
-  'novokosino', 'perovo', 'preobrazhenskoe', 'severnoe-izmajlovo', 'sokolinaya-gora', 'sokolniki',
+  'bogorodskoe', 'veshnyaki', 'vostochnoe-izmaylovo', 'vostochny', 'golyanovo',
+  'ivanovskoe', 'izmaylovo', 'kosino-ukhtomsky', 'metrogorodok', 'novogireevo',
+  'novokosino', 'perovo', 'preobrazhenskoe', 'severnoe-izmaylovo', 'sokolinaya-gora', 'sokolniki',
   // ЮВАО (12)
-  'vyhino-zhulebino', 'kapotnya', 'kuzminki', 'lefortovo', 'lyublino',
-  'marino', 'nekrasovka', 'nizhegorodskij', 'pechatniki', 'ryazanskij',
-  'tekstilshchiki', 'yuzhno-portovyj',
+  'vykhino-zhulebino', 'kapotnya', 'kuzminki', 'lefortovo', 'lyublino',
+  'maryino', 'nekrasovka', 'nizhegorodsky', 'pechatniki', 'ryazansky',
+  'tekstilshchiki', 'yuzhnoport',
   // ЮАО (16)
-  'biryulevo-vostochnoe', 'biryulevo-zapadnoe', 'brateevo', 'danilovskij', 'donskoj',
-  'zyablikovo', 'moskvorechye-saburovo', 'nagatino-sadovniki', 'nagatinskij-zaton',
-  'nagornyj', 'orehovo-borisovo-severnoe', 'orehovo-borisovo-yuzhnoe', 'caricyno',
-  'chertanovo-severnoe', 'chertanovo-centralnoe', 'chertanovo-yuzhnoe',
+  'biryulyovo-vostochnoe', 'biryulyovo-zapadnoe', 'brateevo', 'danilovsky', 'donskoy',
+  'zyablikovo', 'moskvorechye-saburovo', 'nagatino-sadovniki', 'nagatinsky-zaton',
+  'nagorny', 'orekhovo-borisovo-severnoe', 'orekhovo-borisovo-yuzhnoe', 'tsaritsyno',
+  'chertanovo-severnoe', 'chertanovo-tsentralnoe', 'chertanovo-yuzhnoe',
   // ЮЗАО (12)
-  'akademicheskij', 'gagarinskij', 'zyuzino', 'konkovo', 'kotlovka',
-  'lomonosovskij', 'obruchevskij', 'severnoe-butovo', 'teplyj-stan',
+  'akademichesky', 'gagarinsky', 'zyuzino', 'konkovo', 'kotlovka',
+  'lomonosovsky', 'obruchevsky', 'severnoe-butovo', 'tyoply-stan',
   'cheryomushki', 'yuzhnoe-butovo', 'yasenevo',
   // ЗАО (13)
-  'vnukovo', 'dorogomilovo', 'krylatskoe', 'kuntsevo', 'mozhajskij',
+  'vnukovo', 'dorogomilovo', 'krylatskoe', 'kuntsevo', 'mozhaysky',
   'novo-peredelkino', 'ochakovo-matveevskoe', 'prospekt-vernadskogo', 'ramenki',
-  'solncevo', 'troparyovo-nikulino', 'filyovskij-park', 'fili-davydkovo',
+  'solntsevo', 'troparyovo-nikulino', 'filyovsky-park', 'fili-davydkovo',
   // СЗАО (8)
   'kurkino', 'mitino', 'pokrovskoe-streshnevo', 'severnoe-tushino',
-  'strogino', 'horoshevo-mnevniki', 'shchukino', 'yuzhnoe-tushino',
+  'strogino', 'khoroshyovo-mnyovniki', 'shchukino', 'yuzhnoe-tushino',
   // НАО (8)
-  'sosenskoe', 'vnukovskoe', 'voronovskoe', 'desenovskoe', 'kievskij',
-  'kokoshkino', 'marushkinskoe', 'moskovskij',
+  'sosenskoe', 'vnukovskoe', 'voronovskoe', 'desenovskoe', 'kievsky',
+  'kokoshkino', 'marushkinskoe', 'moskovsky',
   // ТАО (10)
-  'troitsk', 'shcherbinka', 'filimonkovskoe', 'pervomajskoe', 'novofeodorovskoe',
-  'rogovskoe', 'krasnopahorskoe', 'klenovskoe', 'shhapovskoe', 'voskresenskoe',
+  'troitsk', 'shcherbinka', 'filimonkovskoe', 'pervomayskoe', 'novofeodorovskoe',
+  'rogovskoe', 'krasnopakhorskoe', 'klenovskoe', 'shchapovskoe', 'voskresenskoe',
   // Зеленоград (5)
-  'zelao-1', 'zelao-2', 'zelao-3', 'zelao-4', 'zelao-5'
+  'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5'
 ];
 
 // Статьи блога

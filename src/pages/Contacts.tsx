@@ -1,10 +1,41 @@
 import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, MessageCircle, Send, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
+// Administrative districts
+const adminDistricts = [
+  { slug: 'dezinfekciya-cao', name: 'ЦАО', fullName: 'Центральный административный округ' },
+  { slug: 'dezinfekciya-sao', name: 'САО', fullName: 'Северный административный округ' },
+  { slug: 'dezinfekciya-svao', name: 'СВАО', fullName: 'Северо-Восточный административный округ' },
+  { slug: 'dezinfekciya-vao', name: 'ВАО', fullName: 'Восточный административный округ' },
+  { slug: 'dezinfekciya-yuvao', name: 'ЮВАО', fullName: 'Юго-Восточный административный округ' },
+  { slug: 'dezinfekciya-yao', name: 'ЮАО', fullName: 'Южный административный округ' },
+  { slug: 'dezinfekciya-yzao', name: 'ЮЗАО', fullName: 'Юго-Западный административный округ' },
+  { slug: 'dezinfekciya-zao', name: 'ЗАО', fullName: 'Западный административный округ' },
+  { slug: 'dezinfekciya-szao', name: 'СЗАО', fullName: 'Северо-Западный административный округ' },
+  { slug: 'dezinfekciya-nao', name: 'НАО', fullName: 'Новомосковский административный округ' },
+  { slug: 'dezinfekciya-tao', name: 'ТАО', fullName: 'Троицкий административный округ' },
+  { slug: 'dezinfekciya-zelao', name: 'ЗелАО', fullName: 'Зеленоградский административный округ' },
+];
+
+// Popular neighborhoods
+const popularNeighborhoods = [
+  { slug: 'arbat', name: 'Арбат' },
+  { slug: 'tverskoy', name: 'Тверской' },
+  { slug: 'khamovniki', name: 'Хамовники' },
+  { slug: 'maryino', name: 'Марьино' },
+  { slug: 'izmaylovo', name: 'Измайлово' },
+  { slug: 'sokol', name: 'Сокол' },
+  { slug: 'kuntsevo', name: 'Кунцево' },
+  { slug: 'yasenevo', name: 'Ясенево' },
+  { slug: 'tekstilshchiki', name: 'Текстильщики' },
+  { slug: 'perovo', name: 'Перово' },
+];
 const Contacts = () => {
   const handlePhoneClick = () => {
     window.location.href = "tel:+79069989888";
@@ -235,6 +266,59 @@ const Contacts = () => {
                     Московская область
                   </p>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Districts Section */}
+          <div className="mt-12 max-w-5xl mx-auto">
+            <div className="bg-card rounded-xl p-6 shadow-lg border border-border">
+              <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-primary" />
+                Районы обслуживания
+              </h2>
+              
+              {/* Administrative Districts */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-muted-foreground mb-3">Административные округа Москвы:</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                  {adminDistricts.map((district) => (
+                    <Link 
+                      key={district.slug} 
+                      to={`/uslugi/${district.slug}`}
+                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted transition-colors"
+                    >
+                      <span className="w-2 h-2 bg-primary rounded-full"></span>
+                      <span className="text-sm font-medium">{district.name}</span>
+                      <span className="text-xs text-muted-foreground hidden sm:inline">({district.fullName.split(' ')[0]})</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Popular Neighborhoods */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-muted-foreground mb-3">Популярные районы:</h3>
+                <div className="flex flex-wrap gap-2">
+                  {popularNeighborhoods.map((n) => (
+                    <Link key={n.slug} to={`/rajony/${n.slug}`}>
+                      <Badge variant="secondary" className="hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer">
+                        {n.name}
+                      </Badge>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Link to all districts */}
+              <div className="text-center pt-4 border-t">
+                <Link 
+                  to="/rajony" 
+                  className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
+                >
+                  Все 125 районов Москвы
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
             </div>
           </div>
