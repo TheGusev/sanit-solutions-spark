@@ -1,21 +1,23 @@
 /**
  * === СТРАНИЦА УСЛУГИ: ДЕЗИНФЕКЦИЯ ===
  * URL: /uslugi/dezinfekciya
+ * С интегрированной SEO-системой
  */
 
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
-import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import ServiceTabNav from '@/components/ServiceTabNav';
 import DezinfekciyaCards from '@/components/ServiceCards/DezinfekciyaCards';
 import { dezinfekciyaData, dezinfekciyaSchemas } from '@/data/dezinfekciyaData';
 import PageLoader from '@/components/PageLoader';
 import CalculatorModal from '@/components/CalculatorModal';
+import { SEO } from '@/components/SEO';
+import RelatedPages from '@/components/SEO/RelatedPages';
 
 const Footer = lazy(() => import('@/components/Footer'));
 
 const DezinfekciyaPage = () => {
-  const { seo, tabs } = dezinfekciyaData;
+  const { seo, tabs, faq } = dezinfekciyaData;
   const [activeTab, setActiveTab] = useState<string>(tabs[0].id);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -51,33 +53,53 @@ const DezinfekciyaPage = () => {
     setIsModalOpen(true);
   }, []);
 
+  // Breadcrumb items for SEO
+  const breadcrumbItems = [
+    { name: "Главная", url: "/" },
+    { name: "Услуги", url: "/#services" },
+    { name: "Дезинфекция" }
+  ];
+
   return (
     <>
-      <Helmet>
-        <title>{seo.title}</title>
-        <meta name="description" content={seo.description} />
-        <meta name="keywords" content={seo.keywords} />
-        <link rel="canonical" href={seo.canonical} />
-        <meta property="og:title" content={seo.title} />
-        <meta property="og:description" content={seo.description} />
-        <meta property="og:url" content={seo.canonical} />
-        <meta name="robots" content="index, follow" />
-        <script type="application/ld+json">
-          {JSON.stringify(dezinfekciyaSchemas.service)}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify(dezinfekciyaSchemas.faq)}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify(dezinfekciyaSchemas.breadcrumb)}
-        </script>
-      </Helmet>
+      {/* Unified SEO Components */}
+      <SEO
+        pageType="service"
+        path="/uslugi/dezinfekciya"
+        data={{
+          service: "Дезинфекция",
+          price: 2000
+        }}
+        customMeta={{
+          title: seo.title,
+          description: seo.description,
+          keywords: seo.keywords
+        }}
+        includeOrganization
+        breadcrumbs={breadcrumbItems}
+        faq={faq}
+        service={{
+          name: "Дезинфекция помещений",
+          description: seo.description,
+          url: "/uslugi/dezinfekciya",
+          minPrice: 2000,
+          maxPrice: 15000,
+          areaServed: ["Москва", "Московская область"]
+        }}
+      />
 
       <Header />
       <ServiceTabNav tabs={tabs} activeTab={activeTab} onTabClick={handleTabClick} />
 
       <main>
         <DezinfekciyaCards onOrderClick={handleOrderClick} />
+        
+        {/* Related Pages Section */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <RelatedPages currentSlug="dezinfekciya" />
+          </div>
+        </section>
       </main>
 
       <Suspense fallback={<PageLoader />}>

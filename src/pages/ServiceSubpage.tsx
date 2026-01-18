@@ -1,15 +1,16 @@
 /**
  * === SERVICE SUBPAGE ===
- * Универсальная страница подуслуги
+ * Универсальная страница подуслуги с интегрированной SEO-системой
  */
 
 import { useParams, Navigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { SubpageLayout } from '@/components/SubpageLayout';
 import { CalculatorModal } from '@/components/CalculatorModal';
+import { SEO } from '@/components/SEO';
+import RelatedPages from '@/components/SEO/RelatedPages';
 import { getSubpage, getSubpageUrl } from '@/data/subpages';
 import type { ServiceCategory } from '@/data/subpages/types';
 
@@ -24,79 +25,54 @@ export default function ServiceSubpage() {
     return <Navigate to="/404" replace />;
   }
 
-  const canonicalUrl = `https://goruslugimsk.ru${getSubpageUrl(subpage)}`;
+  const pageUrl = getSubpageUrl(subpage);
 
-  // Schema.org structured data
-  const serviceSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Service',
-    serviceType: subpage.seo.h1,
-    name: subpage.seo.h1,
-    description: subpage.seo.description,
-    provider: {
-      '@type': 'LocalBusiness',
-      name: 'Санитарные Решения',
-      telephone: '+7-906-998-98-88',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Москва',
-        addressRegion: 'Москва',
-      },
-    },
-    areaServed: {
-      '@type': 'City',
-      name: 'Москва',
-    },
-  };
-
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: subpage.faq.map((item) => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
-      },
-    })),
-  };
-
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: subpage.breadcrumbs.map((crumb, idx) => ({
-      '@type': 'ListItem',
-      position: idx + 1,
-      name: crumb.text,
-      item: `https://goruslugimsk.ru${crumb.url}`,
-    })),
-  };
+  // Breadcrumb items for SEO
+  const breadcrumbItems = subpage.breadcrumbs.map(crumb => ({
+    name: crumb.text,
+    url: crumb.url
+  }));
 
   return (
     <>
-      <Helmet>
-        <title>{subpage.seo.title}</title>
-        <meta name="description" content={subpage.seo.description} />
-        <meta name="keywords" content={subpage.seo.keywords.join(', ')} />
-        <link rel="canonical" href={canonicalUrl} />
-        
-        {/* Open Graph */}
-        <meta property="og:title" content={subpage.seo.title} />
-        <meta property="og:description" content={subpage.seo.description} />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:type" content="website" />
-        
-        {/* Schema.org */}
-        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
-      </Helmet>
+      {/* Unified SEO Components */}
+      <SEO
+        pageType="subservice"
+        path={pageUrl}
+        data={{
+          service: subpage.seo.h1,
+          location: "в Москве",
+          price: 2000
+        }}
+        customMeta={{
+          title: subpage.seo.title,
+          description: subpage.seo.description,
+          keywords: subpage.seo.keywords.join(', ')
+        }}
+        includeOrganization
+        breadcrumbs={breadcrumbItems}
+        faq={subpage.faq}
+        service={{
+          name: subpage.seo.h1,
+          description: subpage.seo.description,
+          url: pageUrl,
+          minPrice: 2000,
+          maxPrice: 15000,
+          areaServed: ["Москва", "Московская область"]
+        }}
+      />
 
       <Header />
       
       <main>
         <SubpageLayout data={subpage} onOrderClick={() => setIsCalculatorOpen(true)} />
+        
+        {/* Related Pages Section */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <RelatedPages currentSlug={`${category}_${slug}`} />
+          </div>
+        </section>
       </main>
 
       <Footer />
