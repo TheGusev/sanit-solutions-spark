@@ -18,6 +18,8 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
 const Contacts = lazy(() => import("./pages/Contacts"));
+const DistrictsOverview = lazy(() => import("./pages/DistrictsOverview"));
+const DistrictPage = lazy(() => import("./pages/DistrictPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Admin pages - separate chunk, load on demand
@@ -48,6 +50,8 @@ const App = () => (
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/uslugi/po-okrugam-moskvy" element={<DistrictsOverview />} />
+                  <Route path="/uslugi/dezinfekciya-:districtId" element={<DistrictPage />} />
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
                   <Route path="/contacts" element={<Contacts />} />
                   
