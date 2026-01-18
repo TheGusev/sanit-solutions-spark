@@ -41,27 +41,45 @@ const WhyUsExtended = () => {
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-          {sections.map((section, index) => (
-            <AnimatedSection 
-              key={index} 
-              animation="fade-up" 
-              delay={index * 100}
-              className="bg-card p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-start gap-4">
-                <div className={`flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center`}>
-                  <section.icon className={`w-6 h-6 ${section.color}`} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Left: Feature image - hidden on mobile, visible on desktop */}
+          <div className="hidden lg:block relative rounded-2xl overflow-hidden shadow-lg h-full min-h-[400px]">
+            <img 
+              src="/images/work/office-cleaning.png" 
+              alt="Специалист проводит дезинфекцию офиса"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4 text-white">
+              <p className="font-bold text-lg">Профессиональный подход</p>
+              <p className="text-sm opacity-80">к каждому объекту</p>
+            </div>
+          </div>
+          
+          {/* Right: Cards grid - takes full width on mobile, 2 cols on desktop */}
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            {sections.map((section, index) => (
+              <AnimatedSection 
+                key={index} 
+                animation="fade-up" 
+                delay={index * 100}
+                className="bg-card p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center`}>
+                    <section.icon className={`w-6 h-6 ${section.color}`} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold mb-2">{section.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {section.content}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold mb-2">{section.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    {section.content}
-                  </p>
-                </div>
-              </div>
-            </AnimatedSection>
-          ))}
+              </AnimatedSection>
+            ))}
+          </div>
         </div>
 
         {/* Key points summary */}
