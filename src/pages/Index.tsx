@@ -8,8 +8,8 @@ import { useScrollDepth } from "@/hooks/useScrollDepth";
 import Header from "@/components/Header";
 import StickyTabNav from "@/components/StickyTabNav";
 
-// Main Stacking Cards component
-const StackingCards = lazy(() => import("@/components/StackingCards"));
+// Main Stacking Cards component (folder with index.tsx)
+const StackingCards = lazy(() => import("@/components/StackingCards/index"));
 
 // Lazy-loaded components
 const Footer = lazy(() => import("@/components/Footer"));
