@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import { HelmetProvider } from "react-helmet-async";
 import { TrafficProvider } from "@/contexts/TrafficContext";
 import PageLoader from "@/components/PageLoader";
+import SEODevTools from "@/components/SEO/SEODevTools";
 
 // Critical - loads immediately (main landing page)
 import Index from "./pages/Index";
@@ -74,6 +75,7 @@ const App = () => (
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                <SEODevTools />
               </Suspense>
             </TrafficProvider>
           </BrowserRouter>
