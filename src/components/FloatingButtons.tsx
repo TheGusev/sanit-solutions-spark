@@ -34,7 +34,7 @@ const FloatingButtons = () => {
       variant: context?.variantId
     });
     
-    window.open("https://t.me/The_Suppor_t", "_blank");
+    window.open("https://t.me/one_help", "_blank");
   };
 
   return (
