@@ -60,37 +60,76 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## Деплой на production сервер
+## CI/CD: Автоматическая сборка Docker-образа
+
+При каждом push в `main` GitHub Actions автоматически собирает Docker-образ и пушит на Docker Hub.
+
+**Docker-образ:** `thegusev/sanit-solutions:latest`
+
+### Настройка GitHub Secrets
+
+1. Перейди в репозиторий → **Settings** → **Secrets and variables** → **Actions**
+2. Добавь два секрета:
+   - `DOCKER_USERNAME` — твой логин на Docker Hub (например: `thegusev`)
+   - `DOCKER_PASSWORD` — Access Token от Docker Hub (**не пароль!**)
+
+### Как получить Docker Hub Access Token
+
+1. Зайди на https://hub.docker.com/settings/security
+2. Нажми **"New Access Token"**
+3. Дай имя (например, "GitHub Actions"), выбери права **Read & Write**
+4. Скопируй токен в GitHub Secret `DOCKER_PASSWORD`
+
+### Важно: Сделай репозиторий публичным
+
+1. Создай репозиторий на Docker Hub: https://hub.docker.com/repository/create
+2. Имя: `sanit-solutions`
+3. Visibility: **Public** (чтобы сервер мог пуллить без авторизации)
+
+### Обновление на сервере
+
+После push в main, GitHub Actions автоматически соберёт и запушит образ (~2-3 минуты).
+
+```bash
+# Вариант 1: Docker Compose (рекомендуется)
+docker compose pull && docker compose up -d
+
+# Вариант 2: Docker Swarm (Dokploy)
+docker service update --image thegusev/sanit-solutions:latest service-goruslugimsk-6jrp9b
+
+# Вариант 3: Ручной pull
+docker pull thegusev/sanit-solutions:latest
+docker stop goruslugimsk && docker rm goruslugimsk
+docker run -d --name goruslugimsk -p 5173:80 --restart unless-stopped thegusev/sanit-solutions:latest
+```
+
+### Проверка статуса сборки
+
+Статус билда виден во вкладке **Actions** в GitHub репозитории.
+
+---
+
+## Деплой на production сервер (legacy)
 
 ### Требования
 - Docker и Docker Compose установлены на сервере
-- Git доступ к репозиторию
 - Traefik (или другой reverse proxy) настроен на порт 5173
 
-### Быстрый деплой
+### Быстрый деплой (из готового образа)
 
 ```bash
-# Сделать скрипт исполняемым (один раз)
-chmod +x deploy.sh
+# Скачать и запустить
+docker compose pull && docker compose up -d
 
-# Запустить деплой
-./deploy.sh
+# Проверить статус
+docker compose ps
 ```
 
-### Ручной деплой
+### Локальная сборка (если нужно)
 
 ```bash
-# 1. Подтянуть последние изменения
-git pull origin main
-
-# 2. Пересобрать и запустить контейнер
+# Раскомментировать build в docker-compose.yml, затем:
 docker compose up -d --build
-
-# 3. Проверить статус
-docker compose ps
-
-# 4. Проверить логи (при необходимости)
-docker compose logs -f
 ```
 
 ### Проверка работоспособности
@@ -111,6 +150,8 @@ curl -I http://localhost:5173/wp-admin/
 ```
 Traefik (443/80) → Docker container (5173) → Nginx (80) → Static files
 ```
+
+---
 
 ## Lovable Cloud Deployment
 

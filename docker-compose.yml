@@ -2,9 +2,11 @@ version: '3.8'
 
 services:
   goruslugimsk:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: thegusev/sanit-solutions:latest
+    # Для локальной сборки раскомментировать:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     container_name: goruslugimsk
     ports:
       - "5173:80"
