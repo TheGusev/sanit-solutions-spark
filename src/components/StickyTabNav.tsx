@@ -24,14 +24,10 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
-  { id: "hero", label: "Главная" },
   { id: "uslugi", label: "Услуги", hasMegaMenu: true },
-  { id: "advantages", label: "О нас" },
-  { id: "process", label: "Процесс" },
   { id: "ceny", label: "Цены" },
-  { id: "blog", label: "Блог" },
-  { id: "reviews", label: "Отзывы" },
-  { id: "contact", label: "Контакты" },
+  { id: "blog", label: "Блог", href: "/blog" },
+  { id: "contact", label: "Контакты", href: "/contacts" },
 ];
 
 interface StickyTabNavProps {
@@ -306,7 +302,24 @@ const StickyTabNav = ({ className }: StickyTabNavProps) => {
               );
             }
 
-            // Regular tabs
+            // Regular tabs - check if it's a link or anchor
+            if (tab.href) {
+              return (
+                <Link
+                  key={tab.id}
+                  to={tab.href}
+                  className={cn(
+                    "relative px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors duration-200",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-md",
+                    "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {tab.label}
+                </Link>
+              );
+            }
+
+            // Anchor scroll tabs
             return (
               <button
                 key={tab.id}
