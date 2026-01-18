@@ -1,7 +1,6 @@
 import { MapPin, Clock, Shield, Phone, Calculator, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import Breadcrumbs from '@/components/Breadcrumbs';
 import { DistrictPage } from '@/data/districtPages';
 
 interface DistrictHeroProps {
@@ -10,13 +9,6 @@ interface DistrictHeroProps {
 }
 
 const DistrictHero = ({ district, onCalculatorOpen }: DistrictHeroProps) => {
-  const breadcrumbItems = [
-    { label: "Главная", href: "/" },
-    { label: "Услуги", href: "/#services" },
-    { label: "По округам", href: "/uslugi/po-okrugam-moskvy" },
-    { label: district.name }
-  ];
-
   return (
     <section className="relative min-h-[50vh] bg-gradient-to-br from-primary/90 to-green-600/80 text-white overflow-hidden">
       {/* Parallax background effect */}
@@ -35,11 +27,6 @@ const DistrictHero = ({ district, onCalculatorOpen }: DistrictHeroProps) => {
       
       {/* Content */}
       <div className="relative container mx-auto px-4 py-16 md:py-20">
-        {/* White breadcrumbs */}
-        <div className="mb-6 [&_a]:text-white/80 [&_a:hover]:text-white [&_li]:text-white/60 [&_svg]:text-white/40">
-          <Breadcrumbs items={breadcrumbItems} />
-        </div>
-
         {/* H1 */}
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 max-w-3xl">
           {district.h1}

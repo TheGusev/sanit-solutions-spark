@@ -1,5 +1,5 @@
 # robots.txt for goruslugimsk.ru
-# Last updated: 2025-01-04
+# Last updated: 2025-01-18
 
 User-agent: Yandex
 Allow: /

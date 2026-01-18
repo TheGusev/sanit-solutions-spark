@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
@@ -54,20 +55,20 @@ const Breadcrumbs = ({ items, className = "" }: BreadcrumbsProps) => {
             const isLast = index === fullItems.length - 1;
 
             return (
-              <BreadcrumbItem key={index}>
-                {!isLast && item.href ? (
-                  <>
+              <React.Fragment key={index}>
+                <BreadcrumbItem>
+                  {!isLast && item.href ? (
                     <BreadcrumbLink asChild>
                       <Link to={item.href} className="hover:text-primary transition-colors">
                         {item.label}
                       </Link>
                     </BreadcrumbLink>
-                    <BreadcrumbSeparator />
-                  </>
-                ) : (
-                  <BreadcrumbPage>{item.label}</BreadcrumbPage>
-                )}
-              </BreadcrumbItem>
+                  ) : (
+                    <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                  )}
+                </BreadcrumbItem>
+                {!isLast && <BreadcrumbSeparator />}
+              </React.Fragment>
             );
           })}
         </BreadcrumbList>
