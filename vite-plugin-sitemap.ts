@@ -82,14 +82,17 @@ export function sitemapPlugin(): Plugin {
         priority: '0.8',
       }));
       
-      // === ГЕО-СТРАНИЦЫ (9 округов) ===
+      // === ГЕО-СТРАНИЦЫ (9 округов x 3 услуги = 27 страниц) ===
       const districts = ['cao', 'sao', 'svao', 'vao', 'uvao', 'uao', 'uzao', 'zao', 'szao'];
-      const geoUrls: SitemapUrl[] = districts.map(district => ({
-        loc: `/uslugi/dezinfekciya-${district}`,
-        lastmod: currentDate,
-        changefreq: 'monthly',
-        priority: '0.7',
-      }));
+      const geoServices = ['dezinfekciya', 'dezinsekciya', 'deratizaciya'];
+      const geoUrls: SitemapUrl[] = districts.flatMap(district =>
+        geoServices.map(service => ({
+          loc: `/uslugi/${service}-${district}`,
+          lastmod: currentDate,
+          changefreq: 'monthly',
+          priority: '0.7',
+        }))
+      );
       
       // === СТАТЬИ БЛОГА ===
       const blogSlugs = [

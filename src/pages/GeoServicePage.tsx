@@ -19,14 +19,26 @@ export default function GeoServicePage() {
   const { district } = useParams<{ district: string }>();
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
-  const slug = district ? `dezinfekciya-${district}` : '';
-  const page = getGeoPage(slug);
+  // Support all service types: dezinfekciya, dezinsekciya, deratizaciya
+  const slugVariants = [
+    `dezinfekciya-${district}`,
+    `dezinsekciya-${district}`,
+    `deratizaciya-${district}`
+  ];
+  
+  const page = slugVariants.map(getGeoPage).find(p => p !== undefined);
 
   if (!page) {
     return <Navigate to="/404" replace />;
   }
 
   const pageUrl = getGeoPageUrl(page);
+  const serviceNames: Record<string, string> = {
+    dezinfekciya: 'Дезинфекция',
+    dezinsekciya: 'Дезинсекция',
+    deratizaciya: 'Дератизация'
+  };
+  const serviceName = serviceNames[page.serviceType] || 'Дезинфекция';
 
   // Breadcrumb items for SEO
   const breadcrumbItems = page.breadcrumbs.map(crumb => ({
@@ -41,9 +53,9 @@ export default function GeoServicePage() {
         pageType="geo"
         path={pageUrl}
         data={{
-          service: "Дезинфекция",
+          service: serviceName,
           district: page.districtInfo.name,
-          price: 2000
+          price: page.serviceType === 'deratizaciya' ? 3000 : 2500
         }}
         customMeta={{
           title: page.seo.title,
