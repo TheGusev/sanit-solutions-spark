@@ -7,22 +7,16 @@ import { useScrollDepth } from "@/hooks/useScrollDepth";
 // Critical components - above the fold, load immediately
 import Header from "@/components/Header";
 import StickyTabNav from "@/components/StickyTabNav";
-import Hero from "@/components/Hero";
 
-// New Stacking Cards for services
+// Main Stacking Cards component
 const StackingCards = lazy(() => import("@/components/StackingCards"));
 
-// Lazy-loaded sections
-const PricingByArea = lazy(() => import("@/components/PricingByArea"));
-const WhyUsExtended = lazy(() => import("@/components/WhyUsExtended"));
-const ServiceAreaMap = lazy(() => import("@/components/ServiceAreaMap"));
-const Reviews = lazy(() => import("@/components/Reviews"));
-const FAQ = lazy(() => import("@/components/FAQ"));
-const FinalCTA = lazy(() => import("@/components/FinalCTA"));
+// Lazy-loaded components
 const Footer = lazy(() => import("@/components/Footer"));
 
 // Modal and floating components
 const CalculatorModal = lazy(() => import("@/components/CalculatorModal"));
+const ReviewFormModal = lazy(() => import("@/components/ReviewFormModal"));
 const FloatingButtons = lazy(() => import("@/components/FloatingButtons"));
 const StickyCTA = lazy(() => import("@/components/StickyCTA"));
 const ABTestDebug = lazy(() => import("@/components/ABTestDebug"));
@@ -30,6 +24,7 @@ const ABTestDebug = lazy(() => import("@/components/ABTestDebug"));
 const Index = () => {
   const [showDebug, setShowDebug] = useState(false);
   const [showCalculator, setShowCalculator] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
 
   // Integrate ML prediction in main flow for real-time personalization
   const { prediction, isLoading: mlLoading } = useMLPrediction();
@@ -54,6 +49,10 @@ const Index = () => {
 
   const handleOpenCalculator = () => {
     setShowCalculator(true);
+  };
+
+  const handleOpenReviewForm = () => {
+    setShowReviewForm(true);
   };
 
   return (
@@ -98,48 +97,13 @@ const Index = () => {
 
       {/* Main content with proper padding for fixed header + sticky tabs */}
       <main className="pt-[var(--total-nav-height)]">
-        {/* Hero Section */}
-        <section id="hero">
-          <Hero onCalculatorClick={handleOpenCalculator} />
-        </section>
-
-        {/* Services - Stacking Cards */}
+        {/* 8 Stacking Cards */}
         <Suspense fallback={<SectionLoader />}>
-          <StackingCards />
+          <StackingCards 
+            onCalculatorClick={handleOpenCalculator}
+            onReviewClick={handleOpenReviewForm}
+          />
         </Suspense>
-
-        {/* Pricing Section */}
-        <section id="pricing">
-          <Suspense fallback={<SectionLoader />}>
-            <PricingByArea />
-          </Suspense>
-        </section>
-
-        {/* About Section */}
-        <section id="about">
-          <Suspense fallback={<SectionLoader />}>
-            <WhyUsExtended />
-          </Suspense>
-
-          <Suspense fallback={<SectionLoader />}>
-            <Reviews />
-          </Suspense>
-
-          <Suspense fallback={<SectionLoader />}>
-            <FAQ />
-          </Suspense>
-        </section>
-
-        {/* Contacts Section */}
-        <section id="contacts">
-          <Suspense fallback={<SectionLoader />}>
-            <ServiceAreaMap />
-          </Suspense>
-
-          <Suspense fallback={<SectionLoader />}>
-            <FinalCTA onOpenCalculator={handleOpenCalculator} />
-          </Suspense>
-        </section>
 
         {/* Footer */}
         <Suspense fallback={<SectionLoader />}>
@@ -152,6 +116,14 @@ const Index = () => {
         <CalculatorModal
           open={showCalculator}
           onOpenChange={setShowCalculator}
+        />
+      </Suspense>
+
+      {/* Review Form Modal */}
+      <Suspense fallback={null}>
+        <ReviewFormModal
+          isOpen={showReviewForm}
+          onClose={() => setShowReviewForm(false)}
         />
       </Suspense>
 

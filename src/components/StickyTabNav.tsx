@@ -10,10 +10,13 @@ interface Tab {
 
 const tabs: Tab[] = [
   { id: "hero", label: "Главная" },
-  { id: "services", label: "Услуги" },
-  { id: "pricing", label: "Цены" },
-  { id: "about", label: "О нас" },
-  { id: "contacts", label: "Контакты" },
+  { id: "uslugi", label: "Услуги" },
+  { id: "advantages", label: "О нас" },
+  { id: "process", label: "Процесс" },
+  { id: "ceny", label: "Цены" },
+  { id: "blog", label: "Блог" },
+  { id: "reviews", label: "Отзывы" },
+  { id: "contact", label: "Контакты" },
 ];
 
 interface StickyTabNavProps {
