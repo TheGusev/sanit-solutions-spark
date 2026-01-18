@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const services = [
-  { icon: Microscope, title: "Дезинфекция квартиры", price: "от 2 000 ₽", href: "/uslugi/dezinfekciya" },
-  { icon: Bug, title: "Дезинсекция (тараканы, клопы)", price: "от 2 500 ₽", href: "/uslugi/dezinsekciya" },
-  { icon: Rat, title: "Дератизация", price: "от 3 000 ₽", href: "/uslugi/deratizaciya" },
-  { icon: Sparkles, title: "Озонирование", price: "от 3 000 ₽", href: "/uslugi/ozonirovanie" },
-  { icon: Wind, title: "Удаление запахов", price: "от 2 500 ₽", href: "/uslugi/dezodoraciya" },
-  { icon: FileCheck, title: "Сертификация СЭС", price: "от 5 000 ₽", href: "/uslugi/sertifikaciya" },
+  { icon: Microscope, title: "Дезинфекция квартиры", price: "от 1 000 ₽", href: "/uslugi/dezinfekciya" },
+  { icon: Bug, title: "Дезинсекция (тараканы, клопы)", price: "от 1 200 ₽", href: "/uslugi/dezinsekciya" },
+  { icon: Rat, title: "Дератизация", price: "от 1 400 ₽", href: "/uslugi/deratizaciya" },
+  { icon: Sparkles, title: "Озонирование", price: "от 1 500 ₽", href: "/uslugi/ozonirovanie" },
+  { icon: Wind, title: "Удаление запахов", price: "от 1 200 ₽", href: "/uslugi/dezodoraciya" },
+  { icon: FileCheck, title: "Сертификация СЭС", price: "от 3 000 ₽", href: "/uslugi/sertifikaciya" },
 ];
 
 const MiniPricing = () => {
