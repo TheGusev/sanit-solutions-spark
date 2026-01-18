@@ -62,12 +62,13 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
   };
 
   const services = [
-    { title: "Дезинфекция", href: "/uslugi/dezinfekciya" },
     { title: "Дезинсекция", href: "/uslugi/dezinsekciya" },
+    { title: "Дезинфекция", href: "/uslugi/dezinfekciya" },
     { title: "Дератизация", href: "/uslugi/deratizaciya" },
     { title: "Озонирование", href: "/uslugi/ozonirovanie" },
     { title: "Дезодорация", href: "/uslugi/dezodoraciya" },
     { title: "Сертификация", href: "/uslugi/sertifikaciya" },
+    { title: "По округам Москвы", href: "/uslugi/po-okrugam-moskvy" },
   ];
 
   return (
