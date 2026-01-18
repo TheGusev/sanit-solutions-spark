@@ -23,6 +23,8 @@ const FinalCTA = ({ onOpenCalculator }: FinalCTAProps) => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-fixed"
         style={{ backgroundImage: "url('/images/work/outdoor-treatment.png')" }}
+        role="img"
+        aria-label="Специалист проводит санитарную обработку территории — дезинсекция на открытом воздухе"
       />
       <div className="absolute inset-0 bg-gradient-to-br from-primary/50 via-primary/40 to-green-600/30" />
       

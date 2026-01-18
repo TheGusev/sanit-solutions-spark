@@ -156,6 +156,8 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
           backgroundImage: "url('/images/work/home-kitchen.png')",
           transform: `translateY(${parallaxOffset}px)` 
         }}
+        role="img"
+        aria-label="Профессиональная дезинфекция кухни — специалист проводит санитарную обработку"
       />
       <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-background/50 to-background/40 dark:from-background/80 dark:via-background/75 dark:to-background/70" />
 

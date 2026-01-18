@@ -84,9 +84,25 @@ export function sitemapPlugin(): Plugin {
         changefreq: 'monthly',
         priority: '0.6',
       }));
+
+      // Подстраницы услуг (коммерческие страницы высокого приоритета)
+      const serviceSubpages = [
+        '/uslugi/dezinfekciya/kvartir',
+        '/uslugi/dezinfekciya/ofisov',
+        '/uslugi/dezinsekciya/unichtozhenie-klopov',
+        '/uslugi/dezinsekciya/unichtozhenie-tarakanov',
+        '/uslugi/deratizaciya/unichtozhenie-krys',
+        '/uslugi/deratizaciya/unichtozhenie-myshej',
+      ];
+      const subpageUrls: SitemapUrl[] = serviceSubpages.map(path => ({
+        loc: path,
+        lastmod: currentDate,
+        changefreq: 'monthly',
+        priority: '0.85',
+      }));
       
       // Генерация XML
-      const allUrls = [...staticUrls, ...serviceUrls, ...districtUrls, ...blogUrls];
+      const allUrls = [...staticUrls, ...serviceUrls, ...subpageUrls, ...districtUrls, ...blogUrls];
       const xml = generateSitemapXml(baseUrl, allUrls);
       
       writeFileSync(resolve('dist/sitemap.xml'), xml);

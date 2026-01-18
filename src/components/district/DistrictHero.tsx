@@ -26,6 +26,8 @@ const DistrictHero = ({ district, onCalculatorOpen }: DistrictHeroProps) => {
           backgroundImage: `url('/placeholder.svg')`,
           backgroundAttachment: 'fixed'
         }}
+        role="img"
+        aria-label="Фоновое изображение — санитарная обработка помещений в округе"
       />
       
       {/* Gradient overlay */}
