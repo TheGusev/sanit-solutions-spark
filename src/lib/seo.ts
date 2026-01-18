@@ -330,55 +330,406 @@ export interface InternalLink {
 
 /**
  * Карта внутренних ссылок по страницам
+ * Расширенная версия для всех услуг, подстраниц и статей
  */
 export const internalLinksMap: Record<string, InternalLink[]> = {
+  // === ГЛАВНАЯ ===
   home: [
     { anchor: 'дезинфекция', url: '/uslugi/dezinfekciya', title: 'Услуги дезинфекции' },
     { anchor: 'дезинсекция', url: '/uslugi/dezinsekciya', title: 'Услуги дезинсекции' },
     { anchor: 'дератизация', url: '/uslugi/deratizaciya', title: 'Услуги дератизации' },
     { anchor: 'уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', title: 'Уничтожение клопов' },
     { anchor: 'борьба с тараканами', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', title: 'Уничтожение тараканов' },
+    { anchor: 'озонирование', url: '/uslugi/ozonirovanie', title: 'Озонирование помещений' },
+    { anchor: 'рассчитать стоимость', url: '/ceny', title: 'Калькулятор стоимости' },
   ],
+
+  // === ДЕЗИНФЕКЦИЯ ===
   dezinfekciya: [
     { anchor: 'дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', title: 'Дезинфекция квартир' },
     { anchor: 'дезинфекция офисов', url: '/uslugi/dezinfekciya/ofisov', title: 'Дезинфекция офисов' },
     { anchor: 'холодный туман', url: '/uslugi/dezinfekciya/holodnyj-tuman', title: 'Обработка холодным туманом' },
+    { anchor: 'горячий туман', url: '/uslugi/dezinfekciya/goryachij-tuman', title: 'Обработка горячим туманом' },
+    { anchor: 'дезинфекция домов', url: '/uslugi/dezinfekciya/domov', title: 'Дезинфекция частных домов' },
+    { anchor: 'дезинфекция складов', url: '/uslugi/dezinfekciya/skladov', title: 'Дезинфекция складов' },
     { anchor: 'рассчитать стоимость', url: '/ceny', title: 'Калькулятор стоимости' },
   ],
+  'dezinfekciya_kvartir': [
+    { anchor: 'дезинфекция офисов', url: '/uslugi/dezinfekciya/ofisov', title: 'Дезинфекция офисов' },
+    { anchor: 'озонирование', url: '/uslugi/ozonirovanie', title: 'Озонирование помещений' },
+    { anchor: 'уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', title: 'Уничтожение клопов' },
+    { anchor: 'устранение запахов', url: '/uslugi/dezodoraciya', title: 'Дезодорация' },
+  ],
+  'dezinfekciya_ofisov': [
+    { anchor: 'дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', title: 'Дезинфекция квартир' },
+    { anchor: 'дезинфекция складов', url: '/uslugi/dezinfekciya/skladov', title: 'Дезинфекция складов' },
+    { anchor: 'уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', title: 'Уничтожение тараканов' },
+    { anchor: 'документы для СЭС', url: '/uslugi/sertifikaciya', title: 'Санитарная сертификация' },
+  ],
+  'dezinfekciya_holodnyj-tuman': [
+    { anchor: 'горячий туман', url: '/uslugi/dezinfekciya/goryachij-tuman', title: 'Обработка горячим туманом' },
+    { anchor: 'дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', title: 'Дезинфекция квартир' },
+    { anchor: 'озонирование', url: '/uslugi/ozonirovanie', title: 'Озонирование помещений' },
+  ],
+  'dezinfekciya_goryachij-tuman': [
+    { anchor: 'холодный туман', url: '/uslugi/dezinfekciya/holodnyj-tuman', title: 'Обработка холодным туманом' },
+    { anchor: 'дезинфекция офисов', url: '/uslugi/dezinfekciya/ofisov', title: 'Дезинфекция офисов' },
+    { anchor: 'уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', title: 'Уничтожение клопов' },
+  ],
+
+  // === ДЕЗИНСЕКЦИЯ ===
   dezinsekciya: [
     { anchor: 'уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', title: 'Уничтожение клопов' },
     { anchor: 'уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', title: 'Уничтожение тараканов' },
     { anchor: 'уничтожение муравьёв', url: '/uslugi/dezinsekciya/unichtozhenie-muravev', title: 'Уничтожение муравьёв' },
+    { anchor: 'уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh', title: 'Уничтожение блох' },
+    { anchor: 'борьба с комарами', url: '/uslugi/dezinsekciya/unichtozhenie-komarov', title: 'Уничтожение комаров' },
     { anchor: 'рассчитать стоимость', url: '/ceny', title: 'Калькулятор стоимости' },
   ],
+  'dezinsekciya_unichtozhenie-klopov': [
+    { anchor: 'уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', title: 'Уничтожение тараканов' },
+    { anchor: 'уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh', title: 'Уничтожение блох' },
+    { anchor: 'дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', title: 'Дезинфекция квартир' },
+    { anchor: 'горячий туман', url: '/uslugi/dezinfekciya/goryachij-tuman', title: 'Обработка горячим туманом' },
+  ],
+  'dezinsekciya_unichtozhenie-tarakanov': [
+    { anchor: 'уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', title: 'Уничтожение клопов' },
+    { anchor: 'уничтожение муравьёв', url: '/uslugi/dezinsekciya/unichtozhenie-muravev', title: 'Уничтожение муравьёв' },
+    { anchor: 'дезинфекция офисов', url: '/uslugi/dezinfekciya/ofisov', title: 'Дезинфекция офисов' },
+    { anchor: 'документы для СЭС', url: '/uslugi/sertifikaciya', title: 'Санитарная сертификация' },
+  ],
+  'dezinsekciya_unichtozhenie-muravev': [
+    { anchor: 'уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', title: 'Уничтожение тараканов' },
+    { anchor: 'уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh', title: 'Уничтожение блох' },
+    { anchor: 'дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', title: 'Дезинфекция квартир' },
+  ],
+  'dezinsekciya_unichtozhenie-bloh': [
+    { anchor: 'уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', title: 'Уничтожение клопов' },
+    { anchor: 'дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', title: 'Дезинфекция квартир' },
+    { anchor: 'дератизация', url: '/uslugi/deratizaciya', title: 'Уничтожение грызунов' },
+  ],
+  'dezinsekciya_unichtozhenie-komarov': [
+    { anchor: 'уничтожение мух', url: '/uslugi/dezinsekciya/unichtozhenie-muh', title: 'Уничтожение мух' },
+    { anchor: 'обработка участка', url: '/uslugi/dezinsekciya', title: 'Дезинсекция' },
+    { anchor: 'дезодорация', url: '/uslugi/dezodoraciya', title: 'Устранение запахов' },
+  ],
+  'dezinsekciya_unichtozhenie-muh': [
+    { anchor: 'борьба с комарами', url: '/uslugi/dezinsekciya/unichtozhenie-komarov', title: 'Уничтожение комаров' },
+    { anchor: 'дезинфекция', url: '/uslugi/dezinfekciya', title: 'Дезинфекция помещений' },
+    { anchor: 'документы для СЭС', url: '/uslugi/sertifikaciya', title: 'Санитарная сертификация' },
+  ],
+
+  // === ДЕРАТИЗАЦИЯ ===
+  deratizaciya: [
+    { anchor: 'уничтожение крыс', url: '/uslugi/deratizaciya/unichtozhenie-krys', title: 'Уничтожение крыс' },
+    { anchor: 'уничтожение мышей', url: '/uslugi/deratizaciya/unichtozhenie-myshej', title: 'Уничтожение мышей' },
+    { anchor: 'дезинфекция после грызунов', url: '/uslugi/dezinfekciya', title: 'Дезинфекция помещений' },
+    { anchor: 'рассчитать стоимость', url: '/ceny', title: 'Калькулятор стоимости' },
+  ],
+  'deratizaciya_unichtozhenie-krys': [
+    { anchor: 'уничтожение мышей', url: '/uslugi/deratizaciya/unichtozhenie-myshej', title: 'Уничтожение мышей' },
+    { anchor: 'дезинфекция после грызунов', url: '/uslugi/dezinfekciya/kvartir', title: 'Дезинфекция квартир' },
+    { anchor: 'уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh', title: 'Уничтожение блох' },
+    { anchor: 'документы для СЭС', url: '/uslugi/sertifikaciya', title: 'Санитарная сертификация' },
+  ],
+  'deratizaciya_unichtozhenie-myshej': [
+    { anchor: 'уничтожение крыс', url: '/uslugi/deratizaciya/unichtozhenie-krys', title: 'Уничтожение крыс' },
+    { anchor: 'дезинфекция', url: '/uslugi/dezinfekciya/kvartir', title: 'Дезинфекция квартир' },
+    { anchor: 'уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh', title: 'Уничтожение блох' },
+  ],
+
+  // === ОЗОНИРОВАНИЕ ===
+  ozonirovanie: [
+    { anchor: 'дезинфекция', url: '/uslugi/dezinfekciya', title: 'Дезинфекция помещений' },
+    { anchor: 'устранение запахов', url: '/uslugi/dezodoraciya', title: 'Дезодорация' },
+    { anchor: 'дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', title: 'Дезинфекция квартир' },
+    { anchor: 'холодный туман', url: '/uslugi/dezinfekciya/holodnyj-tuman', title: 'Обработка холодным туманом' },
+  ],
+
+  // === ДЕЗОДОРАЦИЯ ===
+  dezodoraciya: [
+    { anchor: 'озонирование', url: '/uslugi/ozonirovanie', title: 'Озонирование помещений' },
+    { anchor: 'дезинфекция', url: '/uslugi/dezinfekciya', title: 'Дезинфекция помещений' },
+    { anchor: 'уничтожение грызунов', url: '/uslugi/deratizaciya', title: 'Дератизация' },
+    { anchor: 'дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', title: 'Дезинфекция квартир' },
+  ],
+
+  // === СЕРТИФИКАЦИЯ ===
+  sertifikaciya: [
+    { anchor: 'дезинфекция офисов', url: '/uslugi/dezinfekciya/ofisov', title: 'Дезинфекция офисов' },
+    { anchor: 'дезинсекция', url: '/uslugi/dezinsekciya', title: 'Дезинсекция' },
+    { anchor: 'дератизация', url: '/uslugi/deratizaciya', title: 'Дератизация' },
+    { anchor: 'уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', title: 'Уничтожение тараканов' },
+  ],
+
+  // === ГЕО-СТРАНИЦЫ ===
+  'geo_cao': [
+    { anchor: 'дезинфекция в САО', url: '/uslugi/dezinfekciya-sao', title: 'Дезинфекция в САО' },
+    { anchor: 'дезинсекция', url: '/uslugi/dezinsekciya', title: 'Уничтожение насекомых' },
+    { anchor: 'уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', title: 'Уничтожение клопов' },
+  ],
+  'geo_sao': [
+    { anchor: 'дезинфекция в ЦАО', url: '/uslugi/dezinfekciya-cao', title: 'Дезинфекция в ЦАО' },
+    { anchor: 'дезинфекция в СВАО', url: '/uslugi/dezinfekciya-svao', title: 'Дезинфекция в СВАО' },
+    { anchor: 'уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', title: 'Уничтожение тараканов' },
+  ],
+  'geo_svao': [
+    { anchor: 'дезинфекция в САО', url: '/uslugi/dezinfekciya-sao', title: 'Дезинфекция в САО' },
+    { anchor: 'дезинфекция в ВАО', url: '/uslugi/dezinfekciya-vao', title: 'Дезинфекция в ВАО' },
+    { anchor: 'уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', title: 'Уничтожение клопов' },
+  ],
+  'geo_vao': [
+    { anchor: 'дезинфекция в СВАО', url: '/uslugi/dezinfekciya-svao', title: 'Дезинфекция в СВАО' },
+    { anchor: 'дезинфекция в ЮВАО', url: '/uslugi/dezinfekciya-uvao', title: 'Дезинфекция в ЮВАО' },
+    { anchor: 'дератизация', url: '/uslugi/deratizaciya', title: 'Уничтожение грызунов' },
+  ],
+  'geo_uvao': [
+    { anchor: 'дезинфекция в ВАО', url: '/uslugi/dezinfekciya-vao', title: 'Дезинфекция в ВАО' },
+    { anchor: 'дезинфекция в ЮАО', url: '/uslugi/dezinfekciya-uao', title: 'Дезинфекция в ЮАО' },
+    { anchor: 'уничтожение крыс', url: '/uslugi/deratizaciya/unichtozhenie-krys', title: 'Уничтожение крыс' },
+  ],
+  'geo_uao': [
+    { anchor: 'дезинфекция в ЮВАО', url: '/uslugi/dezinfekciya-uvao', title: 'Дезинфекция в ЮВАО' },
+    { anchor: 'дезинфекция в ЮЗАО', url: '/uslugi/dezinfekciya-uzao', title: 'Дезинфекция в ЮЗАО' },
+    { anchor: 'дезинсекция', url: '/uslugi/dezinsekciya', title: 'Уничтожение насекомых' },
+  ],
+  'geo_uzao': [
+    { anchor: 'дезинфекция в ЮАО', url: '/uslugi/dezinfekciya-uao', title: 'Дезинфекция в ЮАО' },
+    { anchor: 'дезинфекция в ЗАО', url: '/uslugi/dezinfekciya-zao', title: 'Дезинфекция в ЗАО' },
+    { anchor: 'уничтожение мышей', url: '/uslugi/deratizaciya/unichtozhenie-myshej', title: 'Уничтожение мышей' },
+  ],
+  'geo_zao': [
+    { anchor: 'дезинфекция в ЮЗАО', url: '/uslugi/dezinfekciya-uzao', title: 'Дезинфекция в ЮЗАО' },
+    { anchor: 'дезинфекция в СЗАО', url: '/uslugi/dezinfekciya-szao', title: 'Дезинфекция в СЗАО' },
+    { anchor: 'уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', title: 'Уничтожение тараканов' },
+  ],
+  'geo_szao': [
+    { anchor: 'дезинфекция в ЗАО', url: '/uslugi/dezinfekciya-zao', title: 'Дезинфекция в ЗАО' },
+    { anchor: 'дезинфекция в САО', url: '/uslugi/dezinfekciya-sao', title: 'Дезинфекция в САО' },
+    { anchor: 'дератизация', url: '/uslugi/deratizaciya', title: 'Уничтожение грызунов' },
+  ],
+
+  // === СТАТЬИ БЛОГА ПО КАТЕГОРИЯМ ===
+  'article_vrediteli': [
+    { anchor: 'уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', title: 'Профессиональное уничтожение клопов' },
+    { anchor: 'уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', title: 'Уничтожение тараканов' },
+    { anchor: 'дезинсекция', url: '/uslugi/dezinsekciya', title: 'Услуги дезинсекции' },
+    { anchor: 'уничтожение мышей', url: '/uslugi/deratizaciya/unichtozhenie-myshej', title: 'Уничтожение мышей' },
+    { anchor: 'заказать обработку', url: '/ceny', title: 'Рассчитать стоимость' },
+  ],
+  'article_sovety': [
+    { anchor: 'дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', title: 'Дезинфекция квартир' },
+    { anchor: 'дезинфекция', url: '/uslugi/dezinfekciya', title: 'Услуги дезинфекции' },
+    { anchor: 'озонирование', url: '/uslugi/ozonirovanie', title: 'Озонирование помещений' },
+    { anchor: 'позвонить специалисту', url: '/contacts', title: 'Контакты' },
+  ],
+  'article_zakony': [
+    { anchor: 'документы для СЭС', url: '/uslugi/sertifikaciya', title: 'Санитарная сертификация' },
+    { anchor: 'дезинфекция офисов', url: '/uslugi/dezinfekciya/ofisov', title: 'Дезинфекция офисов' },
+    { anchor: 'дератизация', url: '/uslugi/deratizaciya', title: 'Дератизация' },
+  ],
+  'article_preparaty': [
+    { anchor: 'холодный туман', url: '/uslugi/dezinfekciya/holodnyj-tuman', title: 'Обработка холодным туманом' },
+    { anchor: 'горячий туман', url: '/uslugi/dezinfekciya/goryachij-tuman', title: 'Обработка горячим туманом' },
+    { anchor: 'дезинфекция', url: '/uslugi/dezinfekciya', title: 'Услуги дезинфекции' },
+  ],
+  'article_kejsy': [
+    { anchor: 'дезинсекция', url: '/uslugi/dezinsekciya', title: 'Услуги дезинсекции' },
+    { anchor: 'дератизация', url: '/uslugi/deratizaciya', title: 'Услуги дератизации' },
+    { anchor: 'заказать обработку', url: '/ceny', title: 'Рассчитать стоимость' },
+  ],
+
+  // Общий fallback для статей
   article: [
     { anchor: 'профессиональная дезинфекция', url: '/uslugi/dezinfekciya', title: 'Услуги дезинфекции' },
     { anchor: 'заказать обработку', url: '/ceny', title: 'Рассчитать стоимость' },
     { anchor: 'уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', title: 'Уничтожение клопов' },
     { anchor: 'борьба с тараканами', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', title: 'Уничтожение тараканов' },
     { anchor: 'позвонить специалисту', url: '/contacts', title: 'Контакты' },
+    { anchor: 'дезинсекция', url: '/uslugi/dezinsekciya', title: 'Услуги дезинсекции' },
+    { anchor: 'дератизация', url: '/uslugi/deratizaciya', title: 'Услуги дератизации' },
   ],
 };
 
 /**
  * Получить связанные страницы для текущей
+ * Расширенная версия с полной картой перелинковки
  */
 export function getRelatedPages(currentSlug: string): Array<{ title: string; url: string; description?: string }> {
   const relatedMap: Record<string, Array<{ title: string; url: string; description?: string }>> = {
+    // === ОСНОВНЫЕ УСЛУГИ ===
     'dezinfekciya': [
       { title: 'Дезинсекция', url: '/uslugi/dezinsekciya', description: 'Уничтожение насекомых' },
       { title: 'Дератизация', url: '/uslugi/deratizaciya', description: 'Уничтожение грызунов' },
-      { title: 'Озонирование', url: '/uslugi/ozonirovanie', description: 'Очистка воздуха' },
+      { title: 'Озонирование', url: '/uslugi/ozonirovanie', description: 'Очистка воздуха озоном' },
+      { title: 'Дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', description: 'Обработка жилых помещений' },
     ],
     'dezinsekciya': [
       { title: 'Дезинфекция', url: '/uslugi/dezinfekciya', description: 'Обеззараживание помещений' },
       { title: 'Дератизация', url: '/uslugi/deratizaciya', description: 'Уничтожение грызунов' },
+      { title: 'Уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', description: 'Избавление от клопов' },
       { title: 'Цены и калькулятор', url: '/ceny', description: 'Рассчитать стоимость' },
     ],
     'deratizaciya': [
       { title: 'Дезинфекция', url: '/uslugi/dezinfekciya', description: 'Обеззараживание помещений' },
       { title: 'Дезинсекция', url: '/uslugi/dezinsekciya', description: 'Уничтожение насекомых' },
+      { title: 'Уничтожение крыс', url: '/uslugi/deratizaciya/unichtozhenie-krys', description: 'Избавление от крыс' },
       { title: 'Цены и калькулятор', url: '/ceny', description: 'Рассчитать стоимость' },
+    ],
+    'ozonirovanie': [
+      { title: 'Дезинфекция', url: '/uslugi/dezinfekciya', description: 'Обеззараживание помещений' },
+      { title: 'Дезодорация', url: '/uslugi/dezodoraciya', description: 'Устранение запахов' },
+      { title: 'Дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', description: 'Обработка жилых помещений' },
+    ],
+    'dezodoraciya': [
+      { title: 'Озонирование', url: '/uslugi/ozonirovanie', description: 'Очистка воздуха озоном' },
+      { title: 'Дезинфекция', url: '/uslugi/dezinfekciya', description: 'Обеззараживание помещений' },
+      { title: 'Дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', description: 'Обработка жилых помещений' },
+    ],
+    'sertifikaciya': [
+      { title: 'Дезинфекция офисов', url: '/uslugi/dezinfekciya/ofisov', description: 'Для бизнеса' },
+      { title: 'Дезинсекция', url: '/uslugi/dezinsekciya', description: 'Уничтожение насекомых' },
+      { title: 'Дератизация', url: '/uslugi/deratizaciya', description: 'Уничтожение грызунов' },
+    ],
+
+    // === ПОДСТРАНИЦЫ ДЕЗИНФЕКЦИИ ===
+    'dezinfekciya_kvartir': [
+      { title: 'Дезинфекция офисов', url: '/uslugi/dezinfekciya/ofisov', description: 'Для бизнеса' },
+      { title: 'Озонирование', url: '/uslugi/ozonirovanie', description: 'Очистка воздуха' },
+      { title: 'Уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', description: 'Избавление от клопов' },
+    ],
+    'dezinfekciya_ofisov': [
+      { title: 'Дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', description: 'Для частных лиц' },
+      { title: 'Санитарная сертификация', url: '/uslugi/sertifikaciya', description: 'Документы для СЭС' },
+      { title: 'Уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', description: 'Избавление от тараканов' },
+    ],
+    'dezinfekciya_holodnyj-tuman': [
+      { title: 'Горячий туман', url: '/uslugi/dezinfekciya/goryachij-tuman', description: 'Термическая обработка' },
+      { title: 'Дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', description: 'Обработка жилья' },
+      { title: 'Озонирование', url: '/uslugi/ozonirovanie', description: 'Очистка воздуха' },
+    ],
+    'dezinfekciya_goryachij-tuman': [
+      { title: 'Холодный туман', url: '/uslugi/dezinfekciya/holodnyj-tuman', description: 'Мелкодисперсная обработка' },
+      { title: 'Уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', description: 'Эффективно против клопов' },
+      { title: 'Дезинфекция офисов', url: '/uslugi/dezinfekciya/ofisov', description: 'Для бизнеса' },
+    ],
+
+    // === ПОДСТРАНИЦЫ ДЕЗИНСЕКЦИИ ===
+    'dezinsekciya_unichtozhenie-klopov': [
+      { title: 'Уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', description: 'Избавление от тараканов' },
+      { title: 'Уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh', description: 'Избавление от блох' },
+      { title: 'Дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', description: 'Комплексная обработка' },
+    ],
+    'dezinsekciya_unichtozhenie-tarakanov': [
+      { title: 'Уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', description: 'Избавление от клопов' },
+      { title: 'Уничтожение муравьёв', url: '/uslugi/dezinsekciya/unichtozhenie-muravev', description: 'Избавление от муравьёв' },
+      { title: 'Санитарная сертификация', url: '/uslugi/sertifikaciya', description: 'Документы для СЭС' },
+    ],
+    'dezinsekciya_unichtozhenie-muravev': [
+      { title: 'Уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', description: 'Избавление от тараканов' },
+      { title: 'Уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh', description: 'Избавление от блох' },
+      { title: 'Дезинфекция квартир', url: '/uslugi/dezinfekciya/kvartir', description: 'Комплексная обработка' },
+    ],
+    'dezinsekciya_unichtozhenie-bloh': [
+      { title: 'Уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', description: 'Избавление от клопов' },
+      { title: 'Дератизация', url: '/uslugi/deratizaciya', description: 'Уничтожение грызунов' },
+      { title: 'Дезинфекция', url: '/uslugi/dezinfekciya/kvartir', description: 'Комплексная обработка' },
+    ],
+    'dezinsekciya_unichtozhenie-komarov': [
+      { title: 'Уничтожение мух', url: '/uslugi/dezinsekciya/unichtozhenie-muh', description: 'Избавление от мух' },
+      { title: 'Дезодорация', url: '/uslugi/dezodoraciya', description: 'Устранение запахов' },
+      { title: 'Дезинсекция', url: '/uslugi/dezinsekciya', description: 'Все услуги' },
+    ],
+    'dezinsekciya_unichtozhenie-muh': [
+      { title: 'Уничтожение комаров', url: '/uslugi/dezinsekciya/unichtozhenie-komarov', description: 'Избавление от комаров' },
+      { title: 'Санитарная сертификация', url: '/uslugi/sertifikaciya', description: 'Документы для СЭС' },
+      { title: 'Дезинфекция', url: '/uslugi/dezinfekciya', description: 'Обеззараживание' },
+    ],
+
+    // === ПОДСТРАНИЦЫ ДЕРАТИЗАЦИИ ===
+    'deratizaciya_unichtozhenie-krys': [
+      { title: 'Уничтожение мышей', url: '/uslugi/deratizaciya/unichtozhenie-myshej', description: 'Избавление от мышей' },
+      { title: 'Дезинфекция', url: '/uslugi/dezinfekciya/kvartir', description: 'После грызунов' },
+      { title: 'Уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh', description: 'Блохи от грызунов' },
+    ],
+    'deratizaciya_unichtozhenie-myshej': [
+      { title: 'Уничтожение крыс', url: '/uslugi/deratizaciya/unichtozhenie-krys', description: 'Избавление от крыс' },
+      { title: 'Дезинфекция', url: '/uslugi/dezinfekciya/kvartir', description: 'После грызунов' },
+      { title: 'Уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh', description: 'Блохи от грызунов' },
+    ],
+
+    // === ГЕО-СТРАНИЦЫ ===
+    'geo_cao': [
+      { title: 'Дезинфекция в САО', url: '/uslugi/dezinfekciya-sao', description: 'Северный округ' },
+      { title: 'Дезинсекция', url: '/uslugi/dezinsekciya', description: 'Уничтожение насекомых' },
+      { title: 'Цены', url: '/ceny', description: 'Рассчитать стоимость' },
+    ],
+    'geo_sao': [
+      { title: 'Дезинфекция в ЦАО', url: '/uslugi/dezinfekciya-cao', description: 'Центральный округ' },
+      { title: 'Дезинфекция в СВАО', url: '/uslugi/dezinfekciya-svao', description: 'Северо-Восток' },
+      { title: 'Дератизация', url: '/uslugi/deratizaciya', description: 'Уничтожение грызунов' },
+    ],
+    'geo_svao': [
+      { title: 'Дезинфекция в САО', url: '/uslugi/dezinfekciya-sao', description: 'Северный округ' },
+      { title: 'Дезинфекция в ВАО', url: '/uslugi/dezinfekciya-vao', description: 'Восточный округ' },
+      { title: 'Дезинсекция', url: '/uslugi/dezinsekciya', description: 'Уничтожение насекомых' },
+    ],
+    'geo_vao': [
+      { title: 'Дезинфекция в СВАО', url: '/uslugi/dezinfekciya-svao', description: 'Северо-Восток' },
+      { title: 'Дезинфекция в ЮВАО', url: '/uslugi/dezinfekciya-uvao', description: 'Юго-Восток' },
+      { title: 'Дератизация', url: '/uslugi/deratizaciya', description: 'Уничтожение грызунов' },
+    ],
+    'geo_uvao': [
+      { title: 'Дезинфекция в ВАО', url: '/uslugi/dezinfekciya-vao', description: 'Восточный округ' },
+      { title: 'Дезинфекция в ЮАО', url: '/uslugi/dezinfekciya-uao', description: 'Южный округ' },
+      { title: 'Дезинсекция', url: '/uslugi/dezinsekciya', description: 'Уничтожение насекомых' },
+    ],
+    'geo_uao': [
+      { title: 'Дезинфекция в ЮВАО', url: '/uslugi/dezinfekciya-uvao', description: 'Юго-Восток' },
+      { title: 'Дезинфекция в ЮЗАО', url: '/uslugi/dezinfekciya-uzao', description: 'Юго-Запад' },
+      { title: 'Дератизация', url: '/uslugi/deratizaciya', description: 'Уничтожение грызунов' },
+    ],
+    'geo_uzao': [
+      { title: 'Дезинфекция в ЮАО', url: '/uslugi/dezinfekciya-uao', description: 'Южный округ' },
+      { title: 'Дезинфекция в ЗАО', url: '/uslugi/dezinfekciya-zao', description: 'Западный округ' },
+      { title: 'Дезинсекция', url: '/uslugi/dezinsekciya', description: 'Уничтожение насекомых' },
+    ],
+    'geo_zao': [
+      { title: 'Дезинфекция в ЮЗАО', url: '/uslugi/dezinfekciya-uzao', description: 'Юго-Запад' },
+      { title: 'Дезинфекция в СЗАО', url: '/uslugi/dezinfekciya-szao', description: 'Северо-Запад' },
+      { title: 'Дератизация', url: '/uslugi/deratizaciya', description: 'Уничтожение грызунов' },
+    ],
+    'geo_szao': [
+      { title: 'Дезинфекция в ЗАО', url: '/uslugi/dezinfekciya-zao', description: 'Западный округ' },
+      { title: 'Дезинфекция в САО', url: '/uslugi/dezinfekciya-sao', description: 'Северный округ' },
+      { title: 'Дезинсекция', url: '/uslugi/dezinsekciya', description: 'Уничтожение насекомых' },
+    ],
+
+    // === СТАТЬИ БЛОГА ПО КАТЕГОРИЯМ ===
+    'article_vrediteli': [
+      { title: 'Дезинсекция', url: '/uslugi/dezinsekciya', description: 'Профессиональная обработка' },
+      { title: 'Уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', description: 'Избавление от клопов' },
+      { title: 'Дератизация', url: '/uslugi/deratizaciya', description: 'Уничтожение грызунов' },
+    ],
+    'article_sovety': [
+      { title: 'Дезинфекция', url: '/uslugi/dezinfekciya', description: 'Обеззараживание' },
+      { title: 'Озонирование', url: '/uslugi/ozonirovanie', description: 'Очистка воздуха' },
+      { title: 'Все услуги', url: '/', description: 'Каталог услуг' },
+    ],
+    'article_zakony': [
+      { title: 'Сертификация', url: '/uslugi/sertifikaciya', description: 'Документы для СЭС' },
+      { title: 'Дезинфекция офисов', url: '/uslugi/dezinfekciya/ofisov', description: 'Для бизнеса' },
+      { title: 'Контакты', url: '/contacts', description: 'Связаться с нами' },
+    ],
+    'article_preparaty': [
+      { title: 'Холодный туман', url: '/uslugi/dezinfekciya/holodnyj-tuman', description: 'Метод обработки' },
+      { title: 'Горячий туман', url: '/uslugi/dezinfekciya/goryachij-tuman', description: 'Метод обработки' },
+      { title: 'Дезинфекция', url: '/uslugi/dezinfekciya', description: 'Все методы' },
+    ],
+    'article_kejsy': [
+      { title: 'Дезинсекция', url: '/uslugi/dezinsekciya', description: 'Уничтожение насекомых' },
+      { title: 'Дератизация', url: '/uslugi/deratizaciya', description: 'Уничтожение грызунов' },
+      { title: 'Цены', url: '/ceny', description: 'Рассчитать стоимость' },
     ],
   };
   
@@ -386,6 +737,7 @@ export function getRelatedPages(currentSlug: string): Array<{ title: string; url
     { title: 'Все услуги', url: '/', description: 'Каталог услуг' },
     { title: 'Цены', url: '/ceny', description: 'Калькулятор стоимости' },
     { title: 'Блог', url: '/blog', description: 'Полезные статьи' },
+    { title: 'Контакты', url: '/contacts', description: 'Связаться с нами' },
   ];
 }
 
