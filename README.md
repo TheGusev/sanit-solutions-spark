@@ -60,7 +60,59 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+## Деплой на production сервер
+
+### Требования
+- Docker и Docker Compose установлены на сервере
+- Git доступ к репозиторию
+- Traefik (или другой reverse proxy) настроен на порт 5173
+
+### Быстрый деплой
+
+```bash
+# Сделать скрипт исполняемым (один раз)
+chmod +x deploy.sh
+
+# Запустить деплой
+./deploy.sh
+```
+
+### Ручной деплой
+
+```bash
+# 1. Подтянуть последние изменения
+git pull origin main
+
+# 2. Пересобрать и запустить контейнер
+docker compose up -d --build
+
+# 3. Проверить статус
+docker compose ps
+
+# 4. Проверить логи (при необходимости)
+docker compose logs -f
+```
+
+### Проверка работоспособности
+
+```bash
+# Должен вернуть HTTP 200
+curl -I http://localhost:5173/
+
+# Должен вернуть HTTP 404 (не 200!)
+curl -I http://localhost:5173/abrakadabra
+
+# Должен вернуть HTTP 410 (legacy WordPress URLs)
+curl -I http://localhost:5173/wp-admin/
+```
+
+### Архитектура
+
+```
+Traefik (443/80) → Docker container (5173) → Nginx (80) → Static files
+```
+
+## Lovable Cloud Deployment
 
 Simply open [Lovable](https://lovable.dev/projects/51cb7089-b556-4c73-ad6d-780752106744) and click on Share -> Publish.
 
