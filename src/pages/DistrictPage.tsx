@@ -10,6 +10,7 @@ import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CalculatorModal from '@/components/CalculatorModal';
 import { getDistrictById, districtPages } from '@/data/districtPages';
+import { getNeighborhoodsByDistrict } from '@/data/neighborhoods';
 import { useState } from 'react';
 
 // New district components
@@ -127,22 +128,58 @@ const DistrictPage = () => {
         {/* District specifics (2x3 grid) */}
         <DistrictSpecifics district={district} />
 
-        {/* Neighborhoods */}
+        {/* Neighborhoods with links to neighborhood pages */}
         <section className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">
               Районы {district.name}, которые мы обслуживаем
             </h2>
-            <div className="flex flex-wrap gap-2">
-              {district.neighborhoods.map((n, idx) => (
-                <Badge key={idx} variant="secondary" className="text-sm py-1.5 px-3">
-                  {n}
-                </Badge>
-              ))}
+            
+            {/* Clickable neighborhood links */}
+            {(() => {
+              const neighborhoodPages = getNeighborhoodsByDistrict(district.id);
+              if (neighborhoodPages.length > 0) {
+                return (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-6">
+                    {neighborhoodPages.map((n) => (
+                      <Link 
+                        key={n.id} 
+                        to={`/rajony/${n.slug}`}
+                        className="block"
+                      >
+                        <Card className="hover:shadow-md transition-all hover:-translate-y-0.5 h-full">
+                          <CardContent className="p-3 text-center">
+                            <span className="font-medium text-sm">{n.name}</span>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                );
+              }
+              return (
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {district.neighborhoods.map((n, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-sm py-1.5 px-3">
+                      {n}
+                    </Badge>
+                  ))}
+                </div>
+              );
+            })()}
+            
+            {/* Link to all neighborhoods */}
+            <div className="mb-6">
+              <Link 
+                to="/rajony" 
+                className="text-primary hover:underline font-medium"
+              >
+                Смотреть все 125 районов Москвы →
+              </Link>
             </div>
             
             {/* Response time badge */}
-            <div className="mt-6 inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-4 py-2 rounded-lg">
+            <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-4 py-2 rounded-lg">
               <Clock className="w-5 h-5" />
               <span className="font-medium">Среднее время выезда: {district.responseTime}</span>
             </div>
