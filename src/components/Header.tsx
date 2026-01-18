@@ -83,7 +83,11 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
     { title: "Озонирование", href: "/uslugi/ozonirovanie" },
     { title: "Дезодорация", href: "/uslugi/dezodoraciya" },
     { title: "Сертификация", href: "/uslugi/sertifikaciya" },
+  ];
+
+  const infoLinks = [
     { title: "По округам Москвы", href: "/uslugi/po-okrugam-moskvy" },
+    { title: "Подготовка к дезинфекции", href: "/blog/kak-podgotovit-pomeshchenie" },
   ];
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -134,9 +138,26 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                 <button onClick={() => scrollToSection("reviews")} className="text-sm font-medium hover:text-primary transition-colors">
                   Отзывы
                 </button>
-                <button onClick={() => scrollToSection("faq")} className="text-sm font-medium hover:text-primary transition-colors">
-                  Вопросы
-                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium hover:text-primary transition-colors">
+                    Информация
+                    <ChevronDown className="w-4 h-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
+                    {infoLinks.map((link) => (
+                      <DropdownMenuItem key={link.href} asChild>
+                        <Link to={link.href} className="cursor-pointer">
+                          {link.title}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuItem asChild>
+                      <button onClick={() => scrollToSection("faq")} className="w-full text-left cursor-pointer">
+                        Частые вопросы
+                      </button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             ) : (
               <>
@@ -158,9 +179,26 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Link to="/#faq" className="text-sm font-medium hover:text-primary transition-colors">
-                  Вопросы
-                </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium hover:text-primary transition-colors">
+                    Информация
+                    <ChevronDown className="w-4 h-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
+                    {infoLinks.map((link) => (
+                      <DropdownMenuItem key={link.href} asChild>
+                        <Link to={link.href} className="cursor-pointer">
+                          {link.title}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuItem asChild>
+                      <Link to="/#faq" className="cursor-pointer">
+                        Частые вопросы
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             )}
             <Link to="/blog" className="text-sm font-medium hover:text-primary transition-colors">
@@ -245,6 +283,46 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                           </div>
                         </AccordionContent>
                       </AccordionItem>
+                      
+                      <AccordionItem value="info" className="border-none">
+                        <AccordionTrigger className="py-3 px-4 rounded-lg hover:bg-muted hover:no-underline font-medium">
+                          Информация
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-0">
+                          <div className="space-y-1 pl-4">
+                            {infoLinks.map((link) => (
+                              <SheetClose key={link.href} asChild>
+                                <Link
+                                  to={link.href}
+                                  className="block py-2.5 px-4 rounded-lg hover:bg-muted transition-colors text-sm text-muted-foreground hover:text-foreground"
+                                >
+                                  {link.title}
+                                </Link>
+                              </SheetClose>
+                            ))}
+                            {isHomePage ? (
+                              <button
+                                onClick={() => {
+                                  closeMobileMenu();
+                                  scrollToSection("faq");
+                                }}
+                                className="block w-full text-left py-2.5 px-4 rounded-lg hover:bg-muted transition-colors text-sm text-muted-foreground hover:text-foreground"
+                              >
+                                Частые вопросы
+                              </button>
+                            ) : (
+                              <SheetClose asChild>
+                                <Link
+                                  to="/#faq"
+                                  className="block py-2.5 px-4 rounded-lg hover:bg-muted transition-colors text-sm text-muted-foreground hover:text-foreground"
+                                >
+                                  Частые вопросы
+                                </Link>
+                              </SheetClose>
+                            )}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
                     </Accordion>
                     
                     <SheetClose asChild>
@@ -264,27 +342,6 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                         Контакты
                       </Link>
                     </SheetClose>
-                    
-                    {isHomePage ? (
-                      <button
-                        onClick={() => {
-                          closeMobileMenu();
-                          scrollToSection("faq");
-                        }}
-                        className="block w-full text-left py-3 px-4 rounded-lg hover:bg-muted transition-colors font-medium"
-                      >
-                        Частые вопросы
-                      </button>
-                    ) : (
-                      <SheetClose asChild>
-                        <Link 
-                          to="/#faq" 
-                          className="block py-3 px-4 rounded-lg hover:bg-muted transition-colors font-medium"
-                        >
-                          Частые вопросы
-                        </Link>
-                      </SheetClose>
-                    )}
                   </nav>
                   
                   {/* Mobile Menu Footer */}

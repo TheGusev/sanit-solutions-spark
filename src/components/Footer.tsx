@@ -86,6 +86,11 @@ const Footer = memo(() => {
                 </Link>
               </li>
               <li>
+                <Link to="/#faq" className="hover:opacity-100">
+                  • Частые вопросы
+                </Link>
+              </li>
+              <li>
                 <Link to="/privacy" className="hover:opacity-100">
                   • Политика конфиденциальности
                 </Link>

@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import { HelmetProvider } from "react-helmet-async";
 import { TrafficProvider } from "@/contexts/TrafficContext";
 import PageLoader from "@/components/PageLoader";
+import ScrollToTop from "@/components/ScrollToTop";
 
 // Critical - loads immediately (main landing page)
 import Index from "./pages/Index";
@@ -45,6 +46,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <TrafficProvider>
+              <ScrollToTop />
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/" element={<Index />} />
