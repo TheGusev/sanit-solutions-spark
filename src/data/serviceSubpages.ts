@@ -567,13 +567,13 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/deratizaciya/unichtozhenie-krys", title: "Уничтожение крыс", price: "от 3000₽", icon: "🐀" },
-      { slug: "/uslugi/dezinfekciya/domov", title: "Дезинфекция дома", price: "от 3000₽", icon: "🏡" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "от 2500₽", icon: "🐕" }
+      { slug: "/uslugi/deratizaciya/unichtozhenie-krys", title: "Уничтожение крыс", price: "от 1400₽", icon: "🐀" },
+      { slug: "/uslugi/dezinfekciya/domov", title: "Дезинфекция дома", price: "от 1500₽", icon: "🏡" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "от 1200₽", icon: "🐕" }
     ],
     
-    priceFrom: 3000,
-    priceRange: "3000-5000"
+    priceFrom: 1400,
+    priceRange: "1400-3000"
   }
 ];
 

@@ -54,7 +54,15 @@ const App = () => (
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/uslugi/po-okrugam-moskvy" element={<DistrictsOverview />} />
-                  <Route path="/uslugi/dezinfekciya-:districtId" element={<DistrictPage />} />
+                  <Route path="/uslugi/dezinfekciya-cao" element={<DistrictPage />} />
+                  <Route path="/uslugi/dezinfekciya-sao" element={<DistrictPage />} />
+                  <Route path="/uslugi/dezinfekciya-svao" element={<DistrictPage />} />
+                  <Route path="/uslugi/dezinfekciya-vao" element={<DistrictPage />} />
+                  <Route path="/uslugi/dezinfekciya-yuvao" element={<DistrictPage />} />
+                  <Route path="/uslugi/dezinfekciya-yao" element={<DistrictPage />} />
+                  <Route path="/uslugi/dezinfekciya-yzao" element={<DistrictPage />} />
+                  <Route path="/uslugi/dezinfekciya-zao" element={<DistrictPage />} />
+                  <Route path="/uslugi/dezinfekciya-szao" element={<DistrictPage />} />
                   <Route path="/uslugi/:parentSlug/:subSlug" element={<ServiceSubpage />} />
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
                   <Route path="/contacts" element={<Contacts />} />

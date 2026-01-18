@@ -1,4 +1,4 @@
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Navigate, Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { MapPin, Clock, Check, Building, Home, Utensils, Phone } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,8 +20,11 @@ import DistrictReviews from '@/components/district/DistrictReviews';
 import DistrictCTA from '@/components/district/DistrictCTA';
 
 const DistrictPage = () => {
-  const { districtId } = useParams<{ districtId: string }>();
-  const district = districtId ? getDistrictById(districtId.replace("dezinfekciya-", "")) : undefined;
+  const location = useLocation();
+  // Extract district ID from URL path (e.g., /uslugi/dezinfekciya-cao -> cao)
+  const pathMatch = location.pathname.match(/\/uslugi\/dezinfekciya-(\w+)/);
+  const districtId = pathMatch ? pathMatch[1] : undefined;
+  const district = districtId ? getDistrictById(districtId) : undefined;
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   if (!district) {
