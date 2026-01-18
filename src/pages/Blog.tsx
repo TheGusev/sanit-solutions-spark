@@ -12,11 +12,11 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 const BASE_URL = "https://goruslugimsk.ru";
 
 const Blog = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>("Все");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  const filteredPosts = selectedCategory === "Все" 
+  const filteredPosts = selectedCategory === "all" 
     ? blogPosts 
-    : blogPosts.filter(post => post.category === selectedCategory);
+    : blogPosts.filter(post => post.categoryId === selectedCategory);
 
   // ItemList data for Schema.org
   const itemListData = blogPosts.map((post, index) => ({
@@ -84,12 +84,12 @@ const Blog = () => {
           <div className="flex flex-wrap gap-3 justify-center">
             {categories.map((category) => (
               <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                onClick={() => setSelectedCategory(category)}
+                key={category.id}
+                variant={selectedCategory === category.id ? "default" : "outline"}
+                onClick={() => setSelectedCategory(category.id)}
                 className="rounded-full"
               >
-                {category}
+                {category.icon} {category.name}
               </Button>
             ))}
           </div>
