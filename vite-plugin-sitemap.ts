@@ -54,6 +54,18 @@ export function sitemapPlugin(): Plugin {
         changefreq: 'monthly',
         priority: '0.9',
       }));
+
+      // Страницы округов
+      const districts = ['cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao'];
+      const districtUrls: SitemapUrl[] = [
+        { loc: '/uslugi/po-okrugam-moskvy', lastmod: currentDate, changefreq: 'monthly', priority: '0.85' },
+        ...districts.map(d => ({
+          loc: `/uslugi/dezinfekciya-${d}`,
+          lastmod: currentDate,
+          changefreq: 'monthly',
+          priority: '0.85',
+        }))
+      ];
       
       // Статьи блога (контентные страницы)
       const blogSlugs = [
@@ -74,7 +86,7 @@ export function sitemapPlugin(): Plugin {
       }));
       
       // Генерация XML
-      const allUrls = [...staticUrls, ...serviceUrls, ...blogUrls];
+      const allUrls = [...staticUrls, ...serviceUrls, ...districtUrls, ...blogUrls];
       const xml = generateSitemapXml(baseUrl, allUrls);
       
       writeFileSync(resolve('dist/sitemap.xml'), xml);
