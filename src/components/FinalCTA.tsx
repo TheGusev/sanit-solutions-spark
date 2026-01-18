@@ -24,7 +24,7 @@ const FinalCTA = ({ onOpenCalculator }: FinalCTAProps) => {
         className="absolute inset-0 bg-cover bg-center bg-fixed"
         style={{ backgroundImage: "url('/images/work/outdoor-treatment.png')" }}
       />
-      <div className="absolute inset-0 bg-primary/90" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/50 via-primary/40 to-green-600/30" />
       
       <div className="container mx-auto px-4 text-center relative z-10 text-primary-foreground">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
