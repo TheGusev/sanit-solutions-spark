@@ -55,19 +55,19 @@ export const megaMenuData: MegaMenuData = {
           title: 'По типам помещений',
           icon: '🏢',
           links: [
-            { text: 'Квартиры', url: '/uslugi/dezinfekciya' },
-            { text: 'Дома', url: '/uslugi/dezinfekciya' },
-            { text: 'Офисы', url: '/uslugi/dezinfekciya' },
-            { text: 'Склады', url: '/uslugi/dezinfekciya' },
-            { text: 'Магазины', url: '/uslugi/dezinfekciya' },
+            { text: 'Квартиры', url: '/uslugi/dezinfekciya/kvartir' },
+            { text: 'Дома', url: '/uslugi/dezinfekciya/domov' },
+            { text: 'Офисы', url: '/uslugi/dezinfekciya/ofisov' },
+            { text: 'Склады', url: '/uslugi/dezinfekciya/skladov' },
+            { text: 'Магазины', url: '/uslugi/dezinfekciya/magazinov' },
           ]
         },
         {
           title: 'По методам',
           icon: '💨',
           links: [
-            { text: 'Холодный туман', url: '/uslugi/dezinfekciya' },
-            { text: 'Горячий туман', url: '/uslugi/dezinfekciya' },
+            { text: 'Холодный туман', url: '/uslugi/dezinfekciya/holodnyj-tuman' },
+            { text: 'Горячий туман', url: '/uslugi/dezinfekciya/goryachij-tuman' },
           ]
         }
       ]
@@ -81,21 +81,12 @@ export const megaMenuData: MegaMenuData = {
           title: 'По вредителям',
           icon: '🦟',
           links: [
-            { text: 'Уничтожение клопов', url: '/uslugi/dezinsekciya', popular: true },
-            { text: 'Уничтожение тараканов', url: '/uslugi/dezinsekciya', popular: true },
-            { text: 'Уничтожение муравьев', url: '/uslugi/dezinsekciya' },
-            { text: 'Уничтожение блох', url: '/uslugi/dezinsekciya' },
-            { text: 'Уничтожение комаров', url: '/uslugi/dezinsekciya' },
-            { text: 'Уничтожение мух', url: '/uslugi/dezinsekciya' },
-          ]
-        },
-        {
-          title: 'По помещениям',
-          icon: '🏠',
-          links: [
-            { text: 'Квартиры', url: '/uslugi/dezinsekciya' },
-            { text: 'Дома', url: '/uslugi/dezinsekciya' },
-            { text: 'Офисы', url: '/uslugi/dezinsekciya' },
+            { text: 'Уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', popular: true },
+            { text: 'Уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', popular: true },
+            { text: 'Уничтожение муравьёв', url: '/uslugi/dezinsekciya/unichtozhenie-muravev' },
+            { text: 'Уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh' },
+            { text: 'Уничтожение комаров', url: '/uslugi/dezinsekciya/unichtozhenie-komarov' },
+            { text: 'Уничтожение мух', url: '/uslugi/dezinsekciya/unichtozhenie-muh' },
           ]
         }
       ]
@@ -109,17 +100,8 @@ export const megaMenuData: MegaMenuData = {
           title: 'Уничтожение грызунов',
           icon: '🪤',
           links: [
-            { text: 'Уничтожение крыс', url: '/uslugi/deratizaciya' },
-            { text: 'Уничтожение мышей', url: '/uslugi/deratizaciya' },
-          ]
-        },
-        {
-          title: 'По помещениям',
-          icon: '🏠',
-          links: [
-            { text: 'Частные дома', url: '/uslugi/deratizaciya' },
-            { text: 'Склады', url: '/uslugi/deratizaciya' },
-            { text: 'Производства', url: '/uslugi/deratizaciya' },
+            { text: 'Уничтожение крыс', url: '/uslugi/deratizaciya/unichtozhenie-krys' },
+            { text: 'Уничтожение мышей', url: '/uslugi/deratizaciya/unichtozhenie-myshej' },
           ]
         }
       ]
