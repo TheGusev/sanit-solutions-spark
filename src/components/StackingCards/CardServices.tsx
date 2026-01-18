@@ -4,18 +4,18 @@ import { Button } from '@/components/ui/button';
 
 const services = [
   {
-    icon: Microscope,
-    title: 'Дезинфекция',
-    price: 'от 2 000 ₽',
-    href: '/uslugi/dezinfekciya',
-    description: 'Уничтожение вирусов и бактерий',
-  },
-  {
     icon: Bug,
     title: 'Дезинсекция',
     price: 'от 2 500 ₽',
     href: '/uslugi/dezinsekciya',
     description: 'Уничтожение насекомых',
+  },
+  {
+    icon: Microscope,
+    title: 'Дезинфекция',
+    price: 'от 2 000 ₽',
+    href: '/uslugi/dezinfekciya',
+    description: 'Уничтожение вирусов и бактерий',
   },
   {
     icon: Rat,
@@ -52,7 +52,6 @@ const CardServices = () => {
     <section
       id="uslugi"
       className="stacking-card"
-      style={{ '--card-index': 1 } as React.CSSProperties}
     >
       <div className="max-w-6xl mx-auto">
         <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-8 md:mb-12 text-center">

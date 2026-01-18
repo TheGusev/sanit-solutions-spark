@@ -47,6 +47,25 @@ export interface MegaMenuData {
 export const megaMenuData: MegaMenuData = {
   columns: [
     {
+      id: 'dezinsekciya',
+      title: 'Дезинсекция',
+      icon: '🐜',
+      sections: [
+        {
+          title: 'По вредителям',
+          icon: '🦟',
+          links: [
+            { text: 'Уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', popular: true },
+            { text: 'Уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', popular: true },
+            { text: 'Уничтожение муравьёв', url: '/uslugi/dezinsekciya/unichtozhenie-muravev' },
+            { text: 'Уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh' },
+            { text: 'Уничтожение комаров', url: '/uslugi/dezinsekciya/unichtozhenie-komarov' },
+            { text: 'Уничтожение мух', url: '/uslugi/dezinsekciya/unichtozhenie-muh' },
+          ]
+        }
+      ]
+    },
+    {
       id: 'dezinfekciya',
       title: 'Дезинфекция',
       icon: '🧴',
@@ -68,25 +87,6 @@ export const megaMenuData: MegaMenuData = {
           links: [
             { text: 'Холодный туман', url: '/uslugi/dezinfekciya/holodnyj-tuman' },
             { text: 'Горячий туман', url: '/uslugi/dezinfekciya/goryachij-tuman' },
-          ]
-        }
-      ]
-    },
-    {
-      id: 'dezinsekciya',
-      title: 'Дезинсекция',
-      icon: '🐜',
-      sections: [
-        {
-          title: 'По вредителям',
-          icon: '🦟',
-          links: [
-            { text: 'Уничтожение клопов', url: '/uslugi/dezinsekciya/unichtozhenie-klopov', popular: true },
-            { text: 'Уничтожение тараканов', url: '/uslugi/dezinsekciya/unichtozhenie-tarakanov', popular: true },
-            { text: 'Уничтожение муравьёв', url: '/uslugi/dezinsekciya/unichtozhenie-muravev' },
-            { text: 'Уничтожение блох', url: '/uslugi/dezinsekciya/unichtozhenie-bloh' },
-            { text: 'Уничтожение комаров', url: '/uslugi/dezinsekciya/unichtozhenie-komarov' },
-            { text: 'Уничтожение мух', url: '/uslugi/dezinsekciya/unichtozhenie-muh' },
           ]
         }
       ]
