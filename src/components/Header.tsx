@@ -134,6 +134,9 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                 <button onClick={() => scrollToSection("reviews")} className="text-sm font-medium hover:text-primary transition-colors">
                   Отзывы
                 </button>
+                <button onClick={() => scrollToSection("faq")} className="text-sm font-medium hover:text-primary transition-colors">
+                  Вопросы
+                </button>
               </>
             ) : (
               <>
@@ -155,6 +158,9 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
+                <Link to="/#faq" className="text-sm font-medium hover:text-primary transition-colors">
+                  Вопросы
+                </Link>
               </>
             )}
             <Link to="/blog" className="text-sm font-medium hover:text-primary transition-colors">
@@ -258,6 +264,27 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                         Контакты
                       </Link>
                     </SheetClose>
+                    
+                    {isHomePage ? (
+                      <button
+                        onClick={() => {
+                          closeMobileMenu();
+                          scrollToSection("faq");
+                        }}
+                        className="block w-full text-left py-3 px-4 rounded-lg hover:bg-muted transition-colors font-medium"
+                      >
+                        Частые вопросы
+                      </button>
+                    ) : (
+                      <SheetClose asChild>
+                        <Link 
+                          to="/#faq" 
+                          className="block py-3 px-4 rounded-lg hover:bg-muted transition-colors font-medium"
+                        >
+                          Частые вопросы
+                        </Link>
+                      </SheetClose>
+                    )}
                   </nav>
                   
                   {/* Mobile Menu Footer */}
