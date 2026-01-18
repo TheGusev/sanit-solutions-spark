@@ -1,19 +1,18 @@
 /**
  * === GEO SERVICE PAGE ===
- * Универсальная страница услуги по округу Москвы
+ * Универсальная страница услуги по округу Москвы с интегрированной SEO-системой
  */
 
-import { useParams, Navigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { useParams, Navigate, Link } from 'react-router-dom';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Phone, MapPin, Clock, Star, CheckCircle, Building, Home, Utensils } from 'lucide-react';
+import { Phone, Clock, Star, CheckCircle, Building, Home, Utensils } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { CalculatorModal } from '@/components/CalculatorModal';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { SEO } from '@/components/SEO';
+import RelatedPages from '@/components/SEO/RelatedPages';
 import { getGeoPage, getGeoPageUrl } from '@/data/geoPages';
 
 export default function GeoServicePage() {
@@ -27,48 +26,41 @@ export default function GeoServicePage() {
     return <Navigate to="/404" replace />;
   }
 
-  const canonicalUrl = `https://goruslugimsk.ru${getGeoPageUrl(page)}`;
+  const pageUrl = getGeoPageUrl(page);
 
-  const serviceSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Service',
-    serviceType: 'Дезинфекция',
-    name: page.seo.h1,
-    description: page.seo.description,
-    provider: {
-      '@type': 'LocalBusiness',
-      name: 'Санитарные Решения',
-      telephone: '+7-906-998-98-88',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Москва',
-        addressRegion: page.districtInfo.fullName
-      },
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: page.districtInfo.centerCoords.lat,
-        longitude: page.districtInfo.centerCoords.lng
-      }
-    },
-    areaServed: {
-      '@type': 'AdministrativeArea',
-      name: page.districtInfo.fullName
-    },
-    priceRange: '2000-20000 RUB'
-  };
+  // Breadcrumb items for SEO
+  const breadcrumbItems = page.breadcrumbs.map(crumb => ({
+    name: crumb.text,
+    url: crumb.url
+  }));
 
   return (
     <>
-      <Helmet>
-        <title>{page.seo.title}</title>
-        <meta name="description" content={page.seo.description} />
-        <meta name="keywords" content={page.seo.keywords.join(', ')} />
-        <link rel="canonical" href={canonicalUrl} />
-        <meta property="og:title" content={page.seo.title} />
-        <meta property="og:description" content={page.seo.description} />
-        <meta property="og:url" content={canonicalUrl} />
-        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
-      </Helmet>
+      {/* Unified SEO Components */}
+      <SEO
+        pageType="geo"
+        path={pageUrl}
+        data={{
+          service: "Дезинфекция",
+          district: page.districtInfo.name,
+          price: 2000
+        }}
+        customMeta={{
+          title: page.seo.title,
+          description: page.seo.description,
+          keywords: page.seo.keywords.join(', ')
+        }}
+        includeOrganization
+        breadcrumbs={breadcrumbItems}
+        service={{
+          name: page.seo.h1,
+          description: page.seo.description,
+          url: pageUrl,
+          minPrice: 2000,
+          maxPrice: 20000,
+          areaServed: [page.districtInfo.fullName, "Москва"]
+        }}
+      />
 
       <Header />
 
@@ -140,10 +132,10 @@ export default function GeoServicePage() {
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">Обслуживаем районы {page.districtInfo.name}</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
-              {page.districtInfo.districts.map((district, idx) => (
+              {page.districtInfo.districts.map((districtName, idx) => (
                 <div key={idx} className="flex items-center gap-2 bg-white p-3 rounded-lg shadow-sm">
                   <CheckCircle className="w-4 h-4 text-accent shrink-0" />
-                  <span className="text-sm">{district}</span>
+                  <span className="text-sm">{districtName}</span>
                 </div>
               ))}
             </div>
@@ -170,8 +162,15 @@ export default function GeoServicePage() {
           </div>
         </section>
 
-        {/* Pricing */}
+        {/* Related Pages */}
         <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <RelatedPages currentSlug={`geo_${district}`} />
+          </div>
+        </section>
+
+        {/* Pricing */}
+        <section className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-bold mb-2">Цены на дезинфекцию в {page.districtInfo.name}</h2>
             <p className="text-accent font-medium mb-8">Фиксированные цены без доплат!</p>
@@ -264,7 +263,7 @@ export default function GeoServicePage() {
         </section>
 
         {/* Reviews */}
-        <section className="py-12">
+        <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-bold mb-8">Отзывы клиентов из {page.districtInfo.name}</h2>
             <div className="grid md:grid-cols-3 gap-6">

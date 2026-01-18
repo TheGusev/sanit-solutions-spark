@@ -1,6 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Check, Phone, ChevronRight, Shield, Clock, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,6 +21,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WorkProcess from "@/components/WorkProcess";
 import AnimatedSection from "@/components/AnimatedSection";
+import { SEO, OrganizationSchema, FAQSchema, BreadcrumbSchema } from "@/components/SEO";
+import RelatedPages from "@/components/SEO/RelatedPages";
 import { getServiceBySlug, servicePages } from "@/data/services";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
@@ -36,10 +37,13 @@ const ServicePage = () => {
     window.scrollTo(0, 0);
   }, [slug]);
 
-  if (!service) {
-    useEffect(() => {
+  useEffect(() => {
+    if (!service) {
       navigate("/404");
-    }, [navigate]);
+    }
+  }, [service, navigate]);
+
+  if (!service) {
     return null;
   }
 
@@ -62,111 +66,39 @@ const ServicePage = () => {
 
   const otherServices = servicePages.filter(s => s.slug !== service.slug);
 
-  const schemaMarkup = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": service.title,
-    "serviceType": service.title,
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": "ООО Санитарные Решения",
-      "telephone": "+7-906-998-98-88",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Москва",
-        "addressCountry": "RU"
-      }
-    },
-    "areaServed": {
-      "@type": "City",
-      "name": "Москва"
-    },
-    "description": service.metaDescription,
-    "offers": {
-      "@type": "Offer",
-      "priceSpecification": {
-        "@type": "PriceSpecification",
-        "price": service.priceFrom,
-        "priceCurrency": "RUB",
-        "unitText": service.pricePer
-      }
-    }
-  };
-
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": service.faq.map(item => ({
-      "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.answer
-      }
-    }))
-  };
-
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Главная",
-        "item": "https://goruslugimsk.ru"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Услуги",
-        "item": "https://goruslugimsk.ru/#services"
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": service.title,
-        "item": `https://goruslugimsk.ru/uslugi/${service.slug}`
-      }
-    ]
-  };
+  // Breadcrumb items for SEO
+  const breadcrumbItems = [
+    { name: "Главная", url: "/" },
+    { name: "Услуги", url: "/#services" },
+    { name: service.title }
+  ];
 
   return (
     <>
-      <Helmet>
-        <title>{service.metaTitle}</title>
-        <meta name="description" content={service.metaDescription} />
-        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
-        <link rel="alternate" hrefLang="ru" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
-        <link rel="alternate" hrefLang="x-default" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
-        
-        {/* Open Graph */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
-        <meta property="og:title" content={service.metaTitle} />
-        <meta property="og:description" content={service.metaDescription} />
-        <meta property="og:image" content="https://storage.googleapis.com/msgsndr/TPScApsdHM0g97SZIF3E/media/67627bc8700fb0e19a0b3c10.jpeg" />
-        <meta property="og:site_name" content="Санитарные Решения" />
-        <meta property="og:locale" content="ru_RU" />
-        
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={service.metaTitle} />
-        <meta name="twitter:description" content={service.metaDescription} />
-        <meta name="twitter:image" content="https://storage.googleapis.com/msgsndr/TPScApsdHM0g97SZIF3E/media/67627bc8700fb0e19a0b3c10.jpeg" />
-        
-        {/* Schema.org structured data */}
-        <script type="application/ld+json">
-          {JSON.stringify(schemaMarkup)}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify(faqSchema)}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify(breadcrumbSchema)}
-        </script>
-      </Helmet>
+      {/* SEO Components */}
+      <SEO
+        pageType="service"
+        path={`/uslugi/${service.slug}`}
+        data={{
+          service: service.title,
+          price: service.priceFrom
+        }}
+        customMeta={{
+          title: service.metaTitle,
+          description: service.metaDescription
+        }}
+        includeOrganization
+        breadcrumbs={breadcrumbItems}
+        faq={service.faq}
+        service={{
+          name: service.title,
+          description: service.metaDescription,
+          url: `/uslugi/${service.slug}`,
+          minPrice: service.priceFrom,
+          maxPrice: service.priceFrom * 5,
+          areaServed: ["Москва", "Московская область"]
+        }}
+      />
 
       <Header />
 
@@ -340,6 +272,13 @@ const ServicePage = () => {
 
         {/* Work Process */}
         <WorkProcess />
+
+        {/* Related Pages */}
+        <section className="py-12 md:py-16 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <RelatedPages currentSlug={service.slug} />
+          </div>
+        </section>
 
         {/* FAQ */}
         <section className="py-12 md:py-20">

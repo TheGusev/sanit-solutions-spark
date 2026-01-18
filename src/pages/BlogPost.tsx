@@ -1,17 +1,21 @@
+/**
+ * === СТРАНИЦА СТАТЬИ БЛОГА ===
+ * С интегрированной SEO-системой
+ */
+
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import StructuredData from "@/components/StructuredData";
+import { SEO, ArticleSchema, BreadcrumbSchema } from "@/components/SEO";
+import RelatedPages from "@/components/SEO/RelatedPages";
 import TableOfContents, { generateContentWithIds, extractHeadings } from "@/components/TableOfContents";
 import RelatedArticles from "@/components/RelatedArticles";
 import { blogPosts } from "@/data/blogPosts";
 import { Button } from "@/components/ui/button";
-
-const BASE_URL = "https://goruslugimsk.ru";
+import { BASE_URL } from "@/lib/seo";
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -46,34 +50,55 @@ const BlogPost = () => {
   const headings = extractHeadings(post.content);
   const showToc = headings.length >= 3;
 
+  // Breadcrumb items for SEO
+  const breadcrumbItems = [
+    { name: "Главная", url: "/" },
+    { name: "Блог", url: "/blog" },
+    { name: post.category, url: `/blog?category=${post.categoryId}` },
+    { name: post.title }
+  ];
+
+  // Calculate word count and read time
+  const wordCount = post.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
+  const readTimeMinutes = parseInt(post.readTime) || Math.ceil(wordCount / 200);
+
   return (
     <div className="min-h-screen">
-      <Helmet>
-        <title>{post.title} | Санитарные Решения</title>
-        <meta name="description" content={post.excerpt} />
-        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href={`${BASE_URL}/blog/${post.slug}`} />
-        <link rel="alternate" hrefLang="ru" href={`${BASE_URL}/blog/${post.slug}`} />
-        <link rel="alternate" hrefLang="x-default" href={`${BASE_URL}/blog/${post.slug}`} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={`${BASE_URL}/blog/${post.slug}`} />
-        <meta property="og:title" content={`${post.title} | Санитарные Решения`} />
-        <meta property="og:description" content={post.excerpt} />
-        <meta property="og:image" content="https://storage.googleapis.com/msgsndr/TPScApsdHM0g97SZIF3E/media/67627bc8700fb0e19a0b3c10.jpeg" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://storage.googleapis.com/msgsndr/TPScApsdHM0g97SZIF3E/media/67627bc8700fb0e19a0b3c10.jpeg" />
-      </Helmet>
-
-      {/* BlogPosting Schema.org */}
-      <StructuredData 
-        type="BlogPosting"
-        post={{
+      {/* Unified SEO Components */}
+      <SEO
+        pageType="article"
+        path={`/blog/${post.slug}`}
+        data={{
+          articleTitle: post.title,
+          excerpt: post.excerpt,
+          publishDate: post.date,
+          author: "Эксперт Санитарных Решений",
+          category: post.category,
+          tags: post.tags
+        }}
+        customMeta={{
+          title: `${post.title} | Санитарные Решения`,
+          description: post.excerpt,
+          type: 'article',
+          publishedTime: post.date,
+          author: "Эксперт Санитарных Решений",
+          section: post.category,
+          tags: post.tags
+        }}
+        includeOrganization
+        breadcrumbs={breadcrumbItems}
+        article={{
           title: post.title,
           excerpt: post.excerpt,
-          date: post.date,
-          slug: post.slug
+          slug: post.slug,
+          publishDate: post.date,
+          author: "Эксперт Санитарных Решений",
+          authorTitle: "Специалист по дезинфекции",
+          category: post.category,
+          tags: post.tags,
+          wordCount,
+          readTime: readTimeMinutes
         }}
-        baseUrl={BASE_URL}
       />
       
       <Header />
@@ -138,7 +163,7 @@ const BlogPost = () => {
                 </div>
               )}
 
-              <div 
+              <article 
                 className="prose prose-lg max-w-none
                   prose-headings:text-foreground prose-headings:font-bold prose-headings:scroll-mt-28
                   prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
@@ -155,8 +180,26 @@ const BlogPost = () => {
                   )
                 }}
               />
+
+              {/* Share & Tags */}
+              <div className="mt-12 pt-8 border-t">
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {post.tags.map(tag => (
+                    <span key={tag} className="text-sm px-3 py-1 rounded-full bg-muted text-muted-foreground">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Related Pages */}
+      <section className="py-12 bg-muted/30">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <RelatedPages currentSlug={`article_${post.categoryId}`} />
         </div>
       </section>
 
