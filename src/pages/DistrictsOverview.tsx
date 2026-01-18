@@ -11,7 +11,6 @@ import { districtPages } from "@/data/districtPages";
 
 const DistrictsOverview = () => {
   const breadcrumbItems = [
-    { label: "Главная", href: "/" },
     { label: "Услуги", href: "/#services" },
     { label: "По округам Москвы" }
   ];
