@@ -33,7 +33,7 @@ export const serviceSubpageRoutes = [
 
 // Округа Москвы
 export const districtSlugs = [
-  'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao'
+  'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao', 'nao', 'tao', 'zelao'
 ];
 
 // Статьи блога
@@ -46,6 +46,30 @@ export const blogSlugs = [
   'sezonnost-vreditelej',
   'dezinfekciya-ofisa',
   'klopy-v-kvartire',
+];
+
+// Районы Москвы (125 районов)
+export const neighborhoodSlugs = [
+  // ЦАО
+  'arbat', 'tverskoy', 'zamoskvorechye', 'khamovniki', 'presnensky', 'basmannyy', 'krasnoselsky', 'meshchansky', 'tagansky', 'yakimanka',
+  // САО
+  'aeroport', 'begovoy', 'sokol', 'voykovskiy', 'golovinsky', 'koptevo', 'timiryazevsky', 'khovrino', 'savelovsky', 'levoberezhny', 'dmitrovsky', 'zapadnoe-degunino', 'vostochnoe-degunino', 'beskudnikovsky', 'molzhaninovsky', 'khoroshevsky',
+  // СВАО
+  'altufyevsky', 'babushkinsky', 'bibirevo', 'butyrsky', 'lianozovo', 'losinoostrovskiy', 'marfino', 'marina-roshcha', 'ostankinsky', 'otradnoe', 'rostokino', 'sviblovo', 'severny', 'severnoe-medvedkovo', 'yuzhnoe-medvedkovo', 'yaroslavsky', 'severny-rayon',
+  // ВАО
+  'bogorodskoe', 'veshnyaki', 'vostochnoe-izmaylovo', 'vostochny', 'golyanovo', 'ivanovskoe', 'izmaylovo', 'kosino-ukhtomsky', 'metrogorodok', 'novogireevo', 'novokosino', 'perovo', 'preobrazhenskoe', 'severnoe-izmaylovo', 'sokolinaya-gora', 'sokolniki',
+  // ЮВАО
+  'vykhino-zhulebino', 'kapotnya', 'kuzminki', 'lefortovo', 'lyublino', 'maryino', 'nekrasovka', 'nizhegorodsky', 'pechatniki', 'ryazansky', 'tekstilshchiki', 'yuzhnoport',
+  // ЮАО
+  'biryulyovo-vostochnoe', 'biryulyovo-zapadnoe', 'brateevo', 'danilovsky', 'donskoy', 'zyablikovo', 'moskvorechye-saburovo', 'nagatino-sadovniki', 'nagatinsky-zaton', 'nagorny', 'orekhovo-borisovo-severnoe', 'orekhovo-borisovo-yuzhnoe', 'tsaritsyno', 'chertanovo-severnoe', 'chertanovo-tsentralnoe', 'chertanovo-yuzhnoe',
+  // ЮЗАО
+  'akademichesky', 'gagarinsky', 'zyuzino', 'konkovo', 'kotlovka', 'lomonosovsky', 'obruchevsky', 'severnoe-butovo', 'tyoply-stan', 'cheryomushki', 'yuzhnoe-butovo', 'yasenevo',
+  // ЗАО
+  'vnukovo', 'dorogomilovo', 'krylatskoe', 'kuntsevo', 'mozhaysky', 'novo-peredelkino', 'ochakovo-matveevskoe', 'prospekt-vernadskogo', 'ramenki', 'solntsevo', 'troparyovo-nikulino', 'filyovsky-park', 'fili-davydkovo',
+  // СЗАО
+  'kurkino', 'mitino', 'pokrovskoe-streshnevo', 'severnoe-tushino', 'strogino', 'khoroshevo-mnevniki', 'shchukino', 'yuzhnoe-tushino',
+  // НАО, ТАО, ЗелАО
+  'sosenskoe', 'vnukovskoe', 'troitsk', 'shcherbinka', 'moskovsky', 'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5',
 ];
 
 // Генерация всех маршрутов для SSG
@@ -96,6 +120,24 @@ export function getAllSSGRoutes() {
       path: `/blog/${slug}`,
       outputPath: `blog/${slug}/index.html`,
       priority: '0.6',
+      changefreq: 'monthly'
+    });
+  });
+  
+  // Обзорная страница районов
+  routes.push({
+    path: '/rajony',
+    outputPath: 'rajony/index.html',
+    priority: '0.8',
+    changefreq: 'monthly'
+  });
+  
+  // Страницы районов
+  neighborhoodSlugs.forEach(slug => {
+    routes.push({
+      path: `/rajony/${slug}`,
+      outputPath: `rajony/${slug}/index.html`,
+      priority: '0.75',
       changefreq: 'monthly'
     });
   });
