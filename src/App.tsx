@@ -9,9 +9,6 @@ import { HelmetProvider } from "react-helmet-async";
 import { TrafficProvider } from "@/contexts/TrafficContext";
 import PageLoader from "@/components/PageLoader";
 
-import SkipToContent from "@/components/SkipToContent";
-import AccessibilityAnnouncer from "@/components/AccessibilityAnnouncer";
-
 // Critical - loads immediately (main landing page)
 import Index from "./pages/Index";
 
@@ -20,10 +17,6 @@ const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
-const DezinfekciyaPage = lazy(() => import("./pages/DezinfekciyaPage"));
-const ServiceSubpage = lazy(() => import("./pages/ServiceSubpage"));
-const GeoServicePage = lazy(() => import("./pages/GeoServicePage"));
-const PricingPage = lazy(() => import("./pages/PricingPage"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -44,9 +37,7 @@ const App = () => (
   <HelmetProvider>
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider delayDuration={300}>
-          <SkipToContent />
-          <AccessibilityAnnouncer />
+        <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -57,13 +48,7 @@ const App = () => (
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/privacy" element={<Privacy />} />
-                  <Route path="/uslugi/dezinfekciya" element={<DezinfekciyaPage />} />
-                  <Route path="/uslugi/dezinfekciya-:district" element={<GeoServicePage />} />
-                  <Route path="/uslugi/dezinsekciya-:district" element={<GeoServicePage />} />
-                  <Route path="/uslugi/deratizaciya-:district" element={<GeoServicePage />} />
-                  <Route path="/uslugi/:category/:slug" element={<ServiceSubpage />} />
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
-                  <Route path="/ceny" element={<PricingPage />} />
                   <Route path="/contacts" element={<Contacts />} />
                   
                   {/* Admin routes */}
@@ -81,7 +66,6 @@ const App = () => (
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-                
               </Suspense>
             </TrafficProvider>
           </BrowserRouter>

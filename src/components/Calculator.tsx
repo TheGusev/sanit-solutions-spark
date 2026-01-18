@@ -196,7 +196,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
 
   // Расчёт цены
   const calculatePrice = () => {
-    let basePrice = 20;
+    let basePrice = 50;
 
     const premiseMultiplier: Record<string, number> = {
       apartment: 1, house: 1.2, office: 1.3, warehouse: 1.5, 

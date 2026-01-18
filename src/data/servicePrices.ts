@@ -14,7 +14,7 @@ export const servicePrices: ServicePrice[] = [
     id: "dez-1k", 
     service: "Дезинфекция", 
     object: "1-комнатная квартира", 
-    price: "от 1000 ₽",
+    price: "от 2000 ₽",
     category: "dezinfekciya",
     isPopular: true,
     icon: "🧹"
@@ -23,21 +23,21 @@ export const servicePrices: ServicePrice[] = [
     id: "dez-2k", 
     service: "Дезинфекция", 
     object: "2-3 комнатная квартира", 
-    price: "от 2000 ₽",
+    price: "от 3000 ₽",
     category: "dezinfekciya"
   },
   { 
     id: "dez-office", 
     service: "Дезинфекция", 
     object: "Офис до 50 м²", 
-    price: "от 2500 ₽",
+    price: "от 3500 ₽",
     category: "dezinfekciya"
   },
   { 
     id: "dez-sklad", 
     service: "Дезинфекция", 
     object: "Склад от 100 м²", 
-    price: "от 3500 ₽",
+    price: "от 5000 ₽",
     category: "dezinfekciya"
   },
   
@@ -46,7 +46,7 @@ export const servicePrices: ServicePrice[] = [
     id: "dins-1k", 
     service: "Дезинсекция (клопы, тараканы)", 
     object: "1-комнатная квартира", 
-    price: "от 1200 ₽",
+    price: "от 2500 ₽",
     category: "dezinsekciya",
     isPopular: true,
     icon: "🐜"
@@ -55,14 +55,14 @@ export const servicePrices: ServicePrice[] = [
     id: "dins-2k", 
     service: "Дезинсекция", 
     object: "2-3 комнатная квартира", 
-    price: "от 2200 ₽",
+    price: "от 3500 ₽",
     category: "dezinsekciya"
   },
   { 
     id: "dins-dom", 
     service: "Дезинсекция", 
     object: "Частный дом", 
-    price: "от 2800 ₽",
+    price: "от 4000 ₽",
     category: "dezinsekciya"
   },
   
@@ -71,7 +71,7 @@ export const servicePrices: ServicePrice[] = [
     id: "derat-kvart", 
     service: "Дератизация (мыши, крысы)", 
     object: "Квартира", 
-    price: "от 1400 ₽",
+    price: "от 3000 ₽",
     category: "deratizaciya",
     isPopular: true,
     icon: "🐀"
@@ -80,14 +80,14 @@ export const servicePrices: ServicePrice[] = [
     id: "derat-dom", 
     service: "Дератизация", 
     object: "Частный дом", 
-    price: "от 2500 ₽",
+    price: "от 4000 ₽",
     category: "deratizaciya"
   },
   { 
     id: "derat-sklad", 
     service: "Дератизация", 
     object: "Склад / подвал", 
-    price: "от 3500 ₽",
+    price: "от 5000 ₽",
     category: "deratizaciya"
   },
   
@@ -96,7 +96,7 @@ export const servicePrices: ServicePrice[] = [
     id: "ozon-kvart", 
     service: "Озонирование", 
     object: "Квартира до 50 м²", 
-    price: "от 800 ₽",
+    price: "от 3000 ₽",
     category: "ozonirovanie",
     isPopular: true,
     icon: "🌬️"
@@ -105,7 +105,7 @@ export const servicePrices: ServicePrice[] = [
     id: "ozon-office", 
     service: "Озонирование", 
     object: "Офис 50–100 м²", 
-    price: "от 1500 ₽",
+    price: "от 4500 ₽",
     category: "ozonirovanie"
   },
   
@@ -114,7 +114,7 @@ export const servicePrices: ServicePrice[] = [
     id: "dezod-kvart", 
     service: "Дезодорация", 
     object: "Квартира", 
-    price: "от 1000 ₽",
+    price: "от 2500 ₽",
     category: "dezodoraciya",
     isPopular: true,
     icon: "💨"
@@ -123,7 +123,7 @@ export const servicePrices: ServicePrice[] = [
     id: "dezod-pozhar", 
     service: "Дезодорация", 
     object: "После пожара / затопления", 
-    price: "от 2500 ₽",
+    price: "от 5000 ₽",
     category: "dezodoraciya"
   },
   
@@ -132,7 +132,7 @@ export const servicePrices: ServicePrice[] = [
     id: "sert-doc", 
     service: "Сертификация", 
     object: "Документы для СЭС", 
-    price: "от 2000 ₽",
+    price: "от 5000 ₽",
     category: "sertifikaciya",
     isPopular: true,
     icon: "📋"

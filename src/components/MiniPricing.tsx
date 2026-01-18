@@ -2,12 +2,12 @@ import { Microscope, Bug, Rat, Sparkles, Wind, FileCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const services = [
-  { icon: Microscope, title: "Дезинфекция квартиры", price: "от 1 000 ₽" },
-  { icon: Bug, title: "Дезинсекция (тараканы, клопы)", price: "от 1 200 ₽" },
-  { icon: Rat, title: "Дератизация", price: "от 1 400 ₽" },
-  { icon: Sparkles, title: "Озонирование", price: "от 800 ₽" },
-  { icon: Wind, title: "Удаление запахов", price: "от 1 000 ₽" },
-  { icon: FileCheck, title: "Сертификация СЭС", price: "от 2 000 ₽" },
+  { icon: Microscope, title: "Дезинфекция квартиры", price: "от 2 000 ₽" },
+  { icon: Bug, title: "Дезинсекция (тараканы, клопы)", price: "от 2 500 ₽" },
+  { icon: Rat, title: "Дератизация", price: "от 3 000 ₽" },
+  { icon: Sparkles, title: "Озонирование", price: "от 3 000 ₽" },
+  { icon: Wind, title: "Удаление запахов", price: "от 2 500 ₽" },
+  { icon: FileCheck, title: "Сертификация СЭС", price: "от 5 000 ₽" },
 ];
 
 const MiniPricing = () => {

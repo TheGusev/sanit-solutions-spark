@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Phone, Menu } from "lucide-react";
+import { Phone, ChevronDown } from "lucide-react";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import ThemeToggle from "@/components/ThemeToggle";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
@@ -20,24 +19,26 @@ interface HeaderProps {
 const Header = ({ onCalculatorClick }: HeaderProps) => {
   const { context } = useTraffic();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+  
   const handlePhoneClick = () => {
-    trackGoal("phone_click", {
+    trackGoal('phone_click', {
       intent: context?.intent,
       variant: context?.variantId,
-      source: "header",
+      source: 'header'
     });
   };
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
+    // SSR-safe: проверяем наличие window
+    if (typeof window === 'undefined') return;
+    
     let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 10);
+          setIsScrolled(window.scrollY > 100);
           ticking = false;
         });
         ticking = true;
@@ -47,156 +48,126 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleOrderClick = () => {
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    element?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleCalculatorClick = () => {
     if (onCalculatorClick) {
       onCalculatorClick();
+    } else {
+      scrollToSection("calculator");
     }
-    setMobileMenuOpen(false);
   };
 
   const services = [
+    { title: "Дезинфекция", href: "/uslugi/dezinfekciya" },
     { title: "Дезинсекция", href: "/uslugi/dezinsekciya" },
-    { title: "Дезинфекция помещений", href: "/uslugi/dezinfekciya" },
     { title: "Дератизация", href: "/uslugi/deratizaciya" },
     { title: "Озонирование", href: "/uslugi/ozonirovanie" },
     { title: "Дезодорация", href: "/uslugi/dezodoraciya" },
-    { title: "Санитарная сертификация", href: "/uslugi/sertifikaciya" },
+    { title: "Сертификация", href: "/uslugi/sertifikaciya" },
   ];
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-[1100] h-[var(--header-height)] bg-background/95 backdrop-blur-sm border-b border-border transition-shadow duration-300 ${
-        isScrolled ? "shadow-md" : ""
-      }`}
-      role="banner"
-    >
+    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background/95 backdrop-blur-sm border-b border-border">
+      <div 
+        className={`h-full transition-transform duration-300 origin-top ${isScrolled ? 'scale-y-[0.875]' : 'scale-y-100'}`}
+        style={{ willChange: 'transform' }}
+      >
       <div className="container mx-auto px-4 h-full">
         <div className="flex items-center justify-between h-full">
-          {/* Logo */}
-          <Link to="/" className="flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded">
-            <span className="text-lg md:text-xl font-bold text-primary leading-tight block">
-              Санитарные Решения
-            </span>
-            <p className="text-xs text-muted-foreground hidden sm:block">
-              Дезинфекция МСК и МО
-            </p>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to="/">
+              <span className="text-base md:text-xl font-bold text-primary leading-tight block">Санитарные Решения</span>
+              <p className="text-xs text-muted-foreground">Дезинфекция МСК и МО</p>
+            </Link>
+          </div>
 
-          {/* Desktop: Phone + CTA */}
-          <div className="hidden md:flex items-center gap-4">
-            <a
-              href="tel:+79069989888"
-              onClick={handlePhoneClick}
-              className="flex items-center gap-2 text-foreground hover:text-primary transition-colors"
-            >
-              <Phone className="w-5 h-5 text-primary" />
-              <span className="font-semibold">+7 (906) 998-98-88</span>
-            </a>
+          <nav className="hidden md:flex flex-wrap items-center gap-x-4 lg:gap-x-6 gap-y-2">
+            {isHomePage ? (
+              <>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium hover:text-primary transition-colors">
+                    Услуги
+                    <ChevronDown className="w-4 h-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
+                    {services.map((service) => (
+                      <DropdownMenuItem key={service.href} asChild>
+                        <Link to={service.href} className="cursor-pointer">
+                          {service.title}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuItem asChild>
+                      <button onClick={() => scrollToSection("services")} className="w-full text-left cursor-pointer text-muted-foreground">
+                        Все услуги
+                      </button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <button onClick={handleCalculatorClick} className="text-sm font-medium hover:text-primary transition-colors">
+                  Калькулятор
+                </button>
+                <button onClick={() => scrollToSection("reviews")} className="text-sm font-medium hover:text-primary transition-colors">
+                  Отзывы
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
+                  Главная
+                </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium hover:text-primary transition-colors">
+                    Услуги
+                    <ChevronDown className="w-4 h-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
+                    {services.map((service) => (
+                      <DropdownMenuItem key={service.href} asChild>
+                        <Link to={service.href} className="cursor-pointer">
+                          {service.title}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            )}
+            <Link to="/blog" className="text-sm font-medium hover:text-primary transition-colors">
+              Блог
+            </Link>
+            <Link to="/contacts" className="text-sm font-medium hover:text-primary transition-colors">
+              Контакты
+            </Link>
+            {isScrolled && (
+              <a 
+                href="tel:+79069989888"
+                onClick={handlePhoneClick}
+                className="whitespace-nowrap flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary font-semibold text-sm hover:bg-primary/20 transition-colors animate-fade-in"
+              >
+                <Phone className="w-4 h-4 flex-shrink-0" />
+                <span className="hidden lg:inline">+7 (906) 998-98-88</span>
+                <span className="lg:hidden">Позвонить</span>
+              </a>
+            )}
+          </nav>
 
+          <div className="flex items-center gap-2">
             <ThemeToggle />
-
             <Button
-              onClick={handleOrderClick}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-6"
+              onClick={handleCalculatorClick} 
+              size="sm"
+              className="bg-primary hover:bg-primary-dark text-primary-foreground font-semibold text-sm md:text-base px-3 md:px-4"
             >
-              Заказать звонок
+              Рассчитать
             </Button>
           </div>
-
-          {/* Mobile: Theme + Menu */}
-          <div className="flex md:hidden items-center gap-2">
-            <ThemeToggle />
-
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Открыть меню"
-                >
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent
-                side="right"
-                className="w-[300px] sm:w-[350px] bg-background"
-              >
-                <SheetHeader>
-                  <SheetTitle className="text-left text-primary">
-                    Меню
-                  </SheetTitle>
-                </SheetHeader>
-
-                <nav
-                  className="flex flex-col gap-2 mt-6"
-                  aria-label="Мобильная навигация"
-                  role="navigation"
-                >
-                  <Link
-                    to="/"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
-                  >
-                    Главная
-                  </Link>
-
-                  <div className="py-2">
-                    <p className="px-4 text-sm font-semibold text-muted-foreground mb-2">
-                      Услуги
-                    </p>
-                    {services.map((service) => (
-                      <Link
-                        key={service.href}
-                        to={service.href}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="block py-2.5 px-4 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-                      >
-                        {service.title}
-                      </Link>
-                    ))}
-                  </div>
-
-                  <Link
-                    to="/blog"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
-                  >
-                    Блог
-                  </Link>
-                  <Link
-                    to="/contacts"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="py-3 px-4 text-base font-medium hover:bg-muted rounded-lg transition-colors"
-                  >
-                    Контакты
-                  </Link>
-
-                  {/* Mobile contact section */}
-                  <div className="border-t border-border mt-4 pt-4">
-                    <a
-                      href="tel:+79069989888"
-                      onClick={() => {
-                        handlePhoneClick();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="flex items-center gap-3 py-3 px-4 text-base font-medium text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                    >
-                      <Phone className="w-5 h-5" />
-                      +7 (906) 998-98-88
-                    </a>
-
-                    <Button
-                      onClick={handleOrderClick}
-                      className="w-full mt-3 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
-                    >
-                      Заказать звонок
-                    </Button>
-                  </div>
-                </nav>
-              </SheetContent>
-            </Sheet>
-          </div>
         </div>
+      </div>
       </div>
     </header>
   );
