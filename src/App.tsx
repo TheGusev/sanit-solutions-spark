@@ -17,6 +17,7 @@ const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
+const ServiceSubpage = lazy(() => import("./pages/ServiceSubpage"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const DistrictsOverview = lazy(() => import("./pages/DistrictsOverview"));
 const DistrictPage = lazy(() => import("./pages/DistrictPage"));
@@ -52,6 +53,7 @@ const App = () => (
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/uslugi/po-okrugam-moskvy" element={<DistrictsOverview />} />
                   <Route path="/uslugi/dezinfekciya-:districtId" element={<DistrictPage />} />
+                  <Route path="/uslugi/:parentSlug/:subSlug" element={<ServiceSubpage />} />
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
                   <Route path="/contacts" element={<Contacts />} />
                   
