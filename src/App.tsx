@@ -9,6 +9,8 @@ import { HelmetProvider } from "react-helmet-async";
 import { TrafficProvider } from "@/contexts/TrafficContext";
 import PageLoader from "@/components/PageLoader";
 import SEODevTools from "@/components/SEO/SEODevTools";
+import SkipToContent from "@/components/SkipToContent";
+import AccessibilityAnnouncer from "@/components/AccessibilityAnnouncer";
 
 // Critical - loads immediately (main landing page)
 import Index from "./pages/Index";
@@ -42,7 +44,9 @@ const App = () => (
   <HelmetProvider>
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
+        <TooltipProvider delayDuration={300}>
+          <SkipToContent />
+          <AccessibilityAnnouncer />
           <Toaster />
           <Sonner />
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>

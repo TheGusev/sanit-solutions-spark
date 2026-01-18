@@ -96,9 +96,9 @@ const Index = () => {
       <StickyTabNav />
 
       {/* Main content with proper padding for fixed header + sticky tabs */}
-      <main className="pt-[var(--total-nav-height)]">
+      <main id="main-content" className="pt-[var(--total-nav-height)]">
         {/* 8 Stacking Cards */}
-        <Suspense fallback={<SectionLoader />}>
+        <Suspense fallback={<SectionLoader variant="skeleton" />}>
           <StackingCards 
             onCalculatorClick={handleOpenCalculator}
             onReviewClick={handleOpenReviewForm}
