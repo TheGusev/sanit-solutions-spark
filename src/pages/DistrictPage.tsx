@@ -83,9 +83,8 @@ const DistrictPage = () => {
     }))
   };
 
-  // Breadcrumb items for this district
+  // Breadcrumb items for this district (Главная is auto-prepended by Breadcrumbs component)
   const breadcrumbItems = [
-    { label: "Главная", href: "/" },
     { label: "Услуги", href: "/#services" },
     { label: "По округам Москвы", href: "/uslugi/po-okrugam-moskvy" },
     { label: `Дезинфекция в ${district.name}` }
@@ -111,7 +110,7 @@ const DistrictPage = () => {
       <main className="min-h-screen pt-20">
         {/* Breadcrumbs */}
         <div className="container mx-auto px-4 py-4">
-          <Breadcrumbs items={breadcrumbItems.slice(1)} />
+          <Breadcrumbs items={breadcrumbItems} />
         </div>
 
         {/* Hero with parallax */}
