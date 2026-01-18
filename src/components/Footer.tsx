@@ -76,6 +76,11 @@ const Footer = memo(() => {
                 </Link>
               </li>
               <li>
+                <Link to="/rajony" className="hover:opacity-100">
+                  • Районы Москвы
+                </Link>
+              </li>
+              <li>
                 <Link to="/blog" className="hover:opacity-100">
                   • Блог и статьи
                 </Link>

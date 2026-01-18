@@ -43,7 +43,55 @@ const serviceSubpageRoutes = [
 
 // Округа Москвы
 const districtSlugs = [
-  'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao'
+  'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao', 'nao', 'tao', 'zelao'
+];
+
+// Районы Москвы (125 районов)
+const neighborhoodSlugs = [
+  // ЦАО (10)
+  'arbat', 'basmannyj', 'zamoskvorechye', 'krasnoselskij', 'meshchanskij',
+  'presnenskij', 'taganskij', 'tverskoy', 'hamovniki', 'yakimanka',
+  // САО (16)
+  'aeroport', 'begovoy', 'beskudnikovskij', 'vojkovskij', 'vostochnoe-degunino',
+  'golovinskij', 'dmitrovskij', 'zapadnoe-degunino', 'koptevo', 'levoberezhnyj',
+  'molzhaninovskij', 'savelovskij', 'sokol', 'timiryazevskij', 'hovrino', 'horoshevskij',
+  // СВАО (17)
+  'altufevskij', 'babushkinskij', 'bibirevo', 'butyrskij', 'lianozovo',
+  'losinoostrovskij', 'marfino', 'marina-roshcha', 'ostankinskij', 'otradnoe',
+  'rostokino', 'sviblovo', 'severnyj', 'severnoe-medvedkovo', 'yuzhnoe-medvedkovo',
+  'yaroslavskij', 'alekseevskij',
+  // ВАО (16)
+  'bogorodskoe', 'veshnyaki', 'vostochnoe-izmajlovo', 'vostochnyj', 'golyanovo',
+  'ivanovskoe', 'izmajlovo', 'kosino-uhtomskij', 'metrogorodok', 'novogireevo',
+  'novokosino', 'perovo', 'preobrazhenskoe', 'severnoe-izmajlovo', 'sokolinaya-gora', 'sokolniki',
+  // ЮВАО (12)
+  'vyhino-zhulebino', 'kapotnya', 'kuzminki', 'lefortovo', 'lyublino',
+  'marino', 'nekrasovka', 'nizhegorodskij', 'pechatniki', 'ryazanskij',
+  'tekstilshchiki', 'yuzhno-portovyj',
+  // ЮАО (16)
+  'biryulevo-vostochnoe', 'biryulevo-zapadnoe', 'brateevo', 'danilovskij', 'donskoj',
+  'zyablikovo', 'moskvorechye-saburovo', 'nagatino-sadovniki', 'nagatinskij-zaton',
+  'nagornyj', 'orehovo-borisovo-severnoe', 'orehovo-borisovo-yuzhnoe', 'caricyno',
+  'chertanovo-severnoe', 'chertanovo-centralnoe', 'chertanovo-yuzhnoe',
+  // ЮЗАО (12)
+  'akademicheskij', 'gagarinskij', 'zyuzino', 'konkovo', 'kotlovka',
+  'lomonosovskij', 'obruchevskij', 'severnoe-butovo', 'teplyj-stan',
+  'cheryomushki', 'yuzhnoe-butovo', 'yasenevo',
+  // ЗАО (13)
+  'vnukovo', 'dorogomilovo', 'krylatskoe', 'kuntsevo', 'mozhajskij',
+  'novo-peredelkino', 'ochakovo-matveevskoe', 'prospekt-vernadskogo', 'ramenki',
+  'solncevo', 'troparyovo-nikulino', 'filyovskij-park', 'fili-davydkovo',
+  // СЗАО (8)
+  'kurkino', 'mitino', 'pokrovskoe-streshnevo', 'severnoe-tushino',
+  'strogino', 'horoshevo-mnevniki', 'shchukino', 'yuzhnoe-tushino',
+  // НАО (8)
+  'sosenskoe', 'vnukovskoe', 'voronovskoe', 'desenovskoe', 'kievskij',
+  'kokoshkino', 'marushkinskoe', 'moskovskij',
+  // ТАО (10)
+  'troitsk', 'shcherbinka', 'filimonkovskoe', 'pervomajskoe', 'novofeodorovskoe',
+  'rogovskoe', 'krasnopahorskoe', 'klenovskoe', 'shhapovskoe', 'voskresenskoe',
+  // Зеленоград (5)
+  'zelao-1', 'zelao-2', 'zelao-3', 'zelao-4', 'zelao-5'
 ];
 
 // Статьи блога
@@ -97,6 +145,20 @@ function getAllRoutes(): SSGRoute[] {
     routes.push({
       path: `/blog/${slug}`,
       outputPath: `blog/${slug}/index.html`
+    });
+  });
+  
+  // Обзорная страница районов
+  routes.push({
+    path: '/rajony',
+    outputPath: 'rajony/index.html'
+  });
+  
+  // Страницы районов (125 страниц)
+  neighborhoodSlugs.forEach(slug => {
+    routes.push({
+      path: `/rajony/${slug}`,
+      outputPath: `rajony/${slug}/index.html`
     });
   });
   
