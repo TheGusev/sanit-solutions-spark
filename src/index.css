@@ -406,4 +406,162 @@ All colors MUST be HSL.
       margin-bottom: calc(-100vh + 80px);
     }
   }
+
+  /* === MEGA MENU STYLES === */
+  .mega-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    z-index: 1000;
+    width: 100vw;
+    max-width: 1200px;
+    background: hsl(var(--background));
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border-radius: 0 0 16px 16px;
+    padding: 32px 40px;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+  }
+
+  .mega-menu.active {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+
+  .dark .mega-menu {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid hsl(var(--border));
+  }
+
+  /* 4-column grid */
+  .mega-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+
+  /* Column header */
+  .mega-menu-column h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: hsl(var(--primary));
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Section title */
+  .mega-menu-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: hsl(var(--muted-foreground));
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Links */
+  .mega-menu-link {
+    display: block;
+    padding: 6px 10px;
+    color: hsl(var(--foreground));
+    font-size: 14px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .mega-menu-link:hover {
+    background: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
+    transform: translateX(4px);
+  }
+
+  /* Popular link badge */
+  .mega-menu-link.popular::after {
+    content: "🔥";
+    margin-left: 6px;
+    font-size: 11px;
+  }
+
+  /* Service card in "Other services" column */
+  .mega-menu-service-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .mega-menu-service-card:hover {
+    background: hsl(var(--primary) / 0.1);
+    transform: translateX(4px);
+  }
+
+  /* Promo banner */
+  .mega-menu-banner {
+    margin-top: 24px;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+    border-radius: 12px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .mega-menu {
+      position: fixed;
+      top: calc(var(--header-height) + var(--tab-nav-height));
+      left: 0;
+      right: 0;
+      width: 100%;
+      max-width: 100%;
+      transform: translateX(0) translateY(-10px);
+      border-radius: 0;
+      padding: 16px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .mega-menu.active {
+      transform: translateX(0) translateY(0);
+    }
+
+    .mega-menu-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .mega-menu-banner {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  /* Tablet adjustments */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .mega-menu {
+      padding: 24px;
+      max-width: 900px;
+    }
+
+    .mega-menu-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+  }
 }
