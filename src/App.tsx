@@ -20,6 +20,7 @@ const ServicePage = lazy(() => import("./pages/ServicePage"));
 const DezinfekciyaPage = lazy(() => import("./pages/DezinfekciyaPage"));
 const ServiceSubpage = lazy(() => import("./pages/ServiceSubpage"));
 const GeoServicePage = lazy(() => import("./pages/GeoServicePage"));
+const PricingPage = lazy(() => import("./pages/PricingPage"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -55,6 +56,7 @@ const App = () => (
                   <Route path="/uslugi/dezinfekciya-:district" element={<GeoServicePage />} />
                   <Route path="/uslugi/:category/:slug" element={<ServiceSubpage />} />
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
+                  <Route path="/ceny" element={<PricingPage />} />
                   <Route path="/contacts" element={<Contacts />} />
                   
                   {/* Admin routes */}
