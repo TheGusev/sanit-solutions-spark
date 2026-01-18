@@ -148,17 +148,16 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
   };
 
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center bg-pattern overflow-hidden pt-20">
-      {/* Background decorative elements with parallax */}
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
+      {/* Background image with overlay */}
       <div 
-        className="absolute inset-0 overflow-hidden pointer-events-none parallax-bg"
-        style={{ transform: `translateY(${parallaxOffset}px)` }}
-      >
-        <Microscope className="absolute top-20 left-10 w-24 h-24 text-primary/5" />
-        <Pill className="absolute top-40 right-20 w-28 h-28 text-primary/5" />
-        <Beaker className="absolute bottom-40 left-1/4 w-20 h-20 text-primary/5" />
-        <Microscope className="absolute bottom-20 right-1/3 w-24 h-24 text-primary/5" />
-      </div>
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ 
+          backgroundImage: "url('/images/work/home-kitchen.png')",
+          transform: `translateY(${parallaxOffset}px)` 
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/80 dark:from-background/98 dark:via-background/95 dark:to-background/90" />
 
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">
