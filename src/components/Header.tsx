@@ -65,14 +65,15 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-[var(--header-height)] bg-background/95 backdrop-blur-sm border-b border-border transition-shadow duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[1100] h-[var(--header-height)] bg-background/95 backdrop-blur-sm border-b border-border transition-shadow duration-300 ${
         isScrolled ? "shadow-md" : ""
       }`}
+      role="banner"
     >
       <div className="container mx-auto px-4 h-full">
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
-          <Link to="/" className="flex-shrink-0">
+          <Link to="/" className="flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded">
             <span className="text-lg md:text-xl font-bold text-primary leading-tight block">
               Санитарные Решения
             </span>
@@ -129,6 +130,7 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                 <nav
                   className="flex flex-col gap-2 mt-6"
                   aria-label="Мобильная навигация"
+                  role="navigation"
                 >
                   <Link
                     to="/"
