@@ -9,19 +9,19 @@ interface CardPricingProps {
 }
 
 const services = [
-  { id: 'dezinfekciya', name: 'Дезинфекция', basePrice: 2000, pricePerM2: 40 },
-  { id: 'dezinsekciya', name: 'Дезинсекция', basePrice: 2500, pricePerM2: 50 },
-  { id: 'deratizaciya', name: 'Дератизация', basePrice: 3000, pricePerM2: 60 },
-  { id: 'ozonirovanie', name: 'Озонирование', basePrice: 3000, pricePerM2: 50 },
-  { id: 'dezodoraciya', name: 'Дезодорация', basePrice: 2500, pricePerM2: 45 },
+  { id: 'dezinfekciya', name: 'Дезинфекция', basePrice: 1000, pricePerM2: 20 },
+  { id: 'dezinsekciya', name: 'Дезинсекция', basePrice: 1200, pricePerM2: 25 },
+  { id: 'deratizaciya', name: 'Дератизация', basePrice: 1400, pricePerM2: 30 },
+  { id: 'ozonirovanie', name: 'Озонирование', basePrice: 800, pricePerM2: 15 },
+  { id: 'dezodoraciya', name: 'Дезодорация', basePrice: 1000, pricePerM2: 20 },
 ];
 
 const priceTable = [
-  { service: 'Дезинфекция', object: '1-комн. квартира', price: 'от 2 000 ₽' },
-  { service: 'Дезинсекция', object: '2-комн. квартира', price: 'от 3 500 ₽' },
-  { service: 'Дератизация', object: 'Частный дом', price: 'от 5 000 ₽' },
-  { service: 'Озонирование', object: 'Офис до 100 м²', price: 'от 4 000 ₽' },
-  { service: 'Дезодорация', object: 'Коммерческое помещение', price: 'от 6 000 ₽' },
+  { service: 'Дезинфекция', object: '1-комн. квартира', price: 'от 1 000 ₽' },
+  { service: 'Дезинсекция', object: '2-комн. квартира', price: 'от 2 200 ₽' },
+  { service: 'Дератизация', object: 'Частный дом', price: 'от 2 500 ₽' },
+  { service: 'Озонирование', object: 'Офис до 100 м²', price: 'от 1 500 ₽' },
+  { service: 'Дезодорация', object: 'Коммерческое помещение', price: 'от 2 500 ₽' },
 ];
 
 const CardPricing = ({ onCalculatorClick }: CardPricingProps) => {

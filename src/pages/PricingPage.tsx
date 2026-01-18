@@ -36,10 +36,10 @@ const Footer = lazy(() => import('@/components/Footer'));
 
 // Типы услуг
 const services = [
-  { id: 'dezinfekciya', name: 'Дезинфекция', icon: '🧴', basePrice: 2000 },
-  { id: 'dezinsekciya', name: 'Дезинсекция', icon: '🐜', basePrice: 2500 },
-  { id: 'deratizaciya', name: 'Дератизация', icon: '🐀', basePrice: 3000 },
-  { id: 'kompleks', name: 'Комплекс', icon: '⚡', basePrice: 4000, discount: 15 },
+  { id: 'dezinfekciya', name: 'Дезинфекция', icon: '🧴', basePrice: 1000 },
+  { id: 'dezinsekciya', name: 'Дезинсекция', icon: '🐜', basePrice: 1200 },
+  { id: 'deratizaciya', name: 'Дератизация', icon: '🐀', basePrice: 1400 },
+  { id: 'kompleks', name: 'Комплекс', icon: '⚡', basePrice: 1800, discount: 15 },
 ];
 
 // Типы помещений
@@ -63,34 +63,34 @@ const additionalServices = [
 // Таблицы цен
 const priceTables = {
   dezinfekciya: [
-    { type: 'Квартира', area: 'До 50 м²', cold: '2000₽', hot: '3000₽', time: '1-1.5 часа' },
-    { type: '', area: '50-100 м²', cold: '3500₽', hot: '5000₽', time: '1.5-2 часа' },
-    { type: '', area: '100-200 м²', cold: '6000₽', hot: '8500₽', time: '2-3 часа' },
-    { type: '', area: 'Более 200 м²', cold: 'Индивидуально', hot: 'Индивидуально', time: 'от 3 часов' },
-    { type: 'Офис', area: 'До 100 м²', cold: '5000₽', hot: '7000₽', time: '2-3 часа' },
-    { type: '', area: '100-300 м²', cold: '12000₽', hot: '16000₽', time: '4-5 часов' },
-    { type: '', area: 'Более 300 м²', cold: 'от 40₽/м²', hot: 'от 50₽/м²', time: 'Договорная' },
+    { type: 'Квартира', area: 'До 50 м²', cold: '1000₽', hot: '1500₽', time: '1-1.5 часа' },
+    { type: '', area: '50-100 м²', cold: '2000₽', hot: '3000₽', time: '1.5-2 часа' },
+    { type: '', area: '100-200 м²', cold: '3500₽', hot: '5000₽', time: '2-3 часа' },
+    { type: '', area: 'Более 200 м²', cold: 'от 30₽/м²', hot: 'от 40₽/м²', time: 'от 3 часов' },
+    { type: 'Офис', area: 'До 100 м²', cold: '2500₽', hot: '4000₽', time: '2-3 часа' },
+    { type: '', area: '100-300 м²', cold: '6000₽', hot: '9000₽', time: '4-5 часов' },
+    { type: '', area: 'Более 300 м²', cold: 'от 25₽/м²', hot: 'от 35₽/м²', time: 'Договорная' },
   ],
   dezinsekciya: [
-    { type: 'Квартира', area: 'До 50 м²', cold: '2500₽', hot: '3500₽', time: '1-2 часа' },
-    { type: '', area: '50-100 м²', cold: '4000₽', hot: '5500₽', time: '2-3 часа' },
-    { type: '', area: '100-200 м²', cold: '7000₽', hot: '9500₽', time: '3-4 часа' },
-    { type: 'Офис', area: 'До 100 м²', cold: '6000₽', hot: '8000₽', time: '2-3 часа' },
-    { type: '', area: '100-300 м²', cold: '14000₽', hot: '18000₽', time: '4-6 часов' },
+    { type: 'Квартира', area: 'До 50 м²', cold: '1200₽', hot: '1800₽', time: '1-2 часа' },
+    { type: '', area: '50-100 м²', cold: '2200₽', hot: '3200₽', time: '2-3 часа' },
+    { type: '', area: '100-200 м²', cold: '4000₽', hot: '5500₽', time: '3-4 часа' },
+    { type: 'Офис', area: 'До 100 м²', cold: '3000₽', hot: '4500₽', time: '2-3 часа' },
+    { type: '', area: '100-300 м²', cold: '7000₽', hot: '10000₽', time: '4-6 часов' },
   ],
   deratizaciya: [
-    { type: 'Квартира', area: 'До 50 м²', cold: '3000₽', hot: '—', time: '1-2 часа' },
-    { type: '', area: '50-100 м²', cold: '4500₽', hot: '—', time: '2-3 часа' },
-    { type: 'Дом/Участок', area: 'До 10 соток', cold: '5000₽', hot: '—', time: '2-3 часа' },
-    { type: '', area: '10-30 соток', cold: '8000₽', hot: '—', time: '3-4 часа' },
-    { type: 'Склад/Производство', area: 'До 500 м²', cold: '15000₽', hot: '—', time: '4-6 часов' },
+    { type: 'Квартира', area: 'До 50 м²', cold: '1400₽', hot: '—', time: '1-2 часа' },
+    { type: '', area: '50-100 м²', cold: '2500₽', hot: '—', time: '2-3 часа' },
+    { type: 'Дом/Участок', area: 'До 10 соток', cold: '3000₽', hot: '—', time: '2-3 часа' },
+    { type: '', area: '10-30 соток', cold: '5000₽', hot: '—', time: '3-4 часа' },
+    { type: 'Склад/Производство', area: 'До 500 м²', cold: '8000₽', hot: '—', time: '4-6 часов' },
   ],
   other: [
-    { type: 'Озонирование', area: 'До 50 м²', cold: '3000₽', hot: '—', time: '2-3 часа' },
-    { type: '', area: '50-100 м²', cold: '5000₽', hot: '—', time: '3-4 часа' },
-    { type: 'Дезодорация', area: 'До 50 м²', cold: '2500₽', hot: '—', time: '1-2 часа' },
-    { type: '', area: '50-100 м²', cold: '4000₽', hot: '—', time: '2-3 часа' },
-    { type: 'Санитарный сертификат', area: 'Любая', cold: 'от 5000₽', hot: '—', time: '1-3 дня' },
+    { type: 'Озонирование', area: 'До 50 м²', cold: '800₽', hot: '—', time: '2-3 часа' },
+    { type: '', area: '50-100 м²', cold: '1500₽', hot: '—', time: '3-4 часа' },
+    { type: 'Дезодорация', area: 'До 50 м²', cold: '1000₽', hot: '—', time: '1-2 часа' },
+    { type: '', area: '50-100 м²', cold: '2000₽', hot: '—', time: '2-3 часа' },
+    { type: 'Санитарный сертификат', area: 'Любая', cold: 'от 2000₽', hot: '—', time: '1-3 дня' },
   ],
 };
 
@@ -206,8 +206,8 @@ export default function PricingPage() {
             "@type": "PriceSpecification",
             "name": "Цены на дезинфекцию и дезинсекцию",
             "priceCurrency": "RUB",
-            "price": "2000",
-            "minPrice": "2000",
+            "price": "1000",
+            "minPrice": "1000",
             "maxPrice": "50000"
           })}
         </script>
