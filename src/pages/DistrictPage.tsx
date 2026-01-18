@@ -101,6 +101,11 @@ const DistrictPage = () => {
         <meta property="og:description" content={district.metaDescription} />
         <meta property="og:url" content={`https://goruslugimsk.ru/uslugi/${district.slug}`} />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://goruslugimsk.ru/og-image.jpg" />
+        <meta property="og:locale" content="ru_RU" />
+        <meta property="og:site_name" content="Санитарные Решения" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://goruslugimsk.ru/og-image.jpg" />
         <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
