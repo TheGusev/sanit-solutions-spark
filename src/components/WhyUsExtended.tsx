@@ -1,5 +1,11 @@
-import { Shield, Award, FileCheck, Clock, CheckCircle2 } from "lucide-react";
+import { Shield, Award, FileCheck, Clock, CheckCircle2, ChevronDown } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const sections = [
   {
@@ -41,9 +47,37 @@ const WhyUsExtended = () => {
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        {/* Mobile: Accordion */}
+        <div className="md:hidden mb-6">
+          <Accordion type="single" collapsible className="space-y-3">
+            {sections.map((section, index) => (
+              <AccordionItem 
+                key={index} 
+                value={`item-${index}`}
+                className="bg-card rounded-xl border border-border overflow-hidden"
+              >
+                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                  <div className="flex items-center gap-3 text-left">
+                    <div className={`flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center`}>
+                      <section.icon className={`w-5 h-5 ${section.color}`} />
+                    </div>
+                    <span className="font-bold text-sm">{section.title}</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <p className="text-muted-foreground text-sm leading-relaxed pl-13">
+                    {section.content}
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+
+        {/* Desktop: Grid layout */}
+        <div className="hidden md:grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left: Feature image - hidden on mobile, visible on desktop */}
-          <div className="hidden lg:block relative rounded-2xl overflow-hidden shadow-lg h-full min-h-[400px]">
+          <div className="relative rounded-2xl overflow-hidden shadow-lg h-full min-h-[400px]">
             <img 
               src="/images/work/office-cleaning.png" 
               alt="Специалист проводит дезинфекцию офиса"
