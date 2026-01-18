@@ -340,6 +340,47 @@ const ServiceSubpage = () => {
             </div>
           </div>
         </section>
+
+        {/* Districts quick links */}
+        <section className="py-12 md:py-16 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
+              Услуга по округам Москвы
+            </h2>
+            <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-8">
+              Работаем во всех административных округах столицы с выездом от 15 минут
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-3">
+              {['ЦАО', 'САО', 'СВАО', 'ВАО', 'ЮВАО', 'ЮАО', 'ЮЗАО', 'ЗАО', 'СЗАО'].map((name, idx) => {
+                const slugs = ['cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao'];
+                return (
+                  <Link 
+                    key={idx} 
+                    to={`/uslugi/dezinfekciya-${slugs[idx]}`}
+                    className="px-4 py-2 bg-background hover:bg-primary hover:text-primary-foreground rounded-full transition-colors text-sm font-medium border"
+                  >
+                    {name}
+                  </Link>
+                );
+              })}
+            </div>
+            <div className="text-center mt-6">
+              <Link to="/uslugi/po-okrugam-moskvy" className="text-primary hover:underline font-medium">
+                Все округа Москвы →
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Back to parent service */}
+        <section className="py-8">
+          <div className="container mx-auto px-4 text-center">
+            <Link to={`/uslugi/${parentSlug}`} className="inline-flex items-center text-primary hover:underline font-medium">
+              ← Вернуться к услуге {parentService?.title || 'Услуги'}
+            </Link>
+          </div>
+        </section>
       </main>
 
       <Footer />

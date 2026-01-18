@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import CalculatorModal from '@/components/CalculatorModal';
 import { getDistrictById, districtPages } from '@/data/districtPages';
 import { useState } from 'react';
@@ -82,6 +83,14 @@ const DistrictPage = () => {
     }))
   };
 
+  // Breadcrumb items for this district
+  const breadcrumbItems = [
+    { label: "Главная", href: "/" },
+    { label: "Услуги", href: "/#services" },
+    { label: "По округам Москвы", href: "/uslugi/po-okrugam-moskvy" },
+    { label: `Дезинфекция в ${district.name}` }
+  ];
+
   return (
     <>
       <Helmet>
@@ -99,7 +108,12 @@ const DistrictPage = () => {
 
       <Header />
 
-      <main className="min-h-screen">
+      <main className="min-h-screen pt-20">
+        {/* Breadcrumbs */}
+        <div className="container mx-auto px-4 py-4">
+          <Breadcrumbs items={breadcrumbItems.slice(1)} />
+        </div>
+
         {/* Hero with parallax */}
         <DistrictHero 
           district={district} 

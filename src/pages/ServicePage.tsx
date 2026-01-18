@@ -443,6 +443,40 @@ const ServicePage = () => {
           return null;
         })()}
 
+        {/* Districts quick links */}
+        <section className="py-12 md:py-16">
+          <div className="container mx-auto px-4">
+            <AnimatedSection animation="fade-up" className="text-center mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                {service.title} по округам Москвы
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Работаем во всех административных округах столицы с выездом от 15 минут
+              </p>
+            </AnimatedSection>
+
+            <div className="flex flex-wrap justify-center gap-3">
+              {['ЦАО', 'САО', 'СВАО', 'ВАО', 'ЮВАО', 'ЮАО', 'ЮЗАО', 'ЗАО', 'СЗАО'].map((name, idx) => {
+                const slugs = ['cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao'];
+                return (
+                  <Link 
+                    key={idx} 
+                    to={`/uslugi/dezinfekciya-${slugs[idx]}`}
+                    className="px-4 py-2 bg-muted hover:bg-primary hover:text-primary-foreground rounded-full transition-colors text-sm font-medium"
+                  >
+                    {name}
+                  </Link>
+                );
+              })}
+            </div>
+            <div className="text-center mt-6">
+              <Link to="/uslugi/po-okrugam-moskvy" className="text-primary hover:underline font-medium">
+                Все округа Москвы →
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Other Services */}
         <section className="py-12 md:py-20 bg-muted/30">
           <div className="container mx-auto px-4">
