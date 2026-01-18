@@ -22,6 +22,8 @@ const ServiceSubpage = lazy(() => import("./pages/ServiceSubpage"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const DistrictsOverview = lazy(() => import("./pages/DistrictsOverview"));
 const DistrictPage = lazy(() => import("./pages/DistrictPage"));
+const NeighborhoodPage = lazy(() => import("./pages/NeighborhoodPage"));
+const NeighborhoodsOverview = lazy(() => import("./pages/NeighborhoodsOverview"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Admin pages - separate chunk, load on demand
@@ -66,6 +68,8 @@ const App = () => (
                   <Route path="/uslugi/:parentSlug/:subSlug" element={<ServiceSubpage />} />
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
                   <Route path="/contacts" element={<Contacts />} />
+                  <Route path="/rajony" element={<NeighborhoodsOverview />} />
+                  <Route path="/rajony/:slug" element={<NeighborhoodPage />} />
                   
                   {/* Admin routes */}
                   <Route path="/admin/setup" element={<AdminSetup />} />
