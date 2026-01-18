@@ -30,12 +30,12 @@ const CardPricing = ({ onOrderClick }: CardPricingProps) => {
    * @returns Цена в рублях
    */
   const calculatePrice = (): number => {
-    const basePrice = method === 'cold' ? 2000 : 3000;
-    const pricePerSqm = method === 'cold' ? 40 : 60;
+    const basePrice = method === 'cold' ? 1000 : 1500;
+    const pricePerSqm = method === 'cold' ? 20 : 30;
     
     if (area <= 50) return basePrice;
-    if (area <= 100) return method === 'cold' ? 3500 : 5000;
-    if (area <= 200) return method === 'cold' ? 6000 : 8500;
+    if (area <= 100) return method === 'cold' ? 2000 : 3000;
+    if (area <= 200) return method === 'cold' ? 3500 : 5000;
     
     // Для площади > 200 м²
     return Math.round(basePrice + (area - 50) * pricePerSqm);
