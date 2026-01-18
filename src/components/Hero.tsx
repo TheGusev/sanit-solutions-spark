@@ -157,7 +157,7 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
           transform: `translateY(${parallaxOffset}px)` 
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/80 dark:from-background/98 dark:via-background/95 dark:to-background/90" />
+      <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-background/50 to-background/40 dark:from-background/80 dark:via-background/75 dark:to-background/70" />
 
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">
