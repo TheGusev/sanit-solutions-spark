@@ -10,6 +10,8 @@ import TableOfContents, { generateContentWithIds, extractHeadings } from "@/comp
 import RelatedArticles from "@/components/RelatedArticles";
 import { blogPosts } from "@/data/blogPosts";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 const BASE_URL = "https://goruslugimsk.ru";
 
@@ -167,6 +169,41 @@ const BlogPost = () => {
         tags={post.tags}
         maxItems={3}
       />
+
+      {/* Related Services based on tags */}
+      <section className="py-12 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-4xl">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+            Связанные услуги
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-6">
+            {[
+              { title: 'Дезинфекция', href: '/uslugi/dezinfekciya', price: 'от 1000₽', tags: ['дезинфекция', 'вирусы', 'бактерии'] },
+              { title: 'Дезинсекция', href: '/uslugi/dezinsekciya', price: 'от 1200₽', tags: ['насекомые', 'тараканы', 'клопы', 'блохи'] },
+              { title: 'Дератизация', href: '/uslugi/deratizaciya', price: 'от 1400₽', tags: ['грызуны', 'крысы', 'мыши'] },
+              { title: 'Озонирование', href: '/uslugi/ozonirovanie', price: 'от 1500₽', tags: ['озон', 'запах', 'дезодорация'] },
+              { title: 'Дезодорация', href: '/uslugi/dezodoraciya', price: 'от 1000₽', tags: ['запах', 'дезодорация'] },
+            ]
+              .filter(service => 
+                post.tags?.some(tag => 
+                  service.tags.some(st => tag.toLowerCase().includes(st) || st.includes(tag.toLowerCase()))
+                )
+              )
+              .slice(0, 3)
+              .map((service) => (
+                <Link key={service.href} to={service.href}>
+                  <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1">
+                    <CardContent className="p-6 text-center">
+                      <h3 className="font-bold text-lg mb-2">{service.title}</h3>
+                      <p className="text-primary font-medium">{service.price}</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))
+            }
+          </div>
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="py-16 px-4 bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-primary-foreground">

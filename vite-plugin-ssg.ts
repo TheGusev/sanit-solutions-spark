@@ -6,9 +6,14 @@ import { pathToFileURL } from 'url';
 interface SSGRoute {
   path: string;
   outputPath: string;
+  priority?: string;
+  changefreq?: string;
 }
 
-// Static routes to prerender
+// Единый источник истины для всех маршрутов (синхронизирован с src/lib/seoRoutes.ts)
+// Дублируем здесь, т.к. vite-plugin выполняется до сборки и не может импортировать из src/
+
+// Статические страницы
 const staticRoutes: SSGRoute[] = [
   { path: '/', outputPath: 'index.html' },
   { path: '/contacts', outputPath: 'contacts/index.html' },
@@ -16,7 +21,7 @@ const staticRoutes: SSGRoute[] = [
   { path: '/privacy', outputPath: 'privacy/index.html' },
 ];
 
-// Services (from services.ts)
+// Услуги
 const servicesSlugs = [
   'dezinfekciya',
   'dezinsekciya', 
@@ -26,7 +31,22 @@ const servicesSlugs = [
   'sertifikaciya'
 ];
 
-// Blog posts (from blogPosts.ts)
+// Подстраницы услуг
+const serviceSubpageRoutes = [
+  { parent: 'dezinfekciya', sub: 'kvartir' },
+  { parent: 'dezinfekciya', sub: 'ofisov' },
+  { parent: 'dezinsekciya', sub: 'unichtozhenie-klopov' },
+  { parent: 'dezinsekciya', sub: 'unichtozhenie-tarakanov' },
+  { parent: 'deratizaciya', sub: 'unichtozhenie-krys' },
+  { parent: 'deratizaciya', sub: 'unichtozhenie-myshej' },
+];
+
+// Округа Москвы
+const districtSlugs = [
+  'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao'
+];
+
+// Статьи блога
 const blogSlugs = [
   'kak-podgotovit-pomeshchenie',
   'vidy-dezinfekcii',
@@ -38,11 +58,11 @@ const blogSlugs = [
   'klopy-v-kvartire'
 ];
 
-// Generate all routes
+// Generate all routes for SSG
 function getAllRoutes(): SSGRoute[] {
   const routes = [...staticRoutes];
   
-  // Add service pages
+  // Услуги
   servicesSlugs.forEach(slug => {
     routes.push({
       path: `/uslugi/${slug}`,
@@ -50,7 +70,29 @@ function getAllRoutes(): SSGRoute[] {
     });
   });
   
-  // Add blog posts
+  // Подстраницы услуг
+  serviceSubpageRoutes.forEach(({ parent, sub }) => {
+    routes.push({
+      path: `/uslugi/${parent}/${sub}`,
+      outputPath: `uslugi/${parent}/${sub}/index.html`
+    });
+  });
+  
+  // Обзорная страница округов
+  routes.push({
+    path: '/uslugi/po-okrugam-moskvy',
+    outputPath: 'uslugi/po-okrugam-moskvy/index.html'
+  });
+  
+  // Страницы округов
+  districtSlugs.forEach(id => {
+    routes.push({
+      path: `/uslugi/dezinfekciya-${id}`,
+      outputPath: `uslugi/dezinfekciya-${id}/index.html`
+    });
+  });
+  
+  // Блог
   blogSlugs.forEach(slug => {
     routes.push({
       path: `/blog/${slug}`,

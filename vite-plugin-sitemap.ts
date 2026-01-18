@@ -23,6 +23,53 @@ ${urlEntries}
 </urlset>`;
 }
 
+// Единый источник истины для всех маршрутов (синхронизирован с vite-plugin-ssg.ts и src/lib/seoRoutes.ts)
+
+// Статические страницы
+const staticUrls: SitemapUrl[] = [
+  { loc: '/', lastmod: '', changefreq: 'weekly', priority: '1.0' },
+  { loc: '/contacts', lastmod: '', changefreq: 'monthly', priority: '0.8' },
+  { loc: '/blog', lastmod: '', changefreq: 'weekly', priority: '0.7' },
+  { loc: '/privacy', lastmod: '', changefreq: 'yearly', priority: '0.2' },
+];
+
+// Услуги
+const servicesSlugs = [
+  'dezinfekciya',
+  'dezinsekciya', 
+  'deratizaciya',
+  'ozonirovanie',
+  'dezodoraciya',
+  'sertifikaciya'
+];
+
+// Подстраницы услуг
+const serviceSubpageRoutes = [
+  { parent: 'dezinfekciya', sub: 'kvartir' },
+  { parent: 'dezinfekciya', sub: 'ofisov' },
+  { parent: 'dezinsekciya', sub: 'unichtozhenie-klopov' },
+  { parent: 'dezinsekciya', sub: 'unichtozhenie-tarakanov' },
+  { parent: 'deratizaciya', sub: 'unichtozhenie-krys' },
+  { parent: 'deratizaciya', sub: 'unichtozhenie-myshej' },
+];
+
+// Округа Москвы
+const districtSlugs = [
+  'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao'
+];
+
+// Статьи блога
+const blogSlugs = [
+  'kak-podgotovit-pomeshchenie',
+  'vidy-dezinfekcii',
+  'borba-s-tarakanami',
+  'ozonirovaniye-pomeshcheniy',
+  'gryzuny-v-dome',
+  'sezonnost-vreditelej',
+  'dezinfekciya-ofisa',
+  'klopy-v-kvartire',
+];
+
 export function sitemapPlugin(): Plugin {
   return {
     name: 'generate-sitemap',
@@ -31,35 +78,32 @@ export function sitemapPlugin(): Plugin {
       const baseUrl = 'https://goruslugimsk.ru';
       const currentDate = new Date().toISOString().split('T')[0];
       
-      // Статические страницы
-      const staticUrls: SitemapUrl[] = [
-        { loc: '/', lastmod: currentDate, changefreq: 'weekly', priority: '1.0' },
-        { loc: '/contacts', lastmod: currentDate, changefreq: 'monthly', priority: '0.8' },
-        { loc: '/blog', lastmod: currentDate, changefreq: 'weekly', priority: '0.7' },
-        { loc: '/privacy', lastmod: currentDate, changefreq: 'yearly', priority: '0.2' },
-      ];
+      // Обновляем lastmod для статических страниц
+      const updatedStaticUrls = staticUrls.map(url => ({
+        ...url,
+        lastmod: currentDate
+      }));
       
       // Услуги (высокий приоритет - коммерческие страницы)
-      const services = [
-        'dezinfekciya',
-        'dezinsekciya', 
-        'deratizaciya',
-        'ozonirovanie',
-        'dezodoraciya',
-        'sertifikaciya'
-      ];
-      const serviceUrls: SitemapUrl[] = services.map(slug => ({
+      const serviceUrls: SitemapUrl[] = servicesSlugs.map(slug => ({
         loc: `/uslugi/${slug}`,
         lastmod: currentDate,
         changefreq: 'monthly',
         priority: '0.9',
       }));
 
+      // Подстраницы услуг (коммерческие страницы высокого приоритета)
+      const subpageUrls: SitemapUrl[] = serviceSubpageRoutes.map(({ parent, sub }) => ({
+        loc: `/uslugi/${parent}/${sub}`,
+        lastmod: currentDate,
+        changefreq: 'monthly',
+        priority: '0.85',
+      }));
+
       // Страницы округов
-      const districts = ['cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao'];
       const districtUrls: SitemapUrl[] = [
         { loc: '/uslugi/po-okrugam-moskvy', lastmod: currentDate, changefreq: 'monthly', priority: '0.85' },
-        ...districts.map(d => ({
+        ...districtSlugs.map(d => ({
           loc: `/uslugi/dezinfekciya-${d}`,
           lastmod: currentDate,
           changefreq: 'monthly',
@@ -68,41 +112,15 @@ export function sitemapPlugin(): Plugin {
       ];
       
       // Статьи блога (контентные страницы)
-      const blogSlugs = [
-        'kak-podgotovit-pomeshchenie',
-        'vidy-dezinfekcii',
-        'borba-s-tarakanami',
-        'ozonirovaniye-pomeshcheniy',
-        'gryzuny-v-dome',
-        'sezonnost-vreditelej',
-        'dezinfekciya-ofisa',
-        'klopy-v-kvartire',
-      ];
       const blogUrls: SitemapUrl[] = blogSlugs.map(slug => ({
         loc: `/blog/${slug}`,
         lastmod: currentDate,
         changefreq: 'monthly',
         priority: '0.6',
       }));
-
-      // Подстраницы услуг (коммерческие страницы высокого приоритета)
-      const serviceSubpages = [
-        '/uslugi/dezinfekciya/kvartir',
-        '/uslugi/dezinfekciya/ofisov',
-        '/uslugi/dezinsekciya/unichtozhenie-klopov',
-        '/uslugi/dezinsekciya/unichtozhenie-tarakanov',
-        '/uslugi/deratizaciya/unichtozhenie-krys',
-        '/uslugi/deratizaciya/unichtozhenie-myshej',
-      ];
-      const subpageUrls: SitemapUrl[] = serviceSubpages.map(path => ({
-        loc: path,
-        lastmod: currentDate,
-        changefreq: 'monthly',
-        priority: '0.85',
-      }));
       
       // Генерация XML
-      const allUrls = [...staticUrls, ...serviceUrls, ...subpageUrls, ...districtUrls, ...blogUrls];
+      const allUrls = [...updatedStaticUrls, ...serviceUrls, ...subpageUrls, ...districtUrls, ...blogUrls];
       const xml = generateSitemapXml(baseUrl, allUrls);
       
       writeFileSync(resolve('dist/sitemap.xml'), xml);
