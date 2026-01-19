@@ -106,7 +106,7 @@ const neighborhoodSlugs = [
   'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5'
 ];
 
-// Статьи блога
+// Статьи блога (20 статей)
 const blogSlugs = [
   'kak-podgotovit-pomeshchenie',
   'vidy-dezinfekcii',
@@ -116,6 +116,19 @@ const blogSlugs = [
   'sezonnost-vreditelej',
   'dezinfekciya-ofisa',
   'klopy-v-kvartire',
+  // 12 новых статей
+  'narodnye-sredstva-ot-tarakanov',
+  'otkuda-berutsya-klopy',
+  'priznaki-gryzunov-v-dome',
+  'kak-izbavitsya-ot-muravyev',
+  'chernaya-plesen-chem-opasna',
+  'blohi-v-kvartire-otkuda',
+  'mol-v-kvartire',
+  'kak-podgotovit-kvartiru-k-obrabotke',
+  'zapakh-posle-gryzunov',
+  'dezinfekciya-posle-remonta',
+  'pochemu-vozvrashchayutsya-tarakany',
+  'dezinsekciya-dlya-biznesa',
 ];
 
 export function sitemapPlugin(): Plugin {
