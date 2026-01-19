@@ -8,7 +8,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { neighborhoods, getNeighborhoodsByDistrict } from '@/data/neighborhoods';
-import { districtPages } from '@/data/districtPages';
 import { SEO_CONFIG } from '@/lib/seo';
 
 // Group neighborhoods by district
@@ -28,7 +27,23 @@ const districtGroups = [
 ];
 
 const NeighborhoodsOverview = () => {
-  const totalNeighborhoods = neighborhoods.length;
+  const totalNeighborhoods = neighborhoods?.length || 0;
+
+  // Fallback if data not loaded
+  if (!neighborhoods || totalNeighborhoods === 0) {
+    return (
+      <>
+        <Header />
+        <main className="min-h-screen pt-20 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Загрузка районов...</h1>
+            <p className="text-muted-foreground">Пожалуйста, подождите</p>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   // Schema.org
   const schemaData = {
