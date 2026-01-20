@@ -1,6 +1,6 @@
-import { Home, Wind, Bug, Wind as WindAlt, Rat, Calendar, ThermometerSun, Briefcase, type LucideIcon } from "lucide-react";
+import { Home, Wind, Bug, Wind as WindAlt, Rat, Calendar, ThermometerSun, Briefcase, Scale, FileText, FlaskConical, FolderOpen, type LucideIcon } from "lucide-react";
 
-export const categories = ["Все", "Дезинфекция", "Дезинсекция", "Дератизация", "Советы"];
+export const categories = ["Все", "Дезинфекция", "Дезинсекция", "Дератизация", "Советы", "Законы", "Препараты", "Кейсы"];
 
 export interface BlogPost {
   id: number;
@@ -9,7 +9,7 @@ export interface BlogPost {
   excerpt: string;
   content: string;
   image: LucideIcon;
-  category: "Дезинфекция" | "Дезинсекция" | "Дератизация" | "Советы";
+  category: "Дезинфекция" | "Дезинсекция" | "Дератизация" | "Советы" | "Законы" | "Препараты" | "Кейсы";
   date: string;
   readTime: string;
   tags: string[];
