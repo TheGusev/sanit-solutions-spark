@@ -51,7 +51,7 @@ const BlogPost = () => {
   return (
     <div className="min-h-screen">
       <Helmet>
-        <title>{post.title} | Санитарные Решения</title>
+        <title>{`${post.title} | Санитарные Решения`}</title>
         <meta name="description" content={post.excerpt} />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
         <link rel="canonical" href={`${BASE_URL}/blog/${post.slug}`} />
