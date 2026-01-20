@@ -76,7 +76,7 @@ const NeighborhoodsOverview = () => {
   return (
     <>
       <Helmet>
-        <title>Дезинфекция по районам Москвы — {totalNeighborhoods} районов | Санитарные Решения</title>
+        <title>{`Дезинфекция по районам Москвы — ${totalNeighborhoods} районов | Санитарные Решения`}</title>
         <meta name="description" content={`Профессиональная дезинфекция, дезинсекция и дератизация по всем ${totalNeighborhoods} районам Москвы. Выезд от 15 минут. Гарантия 1 год. Звоните!`} />
         <link rel="canonical" href={`${SEO_CONFIG.baseUrl}/rajony`} />
         <link rel="alternate" hrefLang="ru" href={`${SEO_CONFIG.baseUrl}/rajony`} />
