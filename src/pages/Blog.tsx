@@ -79,15 +79,15 @@ const Blog = () => {
       </section>
 
       {/* Category Filter */}
-      <section className="py-8 px-4 border-b">
+      <section className="py-6 md:py-8 px-4 border-b">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-wrap gap-3 justify-center">
+          <div className="grid grid-cols-4 gap-2 md:flex md:flex-wrap md:gap-3 md:justify-center">
             {categories.map((category) => (
               <Button
                 key={category}
                 variant={selectedCategory === category ? "default" : "outline"}
                 onClick={() => setSelectedCategory(category)}
-                className="rounded-full"
+                className="rounded-full text-xs md:text-sm px-2 md:px-4 py-1.5 md:py-2 h-auto whitespace-normal"
               >
                 {category}
               </Button>
