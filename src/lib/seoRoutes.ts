@@ -36,8 +36,9 @@ export const districtSlugs = [
   'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao', 'nao', 'tao', 'zelao'
 ];
 
-// Статьи блога
+// Статьи блога (39 статей)
 export const blogSlugs = [
+  // Оригинальные 8 статей
   'kak-podgotovit-pomeshchenie',
   'vidy-dezinfekcii',
   'borba-s-tarakanami',
@@ -46,6 +47,41 @@ export const blogSlugs = [
   'sezonnost-vreditelej',
   'dezinfekciya-ofisa',
   'klopy-v-kvartire',
+  // Дополнительные 12 статей (ранее добавленные)
+  'narodnye-sredstva-ot-tarakanov',
+  'otkuda-berutsya-klopy',
+  'priznaki-gryzunov-v-dome',
+  'kak-izbavitsya-ot-muravyev',
+  'chernaya-plesen-chem-opasna',
+  'blohi-v-kvartire-otkuda',
+  'mol-v-kvartire',
+  'kak-podgotovit-kvartiru-k-obrabotke',
+  'zapakh-posle-gryzunov',
+  'dezinfekciya-posle-remonta',
+  'pochemu-vozvrashchayutsya-tarakany',
+  'dezinsekciya-dlya-biznesa',
+  // Новые 19 статей: Законы (7)
+  'obyazatelnaya-dezinfekciya-dlya-biznesa',
+  'shtraf-za-tarakanov-v-kafe',
+  'dokumenty-dlya-rospotrebnadzora',
+  'pravila-obrabotki-zhilyh-domov',
+  'otvetstvennost-za-klopov-v-gostinitse',
+  'trebovaniya-k-dezinfekcii-v-medicine',
+  'sanpin-dlya-detskih-sadov',
+  // Новые 19 статей: Препараты (6)
+  'bezopasnye-preparaty-dlya-kvartiry',
+  'chem-travyat-klopov-professionaly',
+  'gel-ili-tuman-chto-vybrat',
+  'pochemu-ne-rabotayut-narodnye-sredstva',
+  'preparaty-ot-gryzunov-obzor',
+  'dezinficiruyushchie-sredstva-ot-pleseni',
+  // Новые 19 статей: Кейсы (6)
+  'kejs-tarakany-v-novostrojke',
+  'kejs-klopy-iz-otpuska',
+  'kejs-myshi-v-chastnom-dome',
+  'kejs-restoran-proshel-proverku',
+  'kejs-plesen-v-vannoy',
+  'kejs-blohi-ot-sobaki',
 ];
 
 // Районы Москвы (125 районов)
