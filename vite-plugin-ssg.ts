@@ -60,8 +60,12 @@ const deratizaciyaPestSlugs = ['krysy', 'myshi'];
 const moscowRegionCitySlugs = ['khimki', 'mytishchi', 'balashikha', 'podolsk', 'korolev', 'lyubertsy', 'krasnogorsk', 'odintsovo', 'domodedovo'];
 const moscowRegionServices = ['dezinsekciya', 'deratizaciya', 'dezinfekciya', 'ozonirovanie'];
 
-// Топ районов для НЧ-страниц
-const topNeighborhoods = ['arbat', 'tverskoy', 'khamovniki', 'presnenskiy', 'sokolniki', 'perovo', 'izmaylovo', 'maryino', 'butovo-severnoe', 'strogino'];
+// Топ районов для НЧ-страниц (синхронизировано с seoRoutes.ts)
+const topNeighborhoods = [
+  'arbat', 'tverskoy', 'khamovniki', 'zamoskvorechye', 'presnensky',
+  'sokol', 'aeroport', 'babushkinsky', 'izmaylovo', 'sokolniki',
+  'maryino', 'lyublino', 'chertanovo-severnoe', 'konkovo', 'strogino'
+];
 
 // Округа Москвы
 const districtSlugs = [
@@ -116,8 +120,9 @@ const neighborhoodSlugs = [
   'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5'
 ];
 
-// Статьи блога (20 статей)
+// Статьи блога (50 статей)
 const blogSlugs = [
+  // Оригинальные 8 статей
   'kak-podgotovit-pomeshchenie',
   'vidy-dezinfekcii',
   'borba-s-tarakanami',
@@ -126,7 +131,7 @@ const blogSlugs = [
   'sezonnost-vreditelej',
   'dezinfekciya-ofisa',
   'klopy-v-kvartire',
-  // 12 новых статей
+  // Дополнительные 12 статей
   'narodnye-sredstva-ot-tarakanov',
   'otkuda-berutsya-klopy',
   'priznaki-gryzunov-v-dome',
@@ -138,7 +143,39 @@ const blogSlugs = [
   'zapakh-posle-gryzunov',
   'dezinfekciya-posle-remonta',
   'pochemu-vozvrashchayutsya-tarakany',
-  'dezinsekciya-dlya-biznesa'
+  'dezinsekciya-dlya-biznesa',
+  // Статьи 21-39: Законы (7), Препараты (6), Кейсы (6)
+  'obyazatelnaya-dezinfekciya-dlya-biznesa',
+  'shtraf-za-tarakanov-v-kafe',
+  'dokumenty-dlya-rospotrebnadzora',
+  'pravila-obrabotki-zhilyh-domov',
+  'otvetstvennost-za-klopov-v-gostinitse',
+  'trebovaniya-k-dezinfekcii-v-medicine',
+  'sanpin-dlya-detskih-sadov',
+  'bezopasnye-preparaty-dlya-kvartiry',
+  'chem-travyat-klopov-professionaly',
+  'gel-ili-tuman-chto-vybrat',
+  'pochemu-ne-rabotayut-narodnye-sredstva',
+  'preparaty-ot-gryzunov-obzor',
+  'dezinficiruyushchie-sredstva-ot-pleseni',
+  'kejs-tarakany-v-novostrojke',
+  'kejs-klopy-iz-otpuska',
+  'kejs-myshi-v-chastnom-dome',
+  'kejs-restoran-proshel-proverku',
+  'kejs-plesen-v-vannoy',
+  'kejs-blohi-ot-sobaki',
+  // Статьи 40-50: Законы (6), Препараты (3), Кейсы (2)
+  'trebovaniya-rospotrebnadzora-2026',
+  'sanpin-dezinfekciya',
+  'prava-zhilcov-ot-sosedey',
+  'licenzirovanie-dezinfekcii',
+  'otvetstvennost-arendodatelya',
+  'sudebnaya-praktika-klopy',
+  'aerozoli-ot-tarakanov',
+  'lovushki-dlya-nasekomyh',
+  'repellenty-kak-vybrat',
+  'kejs-ofis-posle-covid',
+  'kejs-deratizaciya-sklada',
 ];
 
 // Generate all routes for SSG
@@ -597,6 +634,84 @@ export function ssgPlugin(): Plugin {
           }
         }
         
+        // ========== Dead Link Validation ==========
+        console.log('\n🔗 Validating internal links...');
+        
+        // Collect all generated paths
+        const generatedPaths = new Set<string>();
+        routes.forEach(route => {
+          let path = route.path;
+          // Normalize: remove trailing slash except for root
+          if (path !== '/' && path.endsWith('/')) {
+            path = path.slice(0, -1);
+          }
+          generatedPaths.add(path);
+        });
+        
+        // Read generated files and check links
+        const deadLinks: Array<{ page: string; link: string }> = [];
+        const linkDensityWarnings: Array<{ page: string; count: number }> = [];
+        
+        for (const route of routes) {
+          try {
+            const outputPath = resolve(distDir, route.outputPath);
+            if (!existsSync(outputPath)) continue;
+            
+            const html = readFileSync(outputPath, 'utf-8');
+            
+            // Extract internal links
+            const linkRegex = /href="(\/[^"#?]*?)"/g;
+            const links: string[] = [];
+            let match;
+            
+            while ((match = linkRegex.exec(html)) !== null) {
+              let link = match[1];
+              // Normalize
+              if (link !== '/' && link.endsWith('/')) {
+                link = link.slice(0, -1);
+              }
+              links.push(link);
+            }
+            
+            // Check for dead links
+            const uniqueLinks = [...new Set(links)];
+            for (const link of uniqueLinks) {
+              if (!generatedPaths.has(link) && !generatedPaths.has(link + '/')) {
+                // Skip special paths
+                if (link.startsWith('/tel:') || link.startsWith('/mailto:')) continue;
+                deadLinks.push({ page: route.path, link });
+              }
+            }
+            
+            // Check link density
+            if (uniqueLinks.length > 200) {
+              linkDensityWarnings.push({ page: route.path, count: uniqueLinks.length });
+            }
+            
+          } catch (e) {
+            // Skip read errors
+          }
+        }
+        
+        if (deadLinks.length > 0) {
+          console.warn(`\n⚠️  Dead links found: ${deadLinks.length}`);
+          deadLinks.slice(0, 10).forEach(({ page, link }) => {
+            console.warn(`   ${page} → ${link}`);
+          });
+          if (deadLinks.length > 10) {
+            console.warn(`   ... and ${deadLinks.length - 10} more`);
+          }
+        } else {
+          console.log('✓ All internal links valid');
+        }
+        
+        if (linkDensityWarnings.length > 0) {
+          console.warn(`\n⚠️  Pages with >200 links:`);
+          linkDensityWarnings.forEach(({ page, count }) => {
+            console.warn(`   ${page}: ${count} links`);
+          });
+        }
+        
         // Report duplicates
         let duplicateCount = 0;
         titleMap.forEach((paths, title) => {
@@ -621,6 +736,7 @@ export function ssgPlugin(): Plugin {
         console.log(`   ✅ Success: ${successCount}`);
         console.log(`   ⚠️  Warnings: ${warningCount}`);
         console.log(`   ❌ Errors: ${errorCount}`);
+        console.log(`   🔗 Dead links: ${deadLinks.length}`);
         if (duplicateCount > 0) {
           console.log(`   📋 Duplicate titles/descriptions: ${duplicateCount}`);
         }
