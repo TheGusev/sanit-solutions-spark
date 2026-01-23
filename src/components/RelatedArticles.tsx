@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { blogPosts, BlogPost } from "@/data/blogPosts";
+import { allBlogArticles, type BlogArticle } from "@/data/blog";
 import { ArrowRight } from "lucide-react";
 
 interface RelatedArticlesProps {
@@ -22,9 +22,9 @@ const getRelatedPosts = (
   category: string,
   tags: string[] = [],
   maxItems: number = 3
-): BlogPost[] => {
+): BlogArticle[] => {
   // Исключаем текущую статью
-  const otherPosts = blogPosts.filter((p) => p.id !== currentPostId);
+  const otherPosts = allBlogArticles.filter((p) => p.id !== currentPostId);
   
   if (otherPosts.length === 0) return [];
 
