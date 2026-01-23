@@ -103,12 +103,15 @@ export default function NchPage() {
     ]
   };
   
+  // Получаем название округа
+  const districtName = neighborhood.districtId.toUpperCase();
+  
   // Генерируем уникальный контент на основе данных
-  const responseTime = neighborhood.district.includes('ЦАО') ? '30-45 мин' : '40-60 мин';
+  const responseTime = neighborhood.responseTime || (districtName.includes('ЦАО') ? '30-45 мин' : '40-60 мин');
   const localFeatures = [
     `Знаем особенности застройки района ${neighborhood.name}`,
-    `Работаем с ${neighborhood.district}`,
-    neighborhood.metro ? `Быстрый выезд к м. ${neighborhood.metro}` : 'Выезд в любую точку района',
+    `Работаем с ${districtName}`,
+    neighborhood.landmarks?.[0] ? `Быстрый выезд к ${neighborhood.landmarks[0]}` : 'Выезд в любую точку района',
     'Местные мастера, знающие район'
   ];
   
@@ -142,7 +145,7 @@ export default function NchPage() {
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 <span className="text-3xl">{pest.icon}</span>
                 <span className="px-3 py-1 bg-primary/10 rounded-full text-sm font-medium">
-                  {neighborhood.district}
+                  {districtName}
                 </span>
                 <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
                   Выезд {responseTime}
@@ -169,7 +172,7 @@ export default function NchPage() {
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <MapPin className="w-5 h-5 text-primary" />
-                  <span>{neighborhood.name}, {neighborhood.district}</span>
+                  <span>{neighborhood.name}, {districtName}</span>
                 </div>
               </div>
               
@@ -252,7 +255,7 @@ export default function NchPage() {
                 {pest.name} в районе {neighborhood.name}: особенности и решения
               </h2>
               <p>
-                Район {neighborhood.name} ({neighborhood.district}) — {neighborhood.description || 'один из районов Москвы с разнообразной застройкой'}. 
+                Район {neighborhood.name} ({districtName}) — {neighborhood.description || 'один из районов Москвы с разнообразной застройкой'}. 
                 {pest.namePlural} часто появляются в многоквартирных домах, особенно на первых этажах и в старом жилом фонде.
               </p>
               <p>
