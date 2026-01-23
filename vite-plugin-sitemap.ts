@@ -106,7 +106,7 @@ const neighborhoodSlugs = [
   'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5'
 ];
 
-// Статьи блога (39 статей)
+// Статьи блога (50 статей)
 const blogSlugs = [
   // Оригинальные 8 статей
   'kak-podgotovit-pomeshchenie',
@@ -130,7 +130,7 @@ const blogSlugs = [
   'dezinfekciya-posle-remonta',
   'pochemu-vozvrashchayutsya-tarakany',
   'dezinsekciya-dlya-biznesa',
-  // Новые 19 статей: Законы (7)
+  // Статьи 21-39: Законы (7), Препараты (6), Кейсы (6)
   'obyazatelnaya-dezinfekciya-dlya-biznesa',
   'shtraf-za-tarakanov-v-kafe',
   'dokumenty-dlya-rospotrebnadzora',
@@ -138,20 +138,30 @@ const blogSlugs = [
   'otvetstvennost-za-klopov-v-gostinitse',
   'trebovaniya-k-dezinfekcii-v-medicine',
   'sanpin-dlya-detskih-sadov',
-  // Новые 19 статей: Препараты (6)
   'bezopasnye-preparaty-dlya-kvartiry',
   'chem-travyat-klopov-professionaly',
   'gel-ili-tuman-chto-vybrat',
   'pochemu-ne-rabotayut-narodnye-sredstva',
   'preparaty-ot-gryzunov-obzor',
   'dezinficiruyushchie-sredstva-ot-pleseni',
-  // Новые 19 статей: Кейсы (6)
   'kejs-tarakany-v-novostrojke',
   'kejs-klopy-iz-otpuska',
   'kejs-myshi-v-chastnom-dome',
   'kejs-restoran-proshel-proverku',
   'kejs-plesen-v-vannoy',
   'kejs-blohi-ot-sobaki',
+  // Статьи 40-50: Законы (6), Препараты (3), Кейсы (2)
+  'trebovaniya-rospotrebnadzora-2026',
+  'sanpin-dezinfekciya',
+  'prava-zhilcov-ot-sosedey',
+  'licenzirovanie-dezinfekcii',
+  'otvetstvennost-arendodatelya',
+  'sudebnaya-praktika-klopy',
+  'aerozoli-ot-tarakanov',
+  'lovushki-dlya-nasekomyh',
+  'repellenty-kak-vybrat',
+  'kejs-ofis-posle-covid',
+  'kejs-deratizaciya-sklada',
 ];
 
 export function sitemapPlugin(): Plugin {
