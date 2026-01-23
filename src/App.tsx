@@ -19,11 +19,16 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
 const ServiceSubpage = lazy(() => import("./pages/ServiceSubpage"));
+const ServicePestPage = lazy(() => import("./pages/ServicePestPage"));
+const NchPage = lazy(() => import("./pages/NchPage"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const DistrictsOverview = lazy(() => import("./pages/DistrictsOverview"));
 const DistrictPage = lazy(() => import("./pages/DistrictPage"));
 const NeighborhoodPage = lazy(() => import("./pages/NeighborhoodPage"));
 const NeighborhoodsOverview = lazy(() => import("./pages/NeighborhoodsOverview"));
+const MoscowRegionOverview = lazy(() => import("./pages/MoscowRegionOverview"));
+const MoscowRegionCityPage = lazy(() => import("./pages/MoscowRegionCityPage"));
+const MoscowRegionServicePage = lazy(() => import("./pages/MoscowRegionServicePage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Admin pages - separate chunk, load on demand
@@ -66,10 +71,15 @@ const App = () => (
                   <Route path="/uslugi/dezinfekciya-zao" element={<DistrictPage />} />
                   <Route path="/uslugi/dezinfekciya-szao" element={<DistrictPage />} />
                   <Route path="/uslugi/:parentSlug/:subSlug" element={<ServiceSubpage />} />
+                  <Route path="/uslugi/:service/:pest/:neighborhood" element={<NchPage />} />
+                  <Route path="/uslugi/:service/:pest" element={<ServicePestPage />} />
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
                   <Route path="/contacts" element={<Contacts />} />
                   <Route path="/rajony" element={<NeighborhoodsOverview />} />
                   <Route path="/rajony/:slug" element={<NeighborhoodPage />} />
+                  <Route path="/moscow-oblast" element={<MoscowRegionOverview />} />
+                  <Route path="/moscow-oblast/:citySlug" element={<MoscowRegionCityPage />} />
+                  <Route path="/moscow-oblast/:citySlug/:serviceSlug" element={<MoscowRegionServicePage />} />
                   
                   {/* Admin routes */}
                   <Route path="/admin/setup" element={<AdminSetup />} />

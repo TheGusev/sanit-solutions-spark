@@ -76,17 +76,37 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
     }
   };
 
-  const services = [
-    { title: "Дезинсекция", href: "/uslugi/dezinsekciya" },
-    { title: "Дезинфекция", href: "/uslugi/dezinfekciya" },
-    { title: "Дератизация", href: "/uslugi/deratizaciya" },
-    { title: "Озонирование", href: "/uslugi/ozonirovanie" },
-    { title: "Дезодорация", href: "/uslugi/dezodoraciya" },
-    { title: "Сертификация", href: "/uslugi/sertifikaciya" },
+  // 3-уровневая структура меню с подкатегориями вредителей
+  const servicesMenu = [
+    {
+      title: "Дезинсекция",
+      href: "/uslugi/dezinsekciya",
+      subItems: [
+        { title: "От тараканов", href: "/uslugi/dezinsekciya/tarakany" },
+        { title: "От клопов", href: "/uslugi/dezinsekciya/klopy" },
+        { title: "От муравьёв", href: "/uslugi/dezinsekciya/muravyi" },
+        { title: "От блох", href: "/uslugi/dezinsekciya/blohi" },
+        { title: "От моли", href: "/uslugi/dezinsekciya/mol" },
+      ]
+    },
+    {
+      title: "Дератизация",
+      href: "/uslugi/deratizaciya",
+      subItems: [
+        { title: "От крыс", href: "/uslugi/deratizaciya/krysy" },
+        { title: "От мышей", href: "/uslugi/deratizaciya/myshi" },
+      ]
+    },
+    { title: "Дезинфекция", href: "/uslugi/dezinfekciya", subItems: [] },
+    { title: "Озонирование", href: "/uslugi/ozonirovanie", subItems: [] },
+    { title: "Дезодорация", href: "/uslugi/dezodoraciya", subItems: [] },
+    { title: "Сертификация", href: "/uslugi/sertifikaciya", subItems: [] },
   ];
 
   const infoLinks = [
     { title: "По округам Москвы", href: "/uslugi/po-okrugam-moskvy" },
+    { title: "По городам МО", href: "/moscow-oblast" },
+    { title: "Районы Москвы", href: "/rajony" },
     { title: "Подготовка к дезинфекции", href: "/blog/kak-podgotovit-pomeshchenie" },
   ];
 
@@ -117,19 +137,27 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     Услуги
                     <ChevronDown className="w-4 h-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
-                    {services.map((service) => (
-                      <DropdownMenuItem key={service.href} asChild>
-                        <Link to={service.href} className="cursor-pointer">
-                          {service.title}
-                        </Link>
-                      </DropdownMenuItem>
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50 w-56">
+                    {servicesMenu.map((service) => (
+                      <div key={service.href}>
+                        <DropdownMenuItem asChild>
+                          <Link to={service.href} className="cursor-pointer font-medium">
+                            {service.title}
+                          </Link>
+                        </DropdownMenuItem>
+                        {service.subItems && service.subItems.length > 0 && (
+                          <div className="ml-4 border-l border-border pl-2 mb-1">
+                            {service.subItems.map((sub) => (
+                              <DropdownMenuItem key={sub.href} asChild className="py-1">
+                                <Link to={sub.href} className="cursor-pointer text-muted-foreground text-xs">
+                                  {sub.title}
+                                </Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))}
-                    <DropdownMenuItem asChild>
-                      <button onClick={() => scrollToSection("services")} className="w-full text-left cursor-pointer text-muted-foreground">
-                        Все услуги
-                      </button>
-                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <button onClick={handleCalculatorClick} className="text-sm font-medium hover:text-primary transition-colors">
@@ -169,13 +197,26 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     Услуги
                     <ChevronDown className="w-4 h-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
-                    {services.map((service) => (
-                      <DropdownMenuItem key={service.href} asChild>
-                        <Link to={service.href} className="cursor-pointer">
-                          {service.title}
-                        </Link>
-                      </DropdownMenuItem>
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50 w-56">
+                    {servicesMenu.map((service) => (
+                      <div key={service.href}>
+                        <DropdownMenuItem asChild>
+                          <Link to={service.href} className="cursor-pointer font-medium">
+                            {service.title}
+                          </Link>
+                        </DropdownMenuItem>
+                        {service.subItems && service.subItems.length > 0 && (
+                          <div className="ml-4 border-l border-border pl-2 mb-1">
+                            {service.subItems.map((sub) => (
+                              <DropdownMenuItem key={sub.href} asChild className="py-1">
+                                <Link to={sub.href} className="cursor-pointer text-muted-foreground text-xs">
+                                  {sub.title}
+                                </Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -269,16 +310,32 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                           Услуги
                         </AccordionTrigger>
                         <AccordionContent className="pb-0">
-                          <div className="space-y-1 pl-4">
-                            {services.map((service) => (
-                              <SheetClose key={service.href} asChild>
-                                <Link
-                                  to={service.href}
-                                  className="block py-2.5 px-4 rounded-lg hover:bg-muted transition-colors text-sm text-muted-foreground hover:text-foreground"
-                                >
-                                  {service.title}
-                                </Link>
-                              </SheetClose>
+                          <div className="space-y-1 pl-2">
+                            {servicesMenu.map((service) => (
+                              <div key={service.href}>
+                                <SheetClose asChild>
+                                  <Link
+                                    to={service.href}
+                                    className="block py-2.5 px-4 rounded-lg hover:bg-muted transition-colors text-sm font-medium"
+                                  >
+                                    {service.title}
+                                  </Link>
+                                </SheetClose>
+                                {service.subItems && service.subItems.length > 0 && (
+                                  <div className="ml-4 border-l border-border pl-2 space-y-1">
+                                    {service.subItems.map((sub) => (
+                                      <SheetClose key={sub.href} asChild>
+                                        <Link
+                                          to={sub.href}
+                                          className="block py-1.5 px-3 rounded-lg hover:bg-muted transition-colors text-xs text-muted-foreground hover:text-foreground"
+                                        >
+                                          {sub.title}
+                                        </Link>
+                                      </SheetClose>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
                             ))}
                           </div>
                         </AccordionContent>
