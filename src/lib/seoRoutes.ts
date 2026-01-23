@@ -31,6 +31,21 @@ export const serviceSubpageRoutes = [
   { parent: 'deratizaciya', sub: 'unichtozhenie-myshej' },
 ];
 
+// Вредители для дезинсекции
+export const dezinsekciyaPestSlugs = [
+  'tarakany',
+  'klopy',
+  'muravyi',
+  'blohi',
+  'mol'
+];
+
+// Вредители для дератизации
+export const deratizaciyaPestSlugs = [
+  'krysy',
+  'myshi'
+];
+
 // Округа Москвы
 export const districtSlugs = [
   'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao', 'nao', 'tao', 'zelao'
@@ -118,6 +133,23 @@ export const neighborhoodSlugs = [
   'sosenskoe', 'vnukovskoe', 'troitsk', 'shcherbinka', 'moskovsky', 'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5',
 ];
 
+// Города Московской области
+export const moscowRegionCitySlugs = [
+  'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny'
+];
+
+// Услуги для городов МО
+export const moscowRegionServices = [
+  'dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'
+];
+
+// Топ-районы для НЧ-страниц (приоритет 1)
+export const topNeighborhoods = [
+  'arbat', 'tverskoy', 'khamovniki', 'zamoskvorechye', 'presnensky',
+  'sokol', 'aeroport', 'babushkinsky', 'izmaylovo', 'sokolniki',
+  'maryino', 'lyublino', 'chertanovo-severnoe', 'konkovo', 'strogino'
+];
+
 // Генерация всех маршрутов для SSG
 export function getAllSSGRoutes() {
   const routes = [...staticRoutes];
@@ -139,6 +171,49 @@ export function getAllSSGRoutes() {
       outputPath: `uslugi/${parent}/${sub}/index.html`,
       priority: '0.85',
       changefreq: 'monthly'
+    });
+  });
+  
+  // Услуга + Вредитель (Дезинсекция)
+  dezinsekciyaPestSlugs.forEach(pestSlug => {
+    routes.push({
+      path: `/uslugi/dezinsekciya/${pestSlug}`,
+      outputPath: `uslugi/dezinsekciya/${pestSlug}/index.html`,
+      priority: '0.85',
+      changefreq: 'monthly'
+    });
+  });
+  
+  // Услуга + Вредитель (Дератизация)
+  deratizaciyaPestSlugs.forEach(pestSlug => {
+    routes.push({
+      path: `/uslugi/deratizaciya/${pestSlug}`,
+      outputPath: `uslugi/deratizaciya/${pestSlug}/index.html`,
+      priority: '0.85',
+      changefreq: 'monthly'
+    });
+  });
+  
+  // НЧ-страницы: Услуга + Вредитель + Район (приоритет 1 - топ районы)
+  dezinsekciyaPestSlugs.forEach(pestSlug => {
+    topNeighborhoods.forEach(neighborhoodSlug => {
+      routes.push({
+        path: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}`,
+        outputPath: `uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}/index.html`,
+        priority: '0.7',
+        changefreq: 'monthly'
+      });
+    });
+  });
+  
+  deratizaciyaPestSlugs.forEach(pestSlug => {
+    topNeighborhoods.forEach(neighborhoodSlug => {
+      routes.push({
+        path: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}`,
+        outputPath: `uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/index.html`,
+        priority: '0.7',
+        changefreq: 'monthly'
+      });
     });
   });
   
@@ -185,6 +260,34 @@ export function getAllSSGRoutes() {
       outputPath: `rajony/${slug}/index.html`,
       priority: '0.75',
       changefreq: 'monthly'
+    });
+  });
+  
+  // Московская область - обзор
+  routes.push({
+    path: '/moscow-oblast',
+    outputPath: 'moscow-oblast/index.html',
+    priority: '0.8',
+    changefreq: 'monthly'
+  });
+  
+  // Города Московской области
+  moscowRegionCitySlugs.forEach(citySlug => {
+    routes.push({
+      path: `/moscow-oblast/${citySlug}`,
+      outputPath: `moscow-oblast/${citySlug}/index.html`,
+      priority: '0.8',
+      changefreq: 'monthly'
+    });
+    
+    // Услуги в городах МО
+    moscowRegionServices.forEach(serviceSlug => {
+      routes.push({
+        path: `/moscow-oblast/${citySlug}/${serviceSlug}`,
+        outputPath: `moscow-oblast/${citySlug}/${serviceSlug}/index.html`,
+        priority: '0.75',
+        changefreq: 'monthly'
+      });
     });
   });
   

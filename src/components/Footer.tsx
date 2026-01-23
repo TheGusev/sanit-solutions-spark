@@ -17,7 +17,7 @@ const Footer = memo(() => {
   return (
     <footer className="bg-foreground text-background py-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Beaker className="h-7 w-7" />
@@ -103,6 +103,42 @@ const Footer = memo(() => {
               <li>
                 <Link to="/contacts" className="hover:opacity-100">
                   • Контакты и реквизиты
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-4">Московская область</h4>
+            <ul className="space-y-2 text-sm opacity-80">
+              <li>
+                <Link to="/moscow-oblast" className="hover:opacity-100">
+                  • Все города МО
+                </Link>
+              </li>
+              <li>
+                <Link to="/moscow-oblast/khimki" className="hover:opacity-100">
+                  • Химки
+                </Link>
+              </li>
+              <li>
+                <Link to="/moscow-oblast/mytishchi" className="hover:opacity-100">
+                  • Мытищи
+                </Link>
+              </li>
+              <li>
+                <Link to="/moscow-oblast/balashikha" className="hover:opacity-100">
+                  • Балашиха
+                </Link>
+              </li>
+              <li>
+                <Link to="/moscow-oblast/krasnogorsk" className="hover:opacity-100">
+                  • Красногорск
+                </Link>
+              </li>
+              <li>
+                <Link to="/moscow-oblast/podolsk" className="hover:opacity-100">
+                  • Подольск
                 </Link>
               </li>
             </ul>
