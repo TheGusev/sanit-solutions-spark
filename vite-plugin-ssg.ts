@@ -215,8 +215,8 @@ function getAllRoutes(): SSGRoute[] {
     });
   });
   
-  // НЧ-страницы (услуга + вредитель + район) - NchPage
-  topNeighborhoods.forEach(neighborhoodSlug => {
+  // НЧ-страницы (услуга + вредитель + район) - NchPage (все 125 районов = 875 страниц)
+  neighborhoodSlugs.forEach(neighborhoodSlug => {
     dezinsekciyaPestSlugs.forEach(pestSlug => {
       routes.push({
         path: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}`,
