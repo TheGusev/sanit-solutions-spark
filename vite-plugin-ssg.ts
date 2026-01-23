@@ -10,6 +10,17 @@ interface SSGRoute {
   changefreq?: string;
 }
 
+interface ValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+  meta: {
+    titleLength?: number;
+    descriptionLength?: number;
+    wordCount?: number;
+  };
+}
+
 // Единый источник истины для всех маршрутов (синхронизирован с src/lib/seoRoutes.ts)
 // Дублируем здесь, т.к. vite-plugin выполняется до сборки и не может импортировать из src/
 
@@ -40,6 +51,17 @@ const serviceSubpageRoutes = [
   { parent: 'deratizaciya', sub: 'unichtozhenie-krys' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-myshej' },
 ];
+
+// Вредители для услуга + вредитель страниц
+const dezinsekciyaPestSlugs = ['tarakany', 'klopy', 'muravyi', 'blohi', 'mol'];
+const deratizaciyaPestSlugs = ['krysy', 'myshi'];
+
+// Города МО
+const moscowRegionCitySlugs = ['khimki', 'mytishchi', 'balashikha', 'podolsk', 'korolev', 'lyubertsy', 'krasnogorsk', 'odintsovo', 'domodedovo'];
+const moscowRegionServices = ['dezinsekciya', 'deratizaciya', 'dezinfekciya', 'ozonirovanie'];
+
+// Топ районов для НЧ-страниц
+const topNeighborhoods = ['arbat', 'tverskoy', 'khamovniki', 'presnenskiy', 'sokolniki', 'perovo', 'izmaylovo', 'maryino', 'butovo-severnoe', 'strogino'];
 
 // Округа Москвы
 const districtSlugs = [
@@ -139,6 +161,42 @@ function getAllRoutes(): SSGRoute[] {
     });
   });
   
+  // Услуга + Вредитель (ServicePestPage)
+  dezinsekciyaPestSlugs.forEach(pestSlug => {
+    routes.push({
+      path: `/uslugi/dezinsekciya/${pestSlug}`,
+      outputPath: `uslugi/dezinsekciya/${pestSlug}/index.html`,
+      priority: '0.85'
+    });
+  });
+  
+  deratizaciyaPestSlugs.forEach(pestSlug => {
+    routes.push({
+      path: `/uslugi/deratizaciya/${pestSlug}`,
+      outputPath: `uslugi/deratizaciya/${pestSlug}/index.html`,
+      priority: '0.85'
+    });
+  });
+  
+  // НЧ-страницы (услуга + вредитель + район) - NchPage
+  topNeighborhoods.forEach(neighborhoodSlug => {
+    dezinsekciyaPestSlugs.forEach(pestSlug => {
+      routes.push({
+        path: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}`,
+        outputPath: `uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}/index.html`,
+        priority: '0.7'
+      });
+    });
+    
+    deratizaciyaPestSlugs.forEach(pestSlug => {
+      routes.push({
+        path: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}`,
+        outputPath: `uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/index.html`,
+        priority: '0.7'
+      });
+    });
+  });
+  
   // Обзорная страница округов
   routes.push({
     path: '/uslugi/po-okrugam-moskvy',
@@ -175,12 +233,63 @@ function getAllRoutes(): SSGRoute[] {
     });
   });
   
+  // Московская область - обзор
+  routes.push({
+    path: '/moscow-oblast',
+    outputPath: 'moscow-oblast/index.html',
+    priority: '0.8'
+  });
+  
+  // Города МО
+  moscowRegionCitySlugs.forEach(citySlug => {
+    routes.push({
+      path: `/moscow-oblast/${citySlug}`,
+      outputPath: `moscow-oblast/${citySlug}/index.html`,
+      priority: '0.8'
+    });
+    
+    // Услуги в городах МО
+    moscowRegionServices.forEach(serviceSlug => {
+      routes.push({
+        path: `/moscow-oblast/${citySlug}/${serviceSlug}`,
+        outputPath: `moscow-oblast/${citySlug}/${serviceSlug}/index.html`,
+        priority: '0.75'
+      });
+    });
+  });
+  
   return routes;
 }
 
-// Validate generated HTML quality
-function validateHtml(html: string, route: string): { valid: boolean; errors: string[] } {
+// Extract title from HTML
+function extractTitle(html: string): string | null {
+  const match = html.match(/<title>([^<]+)<\/title>/i);
+  return match ? match[1].trim() : null;
+}
+
+// Extract description from HTML
+function extractDescription(html: string): string | null {
+  const match = html.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
+  return match ? match[1].trim() : null;
+}
+
+// Count words in HTML (excluding scripts and styles)
+function countWordsInHtml(html: string): number {
+  const textContent = html
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  
+  return textContent.split(' ').filter(w => w.length > 2).length;
+}
+
+// Validate generated HTML quality with enhanced checks
+function validateHtml(html: string, route: string): ValidationResult {
   const errors: string[] = [];
+  const warnings: string[] = [];
+  const meta: ValidationResult['meta'] = {};
   
   // Check minimum size (2KB)
   if (html.length < 2048) {
@@ -204,9 +313,51 @@ function validateHtml(html: string, route: string): { valid: boolean; errors: st
     errors.push('Content placeholder not replaced');
   }
   
+  // Check Title length (40-70 chars optimal)
+  const title = extractTitle(html);
+  if (title) {
+    meta.titleLength = title.length;
+    if (title.length < 40) {
+      warnings.push(`Title too short: ${title.length} chars (min: 40)`);
+    }
+    if (title.length > 70) {
+      warnings.push(`Title too long: ${title.length} chars (max: 70)`);
+    }
+  } else {
+    errors.push('Missing <title> tag');
+  }
+  
+  // Check Description length (140-170 chars optimal)
+  const description = extractDescription(html);
+  if (description) {
+    meta.descriptionLength = description.length;
+    if (description.length < 140) {
+      warnings.push(`Description too short: ${description.length} chars (min: 140)`);
+    }
+    if (description.length > 170) {
+      warnings.push(`Description too long: ${description.length} chars (max: 170)`);
+    }
+  } else {
+    errors.push('Missing meta description');
+  }
+  
+  // Check word count
+  const wordCount = countWordsInHtml(html);
+  meta.wordCount = wordCount;
+  
+  // НЧ-страницы требуют 650+ слов
+  const isNchPage = route.split('/').length > 4 && route.includes('/uslugi/');
+  const minWords = isNchPage ? 650 : 500;
+  
+  if (wordCount < minWords) {
+    warnings.push(`Thin content: ${wordCount} words (min: ${minWords})`);
+  }
+  
   return {
     valid: errors.length === 0,
-    errors
+    errors,
+    warnings,
+    meta
   };
 }
 
@@ -334,6 +485,11 @@ export function ssgPlugin(): Plugin {
         const routes = getAllRoutes();
         let successCount = 0;
         let errorCount = 0;
+        let warningCount = 0;
+        
+        // Track duplicates
+        const titleMap = new Map<string, string[]>();
+        const descriptionMap = new Map<string, string[]>();
         
         console.log(`📄 Prerendering ${routes.length} pages...\n`);
         
@@ -386,12 +542,38 @@ export function ssgPlugin(): Plugin {
             // Update all head tags from helmet
             html = replaceHeadTags(html, result.helmet);
             
-            // Validate HTML quality
+            // Validate HTML quality with enhanced checks
             const validation = validateHtml(html, route.path);
             
             if (!validation.valid) {
-              console.warn(`⚠️  ${route.path}: Quality issues:`);
-              validation.errors.forEach(err => console.warn(`   - ${err}`));
+              console.error(`❌ ${route.path}: Validation errors:`);
+              validation.errors.forEach(err => console.error(`   - ${err}`));
+              errorCount++;
+              continue;
+            }
+            
+            if (validation.warnings.length > 0) {
+              console.warn(`⚠️  ${route.path}: Quality warnings:`);
+              validation.warnings.forEach(warn => console.warn(`   - ${warn}`));
+              warningCount++;
+            }
+            
+            // Track title and description for duplicate detection
+            const title = extractTitle(html);
+            const description = extractDescription(html);
+            
+            if (title) {
+              if (!titleMap.has(title)) {
+                titleMap.set(title, []);
+              }
+              titleMap.get(title)!.push(route.path);
+            }
+            
+            if (description) {
+              if (!descriptionMap.has(description)) {
+                descriptionMap.set(description, []);
+              }
+              descriptionMap.get(description)!.push(route.path);
             }
             
             // Write the file
@@ -405,7 +587,8 @@ export function ssgPlugin(): Plugin {
             writeFileSync(outputPath, html);
             
             const sizeKb = (html.length / 1024).toFixed(1);
-            console.log(`✓ ${route.path} → ${route.outputPath} (${sizeKb}KB)`);
+            const wordInfo = validation.meta.wordCount ? ` | ${validation.meta.wordCount}w` : '';
+            console.log(`✓ ${route.path} → ${route.outputPath} (${sizeKb}KB${wordInfo})`);
             successCount++;
             
           } catch (error) {
@@ -414,7 +597,34 @@ export function ssgPlugin(): Plugin {
           }
         }
         
-        console.log(`\n📊 SSG Results: ${successCount} success, ${errorCount} errors\n`);
+        // Report duplicates
+        let duplicateCount = 0;
+        titleMap.forEach((paths, title) => {
+          if (paths.length > 1) {
+            duplicateCount++;
+            console.warn(`\n⚠️  Duplicate Title (${paths.length} pages): "${title.slice(0, 50)}..."`);
+            paths.slice(0, 3).forEach(p => console.warn(`   - ${p}`));
+            if (paths.length > 3) console.warn(`   ... and ${paths.length - 3} more`);
+          }
+        });
+        
+        descriptionMap.forEach((paths, desc) => {
+          if (paths.length > 1) {
+            duplicateCount++;
+            console.warn(`\n⚠️  Duplicate Description (${paths.length} pages): "${desc.slice(0, 50)}..."`);
+            paths.slice(0, 3).forEach(p => console.warn(`   - ${p}`));
+            if (paths.length > 3) console.warn(`   ... and ${paths.length - 3} more`);
+          }
+        });
+        
+        console.log(`\n📊 SSG Results:`);
+        console.log(`   ✅ Success: ${successCount}`);
+        console.log(`   ⚠️  Warnings: ${warningCount}`);
+        console.log(`   ❌ Errors: ${errorCount}`);
+        if (duplicateCount > 0) {
+          console.log(`   📋 Duplicate titles/descriptions: ${duplicateCount}`);
+        }
+        console.log('');
         
         if (successCount > 0) {
           console.log('✅ SSG prerendering complete! Static HTML files generated in dist/\n');

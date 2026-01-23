@@ -1,0 +1,165 @@
+/**
+ * Централизованный SEO-валидатор
+ * 
+ * Проверяет Title (40-65 символов), Description (140-165 символов),
+ * H1 (20-80 символов), и минимальное количество слов (500-650).
+ */
+
+export const SEO_LIMITS = {
+  title: { min: 40, max: 65, optimalMax: 60 },
+  description: { min: 140, max: 165, optimalMax: 160 },
+  h1: { min: 20, max: 80 },
+  wordCount: { base: 500, nch: 650 },
+};
+
+export interface SEOValidationResult {
+  valid: boolean;
+  warnings: string[];
+  errors: string[];
+  meta: {
+    titleLength: number;
+    descriptionLength: number;
+    wordCount?: number;
+  };
+}
+
+/**
+ * Проверяет SEO-метаданные страницы
+ */
+export function validateSEO(meta: {
+  title: string;
+  description: string;
+  h1?: string;
+  wordCount?: number;
+  isNchPage?: boolean;
+}): SEOValidationResult {
+  const warnings: string[] = [];
+  const errors: string[] = [];
+
+  // Проверка Title
+  const titleLength = meta.title.length;
+  if (titleLength < SEO_LIMITS.title.min) {
+    warnings.push(`Title слишком короткий: ${titleLength} символов (мин: ${SEO_LIMITS.title.min})`);
+  }
+  if (titleLength > SEO_LIMITS.title.max) {
+    errors.push(`Title слишком длинный: ${titleLength} символов (макс: ${SEO_LIMITS.title.max})`);
+  } else if (titleLength > SEO_LIMITS.title.optimalMax) {
+    warnings.push(`Title длиннее оптимального: ${titleLength} символов (оптимум: ≤${SEO_LIMITS.title.optimalMax})`);
+  }
+
+  // Проверка Description
+  const descriptionLength = meta.description.length;
+  if (descriptionLength < SEO_LIMITS.description.min) {
+    warnings.push(`Description слишком короткое: ${descriptionLength} символов (мин: ${SEO_LIMITS.description.min})`);
+  }
+  if (descriptionLength > SEO_LIMITS.description.max) {
+    errors.push(`Description слишком длинное: ${descriptionLength} символов (макс: ${SEO_LIMITS.description.max})`);
+  } else if (descriptionLength > SEO_LIMITS.description.optimalMax) {
+    warnings.push(`Description длиннее оптимального: ${descriptionLength} символов (оптимум: ≤${SEO_LIMITS.description.optimalMax})`);
+  }
+
+  // Проверка H1
+  if (meta.h1) {
+    const h1Length = meta.h1.length;
+    if (h1Length < SEO_LIMITS.h1.min) {
+      warnings.push(`H1 слишком короткий: ${h1Length} символов (мин: ${SEO_LIMITS.h1.min})`);
+    }
+    if (h1Length > SEO_LIMITS.h1.max) {
+      warnings.push(`H1 слишком длинный: ${h1Length} символов (макс: ${SEO_LIMITS.h1.max})`);
+    }
+  }
+
+  // Проверка word count
+  if (meta.wordCount !== undefined) {
+    const minWords = meta.isNchPage ? SEO_LIMITS.wordCount.nch : SEO_LIMITS.wordCount.base;
+    if (meta.wordCount < minWords) {
+      warnings.push(`Тонкий контент: ${meta.wordCount} слов (мин: ${minWords})`);
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    warnings,
+    errors,
+    meta: {
+      titleLength,
+      descriptionLength,
+      wordCount: meta.wordCount,
+    },
+  };
+}
+
+/**
+ * Подсчитывает слова в HTML, исключая скрипты и стили
+ */
+export function countWordsInHtml(html: string): number {
+  // Удаляем скрипты и стили
+  const textContent = html
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // Считаем слова длиной > 2 символов (игнорируем предлоги)
+  return textContent.split(' ').filter(w => w.length > 2).length;
+}
+
+/**
+ * Извлекает Title из HTML
+ */
+export function extractTitle(html: string): string | null {
+  const match = html.match(/<title>([^<]+)<\/title>/i);
+  return match ? match[1].trim() : null;
+}
+
+/**
+ * Извлекает Description из HTML
+ */
+export function extractDescription(html: string): string | null {
+  const match = html.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
+  return match ? match[1].trim() : null;
+}
+
+/**
+ * Извлекает H1 из HTML
+ */
+export function extractH1(html: string): string | null {
+  const match = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
+  return match ? match[1].trim() : null;
+}
+
+/**
+ * Форматирует Title под лимит символов
+ * Обрезает с конца, сохраняя смысл
+ */
+export function formatTitleForLimit(title: string, maxLength: number = SEO_LIMITS.title.optimalMax): string {
+  if (title.length <= maxLength) return title;
+  
+  // Обрезаем до последнего пробела перед лимитом
+  const truncated = title.substring(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  
+  if (lastSpace > maxLength * 0.7) {
+    return truncated.substring(0, lastSpace);
+  }
+  
+  return truncated;
+}
+
+/**
+ * Форматирует Description под лимит символов
+ */
+export function formatDescriptionForLimit(description: string, maxLength: number = SEO_LIMITS.description.optimalMax): string {
+  if (description.length <= maxLength) return description;
+  
+  // Обрезаем до последнего пробела перед лимитом
+  const truncated = description.substring(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  
+  if (lastSpace > maxLength * 0.7) {
+    return truncated.substring(0, lastSpace);
+  }
+  
+  return truncated;
+}

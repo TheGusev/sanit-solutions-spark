@@ -17,10 +17,18 @@ import InternalLinks from '@/components/InternalLinks';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Phone, Clock, Shield, CheckCircle, MapPin, Star } from 'lucide-react';
+import { Phone, Clock, Shield, CheckCircle, MapPin, Star, AlertTriangle, Award } from 'lucide-react';
 import { getPestBySlug } from '@/data/pests';
 import { neighborhoods } from '@/data/neighborhoods';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
+import { 
+  generateIntro, 
+  generateLocalFeatures, 
+  generateWhyFolkMethodsDontWork,
+  generateGuaranteeText,
+  generateFAQ,
+  generateFAQSchema
+} from '@/lib/contentGenerator';
 
 export default function NchPage() {
   const { service, pest: pestSlug, neighborhood: neighborhoodSlug } = useParams<{
@@ -46,10 +54,15 @@ export default function NchPage() {
     return <Navigate to="/404" replace />;
   }
   
-  // SEO
+  // SEO - оптимизированные лимиты (Title: 40-60, Description: 140-160)
   const serviceName = service === 'dezinsekciya' ? 'Дезинсекция' : 'Дератизация';
-  const pageTitle = `Уничтожение ${pest.genitive} в ${neighborhood.name} — от ${pest.priceFrom}₽ | ${SEO_CONFIG.companyName}`;
-  const pageDescription = `${serviceName} ${pest.genitive} в районе ${neighborhood.name} от ${pest.priceFrom}₽ ⚡ Выезд за 30-60 мин ✅ Гарантия 1 год ✅ ${pest.shortDescription} ☎️ ${SEO_CONFIG.phone}`;
+  
+  // Title: ~55 символов
+  const pageTitle = `${pest.name} в ${neighborhood.name} — от ${pest.priceFrom}₽ | Выезд 30 мин`;
+  
+  // Description: ~155 символов  
+  const pageDescription = `Уничтожение ${pest.genitive} в ${neighborhood.name} от ${pest.priceFrom}₽. Выезд за 30 мин, гарантия 1 год. Безопасные препараты. ☎️ ${SEO_CONFIG.phone}`;
+  
   const canonicalPath = `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`;
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);
   
@@ -60,6 +73,26 @@ export default function NchPage() {
     { label: pest.name, href: `/uslugi/${service}/${pestSlug}` },
     { label: neighborhood.name }
   ];
+  
+  // Контекст для генерации контента
+  const districtName = neighborhood.districtId.toUpperCase();
+  const responseTime = neighborhood.responseTime || (districtName.includes('ЦАО') ? '30-45 мин' : '40-60 мин');
+  
+  const contentContext = {
+    service: service as 'dezinsekciya' | 'deratizaciya',
+    pest,
+    neighborhoodName: neighborhood.name,
+    districtId: neighborhood.districtId,
+    responseTime,
+    priceFrom: pest.priceFrom,
+  };
+  
+  // Генерация контента
+  const introText = generateIntro(contentContext);
+  const localFeatures = generateLocalFeatures(contentContext);
+  const whyFolkMethodsDontWork = generateWhyFolkMethodsDontWork(contentContext);
+  const guaranteeText = generateGuaranteeText(contentContext);
+  const faqItems = generateFAQ(contentContext);
   
   // Schema.org
   const schemaMarkup = {
@@ -103,17 +136,7 @@ export default function NchPage() {
     ]
   };
   
-  // Получаем название округа
-  const districtName = neighborhood.districtId.toUpperCase();
-  
-  // Генерируем уникальный контент на основе данных
-  const responseTime = neighborhood.responseTime || (districtName.includes('ЦАО') ? '30-45 мин' : '40-60 мин');
-  const localFeatures = [
-    `Знаем особенности застройки района ${neighborhood.name}`,
-    `Работаем с ${districtName}`,
-    neighborhood.landmarks?.[0] ? `Быстрый выезд к ${neighborhood.landmarks[0]}` : 'Выезд в любую точку района',
-    'Местные мастера, знающие район'
-  ];
+  const faqSchema = generateFAQSchema(faqItems);
   
   return (
     <>
@@ -131,6 +154,7 @@ export default function NchPage() {
         <meta property="og:type" content={seoMeta.ogType} />
         <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
       
       <Header />
@@ -157,8 +181,7 @@ export default function NchPage() {
               </h1>
               
               <p className="text-lg text-muted-foreground mb-6">
-                Профессиональная {serviceName.toLowerCase()} {pest.genitive} в {neighborhood.name}. 
-                {pest.shortDescription}. Выезжаем в течение {responseTime}, работаем 24/7.
+                {introText}
               </p>
               
               <div className="flex flex-wrap gap-4 mb-6">
@@ -220,6 +243,10 @@ export default function NchPage() {
                       <CheckCircle className="w-4 h-4 text-green-500" />
                       Гарантия до 1 года
                     </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      Безопасные препараты IV класса
+                    </li>
                   </ul>
                 </CardContent>
               </Card>
@@ -277,19 +304,55 @@ export default function NchPage() {
           </div>
         </AnimatedSection>
         
-        {/* Signs */}
+        {/* Why folk methods don't work */}
         <AnimatedSection className="py-10 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-amber-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold mb-3">
+                    Почему народные методы не помогают от {pest.genitive}
+                  </h2>
+                  <div className="text-muted-foreground whitespace-pre-line">
+                    {whyFolkMethodsDontWork}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
+        
+        {/* Signs */}
+        <AnimatedSection className="py-10">
           <div className="container mx-auto px-4">
             <h2 className="text-xl font-bold mb-6 text-center">
               Признаки появления {pest.genitive}
             </h2>
             <div className="grid sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
               {pest.signs.slice(0, 4).map((sign, index) => (
-                <div key={index} className="flex items-start gap-2 p-3 bg-background rounded-lg">
+                <div key={index} className="flex items-start gap-2 p-3 bg-muted/50 rounded-lg">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                   <span className="text-sm">{sign}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        </AnimatedSection>
+        
+        {/* Guarantee */}
+        <AnimatedSection className="py-10 bg-green-50 dark:bg-green-950/20">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
+                <Award className="w-8 h-8 text-green-600" />
+              </div>
+              <h2 className="text-xl font-bold mb-4">Наша гарантия</h2>
+              <p className="text-muted-foreground">
+                {guaranteeText}
+              </p>
             </div>
           </div>
         </AnimatedSection>
@@ -300,30 +363,12 @@ export default function NchPage() {
             <h2 className="text-xl font-bold mb-6 text-center">Вопросы и ответы</h2>
             <div className="max-w-2xl mx-auto">
               <Accordion type="single" collapsible>
-                <AccordionItem value="q1">
-                  <AccordionTrigger>
-                    Сколько стоит вызов в {neighborhood.name}?
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    Выезд в район {neighborhood.name} бесплатный. Стоимость обработки от {pest.priceFrom}₽ в зависимости от площади.
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="q2">
-                  <AccordionTrigger>
-                    Как быстро приедете в {neighborhood.name}?
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    Мастер приезжает в район {neighborhood.name} за {responseTime}. Работаем круглосуточно, без выходных.
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="q3">
-                  <AccordionTrigger>
-                    Нужно ли покидать квартиру во время обработки?
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    Да, на время обработки и 2-4 часа после неё людям и животным нужно покинуть помещение. После проветривания квартира полностью безопасна.
-                  </AccordionContent>
-                </AccordionItem>
+                {faqItems.map((item, index) => (
+                  <AccordionItem key={index} value={`q${index}`}>
+                    <AccordionTrigger>{item.question}</AccordionTrigger>
+                    <AccordionContent>{item.answer}</AccordionContent>
+                  </AccordionItem>
+                ))}
               </Accordion>
             </div>
           </div>
@@ -336,7 +381,7 @@ export default function NchPage() {
               Закажите обработку в {neighborhood.name}
             </h2>
             <p className="opacity-90 mb-4">
-              Выезд за {responseTime}. Гарантия 1 год.
+              Выезд за {responseTime}. Гарантия 1 год. Безопасно для людей и животных.
             </p>
             <Button size="lg" variant="secondary" asChild className="whitespace-normal">
               <a href={`tel:${SEO_CONFIG.phoneClean}`}>
