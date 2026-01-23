@@ -9,6 +9,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CalculatorModal from '@/components/CalculatorModal';
+import InternalLinks from '@/components/InternalLinks';
 import { getNeighborhoodBySlug, getNeighborhoodsByDistrict, neighborhoods, Neighborhood } from '@/data/neighborhoods';
 import { getDistrictById, districtPages } from '@/data/districtPages';
 import { SEO_CONFIG } from '@/lib/seo';
@@ -413,6 +414,14 @@ const NeighborhoodPage = () => {
             </div>
           </section>
         )}
+
+        {/* Internal Links for SEO */}
+        <InternalLinks
+          currentNeighborhood={neighborhood.slug}
+          currentService="dezinsekciya"
+          title="Услуги в других районах Москвы"
+          maxLinks={12}
+        />
       </main>
 
       <Footer />

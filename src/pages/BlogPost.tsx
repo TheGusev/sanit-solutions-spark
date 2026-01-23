@@ -8,12 +8,12 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import TableOfContents, { generateContentWithIds, extractHeadings } from "@/components/TableOfContents";
 import RelatedArticles from "@/components/RelatedArticles";
+import InternalLinks from "@/components/InternalLinks";
 import { getArticleBySlug } from "@/data/blog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-
-const BASE_URL = "https://goruslugimsk.ru";
+import { SEO_CONFIG } from "@/lib/seo";
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -54,16 +54,20 @@ const BlogPost = () => {
         <title>{`${post.title} | Санитарные Решения`}</title>
         <meta name="description" content={post.excerpt} />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href={`${BASE_URL}/blog/${post.slug}`} />
-        <link rel="alternate" hrefLang="ru" href={`${BASE_URL}/blog/${post.slug}`} />
-        <link rel="alternate" hrefLang="x-default" href={`${BASE_URL}/blog/${post.slug}`} />
+        <link rel="canonical" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}`} />
+        <link rel="alternate" hrefLang="ru" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}`} />
+        <link rel="alternate" hrefLang="x-default" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}`} />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={`${BASE_URL}/blog/${post.slug}`} />
-        <meta property="og:title" content={`${post.title} | Санитарные Решения`} />
+        <meta property="og:url" content={`${SEO_CONFIG.baseUrl}/blog/${post.slug}`} />
+        <meta property="og:title" content={`${post.title} | ${SEO_CONFIG.companyName}`} />
         <meta property="og:description" content={post.excerpt} />
-        <meta property="og:image" content="https://goruslugimsk.ru/og-image.jpg" />
+        <meta property="og:image" content={SEO_CONFIG.ogImage} />
+        <meta property="og:locale" content={SEO_CONFIG.locale} />
+        <meta property="og:site_name" content={SEO_CONFIG.companyName} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://goruslugimsk.ru/og-image.jpg" />
+        <meta name="twitter:title" content={`${post.title} | ${SEO_CONFIG.companyName}`} />
+        <meta name="twitter:description" content={post.excerpt} />
+        <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
       </Helmet>
 
       {/* Article Schema.org with enhanced metadata */}
@@ -78,7 +82,7 @@ const BlogPost = () => {
           keywords: post.tags,
           wordCount: post.wordCount || post.content?.split(/\s+/).length
         }}
-        baseUrl={BASE_URL}
+        baseUrl={SEO_CONFIG.baseUrl}
       />
       
       {/* FAQPage Schema if article has FAQ */}
@@ -215,6 +219,19 @@ const BlogPost = () => {
           </div>
         </div>
       </section>
+
+      {/* Internal Links for SEO */}
+      <InternalLinks
+        currentService={
+          post.tags?.some(t => t.toLowerCase().includes('тараканы') || t.toLowerCase().includes('клопы') || t.toLowerCase().includes('блохи'))
+            ? 'dezinsekciya'
+            : post.tags?.some(t => t.toLowerCase().includes('крыс') || t.toLowerCase().includes('мыш'))
+              ? 'deratizaciya'
+              : undefined
+        }
+        title="Полезные ссылки"
+        maxLinks={8}
+      />
 
       {/* CTA Section */}
       <section className="py-16 px-4 bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-primary-foreground">
