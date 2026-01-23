@@ -81,7 +81,7 @@ const Blog = () => {
       {/* Category Filter */}
       <section className="py-6 md:py-8 px-4 border-b">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-4 gap-2 md:flex md:flex-wrap md:gap-3 md:justify-center">
+          <div className="grid grid-cols-2 gap-2 md:flex md:flex-wrap md:gap-3 md:justify-center">
             {categories.map((category) => (
               <Button
                 key={category}
