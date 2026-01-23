@@ -120,6 +120,15 @@ const neighborhoodSlugs = [
   'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5'
 ];
 
+// Типы объектов (синхронизировано с src/data/objects.ts)
+const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv'];
+
+// Услуги для объектов (4 основных)
+const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'];
+
+// Топ-100 районов для Услуга + Объект + Район
+const top100Neighborhoods = neighborhoodSlugs.slice(0, 100);
+
 // Статьи блога (50 статей)
 const blogSlugs = [
   // Оригинальные 8 статей
@@ -214,6 +223,45 @@ function getAllRoutes(): SSGRoute[] {
       priority: '0.85'
     });
   });
+  
+  // ======== НОВЫЕ ТИПЫ СТРАНИЦ ========
+  
+  // Услуга + Объект (24 страницы: 4 услуги × 6 объектов)
+  servicesForObjects.forEach(serviceSlug => {
+    objectSlugs.forEach(objectSlug => {
+      routes.push({
+        path: `/uslugi/${serviceSlug}/${objectSlug}`,
+        outputPath: `uslugi/${serviceSlug}/${objectSlug}/index.html`,
+        priority: '0.8'
+      });
+    });
+  });
+  
+  // Услуга + Район (500 страниц: 4 услуги × 125 районов)
+  servicesForObjects.forEach(serviceSlug => {
+    neighborhoodSlugs.forEach(districtSlug => {
+      routes.push({
+        path: `/uslugi/${serviceSlug}/${districtSlug}`,
+        outputPath: `uslugi/${serviceSlug}/${districtSlug}/index.html`,
+        priority: '0.75'
+      });
+    });
+  });
+  
+  // Услуга + Объект + Район (2,400 страниц: 4 услуги × 6 объектов × 100 районов)
+  servicesForObjects.forEach(serviceSlug => {
+    objectSlugs.forEach(objectSlug => {
+      top100Neighborhoods.forEach(districtSlug => {
+        routes.push({
+          path: `/uslugi/${serviceSlug}/${objectSlug}/${districtSlug}`,
+          outputPath: `uslugi/${serviceSlug}/${objectSlug}/${districtSlug}/index.html`,
+          priority: '0.7'
+        });
+      });
+    });
+  });
+  
+  // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
   
   // НЧ-страницы (услуга + вредитель + район) - NchPage (все 125 районов = 875 страниц)
   neighborhoodSlugs.forEach(neighborhoodSlug => {
