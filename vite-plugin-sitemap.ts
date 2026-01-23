@@ -297,12 +297,12 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // ========== SITEMAP-NCH.XML (НЧ-страницы: услуга + вредитель + район) ==========
+      // ========== SITEMAP-NCH.XML (НЧ-страницы: услуга + вредитель + район = 875 URL) ==========
       const nchUrls: SitemapUrl[] = [];
       
-      // Дезинсекция + вредитель + топ-район
+      // Дезинсекция + вредитель + все 125 районов
       dezinsekciyaPestSlugs.forEach(pestSlug => {
-        topNeighborhoods.forEach(neighborhoodSlug => {
+        neighborhoodSlugs.forEach(neighborhoodSlug => {
           nchUrls.push({
             loc: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}`,
             lastmod: currentDate,
@@ -312,9 +312,9 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // Дератизация + вредитель + топ-район
+      // Дератизация + вредитель + все 125 районов
       deratizaciyaPestSlugs.forEach(pestSlug => {
-        topNeighborhoods.forEach(neighborhoodSlug => {
+        neighborhoodSlugs.forEach(neighborhoodSlug => {
           nchUrls.push({
             loc: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}`,
             lastmod: currentDate,

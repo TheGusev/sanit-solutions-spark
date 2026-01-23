@@ -194,9 +194,9 @@ export function getAllSSGRoutes() {
     });
   });
   
-  // НЧ-страницы: Услуга + Вредитель + Район (приоритет 1 - топ районы)
+  // НЧ-страницы: Услуга + Вредитель + Район (все 125 районов = 875 страниц)
   dezinsekciyaPestSlugs.forEach(pestSlug => {
-    topNeighborhoods.forEach(neighborhoodSlug => {
+    neighborhoodSlugs.forEach(neighborhoodSlug => {
       routes.push({
         path: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}`,
         outputPath: `uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}/index.html`,
@@ -207,7 +207,7 @@ export function getAllSSGRoutes() {
   });
   
   deratizaciyaPestSlugs.forEach(pestSlug => {
-    topNeighborhoods.forEach(neighborhoodSlug => {
+    neighborhoodSlugs.forEach(neighborhoodSlug => {
       routes.push({
         path: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}`,
         outputPath: `uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/index.html`,
