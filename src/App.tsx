@@ -20,6 +20,9 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
 const ServiceSubpage = lazy(() => import("./pages/ServiceSubpage"));
 const ServicePestPage = lazy(() => import("./pages/ServicePestPage"));
+const ServiceObjectPage = lazy(() => import("./pages/ServiceObjectPage"));
+const ServiceDistrictPage = lazy(() => import("./pages/ServiceDistrictPage"));
+const ServiceObjectDistrictPage = lazy(() => import("./pages/ServiceObjectDistrictPage"));
 const NchPage = lazy(() => import("./pages/NchPage"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const DistrictsOverview = lazy(() => import("./pages/DistrictsOverview"));
@@ -71,8 +74,12 @@ const App = () => (
                   <Route path="/uslugi/dezinfekciya-zao" element={<DistrictPage />} />
                   <Route path="/uslugi/dezinfekciya-szao" element={<DistrictPage />} />
                   <Route path="/uslugi/:parentSlug/:subSlug" element={<ServiceSubpage />} />
+                  {/* Порядок важен! Более специфичные маршруты первыми */}
                   <Route path="/uslugi/:service/:pest/:neighborhood" element={<NchPage />} />
+                  <Route path="/uslugi/:service/:object/:district" element={<ServiceObjectDistrictPage />} />
                   <Route path="/uslugi/:service/:pest" element={<ServicePestPage />} />
+                  <Route path="/uslugi/:service/:object" element={<ServiceObjectPage />} />
+                  <Route path="/uslugi/:service/:district" element={<ServiceDistrictPage />} />
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
                   <Route path="/contacts" element={<Contacts />} />
                   <Route path="/rajony" element={<NeighborhoodsOverview />} />

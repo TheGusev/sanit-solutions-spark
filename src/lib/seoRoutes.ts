@@ -150,11 +150,22 @@ export const topNeighborhoods = [
   'maryino', 'lyublino', 'chertanovo-severnoe', 'konkovo', 'strogino'
 ];
 
+// Типы объектов (синхронизировано с src/data/objects.ts)
+export const objectSlugs = [
+  'kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv'
+];
+
+// Услуги для объектов (4 основных)
+export const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'];
+
+// Топ-100 районов для Услуга + Объект + Район (ограничиваем для оптимизации)
+export const top100Neighborhoods = neighborhoodSlugs.slice(0, 100);
+
 // Генерация всех маршрутов для SSG
 export function getAllSSGRoutes() {
   const routes = [...staticRoutes];
   
-  // Услуги
+  // Услуги (6 страниц)
   servicesSlugs.forEach(slug => {
     routes.push({
       path: `/uslugi/${slug}`,
@@ -164,7 +175,7 @@ export function getAllSSGRoutes() {
     });
   });
   
-  // Подстраницы услуг
+  // Подстраницы услуг (6 страниц)
   serviceSubpageRoutes.forEach(({ parent, sub }) => {
     routes.push({
       path: `/uslugi/${parent}/${sub}`,
@@ -174,7 +185,7 @@ export function getAllSSGRoutes() {
     });
   });
   
-  // Услуга + Вредитель (Дезинсекция)
+  // Услуга + Вредитель (Дезинсекция) - 5 страниц
   dezinsekciyaPestSlugs.forEach(pestSlug => {
     routes.push({
       path: `/uslugi/dezinsekciya/${pestSlug}`,
@@ -184,7 +195,7 @@ export function getAllSSGRoutes() {
     });
   });
   
-  // Услуга + Вредитель (Дератизация)
+  // Услуга + Вредитель (Дератизация) - 2 страницы
   deratizaciyaPestSlugs.forEach(pestSlug => {
     routes.push({
       path: `/uslugi/deratizaciya/${pestSlug}`,
@@ -194,7 +205,49 @@ export function getAllSSGRoutes() {
     });
   });
   
-  // НЧ-страницы: Услуга + Вредитель + Район (все 125 районов = 875 страниц)
+  // ======== НОВЫЕ ТИПЫ СТРАНИЦ ========
+  
+  // Услуга + Объект (24 страницы: 4 услуги × 6 объектов)
+  servicesForObjects.forEach(serviceSlug => {
+    objectSlugs.forEach(objectSlug => {
+      routes.push({
+        path: `/uslugi/${serviceSlug}/${objectSlug}`,
+        outputPath: `uslugi/${serviceSlug}/${objectSlug}/index.html`,
+        priority: '0.8',
+        changefreq: 'monthly'
+      });
+    });
+  });
+  
+  // Услуга + Район (500 страниц: 4 услуги × 125 районов)
+  servicesForObjects.forEach(serviceSlug => {
+    neighborhoodSlugs.forEach(districtSlug => {
+      routes.push({
+        path: `/uslugi/${serviceSlug}/${districtSlug}`,
+        outputPath: `uslugi/${serviceSlug}/${districtSlug}/index.html`,
+        priority: '0.75',
+        changefreq: 'monthly'
+      });
+    });
+  });
+  
+  // Услуга + Объект + Район (2,400 страниц: 4 услуги × 6 объектов × 100 районов)
+  servicesForObjects.forEach(serviceSlug => {
+    objectSlugs.forEach(objectSlug => {
+      top100Neighborhoods.forEach(districtSlug => {
+        routes.push({
+          path: `/uslugi/${serviceSlug}/${objectSlug}/${districtSlug}`,
+          outputPath: `uslugi/${serviceSlug}/${objectSlug}/${districtSlug}/index.html`,
+          priority: '0.7',
+          changefreq: 'monthly'
+        });
+      });
+    });
+  });
+  
+  // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
+  
+  // НЧ-страницы: Услуга + Вредитель + Район (875 страниц)
   dezinsekciyaPestSlugs.forEach(pestSlug => {
     neighborhoodSlugs.forEach(neighborhoodSlug => {
       routes.push({
