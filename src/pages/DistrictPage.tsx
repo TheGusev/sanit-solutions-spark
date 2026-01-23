@@ -9,8 +9,10 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CalculatorModal from '@/components/CalculatorModal';
+import InternalLinks from '@/components/InternalLinks';
 import { getDistrictById, districtPages } from '@/data/districtPages';
 import { getNeighborhoodsByDistrict } from '@/data/neighborhoods';
+import { SEO_CONFIG } from '@/lib/seo';
 import { useState } from 'react';
 
 // New district components
@@ -41,9 +43,37 @@ const DistrictPage = () => {
   ];
 
   const otherDistricts = districtPages.filter(d => d.id !== district.id).slice(0, 4);
+  const canonicalUrl = `${SEO_CONFIG.baseUrl}/uslugi/${district.slug}`;
 
-  // Schema.org with geo data
-  const schemaData = {
+  // Schema.org LocalBusiness (primary for GEO pages)
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": `${SEO_CONFIG.companyName} — Дезинфекция в ${district.name}`,
+    "description": district.metaDescription,
+    "telephone": SEO_CONFIG.phone,
+    "url": canonicalUrl,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Москва",
+      "addressRegion": district.fullName,
+      "addressCountry": "RU"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": district.center[0],
+      "longitude": district.center[1]
+    },
+    "areaServed": {
+      "@type": "AdministrativeArea",
+      "name": district.fullName + ", Москва"
+    },
+    "priceRange": `от ${1000 + district.surcharge}₽`,
+    "openingHours": "Mo-Su 00:00-23:59"
+  };
+
+  // Schema.org Service
+  const serviceSchema = {
     "@context": "https://schema.org",
     "@type": "Service",
     "serviceType": "Дезинфекция",
@@ -51,24 +81,17 @@ const DistrictPage = () => {
     "description": district.metaDescription,
     "provider": {
       "@type": "LocalBusiness",
-      "name": "Санитарные Решения",
-      "telephone": "+7-906-998-98-88",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Москва",
-        "addressRegion": district.fullName
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": district.center[0],
-        "longitude": district.center[1]
-      }
+      "name": SEO_CONFIG.companyName
     },
     "areaServed": {
       "@type": "AdministrativeArea",
       "name": district.fullName + ", Москва"
     },
-    "priceRange": `от ${1000 + district.surcharge}₽`
+    "offers": {
+      "@type": "Offer",
+      "price": 1000 + district.surcharge,
+      "priceCurrency": "RUB"
+    }
   };
 
   const faqSchema = {
@@ -84,6 +107,17 @@ const DistrictPage = () => {
     }))
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Главная", "item": SEO_CONFIG.baseUrl },
+      { "@type": "ListItem", "position": 2, "name": "Услуги", "item": `${SEO_CONFIG.baseUrl}/#services` },
+      { "@type": "ListItem", "position": 3, "name": "По округам Москвы", "item": `${SEO_CONFIG.baseUrl}/uslugi/po-okrugam-moskvy` },
+      { "@type": "ListItem", "position": 4, "name": `Дезинфекция в ${district.name}`, "item": canonicalUrl }
+    ]
+  };
+
   // Breadcrumb items for this district (Главная is auto-prepended by Breadcrumbs component)
   const breadcrumbItems = [
     { label: "Услуги", href: "/#services" },
@@ -96,19 +130,31 @@ const DistrictPage = () => {
       <Helmet>
         <title>{district.metaTitle}</title>
         <meta name="description" content={district.metaDescription} />
-        <link rel="canonical" href={`https://goruslugimsk.ru/uslugi/${district.slug}`} />
-        <meta name="robots" content="index, follow" />
-        <meta property="og:title" content={`Дезинфекция в ${district.name} Москвы — Санитарные Решения`} />
+        <link rel="canonical" href={canonicalUrl} />
+        <link rel="alternate" hrefLang="ru" href={canonicalUrl} />
+        <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`} />
         <meta property="og:description" content={district.metaDescription} />
-        <meta property="og:url" content={`https://goruslugimsk.ru/uslugi/${district.slug}`} />
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://goruslugimsk.ru/og-image.jpg" />
-        <meta property="og:locale" content="ru_RU" />
-        <meta property="og:site_name" content="Санитарные Решения" />
+        <meta property="og:image" content={SEO_CONFIG.ogImage} />
+        <meta property="og:locale" content={SEO_CONFIG.locale} />
+        <meta property="og:site_name" content={SEO_CONFIG.companyName} />
+        
+        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://goruslugimsk.ru/og-image.jpg" />
-        <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
+        <meta name="twitter:title" content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`} />
+        <meta name="twitter:description" content={district.metaDescription} />
+        <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
+        
+        {/* Schema.org */}
+        <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
       </Helmet>
 
       <Header />
@@ -305,6 +351,13 @@ const DistrictPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Internal Links for SEO */}
+        <InternalLinks
+          currentService="dezinfekciya"
+          title="Другие услуги в Москве"
+          maxLinks={12}
+        />
       </main>
 
       <Footer />
