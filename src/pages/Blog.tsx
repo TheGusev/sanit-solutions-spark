@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
-import { blogPosts, categories } from "@/data/blogPosts";
+import { allBlogArticles, blogCategories } from "@/data/blog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
@@ -15,11 +15,11 @@ const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
 
   const filteredPosts = selectedCategory === "Все" 
-    ? blogPosts 
-    : blogPosts.filter(post => post.category === selectedCategory);
+    ? allBlogArticles 
+    : allBlogArticles.filter(post => post.category === selectedCategory);
 
   // ItemList data for Schema.org
-  const itemListData = blogPosts.map((post, index) => ({
+  const itemListData = allBlogArticles.slice(0, 50).map((post, index) => ({
     name: post.title,
     url: `${BASE_URL}/blog/${post.slug}`,
     position: index + 1,
@@ -30,7 +30,7 @@ const Blog = () => {
   return (
     <div className="min-h-screen">
       <Helmet>
-        <title>Блог о дезинфекции | Санитарные Решения</title>
+        <title>{`Блог о дезинфекции — ${allBlogArticles.length} статей | Санитарные Решения`}</title>
         <meta name="description" content="Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды. Экспертные советы от специалистов ООО Санитарные Решения." />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
         <link rel="canonical" href="https://goruslugimsk.ru/blog" />
@@ -73,7 +73,8 @@ const Blog = () => {
             📚 Полезные статьи
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Экспертные советы о дезинфекции, борьбе с вредителями и поддержании здоровой среды в вашем доме или офисе
+            Экспертные советы о дезинфекции, борьбе с вредителями и поддержании здоровой среды в вашем доме или офисе. 
+            <span className="font-medium text-foreground"> {allBlogArticles.length} статей</span> от профессионалов.
           </p>
         </div>
       </section>
@@ -82,7 +83,7 @@ const Blog = () => {
       <section className="py-6 md:py-8 px-4 border-b">
         <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-2 gap-2 md:flex md:flex-wrap md:gap-3 md:justify-center">
-            {categories.map((category) => (
+            {blogCategories.map((category) => (
               <Button
                 key={category}
                 variant={selectedCategory === category ? "default" : "outline"}
@@ -90,6 +91,11 @@ const Blog = () => {
                 className="rounded-full text-xs md:text-sm px-2 md:px-4 py-1.5 md:py-2 h-auto whitespace-normal"
               >
                 {category}
+                {category !== "Все" && (
+                  <span className="ml-1 opacity-70">
+                    ({allBlogArticles.filter(p => p.category === category).length})
+                  </span>
+                )}
               </Button>
             ))}
           </div>

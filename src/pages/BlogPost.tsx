@@ -8,7 +8,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import TableOfContents, { generateContentWithIds, extractHeadings } from "@/components/TableOfContents";
 import RelatedArticles from "@/components/RelatedArticles";
-import { blogPosts } from "@/data/blogPosts";
+import { getArticleBySlug } from "@/data/blog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -19,7 +19,7 @@ const BlogPost = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = slug ? getArticleBySlug(slug) : undefined;
   
   useEffect(() => {
     if (post) {
@@ -76,16 +76,16 @@ const BlogPost = () => {
           slug: post.slug,
           category: post.category,
           keywords: post.tags,
-          wordCount: post.content?.split(/\s+/).length
+          wordCount: post.wordCount || post.content?.split(/\s+/).length
         }}
         baseUrl={BASE_URL}
       />
       
       {/* FAQPage Schema if article has FAQ */}
-      {(post as any).faq && (post as any).faq.length > 0 && (
+      {post.faq && post.faq.length > 0 && (
         <StructuredData 
           type="FAQPage"
-          questions={(post as any).faq}
+          questions={post.faq}
         />
       )}
       
