@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Phone, Clock, Shield, CheckCircle, MapPin, Star, Building, Award, Ruler } from 'lucide-react';
+import InternalLinks from '@/components/InternalLinks';
 import { getObjectBySlug } from '@/data/objects';
 import { neighborhoods } from '@/data/neighborhoods';
 import { servicePages } from '@/data/services';
@@ -88,7 +89,15 @@ export default function ServiceObjectDistrictPage() {
       <Helmet>
         <title>{seoMeta.title}</title>
         <meta name="description" content={seoMeta.description} />
+        <meta name="robots" content={seoMeta.robots} />
         <link rel="canonical" href={seoMeta.canonical} />
+        <link rel="alternate" hrefLang="ru" href={seoMeta.hreflangRu} />
+        <link rel="alternate" hrefLang="x-default" href={seoMeta.hreflangDefault} />
+        <meta property="og:title" content={seoMeta.ogTitle} />
+        <meta property="og:description" content={seoMeta.ogDescription} />
+        <meta property="og:url" content={seoMeta.canonical} />
+        <meta property="og:image" content={seoMeta.ogImage} />
+        <meta property="og:type" content={seoMeta.ogType} />
         <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
@@ -192,6 +201,13 @@ export default function ServiceObjectDistrictPage() {
             <Button size="lg" variant="secondary" asChild><a href={`tel:${SEO_CONFIG.phoneClean}`}><Phone className="w-5 h-5 mr-2" />{SEO_CONFIG.phone}</a></Button>
           </div>
         </AnimatedSection>
+        
+        <InternalLinks 
+          currentService={serviceSlug} 
+          currentNeighborhood={districtSlug}
+          variant="grid" 
+          title="Смотрите также" 
+        />
       </main>
       
       <Footer />
