@@ -19,8 +19,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Phone, Clock, Shield, CheckCircle, MapPin, Car } from 'lucide-react';
 import { getCityBySlug, moscowRegionServices, type MoscowRegionService } from '@/data/moscowRegion';
 import { servicePages } from '@/data/services';
-import { pests, getPestsByService } from '@/data/pests';
+import { getPestsByService } from '@/data/pests';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
+import { generateFAQSchema } from '@/lib/contentGenerator';
 
 export default function MoscowRegionServicePage() {
   const { city: citySlug, service: serviceSlug } = useParams<{ city: string; service: string }>();
@@ -44,9 +45,9 @@ export default function MoscowRegionServicePage() {
   // Цена с наценкой за выезд
   const priceWithSurcharge = serviceData.priceFrom + city.surcharge;
   
-  // SEO
+  // SEO - оптимизированные лимиты
   const pageTitle = `${serviceData.title} ${city.prepositional} от ${priceWithSurcharge}₽ — ${SEO_CONFIG.companyName}`;
-  const pageDescription = `${serviceData.title} ${city.prepositional} от ${priceWithSurcharge}₽ ⚡ Выезд ${city.responseTime} ✅ Гарантия 1 год ✅ ${serviceData.heroSubtitle} ☎️ ${SEO_CONFIG.phone}`;
+  const pageDescription = `${serviceData.title} ${city.prepositional} от ${priceWithSurcharge}₽. Выезд ${city.responseTime}. Гарантия 1 год. ☎️ ${SEO_CONFIG.phone}`;
   const canonicalPath = `/moscow-oblast/${citySlug}/${serviceSlug}`;
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);
   
@@ -88,6 +89,20 @@ export default function MoscowRegionServicePage() {
     }
   };
   
+  // FAQ items для Schema
+  const faqItems = [
+    ...serviceData.faq.slice(0, 4).map(item => ({
+      question: item.question,
+      answer: item.answer
+    })),
+    {
+      question: `Есть ли наценка за выезд ${city.prepositional}?`,
+      answer: `Да, наценка за выезд ${city.prepositional} составляет ${city.surcharge}₽. Это связано с расстоянием от МКАД (${city.distance} км) и временем в пути (${city.responseTime}).`
+    }
+  ];
+  
+  const faqSchema = generateFAQSchema(faqItems);
+  
   // Вредители для этой услуги
   const servicePests = (serviceSlug === 'dezinsekciya' || serviceSlug === 'deratizaciya')
     ? getPestsByService(serviceSlug)
@@ -108,6 +123,7 @@ export default function MoscowRegionServicePage() {
         <meta property="og:image" content={seoMeta.ogImage} />
         <meta property="og:type" content={seoMeta.ogType} />
         <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
       
       <Header />
@@ -123,7 +139,7 @@ export default function MoscowRegionServicePage() {
                 <span className="px-3 py-1 bg-primary/10 rounded-full text-sm font-medium">
                   {city.name}, МО
                 </span>
-                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-sm font-medium">
                   Выезд {city.responseTime}
                 </span>
               </div>
@@ -272,21 +288,12 @@ export default function MoscowRegionServicePage() {
             <h2 className="text-2xl font-bold mb-6 text-center">Частые вопросы</h2>
             <div className="max-w-2xl mx-auto">
               <Accordion type="single" collapsible>
-                {serviceData.faq.slice(0, 4).map((item, index) => (
+                {faqItems.map((item, index) => (
                   <AccordionItem key={index} value={`q${index}`}>
                     <AccordionTrigger>{item.question}</AccordionTrigger>
                     <AccordionContent>{item.answer}</AccordionContent>
                   </AccordionItem>
                 ))}
-                <AccordionItem value="local">
-                  <AccordionTrigger>
-                    Есть ли наценка за выезд {city.prepositional}?
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    Да, наценка за выезд {city.prepositional} составляет {city.surcharge}₽. 
-                    Это связано с расстоянием от МКАД ({city.distance} км) и временем в пути ({city.responseTime}).
-                  </AccordionContent>
-                </AccordionItem>
               </Accordion>
             </div>
           </div>
