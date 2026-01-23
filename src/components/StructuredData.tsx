@@ -17,6 +17,11 @@ export interface BlogPostData {
   date: string;
   slug: string;
   author?: string;
+  dateModified?: string;
+  wordCount?: number;
+  category?: string;
+  keywords?: string[];
+  image?: string;
 }
 
 export interface ListItemData {
@@ -121,16 +126,29 @@ const generateArticle = (post: BlogPostData, baseUrl: string) => ({
   "headline": post.title,
   "description": post.excerpt,
   "datePublished": post.date,
+  "dateModified": post.dateModified || post.date,
   "author": {
     "@type": "Organization",
-    "name": post.author || "ООО Санитарные Решения"
+    "name": post.author || "ООО Санитарные Решения",
+    "url": baseUrl
   },
   "publisher": {
     "@type": "Organization",
     "name": "ООО Санитарные Решения",
-    "url": baseUrl
+    "url": baseUrl,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${baseUrl}/og-image.jpg`
+    }
   },
-  "mainEntityOfPage": `${baseUrl}/blog/${post.slug}`
+  "image": post.image || `${baseUrl}/og-image.jpg`,
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": `${baseUrl}/blog/${post.slug}`
+  },
+  ...(post.wordCount && { "wordCount": post.wordCount }),
+  ...(post.category && { "articleSection": post.category }),
+  ...(post.keywords && { "keywords": post.keywords.join(", ") })
 });
 
 const StructuredData = (props: StructuredDataProps) => {

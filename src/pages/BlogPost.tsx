@@ -66,17 +66,28 @@ const BlogPost = () => {
         <meta name="twitter:image" content="https://goruslugimsk.ru/og-image.jpg" />
       </Helmet>
 
-      {/* BlogPosting Schema.org */}
+      {/* Article Schema.org with enhanced metadata */}
       <StructuredData 
-        type="BlogPosting"
+        type="Article"
         post={{
           title: post.title,
           excerpt: post.excerpt,
           date: post.date,
-          slug: post.slug
+          slug: post.slug,
+          category: post.category,
+          keywords: post.tags,
+          wordCount: post.content?.split(/\s+/).length
         }}
         baseUrl={BASE_URL}
       />
+      
+      {/* FAQPage Schema if article has FAQ */}
+      {(post as any).faq && (post as any).faq.length > 0 && (
+        <StructuredData 
+          type="FAQPage"
+          questions={(post as any).faq}
+        />
+      )}
       
       <Header />
 
