@@ -21,9 +21,13 @@ interface UserProperties {
 
 declare global {
   interface Window {
-    ym?: any;
-    hj?: any;
-    posthog?: any;
+    ym?: (...args: unknown[]) => void;
+    hj?: ((...args: unknown[]) => void) & { q?: unknown[][] };
+    posthog?: {
+      init: (apiKey: string, config: Record<string, unknown>) => void;
+      identify: (id: string, props: Record<string, unknown>) => void;
+    };
+    _hjSettings?: { hjid: number; hjsv: number };
     VK?: {
       Retargeting: {
         Init: (pixelId: string) => void;
@@ -31,7 +35,7 @@ declare global {
         Event: (eventName: string) => void;
       };
     };
-    _tmr?: Array<{id: string; type: string; goal?: string; [key: string]: any}>;
+    _tmr?: Array<{id: string; type: string; goal?: string; [key: string]: unknown}>;
   }
 }
 
@@ -181,31 +185,40 @@ export function trackPageView(url: string, params?: Record<string, any>): void {
 }
 
 
-// Lazy loading Hotjar
+// Lazy loading Hotjar (безопасный метод без innerHTML)
 function loadHotjar(siteId: string): void {
+  // Валидация siteId - только цифры
+  if (!siteId || !/^\d+$/.test(siteId)) {
+    console.warn('[Analytics] Invalid Hotjar site ID:', siteId);
+    return;
+  }
+
+  // Проверка на повторную загрузку
+  if (window.hj) {
+    console.debug('[Analytics] Hotjar already loaded');
+    return;
+  }
+
+  // Инициализация через window object (без innerHTML)
+  window.hj = function(...args: unknown[]) {
+    (window.hj!.q = window.hj!.q || []).push(args);
+  };
+  window._hjSettings = { hjid: parseInt(siteId, 10), hjsv: 6 };
+
+  // Загрузка внешнего скрипта
   const script = document.createElement('script');
+  script.src = `https://static.hotjar.com/c/hotjar-${siteId}.js?sv=6`;
   script.async = true;
   script.defer = true;
   
-  script.innerHTML = `
-    (function(h,o,t,j,a,r){
-      h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-      h._hjSettings={hjid:${siteId},hjsv:6};
-      a=o.getElementsByTagName('head')[0];
-      r=o.createElement('script');r.async=1;
-      r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-      a.appendChild(r);
-    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-  `;
-  
   script.onload = () => {
-    console.log('Hotjar initialized');
+    console.debug('[Analytics] Hotjar loaded successfully');
   };
   
   script.onerror = () => {
-    console.debug('Failed to load Hotjar');
+    console.debug('[Analytics] Failed to load Hotjar');
   };
-  
+
   document.head.appendChild(script);
 }
 

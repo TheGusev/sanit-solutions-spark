@@ -54,15 +54,14 @@ const Reviews = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
+        // Используем public_reviews view без lead_id для безопасности
         const { data, error } = await supabase
-          .from('reviews')
+          .from('public_reviews' as 'reviews') // Cast для TypeScript, view имеет ту же структуру
           .select('id, display_name, text, rating, object_type')
-          .eq('is_approved', true)
-          .order('created_at', { ascending: false })
           .limit(8);
 
         if (!error && data) {
-          setDbReviews(data);
+          setDbReviews(data as Review[]);
         }
       } catch (e) {
         console.error('Error fetching reviews:', e);
