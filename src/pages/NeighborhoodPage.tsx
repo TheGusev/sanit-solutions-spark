@@ -10,9 +10,11 @@ import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CalculatorModal from '@/components/CalculatorModal';
 import InternalLinks from '@/components/InternalLinks';
+import { ImageGallery } from '@/components/ImageGallery';
 import { getNeighborhoodBySlug, getNeighborhoodsByDistrict, neighborhoods, Neighborhood } from '@/data/neighborhoods';
 import { getDistrictById, districtPages } from '@/data/districtPages';
 import { getNeighborhoodContent } from '@/data/neighborhoodContent';
+import { getNeighborhoodImages, getCategoryLabel } from '@/data/neighborhoodImages';
 import { SEO_CONFIG } from '@/lib/seo';
 import { useState } from 'react';
 
@@ -35,6 +37,9 @@ const NeighborhoodPage = () => {
 
   // Расширенный контент для района
   const extendedContent = getNeighborhoodContent(neighborhood.slug);
+  
+  // Изображения для района
+  const neighborhoodImagesData = getNeighborhoodImages(neighborhood.slug);
 
   // Services with prices
   const services = [
@@ -163,57 +168,97 @@ const NeighborhoodPage = () => {
           <Breadcrumbs items={breadcrumbItems} />
         </div>
 
-        {/* Hero Section */}
-        <section className="relative py-16 md:py-24 bg-gradient-to-br from-primary/10 via-background to-secondary/10">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl">
-              {/* District badge */}
-              {parentDistrict && (
-                <Link 
-                  to={`/uslugi/${parentDistrict.slug}`}
-                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-4"
-                >
-                  <MapPin className="w-4 h-4" />
-                  <span>{parentDistrict.fullName}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
+        {/* Hero Section with Background Image */}
+        <section className="relative py-16 md:py-24 min-h-[60vh] flex items-center overflow-hidden">
+          {/* Background image */}
+          {neighborhoodImagesData && (
+            <>
+              <div 
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url('${neighborhoodImagesData.heroImage}')` }}
+                role="img"
+                aria-label={neighborhoodImagesData.altText}
+              />
+              {/* Gradient overlay for readability */}
+              <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/75 to-background/50 dark:from-background/95 dark:via-background/85 dark:to-background/60" />
+            </>
+          )}
+          {/* Fallback gradient if no image */}
+          {!neighborhoodImagesData && (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+          )}
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-8 items-center">
+              {/* Left column - text content */}
+              <div className="max-w-xl">
+                {/* District badge */}
+                {parentDistrict && (
+                  <Link 
+                    to={`/uslugi/${parentDistrict.slug}`}
+                    className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-4 bg-background/80 backdrop-blur-sm px-3 py-1.5 rounded-full"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    <span>{parentDistrict.fullName}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                )}
+                
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+                  {neighborhood.h1}
+                </h1>
+                
+                <p className="text-lg md:text-xl text-muted-foreground mb-6">
+                  {neighborhood.description.slice(0, 200)}...
+                </p>
+
+                {/* Trust badges */}
+                <div className="flex flex-wrap gap-3 mb-8">
+                  <Badge className="bg-success/20 text-success py-2 px-4 backdrop-blur-sm">
+                    <Clock className="w-4 h-4 mr-2" />
+                    Выезд {neighborhood.responseTime}
+                  </Badge>
+                  <Badge className="bg-primary/20 text-primary py-2 px-4 backdrop-blur-sm">
+                    <Shield className="w-4 h-4 mr-2" />
+                    Гарантия 1 год
+                  </Badge>
+                  <Badge className="bg-warning/20 text-warning py-2 px-4 backdrop-blur-sm">
+                    от {1000 + neighborhood.surcharge}₽
+                  </Badge>
+                </div>
+
+                {/* CTA buttons */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" asChild>
+                    <a href={`tel:${SEO_CONFIG.phoneClean}`}>
+                      <Phone className="w-5 h-5 mr-2" />
+                      {SEO_CONFIG.phone}
+                    </a>
+                  </Button>
+                  <Button size="lg" variant="outline" onClick={() => setIsCalculatorOpen(true)}>
+                    Рассчитать стоимость
+                  </Button>
+                </div>
+              </div>
+              
+              {/* Right column - hero image card (desktop only) */}
+              {neighborhoodImagesData && (
+                <div className="hidden lg:block">
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                    <img 
+                      src={neighborhoodImagesData.heroImage}
+                      alt={neighborhoodImagesData.altText}
+                      className="w-full h-80 object-cover"
+                      loading="eager"
+                    />
+                    {/* Badge overlay */}
+                    <div className="absolute bottom-4 left-4 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg">
+                      <p className="font-bold">Гарантия 12 месяцев!</p>
+                      <p className="text-sm opacity-90">На все виды услуг</p>
+                    </div>
+                  </div>
+                </div>
               )}
-              
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                {neighborhood.h1}
-              </h1>
-              
-              <p className="text-lg md:text-xl text-muted-foreground mb-6 max-w-2xl">
-                {neighborhood.description.slice(0, 200)}...
-              </p>
-
-              {/* Trust badges */}
-              <div className="flex flex-wrap gap-4 mb-8">
-                <Badge className="bg-success/10 text-success py-2 px-4">
-                  <Clock className="w-4 h-4 mr-2" />
-                  Выезд {neighborhood.responseTime}
-                </Badge>
-                <Badge className="bg-primary/10 text-primary py-2 px-4">
-                  <Shield className="w-4 h-4 mr-2" />
-                  Гарантия 1 год
-                </Badge>
-                <Badge className="bg-warning/10 text-warning py-2 px-4">
-                  от {1000 + neighborhood.surcharge}₽
-                </Badge>
-              </div>
-
-              {/* CTA buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" asChild>
-                  <a href={`tel:${SEO_CONFIG.phoneClean}`}>
-                    <Phone className="w-5 h-5 mr-2" />
-                    {SEO_CONFIG.phone}
-                  </a>
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => setIsCalculatorOpen(true)}>
-                  Рассчитать стоимость
-                </Button>
-              </div>
             </div>
           </div>
         </section>
@@ -258,6 +303,56 @@ const NeighborhoodPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Property Gallery Section */}
+        {neighborhoodImagesData && neighborhoodImagesData.galleryImages.length > 0 && (
+          <section className="py-12">
+            <div className="container mx-auto px-4">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                Обрабатываем все типы объектов в {neighborhood.name}
+              </h2>
+              <p className="text-muted-foreground mb-8 max-w-2xl">
+                От старого фонда до элитной недвижимости — гарантируем результат для любого типа помещений
+              </p>
+              
+              {/* Gallery Grid with Lightbox */}
+              <div className="grid md:grid-cols-3 gap-6">
+                {neighborhoodImagesData.galleryImages.map((image, index) => (
+                  <div 
+                    key={index} 
+                    className="group relative rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <div className="aspect-[4/3] overflow-hidden">
+                      <img 
+                        src={image.url}
+                        alt={`${image.title} - дезинфекция в ${neighborhood.name}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    </div>
+                    
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    
+                    {/* Content */}
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h3 className="text-white font-semibold text-lg mb-1">{image.title}</h3>
+                      <div className="flex items-center text-white/80 text-sm">
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        Обработка от 2500₽
+                      </div>
+                    </div>
+                    
+                    {/* Category badge */}
+                    <Badge className="absolute top-4 right-4" variant="secondary">
+                      {getCategoryLabel(image.category)}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Расширенный контент для района */}
         {extendedContent && (
