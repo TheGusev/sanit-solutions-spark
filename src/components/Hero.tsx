@@ -5,8 +5,14 @@ import { useParallax } from "@/hooks/useParallax";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { getCopy } from "@/lib/copyUtils";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { trackGoal } from "@/lib/analytics";
+
+// Фоновые изображения для ротации
+const HERO_BACKGROUNDS = [
+  '/images/work/home-kitchen.png',
+  '/images/work/living-room-treatment.png'
+];
 
 interface HeroProps {
   onCalculatorClick?: () => void;
@@ -102,6 +108,16 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
   const { context } = useTraffic();
   const parallaxOffset = useParallax(0.3);
   const hasLoggedView = useRef(false);
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
+  
+  // Смена фонового изображения каждые 5 секунд
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBgIndex((prev) => (prev + 1) % HERO_BACKGROUNDS.length);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
   
   // Получаем текст из централизованного словаря с A/B вариантом
   // ⚠️ Используется только для subtitle и CTA, НЕ для H1
@@ -149,17 +165,23 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
-      {/* Background image with overlay */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ 
-          backgroundImage: "url('/images/work/home-kitchen.png')",
-          transform: `translateY(${parallaxOffset}px)` 
-        }}
-        role="img"
-        aria-label="Профессиональная дезинфекция кухни — специалист проводит санитарную обработку"
-      />
-      <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-background/50 to-background/40 dark:from-background/80 dark:via-background/75 dark:to-background/70" />
+      {/* Background images with crossfade transition */}
+      {HERO_BACKGROUNDS.map((bg, index) => (
+        <div 
+          key={bg}
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ${
+            index === currentBgIndex ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ 
+            backgroundImage: `url('${bg}')`,
+            transform: `translateY(${parallaxOffset}px)` 
+          }}
+          role={index === 0 ? "img" : undefined}
+          aria-label={index === 0 ? "Профессиональная дезинфекция — специалист проводит санитарную обработку" : undefined}
+        />
+      ))}
+      {/* Lighter overlay for brighter background visibility */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background/35 via-background/25 to-background/15 dark:from-background/65 dark:via-background/55 dark:to-background/45" />
 
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">

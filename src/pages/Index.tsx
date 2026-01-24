@@ -24,7 +24,6 @@ const Footer = lazy(() => import("@/components/Footer"));
 // Modal and floating components
 const CalculatorModal = lazy(() => import("@/components/CalculatorModal"));
 const FloatingButtons = lazy(() => import("@/components/FloatingButtons"));
-const StickyCTA = lazy(() => import("@/components/StickyCTA"));
 const ABTestDebug = lazy(() => import("@/components/ABTestDebug"));
 
 const Index = () => {
@@ -142,14 +141,6 @@ const Index = () => {
         <FloatingButtons />
       </Suspense>
       
-      {/* Sticky CTA for mobile - shows after 40% scroll */}
-      <Suspense fallback={null}>
-        <StickyCTA 
-          price={2500} 
-          discount={15} 
-          onOrderClick={handleOpenCalculator} 
-        />
-      </Suspense>
       
       {/* A/B Test Debug Panel - Ctrl+Shift+D to toggle */}
       {showDebug && (
