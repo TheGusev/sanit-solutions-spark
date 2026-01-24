@@ -187,15 +187,18 @@ export default function NchPage() {
       <main className="min-h-screen">
         {/* Hero Section с комбинированным фоном */}
         <section className="relative py-10 md:py-14 min-h-[45vh] overflow-hidden">
+          {/* Цветовая подложка для контраста */}
+          <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
+          
           {/* СЛОЙ 1: Изображение вредителя */}
           {pestImage && (
             <div 
               className="absolute inset-0 bg-cover bg-center"
               style={{ 
                 backgroundImage: `url('${pestImage.image}')`,
-                filter: 'blur(8px)',
-                transform: 'scale(1.1)',
-                opacity: 0.06
+                filter: 'blur(12px)',
+                transform: 'scale(1.15)',
+                opacity: 0.12
               }}
               aria-hidden="true"
             />
@@ -206,16 +209,16 @@ export default function NchPage() {
             className="absolute inset-0 bg-cover bg-right"
             style={{ 
               backgroundImage: `url('${getNeighborhoodHeroImage(neighborhoodSlug)}')`,
-              filter: 'blur(10px)',
-              transform: 'scale(1.1)',
-              opacity: 0.03
+              filter: 'blur(14px)',
+              transform: 'scale(1.15)',
+              opacity: 0.06
             }}
             aria-hidden="true"
           />
           
           {/* Градиентные overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/70" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/80 to-background/60" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/50" />
           
           {/* Fallback если нет изображения */}
           {!pestImage && (

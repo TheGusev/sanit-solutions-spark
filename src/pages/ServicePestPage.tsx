@@ -143,20 +143,23 @@ export default function ServicePestPage() {
           {/* Фоновое изображение вредителя с blur */}
           {pestImage && (
             <>
+              {/* Цветовая подложка для контраста */}
+              <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
+              {/* Изображение вредителя с blur */}
               <div 
                 className="absolute inset-0 bg-cover bg-center"
                 style={{ 
                   backgroundImage: `url('${pestImage.image}')`,
-                  filter: 'blur(8px)',
-                  transform: 'scale(1.1)',
-                  opacity: 0.08
+                  filter: 'blur(12px)',
+                  transform: 'scale(1.15)',
+                  opacity: 0.15
                 }}
                 aria-hidden="true"
               />
               {/* Градиентный overlay для читаемости текста */}
-              <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/70" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/80 to-background/60" />
               {/* Дополнительный вертикальный градиент */}
-              <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/60" />
+              <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/50" />
             </>
           )}
           {/* Fallback если нет изображения */}
