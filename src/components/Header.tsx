@@ -226,7 +226,14 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
             >
               Блог
             </Link>
-            <Link to="/contacts" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link 
+              to="/contacts" 
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/contacts'
+                  ? 'text-russia-red border-b-2 border-russia-red pb-0.5'
+                  : 'hover:text-primary'
+              }`}
+            >
               Контакты
             </Link>
             {isScrolled && (
@@ -293,30 +300,14 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                         <AccordionContent className="pb-0">
                           <div className="space-y-1 pl-2">
                             {servicesMenu.map((service) => (
-                              <div key={service.href}>
-                                <SheetClose asChild>
-                                  <Link
-                                    to={service.href}
-                                    className="block py-2.5 px-4 rounded-lg hover:bg-muted transition-colors text-sm font-medium"
-                                  >
-                                    {service.title}
-                                  </Link>
-                                </SheetClose>
-                                {service.subItems && service.subItems.length > 0 && (
-                                  <div className="ml-4 border-l border-border pl-2 space-y-1">
-                                    {service.subItems.map((sub) => (
-                                      <SheetClose key={sub.href} asChild>
-                                        <Link
-                                          to={sub.href}
-                                          className="block py-1.5 px-3 rounded-lg hover:bg-muted transition-colors text-xs text-muted-foreground hover:text-foreground"
-                                        >
-                                          {sub.title}
-                                        </Link>
-                                      </SheetClose>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                              <SheetClose key={service.href} asChild>
+                                <Link
+                                  to={service.href}
+                                  className="block py-2.5 px-4 rounded-lg hover:bg-muted transition-colors text-sm font-medium"
+                                >
+                                  {service.title}
+                                </Link>
+                              </SheetClose>
                             ))}
                           </div>
                         </AccordionContent>
@@ -379,7 +370,11 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     <SheetClose asChild>
                       <Link 
                         to="/contacts" 
-                        className="block py-3 px-4 rounded-lg hover:bg-muted transition-colors font-medium"
+                        className={`block py-3 px-4 rounded-lg transition-colors font-medium ${
+                          location.pathname === '/contacts'
+                            ? 'bg-russia-red/10 text-russia-red border-l-4 border-russia-red'
+                            : 'hover:bg-muted'
+                        }`}
                       >
                         Контакты
                       </Link>
