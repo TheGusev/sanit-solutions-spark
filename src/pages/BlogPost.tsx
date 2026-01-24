@@ -6,10 +6,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
+import HeroBackground from "@/components/HeroBackground";
 import TableOfContents, { generateContentWithIds, extractHeadings } from "@/components/TableOfContents";
 import RelatedArticles from "@/components/RelatedArticles";
 import InternalLinks from "@/components/InternalLinks";
 import { getArticleBySlug } from "@/data/blog";
+import { getBlogCategoryImage } from "@/data/districtImages";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -96,7 +98,7 @@ const BlogPost = () => {
       <Header />
 
       {/* Breadcrumbs */}
-      <section className="pt-28 pb-8 px-4 border-b">
+      <section className="pt-28 pb-4 px-4 border-b">
         <div className="container mx-auto max-w-4xl">
           <Breadcrumbs 
             items={[
@@ -107,12 +109,21 @@ const BlogPost = () => {
         </div>
       </section>
 
-      {/* Article Header */}
-      <section className="py-12 px-4">
-        <div className="container mx-auto max-w-4xl">
+      {/* Article Header with Background */}
+      <section className="relative py-12 px-4 overflow-hidden">
+        {/* Фоновое изображение по категории */}
+        <HeroBackground 
+          image={getBlogCategoryImage(post.category)}
+          blur={12}
+          opacity={0.20}
+          overlay="gradient"
+          altText={`${post.category} - ${post.title}`}
+        />
+        
+        <div className="container mx-auto max-w-4xl relative z-10">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <span className="text-sm px-4 py-1.5 rounded-full bg-primary/10 text-primary font-medium">
+              <span className="text-sm px-4 py-1.5 rounded-full bg-primary/10 text-primary font-medium backdrop-blur-sm">
                 {post.category}
               </span>
               <span className="text-sm text-muted-foreground">
