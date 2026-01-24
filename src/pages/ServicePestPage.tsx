@@ -138,7 +138,7 @@ export default function ServicePestPage() {
       
       <Header />
       
-      <main className="min-h-screen">
+      <main className="min-h-screen pt-16">
         {/* Hero Section с фоновым изображением вредителя */}
         <section className="relative py-12 md:py-16 min-h-[50vh] overflow-hidden">
           {/* Фоновое изображение вредителя с blur */}
