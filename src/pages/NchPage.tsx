@@ -14,6 +14,7 @@ import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import AnimatedSection from '@/components/AnimatedSection';
 import InternalLinks from '@/components/InternalLinks';
+import { generateLocalBusiness } from '@/components/StructuredData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -138,6 +139,13 @@ export default function NchPage() {
   
   const faqSchema = generateFAQSchema(faqItems);
   
+  const localBusinessSchema = generateLocalBusiness(
+    `${serviceName} от ${pest.genitive}`,
+    neighborhood.name,
+    neighborhoodSlug,
+    service
+  );
+  
   return (
     <>
       <Helmet>
@@ -155,6 +163,7 @@ export default function NchPage() {
         <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
       </Helmet>
       
       <Header />

@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Phone, Clock, Shield, CheckCircle, MapPin, Star } from 'lucide-react';
 import InternalLinks from '@/components/InternalLinks';
+import { generateLocalBusiness } from '@/components/StructuredData';
 import { neighborhoods } from '@/data/neighborhoods';
 import { servicePages } from '@/data/services';
 import { pests } from '@/data/pests';
@@ -83,6 +84,13 @@ export default function ServiceDistrictPage() {
     mainEntity: faqItems.map(item => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } }))
   };
   
+  const localBusinessSchema = generateLocalBusiness(
+    serviceName,
+    neighborhood.name,
+    districtSlug,
+    serviceSlug
+  );
+  
   return (
     <>
       <Helmet>
@@ -99,6 +107,7 @@ export default function ServiceDistrictPage() {
         <meta property="og:type" content={seoMeta.ogType} />
         <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
       </Helmet>
       
       <Header />

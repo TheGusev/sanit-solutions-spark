@@ -186,4 +186,45 @@ const StructuredData = (props: StructuredDataProps) => {
   );
 };
 
+// Utility function for LocalBusiness Schema on local pages
+export const generateLocalBusiness = (
+  serviceName: string,
+  locationName: string,
+  locationSlug: string,
+  serviceSlug: string
+) => ({
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: `Санитарные Решения — ${serviceName} в ${locationName}`,
+  description: `Профессиональная ${serviceName.toLowerCase()} в районе ${locationName}, Москва. Лицензированные специалисты, гарантия качества, выезд в течение часа.`,
+  telephone: '+7 (906) 998-98-88',
+  email: 'west-centro@mail.ru',
+  priceRange: 'от 1000₽',
+  areaServed: {
+    '@type': 'City',
+    name: locationName,
+    addressRegion: 'Москва'
+  },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Москва',
+    addressRegion: 'Московская область',
+    addressCountry: 'RU'
+  },
+  url: `https://goruslugimsk.ru/uslugi/${serviceSlug}/${locationSlug}`,
+  openingHours: 'Mo-Su 08:00-22:00',
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: '55.7558',
+    longitude: '37.6173'
+  },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.9',
+    reviewCount: '347',
+    bestRating: '5',
+    worstRating: '1'
+  }
+});
+
 export default StructuredData;
