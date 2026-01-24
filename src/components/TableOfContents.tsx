@@ -313,7 +313,8 @@ const TableOfContents = ({ content, className }: TableOfContentsProps) => {
 
   return (
     <nav className={cn("p-4 rounded-lg bg-muted/30 border", className)}>
-      <h4 className="font-semibold text-sm mb-3 text-foreground">
+      <h4 className="font-semibold text-sm mb-3 text-foreground flex items-center">
+        <span className="w-1 h-5 bg-russia-red rounded-full mr-2"></span>
         📑 Содержание
       </h4>
       <ul className="space-y-2">
@@ -327,10 +328,10 @@ const TableOfContents = ({ content, className }: TableOfContentsProps) => {
             <button
               onClick={() => scrollToHeading(id)}
               className={cn(
-                "text-sm text-left w-full hover:text-primary transition-colors",
+                "text-sm text-left w-full transition-colors border-l-2 pl-3",
                 activeId === id 
-                  ? "text-primary font-medium" 
-                  : "text-muted-foreground"
+                  ? "text-russia-red font-medium border-russia-red" 
+                  : "text-muted-foreground border-transparent hover:text-russia-red hover:border-russia-red/50"
               )}
             >
               {title}

@@ -86,6 +86,13 @@ const Blog = () => {
             Экспертные советы о дезинфекции, борьбе с вредителями и поддержании здоровой среды в вашем доме или офисе. 
             <span className="font-medium text-foreground"> {allBlogArticles.length} статей</span> от профессионалов.
           </p>
+          
+          {/* Триколор-линия под заголовком */}
+          <div className="h-1 w-48 mx-auto flex rounded-full overflow-hidden mt-6">
+            <div className="flex-1 bg-white border-y border-l border-border dark:border-transparent"></div>
+            <div className="flex-1 bg-primary"></div>
+            <div className="flex-1 bg-russia-red"></div>
+          </div>
         </div>
       </section>
 
@@ -116,46 +123,62 @@ const Blog = () => {
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPosts.map((post) => (
-              <Link 
-                key={post.id} 
-                to={`/blog/${post.slug}`}
-                className="group"
-              >
-                <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                  <CardHeader>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
-                        {post.category}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {post.readTime}
-                      </span>
-                    </div>
-                    <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
-                      {post.title}
-                    </h3>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground mb-4">
-                      {post.excerpt}
-                    </p>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {new Date(post.date).toLocaleDateString('ru-RU', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric'
-                        })}
-                      </span>
-                      <span className="text-primary group-hover:underline">
-                        Читать →
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+            {filteredPosts.map((post) => {
+              // Категории с красным акцентом
+              const redCategories = ['Насекомые', 'Советы', 'Законодательство'];
+              const gradientCategories = ['Грызуны', 'Случаи из практики'];
+              
+              const getCategoryClass = () => {
+                if (redCategories.includes(post.category)) {
+                  return "bg-russia-red/10 text-russia-red";
+                }
+                if (gradientCategories.includes(post.category)) {
+                  return "bg-gradient-to-r from-primary to-russia-red text-white";
+                }
+                return "bg-primary/10 text-primary";
+              };
+              
+              return (
+                <Link 
+                  key={post.id} 
+                  to={`/blog/${post.slug}`}
+                  className="group"
+                >
+                  <Card className="h-full hover:shadow-lg hover:shadow-russia-red/10 transition-all duration-300 hover:-translate-y-1">
+                    <CardHeader>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className={`text-xs px-3 py-1 rounded-full font-medium ${getCategoryClass()}`}>
+                          {post.category}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {post.readTime}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
+                        {post.title}
+                      </h3>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground mb-4">
+                        {post.excerpt}
+                      </p>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          {new Date(post.date).toLocaleDateString('ru-RU', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                          })}
+                        </span>
+                        <span className="text-russia-red group-hover:underline">
+                          Читать →
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

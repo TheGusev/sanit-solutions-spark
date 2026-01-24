@@ -45,7 +45,7 @@ const FloatingButtons = () => {
           onClick={handlePhoneClick}
           onMouseEnter={() => setShowPhoneTooltip(true)}
           onMouseLeave={() => setShowPhoneTooltip(false)}
-          className="w-14 h-14 md:w-14 md:h-14 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 animate-pulse-attention"
+          className="w-14 h-14 md:w-14 md:h-14 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 hover:ring-2 hover:ring-russia-red hover:ring-offset-2 animate-pulse-attention"
           aria-label="Позвонить"
         >
           <Phone className="w-6 h-6 md:w-7 md:h-7" />
@@ -65,7 +65,7 @@ const FloatingButtons = () => {
           onClick={handleTelegramClick}
           onMouseEnter={() => setShowTelegramTooltip(true)}
           onMouseLeave={() => setShowTelegramTooltip(false)}
-          className="w-14 h-14 md:w-14 md:h-14 rounded-full bg-[#0088cc] hover:bg-[#0077b5] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110"
+          className="w-14 h-14 md:w-14 md:h-14 rounded-full bg-[#0088cc] hover:bg-[#0077b5] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 hover:ring-2 hover:ring-russia-red hover:ring-offset-2"
           aria-label="Написать в Telegram"
         >
           <svg
@@ -89,7 +89,7 @@ const FloatingButtons = () => {
       <div className="relative">
         <button
           onClick={handleWhatsAppClick}
-          className="w-14 h-14 md:w-14 md:h-14 rounded-full bg-[#25D366] hover:bg-[#20BA59] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110"
+          className="w-14 h-14 md:w-14 md:h-14 rounded-full bg-[#25D366] hover:bg-[#20BA59] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 hover:ring-2 hover:ring-russia-red hover:ring-offset-2"
           aria-label="Написать в WhatsApp"
         >
           <svg
