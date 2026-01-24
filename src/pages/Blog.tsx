@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
+import HeroBackground from "@/components/HeroBackground";
 import { allBlogArticles, blogCategories } from "@/data/blog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -67,8 +68,17 @@ const Blog = () => {
       </section>
 
       {/* Hero Section */}
-      <section className="pt-12 pb-16 px-4 bg-gradient-to-b from-primary/5 to-background">
-        <div className="container mx-auto max-w-6xl text-center">
+      <section className="relative pt-12 pb-16 px-4 overflow-hidden">
+        {/* Фоновое изображение */}
+        <HeroBackground 
+          image="/images/neighborhoods/interior-park.png"
+          blur={10}
+          opacity={0.25}
+          overlay="gradient"
+          altText="Блог о дезинфекции и борьбе с вредителями"
+        />
+        
+        <div className="container mx-auto max-w-6xl text-center relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
             📚 Полезные статьи
           </h1>

@@ -128,9 +128,76 @@ export const neighborhoodImages: NeighborhoodImage[] = [
   }
 ];
 
+// Дополнительные районы для расширенного маппинга
+export const additionalNeighborhoodImages: NeighborhoodImage[] = [
+  {
+    slug: 'begovoy',
+    name: 'Беговой',
+    heroImage: '/images/neighborhoods/high-rise-buildings.png',
+    galleryImages: [
+      { url: '/images/neighborhoods/high-rise-buildings.png', title: 'Жилые комплексы Бегового', category: 'residential' },
+      { url: '/images/neighborhoods/modern-cottage.png', title: 'Современные новостройки', category: 'residential' }
+    ],
+    altText: 'Дезинфекция и дезинсекция в районе Беговой - Москва'
+  },
+  {
+    slug: 'sokol',
+    name: 'Сокол',
+    heroImage: '/images/neighborhoods/luxury-mansion.png',
+    galleryImages: [
+      { url: '/images/neighborhoods/luxury-mansion.png', title: 'Элитный жилой фонд Сокола', category: 'residential' },
+      { url: '/images/neighborhoods/country-house.png', title: 'Частные дома посёлка Сокол', category: 'residential' }
+    ],
+    altText: 'Обработка элитной недвижимости в районе Сокол'
+  },
+  {
+    slug: 'aeroport',
+    name: 'Аэропорт',
+    heroImage: '/images/neighborhoods/modern-cottage.png',
+    galleryImages: [
+      { url: '/images/neighborhoods/modern-cottage.png', title: 'Современные ЖК района Аэропорт', category: 'residential' },
+      { url: '/images/neighborhoods/warehouse-industrial.png', title: 'Бизнес-центры', category: 'commercial' }
+    ],
+    altText: 'Санитарная обработка в районе Аэропорт'
+  },
+  {
+    slug: 'savelovskiy',
+    name: 'Савёловский',
+    heroImage: '/images/neighborhoods/waterfront-residential.png',
+    galleryImages: [
+      { url: '/images/neighborhoods/waterfront-residential.png', title: 'Новостройки Савёловского', category: 'residential' },
+      { url: '/images/neighborhoods/interior-vdnh.png', title: 'Современные интерьеры', category: 'interior' }
+    ],
+    altText: 'Дезинсекция квартир в Савёловском районе'
+  },
+  {
+    slug: 'timiryazevskiy',
+    name: 'Тимирязевский',
+    heroImage: '/images/neighborhoods/interior-park.png',
+    galleryImages: [
+      { url: '/images/neighborhoods/interior-park.png', title: 'Зелёный район Москвы', category: 'residential' },
+      { url: '/images/neighborhoods/kindergarten.png', title: 'Образовательные учреждения', category: 'landmark' }
+    ],
+    altText: 'Обработка жилых домов в Тимирязевском районе'
+  },
+  {
+    slug: 'ostankino',
+    name: 'Останкинский',
+    heroImage: '/images/neighborhoods/interior-vdnh.png',
+    galleryImages: [
+      { url: '/images/neighborhoods/interior-vdnh.png', title: 'ВДНХ и окрестности', category: 'landmark' },
+      { url: '/images/neighborhoods/high-rise-buildings.png', title: 'Высотные дома Останкино', category: 'residential' }
+    ],
+    altText: 'Дезинфекция в Останкинском районе'
+  }
+];
+
+// Объединённый список всех районов
+export const allNeighborhoodImages = [...neighborhoodImages, ...additionalNeighborhoodImages];
+
 // Функция для получения изображений района по slug
 export const getNeighborhoodImages = (slug: string): NeighborhoodImage | undefined => {
-  return neighborhoodImages.find(img => img.slug === slug);
+  return allNeighborhoodImages.find(img => img.slug === slug);
 };
 
 // Функция для получения hero-изображения с fallback

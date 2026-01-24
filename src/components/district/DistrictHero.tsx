@@ -2,6 +2,8 @@ import { MapPin, Clock, Shield, Phone, Calculator, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { DistrictPage } from '@/data/districtPages';
+import { getDistrictImage } from '@/data/districtImages';
+import HeroBackground from '@/components/HeroBackground';
 
 interface DistrictHeroProps {
   district: DistrictPage;
@@ -9,24 +11,24 @@ interface DistrictHeroProps {
 }
 
 const DistrictHero = ({ district, onCalculatorOpen }: DistrictHeroProps) => {
+  const heroImage = getDistrictImage(district.id);
+  
   return (
-    <section className="relative min-h-[50vh] bg-gradient-to-br from-primary/90 to-green-600/80 text-white overflow-hidden">
-      {/* Parallax background effect */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-fixed opacity-20"
-        style={{ 
-          backgroundImage: `url('/placeholder.svg')`,
-          backgroundAttachment: 'fixed'
-        }}
-        role="img"
-        aria-label="Фоновое изображение — санитарная обработка помещений в округе"
+    <section className="relative min-h-[50vh] overflow-hidden">
+      {/* Фоновое изображение с blur */}
+      <HeroBackground 
+        image={heroImage}
+        blur={8}
+        opacity={0.35}
+        overlay="none"
+        altText={`Санитарная обработка помещений в ${district.fullName}`}
       />
       
-      {/* Gradient overlay */}
+      {/* Gradient overlay для читаемости текста */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/70 to-green-600/75" />
       
       {/* Content */}
-      <div className="relative container mx-auto px-4 py-16 md:py-20">
+      <div className="relative container mx-auto px-4 py-16 md:py-20 text-white">
         {/* H1 */}
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 max-w-3xl">
           {district.h1}
