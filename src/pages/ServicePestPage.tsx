@@ -18,6 +18,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Phone, Clock, Shield, CheckCircle, AlertTriangle, MapPin } from 'lucide-react';
 import { getPestBySlug, pests } from '@/data/pests';
+import { getPestImage } from '@/data/pestImages';
 import { servicePages } from '@/data/services';
 import { topNeighborhoods } from '@/data/nchSeeds';
 import { neighborhoods } from '@/data/neighborhoods';
@@ -41,6 +42,7 @@ export default function ServicePestPage() {
   
   const pest = getPestBySlug(pestSlug);
   const serviceData = servicePages.find(s => s.slug === service);
+  const pestImage = getPestImage(pestSlug);
   
   if (!pest || !serviceData || pest.serviceType !== service) {
     return <Navigate to="/404" replace />;
@@ -141,53 +143,78 @@ export default function ServicePestPage() {
           <div className="container mx-auto px-4">
             <Breadcrumbs items={breadcrumbItems} />
             
-            <div className="mt-6 max-w-4xl">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-4xl">{pest.icon}</span>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  pest.dangerLevel === 'high' ? 'bg-red-100 text-red-700' :
-                  pest.dangerLevel === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                  'bg-green-100 text-green-700'
-                }`}>
-                  {pest.dangerLevel === 'high' ? 'Высокая опасность' :
-                   pest.dangerLevel === 'medium' ? 'Средняя опасность' : 'Низкая опасность'}
-                </span>
+            <div className="mt-6 grid md:grid-cols-2 gap-8 items-center">
+              {/* Текстовый блок */}
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-4xl">{pest.icon}</span>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    pest.dangerLevel === 'high' ? 'bg-red-100 text-red-700' :
+                    pest.dangerLevel === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-green-100 text-green-700'
+                  }`}>
+                    {pest.dangerLevel === 'high' ? 'Высокая опасность' :
+                     pest.dangerLevel === 'medium' ? 'Средняя опасность' : 'Низкая опасность'}
+                  </span>
+                </div>
+                
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+                  Уничтожение {pest.genitive} в Москве
+                </h1>
+                
+                <p className="text-lg md:text-xl text-muted-foreground mb-6">
+                  {pest.description}
+                </p>
+                
+                <div className="flex flex-wrap gap-4 mb-8">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Clock className="w-5 h-5 text-primary" />
+                    <span>Результат за {pest.timeToResult}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Shield className="w-5 h-5 text-primary" />
+                    <span>Гарантия до 1 года</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    <span>Москва и МО</span>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button size="lg" asChild className="whitespace-normal">
+                    <a href={`tel:${SEO_CONFIG.phoneClean}`}>
+                      <Phone className="w-5 h-5 mr-2" />
+                      Позвонить: {SEO_CONFIG.phone}
+                    </a>
+                  </Button>
+                  <Button size="lg" variant="outline" asChild className="whitespace-normal">
+                    <Link to="/#calculator">Рассчитать стоимость</Link>
+                  </Button>
+                </div>
               </div>
               
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                Уничтожение {pest.genitive} в Москве
-              </h1>
-              
-              <p className="text-lg md:text-xl text-muted-foreground mb-6">
-                {pest.description}
-              </p>
-              
-              <div className="flex flex-wrap gap-4 mb-8">
-                <div className="flex items-center gap-2 text-sm">
-                  <Clock className="w-5 h-5 text-primary" />
-                  <span>Результат за {pest.timeToResult}</span>
+              {/* Изображение вредителя */}
+              {pestImage && (
+                <div className="hidden md:block">
+                  <div className="relative rounded-2xl overflow-hidden shadow-xl">
+                    <img 
+                      src={pestImage.image}
+                      alt={pestImage.altText}
+                      className="w-full h-64 md:h-80 object-cover"
+                      loading="eager"
+                      width="400"
+                      height="320"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                      <div className="flex items-center gap-2 text-white">
+                        <CheckCircle className="w-5 h-5 text-green-400" />
+                        <span className="font-semibold">Избавим за 1 день!</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Shield className="w-5 h-5 text-primary" />
-                  <span>Гарантия до 1 года</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <MapPin className="w-5 h-5 text-primary" />
-                  <span>Москва и МО</span>
-                </div>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" asChild className="whitespace-normal">
-                  <a href={`tel:${SEO_CONFIG.phoneClean}`}>
-                    <Phone className="w-5 h-5 mr-2" />
-                    Позвонить: {SEO_CONFIG.phone}
-                  </a>
-                </Button>
-                <Button size="lg" variant="outline" asChild className="whitespace-normal">
-                  <Link to="/#calculator">Рассчитать стоимость</Link>
-                </Button>
-              </div>
+              )}
             </div>
           </div>
         </section>

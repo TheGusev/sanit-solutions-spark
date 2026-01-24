@@ -20,9 +20,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Phone, Clock, Shield, CheckCircle, MapPin, Star, AlertTriangle, Award } from 'lucide-react';
 import { getPestBySlug } from '@/data/pests';
+import { getPestImage } from '@/data/pestImages';
 import { neighborhoods } from '@/data/neighborhoods';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
-import { 
+import {
   generateIntro, 
   generateLocalFeatures, 
   generateWhyFolkMethodsDontWork,
@@ -57,6 +58,7 @@ export default function NchPage() {
   
   const pest = getPestBySlug(pestSlug);
   const neighborhood = neighborhoods.find(n => n.slug === neighborhoodSlug);
+  const pestImage = getPestImage(pestSlug);
   
   if (!pest || !neighborhood || pest.serviceType !== service) {
     return <Navigate to="/404" replace />;
@@ -187,51 +189,76 @@ export default function NchPage() {
           <div className="container mx-auto px-4">
             <Breadcrumbs items={breadcrumbItems} />
             
-            <div className="mt-6 max-w-4xl">
-              <div className="flex flex-wrap items-center gap-2 mb-4">
-                <span className="text-3xl">{pest.icon}</span>
-                <span className="px-3 py-1 bg-primary/10 rounded-full text-sm font-medium">
-                  {districtName}
-                </span>
-                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-                  Выезд {responseTime}
-                </span>
+            <div className="mt-6 grid md:grid-cols-3 gap-8 items-start">
+              {/* Текстовый блок - 2/3 ширины */}
+              <div className="md:col-span-2">
+                <div className="flex flex-wrap items-center gap-2 mb-4">
+                  <span className="text-3xl">{pest.icon}</span>
+                  <span className="px-3 py-1 bg-primary/10 rounded-full text-sm font-medium">
+                    {districtName}
+                  </span>
+                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                    Выезд {responseTime}
+                  </span>
+                </div>
+                
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                  Уничтожение {pest.genitive} в районе {neighborhood.name}
+                </h1>
+                
+                <p className="text-lg text-muted-foreground mb-6">
+                  {introText}
+                </p>
+                
+                <div className="flex flex-wrap gap-4 mb-6">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Clock className="w-5 h-5 text-primary" />
+                    <span>Выезд за {responseTime}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Shield className="w-5 h-5 text-primary" />
+                    <span>Гарантия 1 год</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    <span>{neighborhood.name}, {districtName}</span>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button size="lg" asChild className="whitespace-normal">
+                    <a href={`tel:${SEO_CONFIG.phoneClean}`}>
+                      <Phone className="w-5 h-5 mr-2" />
+                      {SEO_CONFIG.phone}
+                    </a>
+                  </Button>
+                  <Button size="lg" variant="outline" asChild className="whitespace-normal">
+                    <Link to="/#calculator">Рассчитать стоимость</Link>
+                  </Button>
+                </div>
               </div>
               
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                Уничтожение {pest.genitive} в районе {neighborhood.name}
-              </h1>
-              
-              <p className="text-lg text-muted-foreground mb-6">
-                {introText}
-              </p>
-              
-              <div className="flex flex-wrap gap-4 mb-6">
-                <div className="flex items-center gap-2 text-sm">
-                  <Clock className="w-5 h-5 text-primary" />
-                  <span>Выезд за {responseTime}</span>
+              {/* Изображение вредителя - 1/3 ширины */}
+              {pestImage && (
+                <div className="hidden md:block">
+                  <div className="relative rounded-2xl overflow-hidden shadow-lg">
+                    <img 
+                      src={pestImage.image}
+                      alt={pestImage.altText}
+                      className="w-full h-56 object-cover"
+                      loading="eager"
+                      width="300"
+                      height="224"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                      <div className="flex items-center gap-2 text-white text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-400" />
+                        <span className="font-medium">Избавим за 1 день!</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Shield className="w-5 h-5 text-primary" />
-                  <span>Гарантия 1 год</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <MapPin className="w-5 h-5 text-primary" />
-                  <span>{neighborhood.name}, {districtName}</span>
-                </div>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button size="lg" asChild className="whitespace-normal">
-                  <a href={`tel:${SEO_CONFIG.phoneClean}`}>
-                    <Phone className="w-5 h-5 mr-2" />
-                    {SEO_CONFIG.phone}
-                  </a>
-                </Button>
-                <Button size="lg" variant="outline" asChild className="whitespace-normal">
-                  <Link to="/#calculator">Рассчитать стоимость</Link>
-                </Button>
-              </div>
+              )}
             </div>
           </div>
         </section>
