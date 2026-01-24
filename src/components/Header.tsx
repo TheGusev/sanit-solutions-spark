@@ -114,6 +114,12 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background/95 backdrop-blur-sm border-b border-border">
+      {/* Триколорная полоска */}
+      <div className="absolute top-0 left-0 right-0 h-1 flex z-50">
+        <div className="flex-1 bg-white dark:bg-white/90"></div>
+        <div className="flex-1 bg-primary"></div>
+        <div className="flex-1 bg-russia-red"></div>
+      </div>
       <div 
         className={`h-full transition-transform duration-300 origin-top ${isScrolled ? 'scale-y-[0.875]' : 'scale-y-100'}`}
         style={{ willChange: 'transform' }}
@@ -300,14 +306,30 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                         <AccordionContent className="pb-0">
                           <div className="space-y-1 pl-2">
                             {servicesMenu.map((service) => (
-                              <SheetClose key={service.href} asChild>
-                                <Link
-                                  to={service.href}
-                                  className="block py-2.5 px-4 rounded-lg hover:bg-muted transition-colors text-sm font-medium"
-                                >
-                                  {service.title}
-                                </Link>
-                              </SheetClose>
+                              <div key={service.href}>
+                                <SheetClose asChild>
+                                  <Link
+                                    to={service.href}
+                                    className="block py-2.5 px-4 rounded-lg hover:bg-muted transition-colors text-sm font-medium"
+                                  >
+                                    {service.title}
+                                  </Link>
+                                </SheetClose>
+                                {service.subItems && service.subItems.length > 0 && (
+                                  <div className="ml-4 border-l-2 border-russia-red/30 pl-2 space-y-1 mt-1">
+                                    {service.subItems.map((sub) => (
+                                      <SheetClose key={sub.href} asChild>
+                                        <Link
+                                          to={sub.href}
+                                          className="block py-1.5 px-3 rounded-lg hover:bg-muted transition-colors text-xs text-muted-foreground hover:text-russia-red"
+                                        >
+                                          {sub.title}
+                                        </Link>
+                                      </SheetClose>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
                             ))}
                           </div>
                         </AccordionContent>

@@ -312,7 +312,7 @@ const TableOfContents = ({ content, className }: TableOfContentsProps) => {
   }
 
   return (
-    <nav className={cn("p-4 rounded-lg bg-muted/30 border", className)}>
+    <nav className={cn("p-4 rounded-lg bg-muted/30 border lg:max-h-none", className)}>
       <h4 className="font-semibold text-sm mb-3 text-foreground flex items-center">
         <span className="w-1 h-5 bg-russia-red rounded-full mr-2"></span>
         📑 Содержание
