@@ -147,7 +147,7 @@ const BlogPost = () => {
       {/* Article Content with TOC */}
       <section className="pb-16 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className={showToc ? "grid lg:grid-cols-[250px_1fr] gap-8" : ""}>
+          <div className={showToc ? "flex flex-col lg:grid lg:grid-cols-[250px_1fr] gap-8" : ""}>
             {/* Table of Contents - Desktop Sidebar */}
             {showToc && (
               <aside className="hidden lg:block">
@@ -158,11 +158,11 @@ const BlogPost = () => {
             )}
 
             {/* Main Content */}
-            <div className="max-w-3xl mx-auto lg:mx-0">
+            <div className="w-full max-w-full lg:max-w-3xl mx-auto lg:mx-0 overflow-x-auto">
               {/* Mobile TOC */}
               {showToc && (
                 <div className="lg:hidden mb-8">
-                  <TableOfContents content={post.content} />
+                  <TableOfContents content={post.content} className="max-h-[40vh] overflow-y-auto" />
                 </div>
               )}
 
