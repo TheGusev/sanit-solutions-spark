@@ -1,7 +1,7 @@
 import { useParams, Link, useLocation } from 'react-router-dom';
 import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Clock, Check, Phone, ArrowRight, Shield, Award, Users, CheckCircle } from 'lucide-react';
+import { MapPin, Clock, Check, Phone, ArrowRight, Shield, Award, Users, CheckCircle, Bug, Wind } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,7 @@ import { getNeighborhoodContent } from '@/data/neighborhoodContent';
 import { getNeighborhoodImages, getCategoryLabel } from '@/data/neighborhoodImages';
 import { SEO_CONFIG } from '@/lib/seo';
 import { useState } from 'react';
+import { IconFromKey, type IconKey } from '@/lib/iconMap';
 
 const NeighborhoodPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -43,11 +44,11 @@ const NeighborhoodPage = () => {
   const neighborhoodImagesData = getNeighborhoodImages(neighborhood.slug);
 
   // Services with prices
-  const services = [
-    { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: 1000 + neighborhood.surcharge, icon: "🦠" },
-    { title: "Дезинсекция", href: "/uslugi/dezinsekciya", price: 1200 + neighborhood.surcharge, icon: "🪳" },
-    { title: "Дератизация", href: "/uslugi/deratizaciya", price: 1400 + neighborhood.surcharge, icon: "🐀" },
-    { title: "Озонирование", href: "/uslugi/ozonirovanie", price: 1500 + neighborhood.surcharge, icon: "💨" },
+  const services: { title: string; href: string; price: number; iconKey: IconKey }[] = [
+    { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: 1000 + neighborhood.surcharge, iconKey: "virus" },
+    { title: "Дезинсекция", href: "/uslugi/dezinsekciya", price: 1200 + neighborhood.surcharge, iconKey: "bug" },
+    { title: "Дератизация", href: "/uslugi/deratizaciya", price: 1400 + neighborhood.surcharge, iconKey: "mouse" },
+    { title: "Озонирование", href: "/uslugi/ozonirovanie", price: 1500 + neighborhood.surcharge, iconKey: "wind" },
   ];
 
   // Schema.org LocalBusiness with areaServed
@@ -282,7 +283,9 @@ const NeighborhoodPage = () => {
                 <Link key={service.href} to={service.href}>
                   <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1 border-2 hover:border-primary/50">
                     <CardContent className="p-6 text-center">
-                      <span className="text-3xl mb-3 block">{service.icon}</span>
+                      <div className="mb-3 flex justify-center">
+                        <IconFromKey iconKey={service.iconKey} className="w-8 h-8 text-primary" />
+                      </div>
                       <h3 className="font-bold text-lg mb-2">{service.title}</h3>
                       <p className="text-2xl font-bold text-primary">от {service.price}₽</p>
                       {neighborhood.surcharge > 0 && (

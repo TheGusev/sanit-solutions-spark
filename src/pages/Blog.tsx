@@ -9,7 +9,7 @@ import HeroBackground from "@/components/HeroBackground";
 import { allBlogArticles, blogCategories } from "@/data/blog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-
+import { BookOpen, Sparkles, TrendingUp } from "lucide-react";
 const BASE_URL = "https://goruslugimsk.ru";
 
 const Blog = () => {
@@ -90,8 +90,9 @@ const Blog = () => {
         />
         
         <div className="container mx-auto max-w-6xl text-center relative z-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-            📚 Полезные статьи
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground flex items-center justify-center gap-3">
+            <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-primary" />
+            Полезные статьи
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Экспертные советы о дезинфекции, борьбе с вредителями и поддержании здоровой среды в вашем доме или офисе. 
@@ -161,13 +162,13 @@ const Blog = () => {
                   <Card className="h-full relative hover:shadow-lg hover:shadow-russia-red/10 transition-all duration-300 hover:-translate-y-1">
                     {/* Бейджи */}
                     {isNew && (
-                      <span className="absolute top-3 right-3 bg-gradient-to-r from-russia-red to-secondary text-white text-[10px] px-2.5 py-1 rounded-full font-medium shadow-md z-10">
-                        ⭐ Новое
+                      <span className="absolute top-3 right-3 bg-gradient-to-r from-russia-red to-secondary text-white text-[10px] px-2.5 py-1 rounded-full font-medium shadow-md z-10 flex items-center gap-1">
+                        <Sparkles className="w-3 h-3" /> Новое
                       </span>
                     )}
                     {isPopular && !isNew && (
-                      <span className="absolute top-3 right-3 bg-gradient-to-r from-primary to-russia-red text-white text-[10px] px-2.5 py-1 rounded-full font-medium shadow-md z-10">
-                        🔥 Популярное
+                      <span className="absolute top-3 right-3 bg-gradient-to-r from-primary to-russia-red text-white text-[10px] px-2.5 py-1 rounded-full font-medium shadow-md z-10 flex items-center gap-1">
+                        <TrendingUp className="w-3 h-3" /> Популярное
                       </span>
                     )}
                     <CardHeader>

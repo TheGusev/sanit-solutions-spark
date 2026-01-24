@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, Loader2, MessageCircle, Clock, Shield } from "lucide-react";
+import { CheckCircle2, Loader2, MessageCircle, Clock, Shield, Target } from "lucide-react";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 
@@ -207,7 +207,9 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[420px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl">🎯 Оформить заявку</DialogTitle>
+          <DialogTitle className="text-2xl flex items-center gap-2">
+            <Target className="w-6 h-6 text-primary" /> Оформить заявку
+          </DialogTitle>
           <DialogDescription className="flex flex-col gap-1">
             <span className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-success" />

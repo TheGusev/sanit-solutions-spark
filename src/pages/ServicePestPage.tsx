@@ -17,8 +17,9 @@ import InternalLinks from '@/components/InternalLinks';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Phone, Clock, Shield, CheckCircle, AlertTriangle, MapPin } from 'lucide-react';
+import { Phone, Clock, Shield, CheckCircle, AlertTriangle, MapPin, Bug, Mouse } from 'lucide-react';
 import { getPestBySlug, pests } from '@/data/pests';
+import { IconFromKey, getIconKeyFromEmoji } from '@/lib/iconMap';
 import { getPestImage } from '@/data/pestImages';
 import { servicePages } from '@/data/services';
 import { topNeighborhoods } from '@/data/nchSeeds';
@@ -52,7 +53,7 @@ export default function ServicePestPage() {
   // SEO
   const serviceName = service === 'dezinsekciya' ? 'Дезинсекция' : 'Дератизация';
   const pageTitle = `Уничтожение ${pest.genitive} в Москве от ${pest.priceFrom}₽ — ${SEO_CONFIG.companyName}`;
-  const pageDescription = `${serviceName} ${pest.genitive} в Москве и МО от ${pest.priceFrom}₽ ⚡ Выезд за 1 час ✅ Гарантия до 1 года ✅ ${pest.shortDescription} ☎️ ${SEO_CONFIG.phone}`;
+  const pageDescription = `${serviceName} ${pest.genitive} в Москве и МО от ${pest.priceFrom}₽ • Выезд за 1 час • Гарантия до 1 года • ${pest.shortDescription} • ${SEO_CONFIG.phone}`;
   const canonicalPath = `/uslugi/${service}/${pestSlug}`;
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);
   
@@ -186,11 +187,13 @@ export default function ServicePestPage() {
               {/* Текстовый блок */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-4xl">{pest.icon}</span>
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <IconFromKey iconKey={getIconKeyFromEmoji(pest.icon)} className="w-7 h-7 text-primary" />
+                  </div>
                   <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    pest.dangerLevel === 'high' ? 'bg-red-100 text-red-700' :
-                    pest.dangerLevel === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-green-100 text-green-700'
+                    pest.dangerLevel === 'high' ? 'bg-destructive/10 text-destructive' :
+                    pest.dangerLevel === 'medium' ? 'bg-warning/10 text-warning' :
+                    'bg-success/10 text-success'
                   }`}>
                     {pest.dangerLevel === 'high' ? 'Высокая опасность' :
                      pest.dangerLevel === 'medium' ? 'Средняя опасность' : 'Низкая опасность'}

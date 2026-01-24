@@ -1,3 +1,5 @@
+import { Mail, Phone, MessageCircle, Send } from 'lucide-react';
+
 const TermsContent = () => {
   return (
     <div className="prose prose-slate dark:prose-invert max-w-none space-y-8">
@@ -169,25 +171,25 @@ const TermsContent = () => {
         <div className="bg-muted p-6 rounded-lg mt-4">
           <ul className="list-none space-y-2">
             <li className="flex items-center gap-2">
-              <span>📧</span>
+              <Mail className="w-4 h-4 text-primary" />
               <a href="mailto:west-centro@mail.ru" className="text-primary hover:underline">
                 west-centro@mail.ru
               </a>
             </li>
             <li className="flex items-center gap-2">
-              <span>📞</span>
+              <Phone className="w-4 h-4 text-primary" />
               <a href="tel:+79069989888" className="text-primary hover:underline">
                 +7 (906) 998-98-88
               </a>
             </li>
             <li className="flex items-center gap-2">
-              <span>💬</span>
+              <MessageCircle className="w-4 h-4 text-primary" />
               <a href="https://wa.me/79069989888" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                 WhatsApp
               </a>
             </li>
             <li className="flex items-center gap-2">
-              <span>✈️</span>
+              <Send className="w-4 h-4 text-primary" />
               <a href="https://t.me/one_help" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                 Telegram: @one_help
               </a>

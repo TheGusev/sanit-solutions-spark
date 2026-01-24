@@ -40,7 +40,7 @@ export default function MoscowRegionCityPage() {
   
   // SEO
   const pageTitle = `Дезинсекция и дератизация ${city.prepositional} — от 1200₽ | ${SEO_CONFIG.companyName}`;
-  const pageDescription = `Профессиональная дезинсекция, дератизация и дезинфекция ${city.prepositional} от 1200₽ ⚡ Выезд ${city.responseTime} ✅ Гарантия 1 год ☎️ ${SEO_CONFIG.phone}`;
+  const pageDescription = `Профессиональная дезинсекция, дератизация и дезинфекция ${city.prepositional} от 1200₽ • Выезд ${city.responseTime} • Гарантия 1 год • ${SEO_CONFIG.phone}`;
   const canonicalPath = `/moscow-oblast/${citySlug}`;
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);
   

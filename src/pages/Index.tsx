@@ -59,7 +59,7 @@ const Index = () => {
     <div className="min-h-screen overflow-x-hidden">
       <Helmet>
         <title>Дезинфекция, дезинсекция, дератизация в Москве — Санитарные Решения</title>
-        <meta name="description" content="Профессиональная СЭС служба в Москве ⚡ Дезинфекция, дезинсекция, дератизация ✅ Лицензия Роспотребнадзора ✅ Гарантия до 1 года ☎️ +7 (906) 998-98-88" />
+        <meta name="description" content="Профессиональная СЭС служба в Москве • Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 1 года • +7 (906) 998-98-88" />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
         <meta httpEquiv="last-modified" content="2026-01-18T00:00:00+03:00" />
         <link rel="canonical" href="https://goruslugimsk.ru/" />
@@ -68,7 +68,7 @@ const Index = () => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://goruslugimsk.ru/" />
         <meta property="og:title" content="Дезинфекция, дезинсекция, дератизация в Москве — Санитарные Решения" />
-        <meta property="og:description" content="Профессиональная СЭС служба в Москве ⚡ Дезинфекция, дезинсекция, дератизация ✅ Гарантия до 1 года" />
+        <meta property="og:description" content="Профессиональная СЭС служба в Москве • Дезинфекция, дезинсекция, дератизация • Гарантия до 1 года" />
       </Helmet>
       
       {/* Critical - Above the fold */}
