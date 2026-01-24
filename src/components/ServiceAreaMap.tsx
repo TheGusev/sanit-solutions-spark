@@ -253,43 +253,20 @@ const ServiceAreaMap = () => {
             </div>
           </div>
 
-          {/* District badges */}
-          <div className="max-w-7xl mx-auto space-y-6">
-            <div>
-              <h3 className="text-sm font-bold text-muted-foreground mb-3">
-                Округа Москвы
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {moscowDistricts.map(district => (
-                  <Badge
-                    key={district.id}
-                    variant={selectedArea.id === district.id ? "default" : "outline"}
-                    className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                    onClick={() => setSelectedArea(district)}
-                  >
-                    {district.name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-bold text-muted-foreground mb-3">
-                Московская область
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {moscowRegion.map(region => (
-                  <Badge
-                    key={region.id}
-                    variant={selectedArea.id === region.id ? "default" : "outline"}
-                    className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                    onClick={() => setSelectedArea(region)}
-                  >
-                    {region.name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
+          {/* District badges - скрыты визуально, карта интерактивна. SEO через sr-only */}
+          <div className="sr-only">
+            <h3>Округа Москвы</h3>
+            <ul>
+              {moscowDistricts.map(district => (
+                <li key={district.id}>{district.fullName}</li>
+              ))}
+            </ul>
+            <h3>Московская область</h3>
+            <ul>
+              {moscowRegion.map(region => (
+                <li key={region.id}>{region.name}</li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

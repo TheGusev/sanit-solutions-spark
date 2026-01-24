@@ -137,26 +137,13 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     Услуги
                     <ChevronDown className="w-4 h-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50 w-56">
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
                     {servicesMenu.map((service) => (
-                      <div key={service.href}>
-                        <DropdownMenuItem asChild>
-                          <Link to={service.href} className="cursor-pointer font-medium">
-                            {service.title}
-                          </Link>
-                        </DropdownMenuItem>
-                        {service.subItems && service.subItems.length > 0 && (
-                          <div className="ml-4 border-l border-border pl-2 mb-1">
-                            {service.subItems.map((sub) => (
-                              <DropdownMenuItem key={sub.href} asChild className="py-1">
-                                <Link to={sub.href} className="cursor-pointer text-muted-foreground text-xs">
-                                  {sub.title}
-                                </Link>
-                              </DropdownMenuItem>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                      <DropdownMenuItem key={service.href} asChild>
+                        <Link to={service.href} className="cursor-pointer font-medium">
+                          {service.title}
+                        </Link>
+                      </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -197,26 +184,13 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     Услуги
                     <ChevronDown className="w-4 h-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50 w-56">
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
                     {servicesMenu.map((service) => (
-                      <div key={service.href}>
-                        <DropdownMenuItem asChild>
-                          <Link to={service.href} className="cursor-pointer font-medium">
-                            {service.title}
-                          </Link>
-                        </DropdownMenuItem>
-                        {service.subItems && service.subItems.length > 0 && (
-                          <div className="ml-4 border-l border-border pl-2 mb-1">
-                            {service.subItems.map((sub) => (
-                              <DropdownMenuItem key={sub.href} asChild className="py-1">
-                                <Link to={sub.href} className="cursor-pointer text-muted-foreground text-xs">
-                                  {sub.title}
-                                </Link>
-                              </DropdownMenuItem>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                      <DropdownMenuItem key={service.href} asChild>
+                        <Link to={service.href} className="cursor-pointer font-medium">
+                          {service.title}
+                        </Link>
+                      </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
