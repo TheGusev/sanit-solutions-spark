@@ -1,10 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 interface ExportParams {
   table: 'traffic_events' | 'leads';
@@ -20,6 +16,9 @@ interface ExportParams {
 }
 
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -158,6 +157,8 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("❌ Error exporting analytics:", error);
+    const origin = req.headers.get("origin");
+    const corsHeaders = getCorsHeaders(origin);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     
     return new Response(

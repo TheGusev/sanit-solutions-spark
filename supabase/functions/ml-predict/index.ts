@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
@@ -24,11 +25,6 @@ function checkRateLimit(sessionId: string): boolean {
   entry.count++;
   return true;
 }
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
 
 interface PredictRequest {
   session_id: string;
@@ -254,6 +250,9 @@ async function predictConversion(data: PredictRequest): Promise<PredictResponse>
 }
 
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -301,6 +300,8 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("❌ ML predict error:", error);
+    const origin = req.headers.get("origin");
+    const corsHeaders = getCorsHeaders(origin);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     
     return new Response(

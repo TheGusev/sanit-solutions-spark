@@ -1,10 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
@@ -65,7 +61,7 @@ interface TrafficEventData {
   variant_id?: string;
   device_type?: string;
   event_type: string;
-  event_data?: Record<string, any>;
+  event_data?: Record<string, unknown>;
 }
 
 const ALLOWED_EVENT_TYPES = [
@@ -94,6 +90,9 @@ const ALLOWED_EVENT_TYPES = [
 const BOT_OR_SYNTHETIC_EVENTS = ['ml_prediction', 'ab_test_debug'];
 
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -191,6 +190,8 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("❌ Error logging traffic event:", error);
+    const origin = req.headers.get("origin");
+    const corsHeaders = getCorsHeaders(origin);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     
     return new Response(
