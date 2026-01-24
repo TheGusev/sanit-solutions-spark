@@ -10,13 +10,14 @@
  * /uslugi/dezinsekciya/kvartir/arbat → ServiceObjectDistrictPage (kvartir = объект)
  */
 
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getPestBySlug } from '@/data/pests';
 import { getObjectBySlug } from '@/data/objects';
 import { neighborhoods } from '@/data/neighborhoods';
 
 import NchPage from './NchPage';
 import ServiceObjectDistrictPage from './ServiceObjectDistrictPage';
+import NotFound from './NotFound';
 
 export default function ThreeSegmentRouteResolver() {
   const { service, segment2, segment3 } = useParams<{ 
@@ -26,13 +27,13 @@ export default function ThreeSegmentRouteResolver() {
   }>();
   
   if (!service || !segment2 || !segment3) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   // Проверяем что третий сегмент - это район
   const neighborhood = neighborhoods.find(n => n.slug === segment3);
   if (!neighborhood) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   // 1. Проверяем вредителя → NchPage
@@ -48,5 +49,5 @@ export default function ThreeSegmentRouteResolver() {
   }
   
   // Ничего не найдено
-  return <Navigate to="/404" replace />;
+  return <NotFound />;
 }

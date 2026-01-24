@@ -6,7 +6,8 @@
  * Контент: 650-800 слов, уникальный для каждой комбинации
  */
 
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
 import { useEffect } from 'react';
 import Header from '@/components/Header';
@@ -54,7 +55,7 @@ export default function NchPage() {
   // Валидация
   const validServices = ['dezinsekciya', 'deratizaciya'];
   if (!service || !validServices.includes(service) || !pestSlug || !neighborhoodSlug) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   const pest = getPestBySlug(pestSlug);
@@ -62,7 +63,7 @@ export default function NchPage() {
   const pestImage = getPestImage(pestSlug);
   
   if (!pest || !neighborhood || pest.serviceType !== service) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   // SEO - оптимизированные лимиты (Title: 40-60, Description: 140-160)

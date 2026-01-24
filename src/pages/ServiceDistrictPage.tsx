@@ -3,7 +3,8 @@
  * URL: /uslugi/dezinsekciya/arbat
  */
 
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
 import { useEffect } from 'react';
 import Header from '@/components/Header';
@@ -32,14 +33,14 @@ export default function ServiceDistrictPage() {
   
   const validServices = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'];
   if (!serviceSlug || !validServices.includes(serviceSlug) || !districtSlug) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   const neighborhood = neighborhoods.find(n => n.slug === districtSlug);
   const service = servicePages.find(s => s.slug === serviceSlug);
   
   if (!neighborhood || !service) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   const serviceName = service.title;

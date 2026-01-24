@@ -1,4 +1,5 @@
-import { useParams, Navigate, Link, useLocation } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
+import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
 import { MapPin, Clock, Check, Phone, ArrowRight, Shield, Award, Users, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,7 +25,7 @@ const NeighborhoodPage = () => {
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   if (!neighborhood) {
-    return <Navigate to="/rajony" replace />;
+    return <NotFound />;
   }
 
   // Get parent district

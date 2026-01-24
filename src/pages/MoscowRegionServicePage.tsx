@@ -5,7 +5,8 @@
  * SEO: Дезинсекция в Мытищах — от 1700₽, выезд 40 мин | Санитарные Решения
  */
 
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
 import { useEffect } from 'react';
 import Header from '@/components/Header';
@@ -32,14 +33,14 @@ export default function MoscowRegionServicePage() {
   
   // Валидация
   if (!citySlug || !serviceSlug) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   const city = getCityBySlug(citySlug);
   const serviceData = servicePages.find(s => s.slug === serviceSlug);
   
   if (!city || !serviceData || !moscowRegionServices.includes(serviceSlug as MoscowRegionService)) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   // Цена с наценкой за выезд

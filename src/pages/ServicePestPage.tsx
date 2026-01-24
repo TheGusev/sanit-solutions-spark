@@ -5,7 +5,8 @@
  * SEO: Уничтожение [вредитель] в Москве от [цена]₽ — Гарантия 1 год
  */
 
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
 import { useEffect } from 'react';
 import Header from '@/components/Header';
@@ -37,7 +38,7 @@ export default function ServicePestPage() {
   // Валидация параметров
   const validServices = ['dezinsekciya', 'deratizaciya'];
   if (!service || !validServices.includes(service) || !pestSlug) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   const pest = getPestBySlug(pestSlug);
@@ -45,7 +46,7 @@ export default function ServicePestPage() {
   const pestImage = getPestImage(pestSlug);
   
   if (!pest || !serviceData || pest.serviceType !== service) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   // SEO

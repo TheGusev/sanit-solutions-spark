@@ -5,7 +5,8 @@
  * SEO: Дезинсекция и дератизация в Мытищах — от 1200₽, выезд 40 мин
  */
 
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
 import { useEffect } from 'react';
 import Header from '@/components/Header';
@@ -28,13 +29,13 @@ export default function MoscowRegionCityPage() {
   }, [citySlug]);
   
   if (!citySlug) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   const city = getCityBySlug(citySlug);
   
   if (!city) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   // SEO
