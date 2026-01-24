@@ -20,6 +20,7 @@ import { neighborhoods } from '@/data/neighborhoods';
 import { servicePages } from '@/data/services';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 import { generateLocalFeatures } from '@/lib/contentGenerator';
+import { generateLocalBusiness } from '@/components/StructuredData';
 
 export default function ServiceObjectDistrictPage() {
   const { service: serviceSlug, object: objectSlug, district: districtSlug } = useParams<{ service: string; object: string; district: string }>();
@@ -84,6 +85,13 @@ export default function ServiceObjectDistrictPage() {
     mainEntity: faqItems.map(item => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } }))
   };
   
+  const localBusinessSchema = generateLocalBusiness(
+    `${service.title} ${objectType.genitive}`,
+    neighborhood.name,
+    districtSlug,
+    serviceSlug
+  );
+  
   return (
     <>
       <Helmet>
@@ -100,6 +108,7 @@ export default function ServiceObjectDistrictPage() {
         <meta property="og:type" content={seoMeta.ogType} />
         <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
       </Helmet>
       
       <Header />
