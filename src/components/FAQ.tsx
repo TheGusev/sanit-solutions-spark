@@ -107,17 +107,17 @@ const FAQ = () => {
         </AnimatedSection>
 
         <AnimatedSection animation="fade-up" delay={200} className="max-w-3xl mx-auto">
-          <Accordion type="single" collapsible className="space-y-4">
+          <Accordion type="single" collapsible defaultValue="item-0" className="space-y-4">
             {faqs.map((faq, index) => (
               <AccordionItem 
                 key={index} 
                 value={`item-${index}`}
-                className="bg-card border border-border rounded-lg px-6 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-card border border-border rounded-lg px-4 md:px-6 shadow-sm hover:shadow-md transition-shadow"
               >
-                <AccordionTrigger className="text-left font-semibold text-foreground hover:text-primary">
+                <AccordionTrigger className="text-left font-semibold text-foreground hover:text-primary text-sm md:text-base py-3 md:py-4">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
+                <AccordionContent className="text-muted-foreground leading-relaxed text-sm md:text-base pb-3 md:pb-4">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
