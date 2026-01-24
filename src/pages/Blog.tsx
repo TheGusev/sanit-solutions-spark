@@ -19,6 +19,17 @@ const Blog = () => {
     ? allBlogArticles 
     : allBlogArticles.filter(post => post.category === selectedCategory);
 
+  // Определяем "новые" статьи (менее 30 дней)
+  const isNewArticle = (dateString: string) => {
+    const articleDate = new Date(dateString);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    return articleDate > thirtyDaysAgo;
+  };
+
+  // Топ-5 популярных статей (первые в списке)
+  const popularSlugs = allBlogArticles.slice(0, 5).map(a => a.slug);
+
   // ItemList data for Schema.org
   const itemListData = allBlogArticles.slice(0, 50).map((post, index) => ({
     name: post.title,
@@ -138,13 +149,27 @@ const Blog = () => {
                 return "bg-primary/10 text-primary";
               };
               
+              const isPopular = popularSlugs.includes(post.slug);
+              const isNew = isNewArticle(post.date);
+              
               return (
                 <Link 
                   key={post.id} 
                   to={`/blog/${post.slug}`}
                   className="group"
                 >
-                  <Card className="h-full hover:shadow-lg hover:shadow-russia-red/10 transition-all duration-300 hover:-translate-y-1">
+                  <Card className="h-full relative hover:shadow-lg hover:shadow-russia-red/10 transition-all duration-300 hover:-translate-y-1">
+                    {/* Бейджи */}
+                    {isNew && (
+                      <span className="absolute top-3 right-3 bg-gradient-to-r from-russia-red to-secondary text-white text-[10px] px-2.5 py-1 rounded-full font-medium shadow-md z-10">
+                        ⭐ Новое
+                      </span>
+                    )}
+                    {isPopular && !isNew && (
+                      <span className="absolute top-3 right-3 bg-gradient-to-r from-primary to-russia-red text-white text-[10px] px-2.5 py-1 rounded-full font-medium shadow-md z-10">
+                        🔥 Популярное
+                      </span>
+                    )}
                     <CardHeader>
                       <div className="flex items-center gap-2 mb-3">
                         <span className={`text-xs px-3 py-1 rounded-full font-medium ${getCategoryClass()}`}>
