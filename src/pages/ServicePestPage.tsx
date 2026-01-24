@@ -146,9 +146,20 @@ export default function ServicePestPage() {
             <>
               {/* Цветовая подложка для контраста */}
               <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
-              {/* Изображение вредителя с blur */}
+              {/* Мобильная версия: более яркий фон, так как карточка справа скрыта */}
               <div 
-                className="absolute inset-0 bg-cover bg-center"
+                className="absolute inset-0 bg-cover bg-center md:hidden"
+                style={{ 
+                  backgroundImage: `url('${pestImage.image}')`,
+                  filter: 'blur(5px)',
+                  transform: 'scale(1.1)',
+                  opacity: 0.50
+                }}
+                aria-hidden="true"
+              />
+              {/* Desktop версия: слабее, так как есть карточка справа */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center hidden md:block"
                 style={{ 
                   backgroundImage: `url('${pestImage.image}')`,
                   filter: 'blur(8px)',
