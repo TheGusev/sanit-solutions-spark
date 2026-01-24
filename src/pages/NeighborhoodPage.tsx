@@ -185,15 +185,15 @@ const NeighborhoodPage = () => {
 
               {/* Trust badges */}
               <div className="flex flex-wrap gap-4 mb-8">
-                <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 py-2 px-4">
+                <Badge className="bg-success/10 text-success py-2 px-4">
                   <Clock className="w-4 h-4 mr-2" />
                   Выезд {neighborhood.responseTime}
                 </Badge>
-                <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 py-2 px-4">
+                <Badge className="bg-primary/10 text-primary py-2 px-4">
                   <Shield className="w-4 h-4 mr-2" />
                   Гарантия 1 год
                 </Badge>
-                <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 py-2 px-4">
+                <Badge className="bg-warning/10 text-warning py-2 px-4">
                   от {1000 + neighborhood.surcharge}₽
                 </Badge>
               </div>
