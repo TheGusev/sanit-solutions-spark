@@ -138,9 +138,33 @@ export default function ServicePestPage() {
       <Header />
       
       <main className="min-h-screen">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-b from-primary/5 to-background py-12 md:py-16">
-          <div className="container mx-auto px-4">
+        {/* Hero Section с фоновым изображением вредителя */}
+        <section className="relative py-12 md:py-16 min-h-[50vh] overflow-hidden">
+          {/* Фоновое изображение вредителя с blur */}
+          {pestImage && (
+            <>
+              <div 
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ 
+                  backgroundImage: `url('${pestImage.image}')`,
+                  filter: 'blur(8px)',
+                  transform: 'scale(1.1)',
+                  opacity: 0.08
+                }}
+                aria-hidden="true"
+              />
+              {/* Градиентный overlay для читаемости текста */}
+              <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/70" />
+              {/* Дополнительный вертикальный градиент */}
+              <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/60" />
+            </>
+          )}
+          {/* Fallback если нет изображения */}
+          {!pestImage && (
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background" />
+          )}
+          
+          <div className="container mx-auto px-4 relative z-10">
             <Breadcrumbs items={breadcrumbItems} />
             
             <div className="mt-6 grid md:grid-cols-2 gap-8 items-center">
@@ -194,10 +218,10 @@ export default function ServicePestPage() {
                 </div>
               </div>
               
-              {/* Изображение вредителя */}
+              {/* Изображение вредителя в карточке */}
               {pestImage && (
                 <div className="hidden md:block">
-                  <div className="relative rounded-2xl overflow-hidden shadow-xl">
+                  <div className="relative rounded-2xl overflow-hidden shadow-xl bg-background/80 backdrop-blur-sm">
                     <img 
                       src={pestImage.image}
                       alt={pestImage.altText}

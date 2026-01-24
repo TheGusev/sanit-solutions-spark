@@ -22,6 +22,7 @@ import { Phone, Clock, Shield, CheckCircle, MapPin, Star, AlertTriangle, Award }
 import { getPestBySlug } from '@/data/pests';
 import { getPestImage } from '@/data/pestImages';
 import { neighborhoods } from '@/data/neighborhoods';
+import { getNeighborhoodHeroImage } from '@/data/neighborhoodImages';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 import {
   generateIntro, 
@@ -184,9 +185,44 @@ export default function NchPage() {
       <Header />
       
       <main className="min-h-screen">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-b from-primary/5 to-background py-10 md:py-14">
-          <div className="container mx-auto px-4">
+        {/* Hero Section с комбинированным фоном */}
+        <section className="relative py-10 md:py-14 min-h-[45vh] overflow-hidden">
+          {/* СЛОЙ 1: Изображение вредителя */}
+          {pestImage && (
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ 
+                backgroundImage: `url('${pestImage.image}')`,
+                filter: 'blur(8px)',
+                transform: 'scale(1.1)',
+                opacity: 0.06
+              }}
+              aria-hidden="true"
+            />
+          )}
+          
+          {/* СЛОЙ 2: Изображение района (слабее) */}
+          <div 
+            className="absolute inset-0 bg-cover bg-right"
+            style={{ 
+              backgroundImage: `url('${getNeighborhoodHeroImage(neighborhoodSlug)}')`,
+              filter: 'blur(10px)',
+              transform: 'scale(1.1)',
+              opacity: 0.03
+            }}
+            aria-hidden="true"
+          />
+          
+          {/* Градиентные overlays */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/70" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/60" />
+          
+          {/* Fallback если нет изображения */}
+          {!pestImage && (
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background" />
+          )}
+          
+          <div className="container mx-auto px-4 relative z-10">
             <Breadcrumbs items={breadcrumbItems} />
             
             <div className="mt-6 grid md:grid-cols-3 gap-8 items-start">
@@ -241,7 +277,7 @@ export default function NchPage() {
               {/* Изображение вредителя - 1/3 ширины */}
               {pestImage && (
                 <div className="hidden md:block">
-                  <div className="relative rounded-2xl overflow-hidden shadow-lg">
+                  <div className="relative rounded-2xl overflow-hidden shadow-lg bg-background/80 backdrop-blur-sm">
                     <img 
                       src={pestImage.image}
                       alt={pestImage.altText}
