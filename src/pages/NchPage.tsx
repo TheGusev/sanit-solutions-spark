@@ -29,7 +29,6 @@ import {
   generateFAQ,
   generateFAQSchema
 } from '@/lib/contentGenerator';
-import { generateLocalBusiness } from '@/components/StructuredData';
 
 export default function NchPage() {
   const { service, pest: pestSlug, neighborhood: neighborhoodSlug } = useParams<{
@@ -139,13 +138,6 @@ export default function NchPage() {
   
   const faqSchema = generateFAQSchema(faqItems);
   
-  const localBusinessSchema = generateLocalBusiness(
-    `${serviceName} от ${pest.genitive}`,
-    neighborhood.name,
-    neighborhoodSlug,
-    service
-  );
-  
   return (
     <>
       <Helmet>
@@ -163,7 +155,6 @@ export default function NchPage() {
         <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
       </Helmet>
       
       <Header />
