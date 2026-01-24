@@ -91,69 +91,39 @@ const PricingByArea = () => {
             </h3>
           </div>
           
-          {/* Desktop Table */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-muted/50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">Услуга</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">Объект</th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-foreground">Цена</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {servicePricesData.map((item, index) => (
-                  <tr 
-                    key={item.id} 
-                    className={`hover:bg-muted/30 transition-all duration-500 ${index % 2 === 0 ? 'bg-background' : 'bg-muted/10'} ${
-                      isVisible 
-                        ? 'opacity-100 translate-y-0' 
-                        : 'opacity-0 translate-y-4'
-                    }`}
-                    style={{ transitionDelay: `${index * 50}ms` }}
-                  >
-                    <td className="px-4 py-3">
-                      <span className="font-bold text-foreground">{item.service}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-muted-foreground">{item.object}</span>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <span className="font-bold text-green-600 dark:text-green-400 text-lg">{item.price}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Accordion */}
-          <div className="md:hidden">
-            <Accordion type="single" collapsible className="divide-y divide-border">
-              {Object.entries(groupedServices).map(([serviceName, items]) => (
-                <AccordionItem key={serviceName} value={serviceName} className="border-0">
-                  <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/30">
-                    <div className="flex items-center justify-between w-full pr-2">
-                      <span className="font-bold text-foreground text-left">{serviceName}</span>
-                      <span className="text-green-600 dark:text-green-400 font-bold text-sm">
-                        {getMinPrice(items)}
-                      </span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="pb-0">
-                    <div className="divide-y divide-border/50">
-                      {items.map((item) => (
-                        <div key={item.id} className="px-4 py-2 flex justify-between bg-muted/20">
-                          <span className="text-muted-foreground text-sm">{item.object}</span>
-                          <span className="text-green-600 dark:text-green-400 font-semibold text-sm">{item.price}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
+          {/* Unified Accordion for all devices */}
+          <Accordion type="single" collapsible defaultValue="Дезинфекция" className="divide-y divide-border">
+            {Object.entries(groupedServices).map(([serviceName, items]) => (
+              <AccordionItem key={serviceName} value={serviceName} className="border-0">
+                <AccordionTrigger className="px-4 md:px-6 py-3 md:py-4 hover:no-underline hover:bg-muted/30">
+                  <div className="flex items-center justify-between w-full pr-2">
+                    <span className="font-bold text-foreground text-left text-base md:text-lg">
+                      {serviceName}
+                    </span>
+                    <span className="text-success font-bold text-sm md:text-base">
+                      {getMinPrice(items)}
+                    </span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pb-0">
+                  <div className="divide-y divide-border/50">
+                    {items.map((item, index) => (
+                      <div 
+                        key={item.id} 
+                        className={`px-4 md:px-6 py-2 md:py-3 flex justify-between bg-muted/20 transition-all duration-300 ${
+                          isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2'
+                        }`}
+                        style={{ transitionDelay: `${index * 50}ms` }}
+                      >
+                        <span className="text-muted-foreground text-sm md:text-base">{item.object}</span>
+                        <span className="text-success font-semibold text-sm md:text-base">{item.price}</span>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
 
           {/* 4 примечания под таблицей */}
           <div className="p-4 bg-muted/30 border-t border-border">
@@ -190,7 +160,7 @@ const PricingByArea = () => {
             <ul className="space-y-3">
               {includedServicesData.map((item, index) => (
                 <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <span className="text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0">✅</span>
+                  <span className="text-success mt-0.5 flex-shrink-0">✅</span>
                   {item}
                 </li>
               ))}
@@ -206,7 +176,7 @@ const PricingByArea = () => {
             <ul className="space-y-3">
               {discountsData.map((item, index) => (
                 <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <span className="text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0">✅</span>
+                  <span className="text-success mt-0.5 flex-shrink-0">✅</span>
                   {item.text}
                 </li>
               ))}
