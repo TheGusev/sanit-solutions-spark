@@ -103,19 +103,91 @@ export const generateContentWithIds = (content: string): string => {
   let tableRows: string[] = [];
   let inList = false;
   let listType: 'ul' | 'ol' = 'ul';
+  let inBlockquote = false;
+  let blockquoteLines: string[] = [];
+  let inCallout = false;
+  let calloutType = '';
+  let calloutLines: string[] = [];
+  
+  const closeList = () => {
+    if (inList) {
+      result += listType === 'ul' ? '</ul>' : '</ol>';
+      inList = false;
+    }
+  };
+  
+  const processBlockquote = () => {
+    if (blockquoteLines.length > 0) {
+      result += `<blockquote class="blog-quote">${blockquoteLines.join('<br/>')}</blockquote>`;
+      blockquoteLines = [];
+    }
+    inBlockquote = false;
+  };
+  
+  const processCallout = () => {
+    if (calloutLines.length > 0) {
+      const icons: Record<string, string> = { tip: '💡', warning: '⚠️', info: 'ℹ️', danger: '🚨' };
+      const icon = icons[calloutType] || 'ℹ️';
+      const variantClass = calloutType === 'tip' ? 'callout-tip' : 
+                           calloutType === 'warning' ? 'callout-warning' :
+                           calloutType === 'danger' ? 'callout-danger' : 'callout-info';
+      result += `<div class="blog-callout ${variantClass}"><span class="callout-icon">${icon}</span><div class="callout-content">${calloutLines.join(' ')}</div></div>`;
+      calloutLines = [];
+    }
+    inCallout = false;
+    calloutType = '';
+  };
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const trimmedLine = line.trim();
     
+    // Handle callout blocks (:::tip, :::warning, :::info, :::danger)
+    if (trimmedLine.startsWith(':::')) {
+      const type = trimmedLine.replace(':::', '').trim().toLowerCase();
+      if (type && !inCallout) {
+        closeList();
+        if (inBlockquote) processBlockquote();
+        inCallout = true;
+        calloutType = type;
+        calloutLines = [];
+        continue;
+      } else if (inCallout && !type) {
+        processCallout();
+        continue;
+      }
+    }
+    
+    if (inCallout) {
+      calloutLines.push(trimmedLine);
+      continue;
+    }
+    
+    // Handle blockquotes (> text)
+    if (trimmedLine.startsWith('> ')) {
+      if (!inBlockquote) {
+        closeList();
+        if (inTable) {
+          result += processTable(tableRows);
+          inTable = false;
+          tableRows = [];
+        }
+        inBlockquote = true;
+        blockquoteLines = [];
+      }
+      blockquoteLines.push(trimmedLine.replace(/^>\s?/, ''));
+      continue;
+    }
+    
+    // End blockquote if line doesn't start with >
+    if (inBlockquote && !trimmedLine.startsWith('>')) {
+      processBlockquote();
+    }
+    
     // Handle table rows
     if (trimmedLine.startsWith('|') && trimmedLine.endsWith('|')) {
       if (!inTable) {
-        // Close any open list
-        if (inList) {
-          result += listType === 'ul' ? '</ul>' : '</ol>';
-          inList = false;
-        }
+        closeList();
         inTable = true;
         tableRows = [];
       }
@@ -132,26 +204,21 @@ export const generateContentWithIds = (content: string): string => {
     
     // Headers
     if (line.startsWith('## ')) {
-      if (inList) {
-        result += listType === 'ul' ? '</ul>' : '</ol>';
-        inList = false;
-      }
+      closeList();
       const title = line.replace('## ', '');
       const id = transliterate(title);
       result += `<h2 id="${id}">${title}</h2>`;
     } else if (line.startsWith('### ')) {
-      if (inList) {
-        result += listType === 'ul' ? '</ul>' : '</ol>';
-        inList = false;
-      }
+      closeList();
       const title = line.replace('### ', '');
       const id = transliterate(title);
       result += `<h3 id="${id}">${title}</h3>`;
+    } else if (line.startsWith('#### ')) {
+      closeList();
+      const title = line.replace('#### ', '');
+      result += `<p><strong>${title}</strong></p>`;
     } else if (line.startsWith('**') && line.endsWith('**')) {
-      if (inList) {
-        result += listType === 'ul' ? '</ul>' : '</ol>';
-        inList = false;
-      }
+      closeList();
       result += `<p><strong>${line.replace(/\*\*/g, '')}</strong></p>`;
     } else if (line.startsWith('- ')) {
       // Unordered list
@@ -172,15 +239,9 @@ export const generateContentWithIds = (content: string): string => {
       }
       result += `<li>${line.replace(/^\d+\.\s/, '')}</li>`;
     } else if (trimmedLine === '') {
-      if (inList) {
-        result += listType === 'ul' ? '</ul>' : '</ol>';
-        inList = false;
-      }
+      closeList();
     } else {
-      if (inList) {
-        result += listType === 'ul' ? '</ul>' : '</ol>';
-        inList = false;
-      }
+      closeList();
       result += `<p>${line}</p>`;
     }
   }
@@ -191,6 +252,12 @@ export const generateContentWithIds = (content: string): string => {
   }
   if (inList) {
     result += listType === 'ul' ? '</ul>' : '</ol>';
+  }
+  if (inBlockquote && blockquoteLines.length > 0) {
+    processBlockquote();
+  }
+  if (inCallout && calloutLines.length > 0) {
+    processCallout();
   }
   
   return result;

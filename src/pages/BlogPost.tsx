@@ -169,7 +169,7 @@ const BlogPost = () => {
                   __html: DOMPurify.sanitize(
                     generateContentWithIds(post.content),
                     { 
-                      ALLOWED_TAGS: ['h2', 'h3', 'p', 'strong', 'li', 'ul', 'ol', 'em', 'br', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'div'], 
+                      ALLOWED_TAGS: ['h2', 'h3', 'h4', 'p', 'strong', 'li', 'ul', 'ol', 'em', 'br', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'div', 'blockquote', 'span'], 
                       ALLOWED_ATTR: ['id', 'class'] 
                     }
                   )
