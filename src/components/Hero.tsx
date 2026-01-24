@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Phone, Zap, CheckCircle, Shield, Calculator } from "lucide-react";
+import { Zap, CheckCircle, Shield, Calculator } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useParallax } from "@/hooks/useParallax";
 import { useTraffic } from "@/contexts/TrafficContext";
@@ -173,7 +173,7 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
             {copy.subtitle}
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex justify-center">
             <Button 
               onClick={() => {
                 trackGoal('hero_cta_click', {
@@ -188,23 +188,6 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
             >
               <Calculator className="w-5 h-5 mr-2 flex-shrink-0" />
               Заказать обработку и рассчитать стоимость
-            </Button>
-            
-            <Button 
-              onClick={() => {
-                trackGoal('hero_cta_click', {
-                  intent: context?.intent,
-                  variant: context?.variantId,
-                  button: 'call'
-                });
-                window.location.href = 'tel:+79069989888';
-              }}
-              size="lg"
-              variant="outline"
-              className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold text-lg px-8 py-6 h-auto whitespace-normal"
-            >
-              <Phone className="w-5 h-5 mr-2 flex-shrink-0" />
-              Позвонить сейчас
             </Button>
           </div>
 
