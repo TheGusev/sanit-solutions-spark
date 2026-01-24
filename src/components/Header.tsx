@@ -242,7 +242,14 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                 </DropdownMenu>
               </>
             )}
-            <Link to="/blog" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link 
+              to="/blog" 
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/blog' || location.pathname.startsWith('/blog/')
+                  ? 'text-russia-red border-b-2 border-russia-red pb-0.5'
+                  : 'hover:text-primary'
+              }`}
+            >
               Блог
             </Link>
             <Link to="/contacts" className="text-sm font-medium hover:text-primary transition-colors">
@@ -385,7 +392,11 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     <SheetClose asChild>
                       <Link 
                         to="/blog" 
-                        className="block py-3 px-4 rounded-lg hover:bg-muted transition-colors font-medium"
+                        className={`block py-3 px-4 rounded-lg transition-colors font-medium ${
+                          location.pathname === '/blog' || location.pathname.startsWith('/blog/')
+                            ? 'bg-russia-red/10 text-russia-red border-l-4 border-russia-red'
+                            : 'hover:bg-muted'
+                        }`}
                       >
                         Блог
                       </Link>
