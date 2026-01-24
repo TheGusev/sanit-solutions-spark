@@ -180,15 +180,15 @@ const NeighborhoodPage = () => {
                 className="absolute inset-0 bg-cover bg-center"
                 style={{ 
                   backgroundImage: `url('${neighborhoodImagesData.heroImage}')`,
-                  filter: 'blur(12px)',
-                  transform: 'scale(1.15)',
-                  opacity: 0.15
+                  filter: 'blur(8px)',
+                  transform: 'scale(1.1)',
+                  opacity: 0.30
                 }}
                 role="img"
                 aria-label={neighborhoodImagesData.altText}
               />
               {/* Gradient overlay for readability */}
-              <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/70 to-background/40 dark:from-background/95 dark:via-background/85 dark:to-background/60" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/50 to-background/40 dark:from-background/70 dark:via-background/60 dark:to-background/50" />
             </>
           )}
           {/* Fallback gradient if no image */}
