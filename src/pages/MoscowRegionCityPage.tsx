@@ -110,7 +110,7 @@ export default function MoscowRegionCityPage() {
       
       <Header />
       
-      <main className="min-h-screen">
+      <main className="min-h-screen pt-16">
         {/* Hero */}
         <section className="bg-gradient-to-b from-primary/5 to-background py-12 md:py-16">
           <div className="container mx-auto px-4">

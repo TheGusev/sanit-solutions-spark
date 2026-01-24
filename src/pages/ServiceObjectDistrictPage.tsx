@@ -125,7 +125,7 @@ export default function ServiceObjectDistrictPage() {
       
       <Header />
       
-      <main className="min-h-screen">
+      <main className="min-h-screen pt-16">
         <section className="bg-gradient-to-b from-primary/5 to-background py-10 md:py-14">
           <div className="container mx-auto px-4">
             <Breadcrumbs items={breadcrumbItems} />

@@ -185,7 +185,7 @@ export default function NchPage() {
       
       <Header />
       
-      <main className="min-h-screen">
+      <main className="min-h-screen pt-16">
         {/* Hero Section с комбинированным фоном */}
         <section className="relative py-10 md:py-14 min-h-[45vh] overflow-hidden">
           {/* Цветовая подложка для контраста */}

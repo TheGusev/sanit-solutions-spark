@@ -50,7 +50,7 @@ const Breadcrumbs = ({ items, className = "" }: BreadcrumbsProps) => {
         </script>
       </Helmet>
 
-      <Breadcrumb className={className}>
+      <Breadcrumb className={`hidden md:block ${className}`}>
         <BreadcrumbList>
           {fullItems.map((item, index) => {
             const isLast = index === fullItems.length - 1;

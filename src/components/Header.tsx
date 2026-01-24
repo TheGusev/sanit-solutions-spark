@@ -129,7 +129,7 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex flex-wrap items-center gap-x-4 lg:gap-x-6 gap-y-2">
+          <nav className="hidden lg:flex flex-wrap items-center gap-x-4 xl:gap-x-6 gap-y-2">
             {isHomePage ? (
               <>
                 <DropdownMenu>
@@ -262,7 +262,7 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-2">
             <ThemeToggle />
             <Button
               onClick={handleCalculatorClick} 
@@ -274,7 +274,7 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex lg:hidden items-center gap-2">
             <ThemeToggle />
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
