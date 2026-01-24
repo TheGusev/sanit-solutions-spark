@@ -24,7 +24,10 @@ import { neighborhoods } from '@/data/neighborhoods';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 
 export default function ServicePestPage() {
-  const { service, pest: pestSlug } = useParams<{ service: string; pest: string }>();
+  // Поддержка обоих форматов params: старый {service, pest} и новый {parentSlug, subSlug}
+  const params = useParams<{ service?: string; pest?: string; parentSlug?: string; subSlug?: string }>();
+  const service = params.service || params.parentSlug;
+  const pestSlug = params.pest || params.subSlug;
   
   useEffect(() => {
     window.scrollTo(0, 0);

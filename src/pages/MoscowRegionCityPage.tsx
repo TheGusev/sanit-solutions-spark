@@ -120,7 +120,7 @@ export default function MoscowRegionCityPage() {
                 <span className="px-3 py-1 bg-primary/10 rounded-full text-sm font-medium">
                   Московская область
                 </span>
-                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-success/10 text-success rounded-full text-sm font-medium">
                   {city.distance} км от МКАД
                 </span>
               </div>
