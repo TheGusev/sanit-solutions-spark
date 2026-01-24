@@ -1,6 +1,6 @@
 import { useParams, Navigate, Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Clock, Check, Phone, ArrowRight, Shield, Award, Users } from 'lucide-react';
+import { MapPin, Clock, Check, Phone, ArrowRight, Shield, Award, Users, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import CalculatorModal from '@/components/CalculatorModal';
 import InternalLinks from '@/components/InternalLinks';
 import { getNeighborhoodBySlug, getNeighborhoodsByDistrict, neighborhoods, Neighborhood } from '@/data/neighborhoods';
 import { getDistrictById, districtPages } from '@/data/districtPages';
+import { getNeighborhoodContent } from '@/data/neighborhoodContent';
 import { SEO_CONFIG } from '@/lib/seo';
 import { useState } from 'react';
 
@@ -31,6 +32,9 @@ const NeighborhoodPage = () => {
   const siblingNeighborhoods = getNeighborhoodsByDistrict(neighborhood.districtId)
     .filter(n => n.slug !== neighborhood.slug)
     .slice(0, 6);
+
+  // Расширенный контент для района
+  const extendedContent = getNeighborhoodContent(neighborhood.slug);
 
   // Services with prices
   const services = [
@@ -254,6 +258,97 @@ const NeighborhoodPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Расширенный контент для района */}
+        {extendedContent && (
+          <>
+            {/* Введение с фоном */}
+            <section className="py-12 bg-primary/5">
+              <div className="container mx-auto px-4">
+                <div className="max-w-4xl mx-auto">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                    Дезинфекция и дезинсекция в районе {extendedContent.name}
+                  </h2>
+                  <p className="text-muted-foreground text-lg leading-relaxed">
+                    {extendedContent.intro}
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Почему мы */}
+            <section className="py-12">
+              <div className="container mx-auto px-4">
+                <div className="max-w-4xl mx-auto">
+                  <h2 className="text-2xl font-bold mb-6">
+                    Почему выбирают нас в {extendedContent.name}
+                  </h2>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {extendedContent.whyUs.map((reason, index) => (
+                      <div 
+                        key={index}
+                        className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg"
+                      >
+                        <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>{reason}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Зона покрытия */}
+            <section className="py-12 bg-muted/30">
+              <div className="container mx-auto px-4">
+                <div className="max-w-4xl mx-auto">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                      <MapPin className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold mb-3">Зона обслуживания</h2>
+                      <p className="text-muted-foreground mb-4">
+                        {extendedContent.coverage}
+                      </p>
+                      <div>
+                        <p className="font-medium mb-2">Ближайшие станции метро и ориентиры:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {extendedContent.landmarks.map((landmark, index) => (
+                            <Badge key={index} variant="secondary" className="text-sm py-1.5 px-3">
+                              <MapPin className="w-3 h-3 mr-1" />
+                              {landmark}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Преимущества */}
+            <section className="py-12">
+              <div className="container mx-auto px-4">
+                <div className="max-w-4xl mx-auto">
+                  <h2 className="text-2xl font-bold mb-6">Наши преимущества</h2>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {extendedContent.advantages.map((advantage, index) => (
+                      <div 
+                        key={index}
+                        className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg"
+                      >
+                        <Award className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <span>{advantage}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          </>
+        )}
 
         {/* Landmarks */}
         <section className="py-12">
