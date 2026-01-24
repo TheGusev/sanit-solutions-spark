@@ -107,7 +107,7 @@ const FAQ = () => {
         </AnimatedSection>
 
         <AnimatedSection animation="fade-up" delay={200} className="max-w-3xl mx-auto">
-          <Accordion type="single" collapsible defaultValue="item-0" className="space-y-4">
+          <Accordion type="multiple" defaultValue={faqs.map((_, index) => `item-${index}`)} className="space-y-4">
             {faqs.map((faq, index) => (
               <AccordionItem 
                 key={index} 
