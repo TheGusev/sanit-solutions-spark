@@ -9,6 +9,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { TrafficProvider } from "@/contexts/TrafficContext";
 import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
+import { CookieBanner } from "@/components/CookieBanner";
 
 // Critical - loads immediately (main landing page)
 import Index from "./pages/Index";
@@ -17,6 +18,7 @@ import Index from "./pages/Index";
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
 const ServiceSubpage = lazy(() => import("./pages/ServiceSubpage"));
 const ServicePestPage = lazy(() => import("./pages/ServicePestPage"));
@@ -59,12 +61,14 @@ const App = () => (
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <TrafficProvider>
               <ScrollToTop />
+              <CookieBanner />
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
                   <Route path="/uslugi/po-okrugam-moskvy" element={<DistrictsOverview />} />
                   <Route path="/uslugi/dezinfekciya-cao" element={<DistrictPage />} />
                   <Route path="/uslugi/dezinfekciya-sao" element={<DistrictPage />} />
