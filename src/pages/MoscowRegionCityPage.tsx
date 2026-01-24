@@ -22,7 +22,7 @@ import { servicePages } from '@/data/services';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 
 export default function MoscowRegionCityPage() {
-  const { city: citySlug } = useParams<{ city: string }>();
+  const { citySlug } = useParams<{ citySlug: string }>();
   
   useEffect(() => {
     window.scrollTo(0, 0);
