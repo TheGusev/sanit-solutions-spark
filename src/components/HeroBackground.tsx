@@ -6,7 +6,9 @@
 interface HeroBackgroundProps {
   image: string;
   blur?: number;
+  blurMobile?: number;
   opacity?: number;
+  opacityMobile?: number;
   overlay?: 'light' | 'dark' | 'gradient' | 'none';
   altText?: string;
   className?: string;
@@ -15,19 +17,38 @@ interface HeroBackgroundProps {
 const HeroBackground = ({ 
   image, 
   blur = 8, 
+  blurMobile,
   opacity = 0.30,
+  opacityMobile,
   overlay = 'gradient',
   altText = 'Фоновое изображение',
   className = ''
 }: HeroBackgroundProps) => {
+  // Мобильные значения: по умолчанию более яркие
+  const mobileBlur = blurMobile ?? Math.max(blur - 2, 4);
+  const mobileOpacity = opacityMobile ?? Math.min(opacity + 0.15, 0.55);
+
   return (
     <>
       {/* Базовая цветовая подложка */}
       <div className={`absolute inset-0 bg-primary/5 ${className}`} aria-hidden="true" />
       
-      {/* Фоновое изображение с blur */}
+      {/* Мобильная версия: более яркий и менее размытый фон */}
       <div 
-        className="absolute inset-0 bg-cover bg-center"
+        className="absolute inset-0 bg-cover bg-center md:hidden"
+        style={{ 
+          backgroundImage: `url('${image}')`,
+          filter: `blur(${mobileBlur}px)`,
+          transform: 'scale(1.1)',
+          opacity: mobileOpacity
+        }}
+        role="img"
+        aria-label={altText}
+      />
+      
+      {/* Desktop версия */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center hidden md:block"
         style={{ 
           backgroundImage: `url('${image}')`,
           filter: `blur(${blur}px)`,

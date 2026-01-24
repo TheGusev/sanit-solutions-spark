@@ -193,16 +193,30 @@ export default function NchPage() {
           
           {/* СЛОЙ 1: Изображение вредителя */}
           {pestImage && (
-            <div 
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ 
-                backgroundImage: `url('${pestImage.image}')`,
-                filter: 'blur(8px)',
-                transform: 'scale(1.1)',
-                opacity: 0.30
-              }}
-              aria-hidden="true"
-            />
+            <>
+              {/* Мобильная версия: более яркий фон, так как карточка справа скрыта */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center md:hidden"
+                style={{ 
+                  backgroundImage: `url('${pestImage.image}')`,
+                  filter: 'blur(6px)',
+                  transform: 'scale(1.1)',
+                  opacity: 0.45
+                }}
+                aria-hidden="true"
+              />
+              {/* Desktop версия: слабее, так как есть карточка справа */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center hidden md:block"
+                style={{ 
+                  backgroundImage: `url('${pestImage.image}')`,
+                  filter: 'blur(8px)',
+                  transform: 'scale(1.1)',
+                  opacity: 0.30
+                }}
+                aria-hidden="true"
+              />
+            </>
           )}
           
           {/* СЛОЙ 2: Изображение района (слабее) */}
