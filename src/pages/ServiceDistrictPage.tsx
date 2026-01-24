@@ -20,6 +20,7 @@ import { servicePages } from '@/data/services';
 import { pests } from '@/data/pests';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 import { generateLocalFeatures } from '@/lib/contentGenerator';
+import { generateLocalBusiness } from '@/components/StructuredData';
 
 export default function ServiceDistrictPage() {
   const { service: serviceSlug, district: districtSlug } = useParams<{ service: string; district: string }>();
@@ -83,6 +84,13 @@ export default function ServiceDistrictPage() {
     mainEntity: faqItems.map(item => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } }))
   };
   
+  const localBusinessSchema = generateLocalBusiness(
+    service.title,
+    neighborhood.name,
+    districtSlug,
+    serviceSlug
+  );
+  
   return (
     <>
       <Helmet>
@@ -99,6 +107,7 @@ export default function ServiceDistrictPage() {
         <meta property="og:type" content={seoMeta.ogType} />
         <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
       </Helmet>
       
       <Header />
