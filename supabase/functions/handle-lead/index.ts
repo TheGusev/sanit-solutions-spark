@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
@@ -26,11 +27,6 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
 interface LeadData {
   name: string;
   phone: string;
@@ -49,8 +45,8 @@ interface LeadData {
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
-  utm_content?: string; // Новое поле
-  utm_term?: string; // Новое поле
+  utm_content?: string;
+  utm_term?: string;
   keyword?: string;
   yclid?: string;
   gclid?: string;
@@ -111,13 +107,11 @@ async function sendTelegramNotification(lead: LeadData): Promise<boolean> {
     return true;
   }
   
-  // Check if this is a discount popup lead (without calculator data)
   const isDiscountPopup = lead.source === "website_discount_popup";
   
   let message: string;
   
   if (isDiscountPopup) {
-    // Simplified message for discount popup leads
     message = `🎁 *ЗАЯВКА НА СКИДКУ*
 ━━━━━━━━━━━━━━━━━
 
@@ -130,7 +124,6 @@ ${lead.email ? `📧 *Email:* ${lead.email}\n` : ""}
 📍 *Источник:* Попап со скидкой
 ${lead.utm_source || lead.utm_medium || lead.utm_campaign ? `📊 *UTM:* ${lead.utm_source || "—"} / ${lead.utm_medium || "—"} / ${lead.utm_campaign || "—"}\n` : ""}🕐 ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })}`;
   } else {
-    // Full message for calculator leads
     message = `🔔 *НОВАЯ ЗАЯВКА*
 ━━━━━━━━━━━━━━━━━
 
@@ -214,16 +207,17 @@ async function sendLeadToCrm(lead: LeadData): Promise<boolean> {
 }
 
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
   
-  // Extract client IP for rate limiting
   const ip = req.headers.get("x-real-ip") || 
              req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || 
              "unknown";
 
-  // Rate limit check
   if (!checkRateLimit(ip)) {
     console.log(`⚠️ Rate limit exceeded for ${ip}`);
     return new Response(
@@ -236,7 +230,6 @@ serve(async (req) => {
     console.log("📥 Received lead request");
     const leadData: LeadData = await req.json();
     
-    // Debug log incoming data
     console.log('📥 Lead data received:', {
       session_id: leadData.session_id,
       intent: leadData.intent,
@@ -245,10 +238,8 @@ serve(async (req) => {
       device_type: leadData.device_type
     });
     
-    // Honeypot protection: if website field is filled, it's a bot
     if (leadData.website) {
       console.log("🤖 Bot detected via honeypot field");
-      // Return success to not reveal the honeypot
       return new Response(
         JSON.stringify({ success: true }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -260,7 +251,6 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
     
-    // Find most recent impression for this session to link conversion
     let impressionData = null;
     if (leadData.session_id) {
       const { data: impression } = await supabase
@@ -317,12 +307,10 @@ serve(async (req) => {
     
     console.log("✅ Lead saved to database:", data.id);
     
-    // Track MVT conversion using explicit α,β update
     if (impressionData) {
       const revenue = leadData.final_price || 0;
       
       try {
-        // Increment α (success) for the arm that led to this conversion
         await supabase.rpc('increment_arm_alpha', {
           p_test_name: impressionData.test_name,
           p_intent: impressionData.intent || 'default',
@@ -340,7 +328,6 @@ serve(async (req) => {
         console.error("⚠️ Failed to track MVT conversion:", convError);
       }
     } else if (leadData.variant_id && leadData.intent) {
-      // Fallback to old A/B tracking if no impression found
       try {
         const revenue = leadData.final_price || 0;
         

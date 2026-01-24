@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
@@ -24,11 +25,6 @@ function checkRateLimit(sessionId: string): boolean {
   entry.count++;
   return true;
 }
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 interface MVTRequest {
   test_name: string;
@@ -149,6 +145,9 @@ function calculateMVTConfidence(
 }
 
 Deno.serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -294,7 +293,7 @@ Deno.serve(async (req) => {
     }
 
     // 8. Build stats response
-    const stats: Record<string, any> = {};
+    const stats: Record<string, { variant_id: string; sessions: number; conversions: number; conversion_rate: number }> = {};
     variantParams.forEach(v => {
       stats[v.variant_key] = {
         variant_id: v.variant_key,
@@ -325,6 +324,8 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('MVT optimize error:', error);
+    const origin = req.headers.get('origin');
+    const corsHeaders = getCorsHeaders(origin);
     return new Response(
       JSON.stringify({
         variant_id: 'A',

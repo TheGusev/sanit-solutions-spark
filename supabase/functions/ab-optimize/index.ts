@@ -1,10 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 interface ABRequest {
   test_name: string;
@@ -30,7 +26,6 @@ interface ABResponse {
 
 // Beta distribution sampling using rejection sampling
 function betaSample(alpha: number, beta: number): number {
-  // Simple approximation using two gamma distributions
   const gammaA = gammaRandom(alpha);
   const gammaB = gammaRandom(beta);
   return gammaA / (gammaA + gammaB);
@@ -94,6 +89,9 @@ function calculateConfidence(
 }
 
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -105,7 +103,6 @@ serve(async (req) => {
       throw new Error("test_name is required");
     }
     
-    // Use SERVICE_ROLE_KEY for admin operations (increment_ab_session)
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -232,7 +229,8 @@ serve(async (req) => {
     
   } catch (error) {
     console.error("❌ Error in ab-optimize:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const origin = req.headers.get("origin");
+    const corsHeaders = getCorsHeaders(origin);
     
     // Fallback: возвращаем случайный вариант при ошибке
     const fallbackResponse: ABResponse = {
@@ -248,7 +246,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify(fallbackResponse),
       { 
-        status: 200, // Возвращаем 200 чтобы не ломать клиент
+        status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" } 
       }
     );
