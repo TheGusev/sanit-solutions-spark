@@ -1,4 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
+import NotFound from './NotFound';
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Phone, Check, Shield, Clock, Award, ChevronRight } from "lucide-react";
@@ -36,10 +37,7 @@ const ServiceSubpage = () => {
   }, [parentSlug, subSlug]);
 
   if (!subpage) {
-    useEffect(() => {
-      navigate("/404");
-    }, [navigate]);
-    return null;
+    return <NotFound />;
   }
 
   const handlePhoneClick = () => {

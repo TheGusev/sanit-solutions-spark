@@ -7,7 +7,7 @@
  * - ServiceDistrictPage (районы Москвы: arbat, tverskoy)
  */
 
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getSubpageByPath } from '@/data/serviceSubpages';
 import { getPestBySlug } from '@/data/pests';
 import { getObjectBySlug } from '@/data/objects';
@@ -17,6 +17,7 @@ import ServiceSubpage from './ServiceSubpage';
 import ServicePestPage from './ServicePestPage';
 import ServiceObjectPage from './ServiceObjectPage';
 import ServiceDistrictPage from './ServiceDistrictPage';
+import NotFound from './NotFound';
 
 export default function ServiceRouteResolver() {
   const { parentSlug, subSlug } = useParams<{ 
@@ -25,7 +26,7 @@ export default function ServiceRouteResolver() {
   }>();
   
   if (!parentSlug || !subSlug) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
   
   // 1. SEO-подстраницы из serviceSubpages.ts (напр. /dezinfekciya/kvartir как SEO страница)
@@ -53,5 +54,5 @@ export default function ServiceRouteResolver() {
   }
   
   // Ничего не найдено → 404
-  return <Navigate to="/404" replace />;
+  return <NotFound />;
 }
