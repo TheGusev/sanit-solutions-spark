@@ -33,6 +33,7 @@ const MoscowRegionOverview = lazy(() => import("./pages/MoscowRegionOverview"));
 const MoscowRegionCityPage = lazy(() => import("./pages/MoscowRegionCityPage"));
 const MoscowRegionServicePage = lazy(() => import("./pages/MoscowRegionServicePage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const ServiceRouteResolver = lazy(() => import("./pages/ServiceRouteResolver"));
 
 // Admin pages - separate chunk, load on demand
 const AdminLogin = lazy(() => import("./pages/admin/Login"));
@@ -73,13 +74,14 @@ const App = () => (
                   <Route path="/uslugi/dezinfekciya-yzao" element={<DistrictPage />} />
                   <Route path="/uslugi/dezinfekciya-zao" element={<DistrictPage />} />
                   <Route path="/uslugi/dezinfekciya-szao" element={<DistrictPage />} />
-                  <Route path="/uslugi/:parentSlug/:subSlug" element={<ServiceSubpage />} />
-                  {/* Порядок важен! Более специфичные маршруты первыми */}
+                  {/* 3 сегмента - самые специфичные маршруты */}
                   <Route path="/uslugi/:service/:pest/:neighborhood" element={<NchPage />} />
                   <Route path="/uslugi/:service/:object/:district" element={<ServiceObjectDistrictPage />} />
-                  <Route path="/uslugi/:service/:pest" element={<ServicePestPage />} />
-                  <Route path="/uslugi/:service/:object" element={<ServiceObjectPage />} />
-                  <Route path="/uslugi/:service/:district" element={<ServiceDistrictPage />} />
+                  
+                  {/* 2 сегмента - умный роутер определяет тип страницы */}
+                  <Route path="/uslugi/:parentSlug/:subSlug" element={<ServiceRouteResolver />} />
+                  
+                  {/* 1 сегмент */}
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
                   <Route path="/contacts" element={<Contacts />} />
                   <Route path="/rajony" element={<NeighborhoodsOverview />} />

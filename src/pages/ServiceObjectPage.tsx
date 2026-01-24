@@ -20,7 +20,10 @@ import { servicePages } from '@/data/services';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 
 export default function ServiceObjectPage() {
-  const { service: serviceSlug, object: objectSlug } = useParams<{ service: string; object: string }>();
+  // Поддержка обоих форматов params: старый {service, object} и новый {parentSlug, subSlug}
+  const params = useParams<{ service?: string; object?: string; parentSlug?: string; subSlug?: string }>();
+  const serviceSlug = params.service || params.parentSlug;
+  const objectSlug = params.object || params.subSlug;
   
   useEffect(() => { window.scrollTo(0, 0); }, [serviceSlug, objectSlug]);
   

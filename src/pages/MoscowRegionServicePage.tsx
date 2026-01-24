@@ -145,7 +145,7 @@ export default function MoscowRegionServicePage() {
                 <span className="px-3 py-1 bg-primary/10 rounded-full text-sm font-medium">
                   {city.name}, МО
                 </span>
-                <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-success/10 text-success rounded-full text-sm font-medium">
                   Выезд {city.responseTime}
                 </span>
               </div>
@@ -204,15 +204,15 @@ export default function MoscowRegionServicePage() {
                 </p>
                 <ul className="space-y-2 text-left max-w-sm mx-auto">
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-success" />
                     <span>Диагностика включена</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-success" />
                     <span>Гарантия до 1 года</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-success" />
                     <span>Безопасные препараты</span>
                   </li>
                 </ul>
