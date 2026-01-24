@@ -173,14 +173,21 @@ const NeighborhoodPage = () => {
           {/* Background image */}
           {neighborhoodImagesData && (
             <>
+              {/* Цветовая подложка */}
+              <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
               <div 
                 className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url('${neighborhoodImagesData.heroImage}')` }}
+                style={{ 
+                  backgroundImage: `url('${neighborhoodImagesData.heroImage}')`,
+                  filter: 'blur(12px)',
+                  transform: 'scale(1.15)',
+                  opacity: 0.15
+                }}
                 role="img"
                 aria-label={neighborhoodImagesData.altText}
               />
               {/* Gradient overlay for readability */}
-              <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/75 to-background/50 dark:from-background/95 dark:via-background/85 dark:to-background/60" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/70 to-background/40 dark:from-background/95 dark:via-background/85 dark:to-background/60" />
             </>
           )}
           {/* Fallback gradient if no image */}
