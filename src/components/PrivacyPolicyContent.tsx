@@ -1,3 +1,5 @@
+import { Mail, Phone, MessageCircle, Send } from 'lucide-react';
+
 const PrivacyPolicyContent = () => {
   return (
     <div className="prose prose-slate dark:prose-invert max-w-none space-y-8">
@@ -120,8 +122,8 @@ const PrivacyPolicyContent = () => {
         <div className="bg-primary/10 p-4 rounded-lg mt-6">
           <p className="font-medium">Для реализации своих прав обратитесь к Оператору:</p>
           <ul className="list-none space-y-1 mt-2">
-            <li>📧 Email: <a href="mailto:west-centro@mail.ru" className="text-primary hover:underline">west-centro@mail.ru</a></li>
-            <li>📞 Телефон: <a href="tel:+79069989888" className="text-primary hover:underline">+7 (906) 998-98-88</a></li>
+            <li className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Email: <a href="mailto:west-centro@mail.ru" className="text-primary hover:underline">west-centro@mail.ru</a></li>
+            <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> Телефон: <a href="tel:+79069989888" className="text-primary hover:underline">+7 (906) 998-98-88</a></li>
           </ul>
         </div>
       </section>
@@ -184,25 +186,25 @@ const PrivacyPolicyContent = () => {
           <p className="font-medium mb-3">Контакты для связи:</p>
           <ul className="list-none space-y-2">
             <li className="flex items-center gap-2">
-              <span>📧</span>
+              <Mail className="w-4 h-4 text-primary" />
               <a href="mailto:west-centro@mail.ru" className="text-primary hover:underline">
                 west-centro@mail.ru
               </a>
             </li>
             <li className="flex items-center gap-2">
-              <span>📞</span>
+              <Phone className="w-4 h-4 text-primary" />
               <a href="tel:+79069989888" className="text-primary hover:underline">
                 +7 (906) 998-98-88
               </a>
             </li>
             <li className="flex items-center gap-2">
-              <span>💬</span>
+              <MessageCircle className="w-4 h-4 text-primary" />
               <a href="https://wa.me/79069989888" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                 WhatsApp
               </a>
             </li>
             <li className="flex items-center gap-2">
-              <span>✈️</span>
+              <Send className="w-4 h-4 text-primary" />
               <a href="https://t.me/one_help" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                 Telegram: @one_help
               </a>

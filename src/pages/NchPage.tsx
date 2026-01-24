@@ -19,8 +19,9 @@ import { generateLocalBusiness } from '@/components/StructuredData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Phone, Clock, Shield, CheckCircle, MapPin, Star, AlertTriangle, Award } from 'lucide-react';
+import { Phone, Clock, Shield, CheckCircle, MapPin, Star, AlertTriangle, Award, Bug, Mouse } from 'lucide-react';
 import { getPestBySlug } from '@/data/pests';
+import { IconFromKey, getIconKeyFromEmoji } from '@/lib/iconMap';
 import { getPestImage } from '@/data/pestImages';
 import { neighborhoods } from '@/data/neighborhoods';
 import { getNeighborhoodHeroImage } from '@/data/neighborhoodImages';
@@ -73,7 +74,7 @@ export default function NchPage() {
   const pageTitle = `${pest.name} в ${neighborhood.name} — от ${pest.priceFrom}₽ | Выезд 30 мин`;
   
   // Description: ~155 символов  
-  const pageDescription = `Уничтожение ${pest.genitive} в ${neighborhood.name} от ${pest.priceFrom}₽. Выезд за 30 мин, гарантия 1 год. Безопасные препараты. ☎️ ${SEO_CONFIG.phone}`;
+  const pageDescription = `Уничтожение ${pest.genitive} в ${neighborhood.name} от ${pest.priceFrom}₽. Выезд за 30 мин, гарантия 1 год. Безопасные препараты. ${SEO_CONFIG.phone}`;
   
   const canonicalPath = `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`;
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);
@@ -247,11 +248,13 @@ export default function NchPage() {
               {/* Текстовый блок - 2/3 ширины */}
               <div className="md:col-span-2">
                 <div className="flex flex-wrap items-center gap-2 mb-4">
-                  <span className="text-3xl">{pest.icon}</span>
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <IconFromKey iconKey={getIconKeyFromEmoji(pest.icon)} className="w-6 h-6 text-primary" />
+                  </div>
                   <span className="px-3 py-1 bg-primary/10 rounded-full text-sm font-medium">
                     {districtName}
                   </span>
-                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                  <span className="px-3 py-1 bg-success/10 text-success rounded-full text-sm font-medium">
                     Выезд {responseTime}
                   </span>
                 </div>

@@ -1,4 +1,4 @@
-import { Phone, MessageCircle, Clock, MapPin, Star, Zap } from 'lucide-react';
+import { Phone, MessageCircle, Clock, MapPin, Star, Zap, BadgeCheck, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DistrictPage } from '@/data/districtPages';
 
@@ -105,9 +105,13 @@ const DistrictCTA = ({ district }: DistrictCTAProps) => {
                 Среднее время ответа: 2 минуты
               </span>
               <span>•</span>
-              <span>💯 Работаем официально</span>
+              <span className="flex items-center gap-1">
+                <BadgeCheck className="w-4 h-4" /> Работаем официально
+              </span>
               <span>•</span>
-              <span>📋 Лицензия Роспотребнадзора</span>
+              <span className="flex items-center gap-1">
+                <FileText className="w-4 h-4" /> Лицензия Роспотребнадзора
+              </span>
             </div>
           </div>
         </div>

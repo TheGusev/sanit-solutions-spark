@@ -65,8 +65,8 @@ export function formatServiceTitle(serviceName: string, priceFrom: number): stri
  * Формат описания услуги
  */
 export function formatServiceDescription(serviceName: string, priceFrom: number, features: string[]): string {
-  const featuresText = features.slice(0, 3).map(f => `✅ ${f}`).join(' ');
-  return `Профессиональная ${serviceName.toLowerCase()} в Москве от ${priceFrom}₽ ${featuresText} ☎️ ${SEO_CONFIG.phone}`;
+  const featuresText = features.slice(0, 3).map(f => `• ${f}`).join(' ');
+  return `Профессиональная ${serviceName.toLowerCase()} в Москве от ${priceFrom}₽ ${featuresText} ${SEO_CONFIG.phone}`;
 }
 
 /**

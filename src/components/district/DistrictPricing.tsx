@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, FileText, Info } from 'lucide-react';
+import { Check, FileText, Info, Sparkles } from 'lucide-react';
 import { DistrictPage } from '@/data/districtPages';
 import { cn } from '@/lib/utils';
 
@@ -76,7 +76,8 @@ const DistrictPricing = ({ district }: DistrictPricingProps) => {
         </h2>
         
         <div className="flex items-center gap-2 mb-6">
-          <span className="text-green-600 font-semibold">✨ Фиксированные цены без доплат за центр!</span>
+          <Sparkles className="w-5 h-5 text-green-600" />
+          <span className="text-green-600 font-semibold">Фиксированные цены без доплат за центр!</span>
         </div>
 
         {/* Tabs */}
@@ -253,7 +254,7 @@ const DistrictPricing = ({ district }: DistrictPricingProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {includedItems.map((item, idx) => (
               <div key={idx} className="flex items-center gap-2 text-sm">
-                <span className="text-green-500">✓</span>
+                <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
                 {item}
               </div>
             ))}
