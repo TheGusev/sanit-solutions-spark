@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Clock, Calculator, CheckCircle, Gift, Info, Car } from "lucide-react";
+import { Calculator, CheckCircle, Gift, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import {
@@ -38,20 +38,6 @@ const groupedServices = {
   "Сертификация": servicePricesData.filter(s => s.service.startsWith("Сертификация")),
 };
 
-// Доплаты за выезд - Москва
-const moscowDistrictsData = [
-  { id: 1, district: "ЦАО, САО", surcharge: "Бесплатно", time: "15-30 мин" },
-  { id: 2, district: "СВАО, ВАО, ЮВАО, ЮАО, ЮЗАО, ЗАО, СЗАО", surcharge: "+500 ₽", time: "20-40 мин" },
-  { id: 3, district: "ЗелАО, НАО", surcharge: "+1000 ₽", time: "40-60 мин" },
-  { id: 4, district: "ТАО", surcharge: "+1500 ₽", time: "60-90 мин" },
-];
-
-// Доплаты за выезд - Подмосковье
-const moscowRegionData = [
-  { id: 1, zone: "Ближнее (до 30 км)", surcharge: "+1000 ₽", time: "30-60 мин" },
-  { id: 2, zone: "Дальнее (30-50 км)", surcharge: "+1500 ₽", time: "60-90 мин" },
-  { id: 3, zone: "Отдалённое (50+ км)", surcharge: "По запросу", time: "по согласованию" },
-];
 
 // Что входит в стоимость
 const includedServicesData = [
@@ -73,18 +59,11 @@ const discountsData = [
 
 const PricingByArea = () => {
   const { ref: tableRef, isVisible } = useScrollAnimation({ threshold: 0.1 });
-  const { ref: surchargeRef, isVisible: isSurchargeVisible } = useScrollAnimation({ threshold: 0.1 });
 
   const scrollToCalculator = () => {
     document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const getSurchargeColor = (surcharge: string) => {
-    if (surcharge === "Бесплатно") return "bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400";
-    if (surcharge === "По запросу") return "bg-blue-50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400";
-    if (surcharge.includes("+1500") || surcharge.includes("+1000")) return "bg-blue-50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400";
-    return "bg-yellow-50 dark:bg-yellow-900/10 text-yellow-700 dark:text-yellow-400";
-  };
 
   const getMinPrice = (items: typeof servicePricesData) => {
     return items[0]?.price || "";
@@ -199,124 +178,6 @@ const PricingByArea = () => {
           </div>
         </div>
 
-        {/* СЕКЦИЯ 2: ДОПЛАТЫ ЗА ВЫЕЗД */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
-            Стоимость выезда по районам
-          </h3>
-          
-          <div ref={surchargeRef} className="grid lg:grid-cols-2 gap-8">
-            {/* Москва */}
-            <div className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border">
-              <div className="bg-primary/10 px-6 py-4 border-b border-border">
-                <h4 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  <Car className="w-5 h-5 text-primary" />
-                  Округа Москвы
-                </h4>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-foreground">Район</th>
-                      <th className="px-4 py-2 text-center text-sm font-semibold text-foreground">Доплата</th>
-                      <th className="px-4 py-2 text-right text-sm font-semibold text-foreground">Время</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {moscowDistrictsData.map((item, index) => (
-                      <tr 
-                        key={item.id}
-                        className={`transition-all duration-500 ${
-                          isSurchargeVisible 
-                            ? 'opacity-100 translate-y-0' 
-                            : 'opacity-0 translate-y-4'
-                        }`}
-                        style={{ transitionDelay: `${index * 60}ms` }}
-                      >
-                        <td className="px-4 py-3 text-sm text-foreground">{item.district}</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getSurchargeColor(item.surcharge)}`}>
-                            {item.surcharge === "Бесплатно" ? "✓ Бесплатно" : item.surcharge}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-right text-sm text-muted-foreground flex items-center justify-end gap-1">
-                          <Clock className="w-3 h-3" />
-                          {item.time}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Подмосковье */}
-            <div className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border">
-              <div className="bg-primary/10 px-6 py-4 border-b border-border">
-                <h4 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-primary" />
-                  Московская область
-                </h4>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-foreground">Зона</th>
-                      <th className="px-4 py-2 text-center text-sm font-semibold text-foreground">Доплата</th>
-                      <th className="px-4 py-2 text-right text-sm font-semibold text-foreground">Время</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {moscowRegionData.map((item, index) => (
-                      <tr 
-                        key={item.id}
-                        className={`transition-all duration-500 ${
-                          isSurchargeVisible 
-                            ? 'opacity-100 translate-y-0' 
-                            : 'opacity-0 translate-y-4'
-                        }`}
-                        style={{ transitionDelay: `${index * 80}ms` }}
-                      >
-                        <td className="px-4 py-3 text-sm text-foreground">{item.zone}</td>
-                        <td className="px-4 py-3 text-center">
-                          <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getSurchargeColor(item.surcharge)}`}>
-                            {item.surcharge}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-right text-sm text-muted-foreground flex items-center justify-end gap-1">
-                          <Clock className="w-3 h-3" />
-                          {item.time}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Legend */}
-              <div className="p-4 bg-muted/30 border-t border-border">
-                <div className="flex flex-wrap gap-4 text-xs">
-                  <div className="flex items-center gap-1">
-                    <span className="w-3 h-3 rounded-full bg-green-500/40"></span>
-                    <span className="text-muted-foreground">Бесплатно</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="w-3 h-3 rounded-full bg-yellow-500/40"></span>
-                    <span className="text-muted-foreground">+500 ₽</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="w-3 h-3 rounded-full bg-blue-500/40"></span>
-                    <span className="text-muted-foreground">+1000 ₽ и более</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* СЕКЦИЯ 3: ЧТО ВХОДИТ + СКИДКИ */}
         <div className="grid md:grid-cols-2 gap-8 mb-12">
