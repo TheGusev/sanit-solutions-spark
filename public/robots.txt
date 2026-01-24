@@ -64,5 +64,5 @@ Disallow: /wp-admin/
 Disallow: /wp-content/
 Disallow: /wp-includes/
 
-# Главный индекс sitemap (8 файлов)
+# Главный индекс sitemap (10 файлов)
 Sitemap: https://goruslugimsk.ru/sitemap-index.xml
