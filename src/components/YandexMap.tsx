@@ -32,8 +32,71 @@ const YandexMap = ({ selectedArea, onAreaSelect, districts, regions }: YandexMap
   };
 
   useEffect(() => {
+    let isMounted = true;
+    let mapRef_internal: any = null;
+
+    // Ленивая загрузка Yandex Maps API
+    const loadYandexMaps = (): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        // Если уже загружен
+        if (window.ymaps) {
+          resolve();
+          return;
+        }
+
+        // Проверяем, не добавлен ли уже скрипт
+        const existingScript = document.querySelector('script[src*="api-maps.yandex.ru"]');
+        if (existingScript) {
+          // Ждём загрузки существующего скрипта
+          const checkInterval = setInterval(() => {
+            if (window.ymaps) {
+              clearInterval(checkInterval);
+              resolve();
+            }
+          }, 100);
+          
+          // Таймаут для существующего скрипта
+          setTimeout(() => {
+            clearInterval(checkInterval);
+            if (!window.ymaps) {
+              reject(new Error('Timeout waiting for existing Yandex Maps script'));
+            }
+          }, 10000);
+          return;
+        }
+
+        // Создаём и добавляем скрипт
+        const script = document.createElement('script');
+        script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU';
+        script.async = true;
+        script.defer = true;
+
+        script.onload = () => {
+          // Ждём инициализации ymaps
+          const checkInterval = setInterval(() => {
+            if (window.ymaps) {
+              clearInterval(checkInterval);
+              resolve();
+            }
+          }, 50);
+
+          // Таймаут на инициализацию
+          setTimeout(() => {
+            clearInterval(checkInterval);
+            if (!window.ymaps) {
+              reject(new Error('Yandex Maps API failed to initialize'));
+            }
+          }, 5000);
+        };
+
+        script.onerror = () => reject(new Error('Failed to load Yandex Maps script'));
+
+        document.head.appendChild(script);
+      });
+    };
+
     const initializeMap = () => {
-      if (!mapRef.current) return;
+      if (!mapRef.current || !isMounted) return;
 
       try {
         const map = new window.ymaps.Map(mapRef.current, {
@@ -41,6 +104,8 @@ const YandexMap = ({ selectedArea, onAreaSelect, districts, regions }: YandexMap
           zoom: 10,
           controls: ['zoomControl', 'fullscreenControl', 'typeSelector']
         });
+
+        mapRef_internal = map;
 
         // Add polygons for each district
         districts.forEach((district) => {
@@ -95,37 +160,43 @@ const YandexMap = ({ selectedArea, onAreaSelect, districts, regions }: YandexMap
           map.geoObjects.add(selectedPolygon);
         }
 
-        setMapInstance(map);
-        setIsLoaded(true);
-        setIsLoading(false);
+        if (isMounted) {
+          setMapInstance(map);
+          setIsLoaded(true);
+          setIsLoading(false);
+        }
       } catch (err) {
         console.error('Error initializing map:', err);
-        setError('Ошибка инициализации карты');
-        setIsLoading(false);
+        if (isMounted) {
+          setError('Ошибка инициализации карты');
+          setIsLoading(false);
+        }
       }
     };
 
-    // Wait for Yandex Maps API to load with timeout
-    const checkApi = setInterval(() => {
-      if (window.ymaps) {
-        clearInterval(checkApi);
-        window.ymaps.ready(initializeMap);
-      }
-    }, 100);
-
-    const timeout = setTimeout(() => {
-      clearInterval(checkApi);
-      if (!window.ymaps) {
-        setError('Не удалось загрузить карту. Попробуйте обновить страницу.');
-        setIsLoading(false);
-      }
-    }, 5000);
+    // Загружаем API, затем инициализируем карту
+    loadYandexMaps()
+      .then(() => {
+        if (isMounted && window.ymaps) {
+          window.ymaps.ready(initializeMap);
+        }
+      })
+      .catch((err) => {
+        console.error('Yandex Maps load error:', err);
+        if (isMounted) {
+          setError('Не удалось загрузить карту. Попробуйте обновить страницу.');
+          setIsLoading(false);
+        }
+      });
 
     return () => {
-      clearInterval(checkApi);
-      clearTimeout(timeout);
-      if (mapInstance) {
-        mapInstance.destroy();
+      isMounted = false;
+      if (mapRef_internal) {
+        try {
+          mapRef_internal.destroy();
+        } catch (e) {
+          // Ignore destroy errors
+        }
       }
     };
   }, []);
