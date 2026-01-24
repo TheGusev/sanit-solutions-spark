@@ -168,7 +168,10 @@ const BlogPost = () => {
                 dangerouslySetInnerHTML={{ 
                   __html: DOMPurify.sanitize(
                     generateContentWithIds(post.content),
-                    { ALLOWED_TAGS: ['h2', 'h3', 'p', 'strong', 'li', 'ul', 'ol', 'em', 'br'], ALLOWED_ATTR: ['id'] }
+                    { 
+                      ALLOWED_TAGS: ['h2', 'h3', 'p', 'strong', 'li', 'ul', 'ol', 'em', 'br', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'div'], 
+                      ALLOWED_ATTR: ['id', 'class'] 
+                    }
                   )
                 }}
               />
