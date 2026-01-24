@@ -32,11 +32,18 @@ import {
 } from '@/lib/contentGenerator';
 
 export default function NchPage() {
-  const { service, pest: pestSlug, neighborhood: neighborhoodSlug } = useParams<{
-    service: string;
-    pest: string;
-    neighborhood: string;
+  // Поддержка как старых параметров (pest, neighborhood), так и новых (segment2, segment3)
+  const params = useParams<{
+    service?: string;
+    pest?: string;
+    neighborhood?: string;
+    segment2?: string;
+    segment3?: string;
   }>();
+  
+  const service = params.service;
+  const pestSlug = params.pest || params.segment2;
+  const neighborhoodSlug = params.neighborhood || params.segment3;
   
   useEffect(() => {
     window.scrollTo(0, 0);

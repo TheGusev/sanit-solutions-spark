@@ -23,7 +23,18 @@ import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 import { generateLocalFeatures } from '@/lib/contentGenerator';
 
 export default function ServiceObjectDistrictPage() {
-  const { service: serviceSlug, object: objectSlug, district: districtSlug } = useParams<{ service: string; object: string; district: string }>();
+  // Поддержка как старых параметров (object, district), так и новых (segment2, segment3)
+  const params = useParams<{
+    service?: string;
+    object?: string;
+    district?: string;
+    segment2?: string;
+    segment3?: string;
+  }>();
+  
+  const serviceSlug = params.service;
+  const objectSlug = params.object || params.segment2;
+  const districtSlug = params.district || params.segment3;
   
   useEffect(() => { window.scrollTo(0, 0); }, [serviceSlug, objectSlug, districtSlug]);
   
