@@ -122,6 +122,12 @@ export default function MoscowRegionServicePage() {
         <meta property="og:url" content={seoMeta.canonical} />
         <meta property="og:image" content={seoMeta.ogImage} />
         <meta property="og:type" content={seoMeta.ogType} />
+        <meta property="og:locale" content="ru_RU" />
+        <meta property="og:site_name" content="Санитарные Решения" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoMeta.ogTitle} />
+        <meta name="twitter:description" content={seoMeta.ogDescription} />
+        <meta name="twitter:image" content={seoMeta.ogImage} />
         <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
