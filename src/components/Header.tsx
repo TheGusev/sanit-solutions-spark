@@ -143,13 +143,29 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     Услуги
                     <ChevronDown className="w-4 h-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50 max-h-[70vh] overflow-y-auto">
                     {servicesMenu.map((service) => (
-                      <DropdownMenuItem key={service.href} asChild>
-                        <Link to={service.href} className="cursor-pointer font-medium">
-                          {service.title}
-                        </Link>
-                      </DropdownMenuItem>
+                      <div key={service.href}>
+                        <DropdownMenuItem asChild>
+                          <Link to={service.href} className="cursor-pointer font-medium">
+                            {service.title}
+                          </Link>
+                        </DropdownMenuItem>
+                        {service.subItems && service.subItems.length > 0 && (
+                          <div className="pl-4 border-l-2 border-russia-red/30 ml-2 mb-1">
+                            {service.subItems.map((sub) => (
+                              <DropdownMenuItem key={sub.href} asChild>
+                                <Link 
+                                  to={sub.href} 
+                                  className="cursor-pointer text-sm text-muted-foreground hover:text-russia-red"
+                                >
+                                  {sub.title}
+                                </Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -190,13 +206,29 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     Услуги
                     <ChevronDown className="w-4 h-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50">
+                  <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50 max-h-[70vh] overflow-y-auto">
                     {servicesMenu.map((service) => (
-                      <DropdownMenuItem key={service.href} asChild>
-                        <Link to={service.href} className="cursor-pointer font-medium">
-                          {service.title}
-                        </Link>
-                      </DropdownMenuItem>
+                      <div key={service.href}>
+                        <DropdownMenuItem asChild>
+                          <Link to={service.href} className="cursor-pointer font-medium">
+                            {service.title}
+                          </Link>
+                        </DropdownMenuItem>
+                        {service.subItems && service.subItems.length > 0 && (
+                          <div className="pl-4 border-l-2 border-russia-red/30 ml-2 mb-1">
+                            {service.subItems.map((sub) => (
+                              <DropdownMenuItem key={sub.href} asChild>
+                                <Link 
+                                  to={sub.href} 
+                                  className="cursor-pointer text-sm text-muted-foreground hover:text-russia-red"
+                                >
+                                  {sub.title}
+                                </Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
