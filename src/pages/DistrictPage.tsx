@@ -225,7 +225,7 @@ const DistrictPage = () => {
             </div>
             
             {/* Response time badge */}
-            <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-4 py-2 rounded-lg">
+            <div className="inline-flex items-center gap-2 bg-success/10 text-success px-4 py-2 rounded-lg">
               <Clock className="w-5 h-5" />
               <span className="font-medium">Среднее время выезда: {district.responseTime}</span>
             </div>
