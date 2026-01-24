@@ -45,6 +45,10 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
+    /* Patriotic Russia Red accent */
+    --russia-red: 0 72% 51%;
+    --russia-red-light: 0 72% 95%;
+
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(207 90% 54%) 0%, hsl(207 90% 64%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(36 100% 50%) 0%, hsl(36 100% 60%) 100%);
@@ -85,6 +89,10 @@ All colors MUST be HSL.
     --border: 240 10% 22%;
     --input: 240 10% 18%;
     --ring: 220 70% 55%;
+
+    /* Patriotic Russia Red accent - lighter for dark mode */
+    --russia-red: 0 72% 60%;
+    --russia-red-light: 0 72% 15%;
 
     /* Soft elegant gradients */
     --gradient-hero: linear-gradient(135deg, hsl(220 60% 45%) 0%, hsl(260 50% 40%) 100%);

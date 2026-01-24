@@ -15,8 +15,15 @@ const Footer = memo(() => {
     });
   };
   return (
-    <footer className="bg-foreground text-background py-12">
-      <div className="container mx-auto px-4">
+    <footer className="bg-foreground text-background">
+      {/* Триколор-полоса сверху */}
+      <div className="h-1 w-full flex">
+        <div className="flex-1 bg-white"></div>
+        <div className="flex-1 bg-primary"></div>
+        <div className="flex-1 bg-russia-red"></div>
+      </div>
+      
+      <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-4">

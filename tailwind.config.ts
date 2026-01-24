@@ -52,6 +52,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        russia: {
+          white: "#FFFFFF",
+          blue: "hsl(var(--primary))",
+          red: "hsl(var(--russia-red))",
+          "red-light": "hsl(var(--russia-red-light))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
