@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Microscope, Pill, Beaker, Phone, BarChart3, Zap, CheckCircle, Shield } from "lucide-react";
+import { Phone, Zap, CheckCircle, Shield, Calculator } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useParallax } from "@/hooks/useParallax";
 import { useTraffic } from "@/contexts/TrafficContext";
@@ -179,15 +179,15 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
                 trackGoal('hero_cta_click', {
                   intent: context?.intent,
                   variant: context?.variantId,
-                  button: 'order'
+                  button: 'order_and_calculate'
                 });
                 handleCalculatorClick();
               }}
               size="lg"
-              className="gradient-accent hover:opacity-90 text-accent-foreground font-bold text-lg px-8 py-6 h-auto"
+              className="gradient-accent hover:opacity-90 text-accent-foreground font-bold text-lg px-8 py-6 h-auto whitespace-normal"
             >
-              <Phone className="w-5 h-5 mr-2" />
-              Заказать обработку
+              <Calculator className="w-5 h-5 mr-2 flex-shrink-0" />
+              Заказать обработку и рассчитать стоимость
             </Button>
             
             <Button 
@@ -195,16 +195,16 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
                 trackGoal('hero_cta_click', {
                   intent: context?.intent,
                   variant: context?.variantId,
-                  button: 'calculator'
+                  button: 'call'
                 });
-                handleCalculatorClick();
+                window.location.href = 'tel:+79069989888';
               }}
               size="lg"
               variant="outline"
-              className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold text-lg px-8 py-6 h-auto"
+              className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold text-lg px-8 py-6 h-auto whitespace-normal"
             >
-              <BarChart3 className="w-5 h-5 mr-2" />
-              {copy.cta_secondary || "Рассчитать стоимость"}
+              <Phone className="w-5 h-5 mr-2 flex-shrink-0" />
+              Позвонить сейчас
             </Button>
           </div>
 
