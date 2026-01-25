@@ -70,7 +70,7 @@ const DistrictsOverview = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {districtPages.map((district) => (
                 <Link key={district.id} to={`/uslugi/${district.slug}`}>
-                  <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
+                  <Card className="h-full hover:shadow-lg hover:shadow-russia-red/15 transition-shadow cursor-pointer border-2 hover:border-russia-red">
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div>

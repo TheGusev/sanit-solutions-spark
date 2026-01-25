@@ -166,7 +166,7 @@ const NeighborhoodsOverview = () => {
                   </div>
                   <Link 
                     to={`/uslugi/dezinfekciya-${district.id}`}
-                    className="hidden sm:inline-flex items-center gap-1 text-primary hover:underline text-sm"
+                    className="hidden sm:inline-flex items-center gap-1 text-russia-red hover:underline hover:text-russia-red/80 text-sm"
                   >
                     Весь округ <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -175,7 +175,7 @@ const NeighborhoodsOverview = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                   {districtNeighborhoods.map((n) => (
                     <Link key={n.slug} to={`/rajony/${n.slug}`}>
-                      <Card className="h-full hover:shadow-md transition-all hover:-translate-y-0.5 hover:border-primary/50">
+                      <Card className="h-full hover:shadow-md hover:shadow-russia-red/10 transition-all hover:-translate-y-0.5 hover:border-russia-red/50">
                         <CardContent className="p-3 text-center">
                           <h3 className="font-medium text-sm">{n.name}</h3>
                           <p className="text-xs text-muted-foreground">{n.responseTime}</p>

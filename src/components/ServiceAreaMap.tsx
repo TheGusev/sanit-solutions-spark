@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { moscowDistricts, moscowRegion, ServiceArea } from "@/data/serviceAreas";
+import { neighborhoods, getNeighborhoodsByDistrict } from "@/data/neighborhoods";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { CheckCircle2, Clock, MapPin, Phone } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, Phone, ChevronDown } from "lucide-react";
 import YandexMap from "@/components/YandexMap";
 import {
   Accordion,
@@ -11,6 +13,27 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+
+// District groups for neighborhood listing
+const districtGroups = [
+  { id: 'cao', name: 'ЦАО', fullName: 'Центральный округ' },
+  { id: 'sao', name: 'САО', fullName: 'Северный округ' },
+  { id: 'svao', name: 'СВАО', fullName: 'Северо-Восточный округ' },
+  { id: 'vao', name: 'ВАО', fullName: 'Восточный округ' },
+  { id: 'yuvao', name: 'ЮВАО', fullName: 'Юго-Восточный округ' },
+  { id: 'yao', name: 'ЮАО', fullName: 'Южный округ' },
+  { id: 'yzao', name: 'ЮЗАО', fullName: 'Юго-Западный округ' },
+  { id: 'zao', name: 'ЗАО', fullName: 'Западный округ' },
+  { id: 'szao', name: 'СЗАО', fullName: 'Северо-Западный округ' },
+  { id: 'nao', name: 'НАО', fullName: 'Новомосковский округ' },
+  { id: 'tao', name: 'ТАО', fullName: 'Троицкий округ' },
+  { id: 'zelao', name: 'ЗелАО', fullName: 'Зеленоградский округ' },
+];
 
 const ServiceAreaMap = () => {
   const [selectedArea, setSelectedArea] = useState<ServiceArea>(moscowDistricts[0]);
@@ -133,7 +156,7 @@ const ServiceAreaMap = () => {
                         <Badge
                           key={district.id}
                           variant={selectedArea.id === district.id ? "default" : "outline"}
-                          className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                          className="cursor-pointer hover:bg-russia-red hover:text-white transition-colors"
                           onClick={() => setSelectedArea(district)}
                         >
                           {district.name}
@@ -151,7 +174,7 @@ const ServiceAreaMap = () => {
                         <Badge
                           key={region.id}
                           variant={selectedArea.id === region.id ? "default" : "outline"}
-                          className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                          className="cursor-pointer hover:bg-russia-red hover:text-white transition-colors"
                           onClick={() => setSelectedArea(region)}
                         >
                           {region.name}
@@ -268,6 +291,55 @@ const ServiceAreaMap = () => {
               ))}
             </ul>
           </div>
+
+          {/* All neighborhoods collapsible list */}
+          <Collapsible className="mt-8 max-w-7xl mx-auto">
+            <CollapsibleTrigger className="w-full flex items-center justify-between bg-card rounded-lg p-4 border border-border hover:bg-muted/50 hover:border-russia-red/50 transition-colors group">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-russia-red" />
+                <span className="font-semibold text-lg">Все {neighborhoods?.length || 130} районов Москвы</span>
+              </div>
+              <ChevronDown className="w-5 h-5 text-muted-foreground group-data-[state=open]:rotate-180 transition-transform" />
+            </CollapsibleTrigger>
+            
+            <CollapsibleContent className="pt-4">
+              <div className="bg-card rounded-lg border border-border p-4 space-y-6">
+                {districtGroups.map(district => {
+                  const districtNeighborhoods = getNeighborhoodsByDistrict(district.id);
+                  if (!districtNeighborhoods || districtNeighborhoods.length === 0) return null;
+                  
+                  return (
+                    <div key={district.id}>
+                      <h4 className="font-bold text-sm mb-3 text-muted-foreground">
+                        {district.name} — {district.fullName} ({districtNeighborhoods.length})
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {districtNeighborhoods.map(n => (
+                          <Link 
+                            key={n.slug} 
+                            to={`/rajony/${n.slug}`}
+                            className="text-sm px-3 py-1.5 bg-muted rounded-full hover:bg-russia-red hover:text-white transition-colors"
+                          >
+                            {n.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+                
+                {/* Link to full overview */}
+                <div className="pt-4 border-t border-border text-center">
+                  <Link 
+                    to="/rajony"
+                    className="inline-flex items-center gap-2 text-russia-red hover:underline font-medium"
+                  >
+                    Открыть полный каталог районов →
+                  </Link>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       </div>
     </section>
