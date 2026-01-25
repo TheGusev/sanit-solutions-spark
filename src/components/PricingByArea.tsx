@@ -92,7 +92,7 @@ const PricingByArea = () => {
           </div>
           
           {/* Unified Accordion for all devices */}
-          <Accordion type="single" collapsible defaultValue="Дезинфекция" className="divide-y divide-border">
+          <Accordion type="single" collapsible className="divide-y divide-border">
             {Object.entries(groupedServices).map(([serviceName, items]) => (
               <AccordionItem key={serviceName} value={serviceName} className="border-0">
                 <AccordionTrigger className="px-4 md:px-6 py-3 md:py-4 hover:no-underline hover:bg-muted/30">

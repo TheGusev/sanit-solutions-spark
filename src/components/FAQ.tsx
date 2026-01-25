@@ -1,10 +1,17 @@
+import { useState } from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import AnimatedSection from "@/components/AnimatedSection";
+import { ChevronDown, HelpCircle } from "lucide-react";
 
 const faqs = [
   {
@@ -88,6 +95,8 @@ const generateFAQSchema = () => ({
 });
 
 const FAQ = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <section id="faq" className="py-8 md:py-24 bg-muted/30">
       {/* FAQPage Schema for SEO */}
@@ -97,32 +106,46 @@ const FAQ = () => {
       />
       
       <div className="container mx-auto px-4">
-        <AnimatedSection animation="fade-up" className="text-center mb-6 md:mb-12">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Частые вопросы
-          </h2>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
-            Ответы на самые популярные вопросы о наших услугах
-          </p>
-        </AnimatedSection>
-
-        <AnimatedSection animation="fade-up" delay={200} className="max-w-3xl mx-auto">
-          <Accordion type="multiple" defaultValue={faqs.map((_, index) => `item-${index}`)} className="space-y-4">
-            {faqs.map((faq, index) => (
-              <AccordionItem 
-                key={index} 
-                value={`item-${index}`}
-                className="bg-card border border-border rounded-lg px-4 md:px-6 shadow-sm hover:shadow-md transition-shadow data-[state=open]:border-l-4 data-[state=open]:border-l-russia-red"
-              >
-                <AccordionTrigger className="text-left font-semibold text-foreground hover:text-primary text-sm md:text-base py-3 md:py-4">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed text-sm md:text-base pb-3 md:pb-4">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+        <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto">
+          <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+            <CollapsibleTrigger className="w-full flex items-center justify-between bg-card rounded-xl p-4 md:p-6 border border-border hover:bg-muted/50 transition-all shadow-sm hover:shadow-md group">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <HelpCircle className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                </div>
+                <div className="text-left">
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground">
+                    Частые вопросы
+                  </h2>
+                  <p className="text-muted-foreground text-sm md:text-base hidden sm:block">
+                    {faqs.length} ответов на популярные вопросы
+                  </p>
+                </div>
+              </div>
+              <ChevronDown className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180" />
+            </CollapsibleTrigger>
+            
+            <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
+              <div className="pt-4 md:pt-6">
+                <Accordion type="multiple" defaultValue={[]} className="space-y-3 md:space-y-4">
+                  {faqs.map((faq, index) => (
+                    <AccordionItem 
+                      key={index} 
+                      value={`item-${index}`}
+                      className="bg-card border border-border rounded-lg px-4 md:px-6 shadow-sm hover:shadow-md transition-shadow data-[state=open]:border-l-4 data-[state=open]:border-l-primary"
+                    >
+                      <AccordionTrigger className="text-left font-semibold text-foreground hover:text-primary text-sm md:text-base py-3 md:py-4">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground leading-relaxed text-sm md:text-base pb-3 md:pb-4">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         </AnimatedSection>
       </div>
     </section>
