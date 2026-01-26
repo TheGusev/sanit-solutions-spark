@@ -1,8 +1,9 @@
 import { useEffect, useState, lazy, Suspense } from "react";
-import { Helmet } from "react-helmet-async";
 import SectionLoader from "@/components/SectionLoader";
 import { useMLPrediction } from "@/hooks/useMLPrediction";
 import { useScrollDepth } from "@/hooks/useScrollDepth";
+import { generateIndexMetadata } from "@/lib/metadata";
+import SEOHead from "@/components/SEOHead";
 
 // Critical components - above the fold, load immediately
 import Header from "@/components/Header";
@@ -14,7 +15,6 @@ const MiniPricing = lazy(() => import("@/components/MiniPricing"));
 const WhyUsExtended = lazy(() => import("@/components/WhyUsExtended"));
 const PricingByArea = lazy(() => import("@/components/PricingByArea"));
 const ServiceAreaMap = lazy(() => import("@/components/ServiceAreaMap"));
-
 const Reviews = lazy(() => import("@/components/Reviews"));
 const WorkGallery = lazy(() => import("@/components/WorkGallery"));
 const FAQ = lazy(() => import("@/components/FAQ"));
@@ -55,21 +55,13 @@ const Index = () => {
     setShowCalculator(true);
   };
 
+  // Генерируем метаданные с валидацией
+  const metadata = generateIndexMetadata();
+
   return (
     <div className="min-h-screen overflow-x-hidden">
-      <Helmet>
-        <title>Дезинфекция, дезинсекция, дератизация в Москве — Санитарные Решения</title>
-        <meta name="description" content="Профессиональная СЭС служба в Москве • Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 1 года • +7 (906) 998-98-88" />
-        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <meta httpEquiv="last-modified" content="2026-01-18T00:00:00+03:00" />
-        <link rel="canonical" href="https://goruslugimsk.ru/" />
-        <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/" />
-        <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://goruslugimsk.ru/" />
-        <meta property="og:title" content="Дезинфекция, дезинсекция, дератизация в Москве — Санитарные Решения" />
-        <meta property="og:description" content="Профессиональная СЭС служба в Москве • Дезинфекция, дезинсекция, дератизация • Гарантия до 1 года" />
-      </Helmet>
+      {/* SEO Head с автоматической валидацией */}
+      <SEOHead metadata={metadata} pagePath="/" />
       
       {/* Critical - Above the fold */}
       <Header onCalculatorClick={handleOpenCalculator} />
@@ -97,7 +89,6 @@ const Index = () => {
       <Suspense fallback={<SectionLoader />}>
         <ServiceAreaMap />
       </Suspense>
-      
       
       {/* Reviews */}
       <Suspense fallback={<SectionLoader />}>
@@ -137,7 +128,6 @@ const Index = () => {
         <FloatingButtons />
       </Suspense>
       
-      
       {/* A/B Test Debug Panel - Ctrl+Shift+D to toggle */}
       {showDebug && (
         <Suspense fallback={null}>
@@ -149,3 +139,4 @@ const Index = () => {
 };
 
 export default Index;
+
