@@ -11,7 +11,7 @@ const services = [
   { icon: FileCheck, title: "Сертификация СЭС", price: "от 3 000 ₽", href: "/uslugi/sertifikaciya" },
 ];
 
-const MiniPricing = () => {
+const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
   const scrollToPricing = () => {
     const element = document.getElementById("pricing-by-area");
     if (element) {
@@ -25,22 +25,21 @@ const MiniPricing = () => {
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
           Цены на <span className="text-primary">основные услуги</span>
         </h2>
-
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-5xl mx-auto mb-8">
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
               <Link
                 key={index}
-                to={service.href}
+                to={citySlug ? `/goroda/${citySlug}${service.href}` : service.href}
                 className="group"
               >
-                <div className="bg-card rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-primary/20 h-full flex flex-col">
-                  <h3 className="text-sm font-medium text-foreground mb-2 leading-tight min-h-[2.5rem] group-hover:text-primary transition-colors">
+                <div className="bg-card rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all">
+                  <h3 className="text-sm font-medium text-foreground mb-2 leading-tight min-h-[2.5rem]">
                     {service.title}
                   </h3>
                   <p className="text-lg font-bold text-primary mb-2">{service.price}</p>
-                  <span className="text-xs text-muted-foreground flex items-center justify-center gap-1 mt-auto group-hover:text-primary transition-colors">
+                  <span className="text-xs text-muted-foreground flex items-center justify-center">
                     Подробнее
                     <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   </span>
@@ -49,7 +48,6 @@ const MiniPricing = () => {
             );
           })}
         </div>
-
         <div className="text-center">
           <Button
             onClick={scrollToPricing}
