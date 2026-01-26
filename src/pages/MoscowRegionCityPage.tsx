@@ -180,12 +180,11 @@ export default function MoscowRegionCityPage() {
               {availableServices.map((service) => service && (
                 <Link
                   key={service.slug}
-                to={`/moscow-oblast/${citySlug}/uslugi/${service.slug}`}                  className="block"
-                >
+                to={`/uslugi/${service.slug}`}                  className="block"                >
                   <Card className="h-full hover:shadow-md transition-shadow">
                     <CardHeader>
-                to={`/moscow-oblast/${citySlug}/${service.slug}`}                    </CardHeader>
-                    <CardContent>
+                      <CardTitle>{service.title}</CardTitle>                    <CardContent>
+                                            </CardHeader>
                       <div className="text-2xl font-bold text-primary mb-2">
                         от {service.priceFrom}₽
                       </div>
