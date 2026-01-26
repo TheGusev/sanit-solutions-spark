@@ -21,4 +21,4 @@ jobs:
             https://goruslugimsk.ru/blog
             https://goruslugimsk.ru/rajony
           uploadArtifacts: true
-          temporaryPublicStorage: true
+          
