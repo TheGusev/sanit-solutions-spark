@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
 
         // 🚀 Gzip compression
     
-    filter(Boolean),
+    filter(Boolean)],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
