@@ -18,91 +18,11 @@ interface HeroProps {
   onCalculatorClick?: () => void;
 }
 
-interface HeroContent {
-  title: string;
-  highlight: string;
-  subtitle: string;
-}
-
-const HERO_CONTENT_BY_INTENT: Record<string, HeroContent> = {
-  flat_bedbugs: {
-    title: "Профессиональная дезинсекция квартир",
-    highlight: "в Москве и МО",
-    subtitle: "Уничтожаем клопов, тараканов и других насекомых с гарантией результата"
-  },
-  flat_cockroaches: {
-    title: "Профессиональная дезинсекция квартир",
-    highlight: "в Москве и МО",
-    subtitle: "Уничтожаем клопов, тараканов и других насекомых с гарантией результата"
-  },
-  flat_general: {
-    title: "Дезинфекция и дезинсекция квартир",
-    highlight: "для жителей Москвы",
-    subtitle: "Безопасные профессиональные услуги с гарантией до 30 дней"
-  },
-  office_disinfection: {
-    title: "Дезинфекция и дезинсекция офисов",
-    highlight: "для юридических лиц",
-    subtitle: "Работаем по договорам, готовим документы для СЭС и Роспотребнадзора"
-  },
-  office_general: {
-    title: "Санитарные услуги для офисов",
-    highlight: "и бизнес-центров",
-    subtitle: "Комплексная обработка коммерческих помещений с полным пакетом документов"
-  },
-  warehouse_deratization: {
-    title: "Дератизация и защита складов",
-    highlight: "от грызунов и птиц",
-    subtitle: "Комплексные решения для логистических центров и складских комплексов"
-  },
-  warehouse_general: {
-    title: "Санитарная обработка складов",
-    highlight: "и промышленных объектов",
-    subtitle: "Профессиональная дезинфекция и дезинсекция для бизнеса"
-  },
-  restaurant_disinfection: {
-    title: "Дезинфекция для предприятий общепита",
-    highlight: "в соответствии с СЭС",
-    subtitle: "Санитарная обработка ресторанов, кафе и кухонь с документами"
-  },
-  restaurant_general: {
-    title: "Санитарные услуги для общепита",
-    highlight: "в Москве и МО",
-    subtitle: "Полный комплекс услуг для ресторанов, кафе и пищевых производств"
-  },
-  ses_check_preparation: {
-    title: "Подготовка к проверке СЭС",
-    highlight: "срочная обработка",
-    subtitle: "Дезинфекция с полным пакетом документов для Роспотребнадзора"
-  },
-  b2b_general: {
-    title: "Санитарные услуги для бизнеса",
-    highlight: "договоры и документы",
-    subtitle: "Профессиональная обработка объектов для юридических лиц и ИП"
-  },
-  production_facility: {
-    title: "Обработка промышленных объектов",
-    highlight: "и производств",
-    subtitle: "Дезинфекция, дезинсекция, дератизация для заводов и цехов"
-  },
-  shop_store: {
-    title: "Санитарная обработка магазинов",
-    highlight: "и торговых площадей",
-    subtitle: "Дезинфекция торговых залов и складов с сертификатами"
-  }
-};
-
-const DEFAULT_HERO_CONTENT: HeroContent = {
-  title: "Полная дезинфекция помещений",
-  highlight: "для бизнеса и дома",
-  subtitle: "Безопасные профессиональные услуги для Москвы"
-};
-
 // ⚠️ SEO: H1 фиксирован для стабильности индексации
 // Бот Яндекса/Google должен видеть одинаковый H1 при каждом визите
 // A/B тестирование работает только на subtitle и CTA (безопасно для SEO)
-const SEO_H1_TITLE = "Профессиональная дезинфекция, дезинсекция и дератизация";
-const SEO_H1_HIGHLIGHT = "в Москве и МО";
+const SEO_H1_TITLE = "Профессиональная СЭС служба";
+const SEO_H1_HIGHLIGHT = "в Москве и области";
 
 const Hero = ({ onCalculatorClick }: HeroProps) => {
   const { context } = useTraffic();
@@ -185,14 +105,14 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
 
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">
-          {/* H1 фиксирован для SEO - не меняется между визитами */}
+          {/* H1 фиксирован для SEO - совпадает с metadata.h1 */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
             {SEO_H1_TITLE}{" "}
             <span className="text-primary">{SEO_H1_HIGHLIGHT}</span>
           </h1>
           
           <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10">
-            {copy.subtitle}
+            {copy.subtitle || "Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 1 года"}
           </p>
 
           <div className="flex justify-center">
