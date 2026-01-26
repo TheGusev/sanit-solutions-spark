@@ -1,8 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import NotFound from './NotFound';
 import { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
-import { ArrowLeft, Check, Phone, ChevronRight, Shield, Clock, Award } from "lucide-react";
+import { Check, Phone, ChevronRight, Shield, Clock, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -23,10 +22,11 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WorkProcess from "@/components/WorkProcess";
 import AnimatedSection from "@/components/AnimatedSection";
-import RelatedArticles from "@/components/RelatedArticles";
 import { getServiceBySlug, servicePages, getRelatedArticlesForService } from "@/data/services";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
+import SEOHead from "@/components/SEOHead";
+import { generateServiceMetadata } from "@/lib/metadata";
 
 const ServicePage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -61,6 +61,16 @@ const ServicePage = () => {
 
   const otherServices = servicePages.filter(s => s.slug !== service.slug);
 
+  // Генерируем метаданные с валидацией
+  const metadata = generateServiceMetadata({
+    serviceName: service.title,
+    serviceSlug: service.slug,
+    priceFrom: service.priceFrom,
+    pricePer: service.pricePer,
+    description: service.metaDescription,
+  });
+
+  // Schema.org разметка
   const schemaMarkup = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -130,42 +140,13 @@ const ServicePage = () => {
     ]
   };
 
+  // Добавляем schema в metadata
+  metadata.schema = [schemaMarkup, faqSchema, breadcrumbSchema];
+
   return (
     <>
-      <Helmet>
-        <title>{service.metaTitle}</title>
-        <meta name="description" content={service.metaDescription} />
-        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
-        <link rel="alternate" hrefLang="ru" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
-        <link rel="alternate" hrefLang="x-default" href={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
-        
-        {/* Open Graph */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://goruslugimsk.ru/uslugi/${service.slug}`} />
-        <meta property="og:title" content={service.metaTitle} />
-        <meta property="og:description" content={service.metaDescription} />
-        <meta property="og:image" content="https://goruslugimsk.ru/og-image.jpg" />
-        <meta property="og:site_name" content="Санитарные Решения" />
-        <meta property="og:locale" content="ru_RU" />
-        
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={service.metaTitle} />
-        <meta name="twitter:description" content={service.metaDescription} />
-        <meta name="twitter:image" content="https://goruslugimsk.ru/og-image.jpg" />
-        
-        {/* Schema.org structured data */}
-        <script type="application/ld+json">
-          {JSON.stringify(schemaMarkup)}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify(faqSchema)}
-        </script>
-        <script type="application/ld+json">
-          {JSON.stringify(breadcrumbSchema)}
-        </script>
-      </Helmet>
+      {/* SEO Head с автоматической валидацией */}
+      <SEOHead metadata={metadata} pagePath={`/uslugi/${service.slug}`} />
 
       <Header />
 
@@ -196,8 +177,9 @@ const ServicePage = () => {
 
             <div className="max-w-4xl">
               <AnimatedSection animation="fade-up">
+                {/* H1 из metadata для SEO */}
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                  {service.heroTitle}
+                  {service.heroTitle || metadata.h1}
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground mb-8">
                   {service.heroSubtitle}
