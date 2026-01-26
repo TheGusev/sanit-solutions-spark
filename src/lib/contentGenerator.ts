@@ -1,3 +1,100 @@
+import { validateAndFormatMetadata } from './metadata';
+import type { PageMetadata } from './metadata';
+
+// ... остальной код остаётся без изменений ...
+
+/**
+ * Генерирует полные метаданные для НЧ-страницы с валидацией
+ */
+export function generateNchPageMetadata(ctx: ContentContext): PageMetadata {
+  const location = ctx.neighborhoodName || ctx.cityName || 'Москва';
+  const pestName = ctx.pest?.name || 'Вредители';
+  const pestGenitive = ctx.pest?.genitive || 'вредителей';
+  const priceFrom = ctx.priceFrom || ctx.pest?.priceFrom || 1200;
+  
+  const serviceName = {
+    'dezinsekciya': 'Дезинсекция',
+    'deratizaciya': 'Дератизация',
+    'dezinfekciya': 'Дезинфекция',
+  }[ctx.service] || 'Обработка';
+
+  return validateAndFormatMetadata({
+    title: `${serviceName} от ${pestGenitive} в ${location} — от ${priceFrom}₽`,
+    description: `Уничтожение ${pestGenitive} в районе ${location} • Выезд за ${ctx.responseTime || '30-60 минут'} • Гарантия до 1 года • Безопасные препараты • +7 (906) 998-98-88`,
+    h1: `${serviceName} от ${pestGenitive} в ${location}`,
+    canonical: `https://goruslugimsk.ru/uslugi/${ctx.service}/${ctx.pest?.slug}/${ctx.neighborhoodName || ctx.cityName}`,
+    keywords: [
+      `${pestGenitive} ${location}`,
+      `уничтожение ${pestGenitive} ${location}`,
+      `${serviceName.toLowerCase()} ${location}`,
+    ],
+  }, { pageType: 'nch', autoFix: true }).metadata;
+}
+
+/**
+ * Генерирует метаданные для страницы Услуга + Объект
+ */
+export function generateObjectPageMetadata(params: {
+  service: string;
+  serviceGenitive: string;
+  object: string;
+  objectGenitive: string;
+  priceFrom: number;
+}): PageMetadata {
+  const { service, serviceGenitive, object, objectGenitive, priceFrom } = params;
+
+  return validateAndFormatMetadata({
+    title: `${service} ${objectGenitive} в Москве — от ${priceFrom}₽`,
+    description: `Профессиональная ${serviceGenitive} ${objectGenitive} в Москве • Лицензия Роспотребнадзора • Выезд за 30 минут • Гарантия до 1 года • +7 (906) 998-98-88`,
+    h1: `${service} ${objectGenitive}`,
+    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${object}`,
+    keywords: [`${serviceGenitive} ${objectGenitive} москва`, `${service.toLowerCase()} ${objectGenitive}`],
+  }, { pageType: 'service', autoFix: true }).metadata;
+}
+
+/**
+ * Генерирует метаданные для страницы Услуга + Район
+ */
+export function generateServiceDistrictMetadata(params: {
+  service: string;
+  serviceGenitive: string;
+  location: string;
+  priceFrom: number;
+  responseTime?: string;
+}): PageMetadata {
+  const { service, serviceGenitive, location, priceFrom, responseTime } = params;
+
+  return validateAndFormatMetadata({
+    title: `${service} в ${location} — от ${priceFrom}₽`,
+    description: `${service} в районе ${location} • Выезд за ${responseTime || '30 минут'} • Профессиональная обработка • Гарантия • +7 (906) 998-98-88`,
+    h1: `${service} в районе ${location}`,
+    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${location}`,
+    keywords: [`${serviceGenitive} ${location}`, `${service.toLowerCase()} ${location}`],
+  }, { pageType: 'nch', autoFix: true }).metadata;
+}
+
+/**
+ * Генерирует метаданные для страницы Услуга + Объект + Район
+ */
+export function generateObjectDistrictMetadata(params: {
+  service: string;
+  serviceGenitive: string;
+  object: string;
+  objectGenitive: string;
+  location: string;
+  priceFrom: number;
+  responseTime?: string;
+}): PageMetadata {
+  const { service, serviceGenitive, object, objectGenitive, location, priceFrom, responseTime } = params;
+
+  return validateAndFormatMetadata({
+    title: `${service} ${objectGenitive} в ${location} — от ${priceFrom}₽`,
+    description: `${service} ${objectGenitive} в районе ${location} • Выезд за ${responseTime || '30 минут'} • Профессиональная обработка • Гарантия • +7 (906) 998-98-88`,
+    h1: `${service} ${objectGenitive} в ${location}`,
+    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${object}/${location}`,
+    keywords: [`${serviceGenitive} ${objectGenitive} ${location}`],
+  }, { pageType: 'nch', autoFix: true }).metadata;
+}
 /**
  * Генератор уникального контента для НЧ-страниц
  * 
