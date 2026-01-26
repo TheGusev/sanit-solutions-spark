@@ -1,4 +1,5 @@
-153
+183
+  153
 /**
  * Шаблон хаб-страницы города Московской области
  * URL: /moscow-oblast/mytishchi
@@ -183,8 +184,9 @@ export default function MoscowRegionCityPage() {
                 to={`/uslugi/${service.slug}`}                  className="block"                >
                   <Card className="h-full hover:shadow-md transition-shadow">
                     <CardHeader>
-                      <CardTitle>{service.title}</CardTitle>                    <CardContent>
-                                            </CardHeader>
+                      <CardTitle>{service.title}</CardTitle>                                            </CardHeader>
+                                        </CardHeader>
+                    <CardContent>
                       <div className="text-2xl font-bold text-primary mb-2">
                         от {service.priceFrom}₽
                       </div>
