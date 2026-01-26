@@ -180,8 +180,7 @@ export default function MoscowRegionCityPage() {
               {availableServices.map((service) => service && (
                 <Link
                   key={service.slug}
-                  to={`/uslugi/${service.slug}`}
-                  className="block"
+                to={`/moscow-oblast/${citySlug}/uslugi/${service.slug}`}                  className="block"
                 >
                   <Card className="h-full hover:shadow-md transition-shadow">
                     <CardHeader>
