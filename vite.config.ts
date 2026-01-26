@@ -4,7 +4,6 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { sitemapPlugin } from "./vite-plugin-sitemap";
 import { ssgPlugin } from "./vite-plugin-ssg";
-import viteCompression from 'vite-plugin-compression';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -19,23 +18,8 @@ export default defineConfig(({ mode }) => ({
     mode === "production" && ssgPlugin(),
 
         // 🚀 Gzip compression
-    viteCompression({
-      verbose: true,
-      disable: false,
-      threshold: 10240,
-      algorithm: 'gzip',
-      ext: '.gz',
-    }),
     
-    // 🚀 Brotli compression
-    viteCompression({
-      verbose: true,
-      disable: false,
-      threshold: 10240,
-      algorithm: 'brotliCompress',
-      ext: '.br',
-    }),
-  ].filter(Boolean),
+    filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
