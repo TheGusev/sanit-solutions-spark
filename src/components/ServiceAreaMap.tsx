@@ -146,7 +146,7 @@ const ServiceAreaMap = () => {
                 </Card>
 
                 {/* District badges */}
-                <div className="space-y-4">
+                <div className="space-y-4 mb-4">
                   <div>
                     <h3 className="text-sm font-bold text-muted-foreground mb-2">
                       Округа Москвы
@@ -183,6 +183,55 @@ const ServiceAreaMap = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* All neighborhoods - ДОБАВЛЕН В МОБИЛКУ! */}
+                <Collapsible>
+                  <CollapsibleTrigger className="w-full flex items-center justify-between bg-muted rounded-lg p-3 border border-border hover:bg-muted/50 hover:border-russia-red/50 transition-colors group">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-russia-red" />
+                      <span className="font-semibold text-sm">Все {neighborhoods?.length || 130} районов Москвы</span>
+                    </div>
+                    <ChevronDown className="w-4 h-4 text-muted-foreground group-data-[state=open]:rotate-180 transition-transform" />
+                  </CollapsibleTrigger>
+                  
+                  <CollapsibleContent className="pt-3">
+                    <div className="bg-card rounded-lg border border-border p-3 space-y-4">
+                      {districtGroups.map(district => {
+                        const districtNeighborhoods = getNeighborhoodsByDistrict(district.id);
+                        if (!districtNeighborhoods || districtNeighborhoods.length === 0) return null;
+                        
+                        return (
+                          <div key={district.id}>
+                            <h4 className="font-bold text-xs mb-2 text-muted-foreground">
+                              {district.name} — {district.fullName} ({districtNeighborhoods.length})
+                            </h4>
+                            <div className="flex flex-wrap gap-1.5">
+                              {districtNeighborhoods.map(n => (
+                                <Link 
+                                  key={n.slug} 
+                                  to={`/rajony/${n.slug}`}
+                                  className="text-xs px-2.5 py-1 bg-muted rounded-full hover:bg-russia-red hover:text-white transition-colors"
+                                >
+                                  {n.name}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                      
+                      <div className="pt-3 border-t border-border text-center">
+                        <Link 
+                          to="/rajony"
+                          className="inline-flex items-center gap-1 text-russia-red hover:underline font-medium text-sm"
+                        >
+                          Открыть полный каталог районов →
+                        </Link>
+                      </div>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -347,3 +396,4 @@ const ServiceAreaMap = () => {
 };
 
 export default ServiceAreaMap;
+
