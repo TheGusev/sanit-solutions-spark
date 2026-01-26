@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const services = [
-  { icon: Microscope, title: "Дезинфекция квартиры", price: "от 1 000 ₽", href: "/uslugi/dezinfekciya" },
-  { icon: Bug, title: "Дезинсекция (тараканы, клопы)", price: "от 1 200 ₽", href: "/uslugi/dezinsekciya" },
-  { icon: Rat, title: "Дератизация", price: "от 1 400 ₽", href: "/uslugi/deratizaciya" },
-  { icon: Sparkles, title: "Озонирование", price: "от 1 500 ₽", href: "/uslugi/ozonirovanie" },
-  { icon: Wind, title: "Удаление запахов", price: "от 1 200 ₽", href: "/uslugi/dezodoraciya" },
-  { icon: FileCheck, title: "Сертификация СЭС", price: "от 3 000 ₽", href: "/uslugi/sertifikaciya" },
+  { icon: Microscope, title: "Дезинфекция квартиры", href: "/uslugi/dezinfekciya" },
+  { icon: Bug, title: "Дезинсекция (тараканы, клопы)", href: "/uslugi/dezinsekciya" },
+  { icon: Rat, title: "Дератизация", href: "/uslugi/deratizaciya" },
+  { icon: Sparkles, title: "Озонирование", href: "/uslugi/ozonirovanie" },
+  { icon: Wind, title: "Удаление запахов", href: "/uslugi/dezodoraciya" },
+  { icon: FileCheck, title: "Сертификация СЭС", href: "/uslugi/sertifikaciya" },
 ];
 
 const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
@@ -23,7 +23,7 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
     <section className="py-10 md:py-16 bg-muted/30">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
-          Цены на <span className="text-primary">основные услуги</span>
+          Наши основные услуги
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-5xl mx-auto mb-8">
           {services.map((service, index) => {
@@ -35,10 +35,9 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
                 className="group"
               >
                 <div className="bg-card rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all">
-                  <h3 className="text-sm font-medium text-foreground mb-2 leading-tight min-h-[2.5rem]">
+                  <h3 className="text-sm font-medium text-foreground mb-3 leading-tight min-h-[2.5rem]">
                     {service.title}
                   </h3>
-                  <p className="text-lg font-bold text-primary mb-2">{service.price}</p>
                   <span className="text-xs text-muted-foreground flex items-center justify-center">
                     Подробнее
                     <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
@@ -64,3 +63,4 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
 };
 
 export default MiniPricing;
+
