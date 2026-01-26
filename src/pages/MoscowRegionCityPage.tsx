@@ -184,8 +184,7 @@ export default function MoscowRegionCityPage() {
                 >
                   <Card className="h-full hover:shadow-md transition-shadow">
                     <CardHeader>
-                      <CardTitle className="text-lg">{service.title}</CardTitle>
-                    </CardHeader>
+                to={`/moscow-oblast/${citySlug}/${service.slug}`}                    </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold text-primary mb-2">
                         от {service.priceFrom}₽
