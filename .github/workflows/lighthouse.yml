@@ -1,12 +1,11 @@
-lighthouse.ymlname: Lighthouse Performance Check
+name: Lighthouse Performance Check
 
 on:
   push:
     branches: [ main ]
   schedule:
-    # Запуск каждый день в 09:00 UTC (12:00 MSK)
     - cron: '0 9 * * *'
-  workflow_dispatch: # Возможность запуска вручную
+  workflow_dispatch:
 
 jobs:
   lighthouse:
