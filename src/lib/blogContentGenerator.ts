@@ -1,3 +1,58 @@
+import { validateAndFormatMetadata } from './metadata';
+import type { PageMetadata } from './metadata';
+
+// ... остальной код остаётся ...
+
+/**
+ * Генерирует метаданные для статьи о вредителе
+ */
+export function generatePestArticleMetadata(params: {
+  pestName: string;
+  pestGenitive: string;
+  slug: string;
+  excerpt: string;
+  category: string;
+}): PageMetadata {
+  const { pestName, pestGenitive, slug, excerpt, category } = params;
+
+  return validateAndFormatMetadata({
+    title: `Как избавиться от ${pestGenitive}: профессиональные методы`,
+    description: excerpt || `Полное руководство по уничтожению ${pestGenitive} • Профессиональные методы • Препараты • Профилактика • Цены на обработку в Москве`,
+    h1: `Как избавиться от ${pestGenitive}`,
+    canonical: `https://goruslugimsk.ru/blog/${slug}`,
+    keywords: [
+      `как избавиться от ${pestGenitive}`,
+      `уничтожение ${pestGenitive}`,
+      `обработка от ${pestGenitive}`,
+      category.toLowerCase(),
+    ],
+  }, { pageType: 'blog', autoFix: true }).metadata;
+}
+
+/**
+ * Генерирует метаданные для статьи о помещении
+ */
+export function generatePremisesArticleMetadata(params: {
+  objectName: string;
+  objectGenitive: string;
+  slug: string;
+  excerpt: string;
+  category: string;
+}): PageMetadata {
+  const { objectName, objectGenitive, slug, excerpt, category } = params;
+
+  return validateAndFormatMetadata({
+    title: `Дезинсекция ${objectGenitive}: полное руководство`,
+    description: excerpt || `Профессиональная обработка ${objectGenitive} от вредителей • Методы • Подготовка • Цены • Гарантия • Работаем по всей Москве`,
+    h1: `Дезинсекция ${objectGenitive}`,
+    canonical: `https://goruslugimsk.ru/blog/${slug}`,
+    keywords: [
+      `дезинсекция ${objectGenitive}`,
+      `обработка ${objectGenitive}`,
+      category.toLowerCase(),
+    ],
+  }, { pageType: 'blog', autoFix: true }).metadata;
+}
 /**
  * Генератор уникального контента для статей блога.
  * Использует детерминированный хеш для вариативности.
