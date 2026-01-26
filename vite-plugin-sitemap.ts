@@ -84,7 +84,7 @@ const districtSlugs = [
   'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao', 'nao', 'tao', 'zelao'
 ];
 
-// Районы Москвы (125 районов) - синхронизировано с src/data/neighborhoods.ts
+// Районы Москвы (130 районов) - синхронизировано с src/data/neighborhoods.ts
 const neighborhoodSlugs = [
   // ЦАО (10)
   'arbat', 'basmannyy', 'zamoskvorechye', 'krasnoselsky', 'meshchansky',
@@ -122,12 +122,10 @@ const neighborhoodSlugs = [
   // СЗАО (8)
   'kurkino', 'mitino', 'pokrovskoe-streshnevo', 'severnoe-tushino',
   'strogino', 'khoroshyovo-mnyovniki', 'shchukino', 'yuzhnoe-tushino',
-  // НАО (8)
-  'sosenskoe', 'vnukovskoe', 'voronovskoe', 'desenovskoe', 'kievsky',
-  'kokoshkino', 'marushkinskoe', 'moskovsky',
-  // ТАО (10)
-  'troitsk', 'shcherbinka', 'filimonkovskoe', 'pervomayskoe', 'novofeodorovskoe',
-  'rogovskoe', 'krasnopakhorskoe', 'klenovskoe', 'shchapovskoe', 'voskresenskoe',
+  // НАО (2) - ИСПРАВЛЕНО!
+  'sosenskoe', 'vnukovskoe',
+  // ТАО (3) - ИСПРАВЛЕНО!
+  'troitsk', 'shcherbinka', 'moskovsky',
   // Зеленоград (5)
   'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5'
 ];
@@ -315,10 +313,10 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // ========== SITEMAP-NCH.XML (НЧ-страницы: услуга + вредитель + район = 875 URL) ==========
+      // ========== SITEMAP-NCH.XML (НЧ-страницы: услуга + вредитель + район = 910 URL) ==========
       const nchUrls: SitemapUrl[] = [];
       
-      // Дезинсекция + вредитель + все 125 районов
+      // Дезинсекция + вредитель + все 130 районов
       dezinsekciyaPestSlugs.forEach(pestSlug => {
         neighborhoodSlugs.forEach(neighborhoodSlug => {
           nchUrls.push({
@@ -330,7 +328,7 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // Дератизация + вредитель + все 125 районов
+      // Дератизация + вредитель + все 130 районов
       deratizaciyaPestSlugs.forEach(pestSlug => {
         neighborhoodSlugs.forEach(neighborhoodSlug => {
           nchUrls.push({
@@ -355,7 +353,7 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // ========== SITEMAP-SERVICES-DISTRICT.XML (услуга + район = 500 URL) ==========
+      // ========== SITEMAP-SERVICES-DISTRICT.XML (услуга + район = 520 URL) ==========
       const serviceDistrictUrls: SitemapUrl[] = [];
       servicesForObjects.forEach(serviceSlug => {
         neighborhoodSlugs.forEach(districtSlug => {
@@ -432,3 +430,4 @@ export function sitemapPlugin(): Plugin {
     }
   };
 }
+
