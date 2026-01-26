@@ -16,10 +16,8 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     mode === "production" && sitemapPlugin(),
     mode === "production" && ssgPlugin(),
-
-        // 🚀 Gzip compression
+  ].filter(Boolean),
     
-    filter(Boolean)],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
