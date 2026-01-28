@@ -12,11 +12,20 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CalculatorModal from '@/components/CalculatorModal';
 import InternalLinks from '@/components/InternalLinks';
 import { ImageGallery } from '@/components/ImageGallery';
-import { getNeighborhoodBySlug, getNeighborhoodsByDistrict, getNeighborhoodContent, getNeighborhoodImages, getCategoryLabel } from '@/data/neighborhoods';
+import { getNeighborhoodBySlug, getNeighborhoodsByDistrict } from '@/data/neighborhoods';
 import { getDistrictById } from '@/data/districtPages';
+import { getNeighborhoodContent } from '@/data/neighborhoodContent';
+import { getNeighborhoodImages, getCategoryLabel } from '@/data/neighborhoodImages';
 import { SEO_CONFIG } from '@/lib/seo';
 import { useState } from 'react';
 import { IconFromKey, type IconKey } from '@/lib/iconMap';
+
+// Variation system imports
+import { VariableHeading } from '@/components/ui/VariableHeading';
+import { WarningBlock } from '@/components/ui/WarningBlock';
+import { VariableCTA } from '@/components/ui/VariableCTA';
+import { getPageVariation, cardStyles } from '@/lib/contentVariations';
+
 
 // Variation system imports
 import { VariableHeading } from '@/components/ui/VariableHeading';
