@@ -1,4 +1,4 @@
-import { useParams, Navigate, Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { MapPin, Clock, Check, Building, Home, Utensils, Phone } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +23,12 @@ import DistrictCases from '@/components/district/DistrictCases';
 import DistrictReviews from '@/components/district/DistrictReviews';
 import DistrictCTA from '@/components/district/DistrictCTA';
 
+// Variation system imports
+import { VariableHeading } from '@/components/ui/VariableHeading';
+import { WarningBlock } from '@/components/ui/WarningBlock';
+import { VariableCTA } from '@/components/ui/VariableCTA';
+import { getPageVariation } from '@/lib/contentVariations';
+
 const DistrictPage = () => {
   const location = useLocation();
   // Extract district ID from URL path (e.g., /uslugi/dezinfekciya-cao -> cao)
@@ -34,6 +40,10 @@ const DistrictPage = () => {
   if (!district) {
     return <Navigate to="/uslugi/po-okrugam-moskvy" replace />;
   }
+
+  // Generate slug for variation system
+  const slug = `/uslugi/${district.slug}`;
+  const variation = getPageVariation(slug);
 
   const services = [
     { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: 1000 + district.surcharge },
@@ -177,9 +187,12 @@ const DistrictPage = () => {
         {/* Neighborhoods with links to neighborhood pages */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              Районы {district.name}, которые мы обслуживаем
-            </h2>
+            <VariableHeading 
+              slug={slug} 
+              category="whyChooseUs" 
+              level="h2" 
+              className="text-2xl md:text-3xl font-bold mb-6" 
+            />
             
             {/* Clickable neighborhood links */}
             {(() => {
@@ -224,11 +237,13 @@ const DistrictPage = () => {
               </Link>
             </div>
             
-            {/* Response time badge */}
-            <div className="inline-flex items-center gap-2 bg-success/10 text-success px-4 py-2 rounded-lg">
-              <Clock className="w-5 h-5" />
-              <span className="font-medium">Среднее время выезда: {district.responseTime}</span>
-            </div>
+            {/* Response time badge with variable warning */}
+            <WarningBlock slug={slug} icon="info">
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                <span className="font-medium">Среднее время выезда: {district.responseTime}</span>
+              </div>
+            </WarningBlock>
           </div>
         </section>
 
@@ -244,7 +259,12 @@ const DistrictPage = () => {
         {/* Services in district */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Услуги в {district.name}</h2>
+            <VariableHeading 
+              slug={slug} 
+              category="benefits" 
+              level="h2" 
+              className="text-2xl md:text-3xl font-bold mb-6" 
+            />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {services.map((service) => (
                 <Link key={service.href} to={service.href}>
@@ -372,3 +392,4 @@ const DistrictPage = () => {
 };
 
 export default DistrictPage;
+
