@@ -1,33 +1,36 @@
-import { AlertCircle, AlertTriangle, Info, ShieldAlert } from 'lucide-react';
-import { getPageVariation, colorSchemes } from '@/lib/contentVariations';
+import { AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { getPageVariation, warningContent } from '@/lib/contentVariations';
 
 interface WarningBlockProps {
-  children: React.ReactNode;
   slug: string;
-  icon?: 'alert' | 'warning' | 'info' | 'shield';
 }
 
-export function WarningBlock({ children, slug, icon = 'alert' }: WarningBlockProps) {
+export function WarningBlock({ slug }: WarningBlockProps) {
+  // Get variation
   const variation = getPageVariation(slug);
-  const colors = colorSchemes[variation.warningColor];
   
-  const icons = {
-    alert: AlertCircle,
-    warning: AlertTriangle,
-    info: Info,
-    shield: ShieldAlert
-  };
+  // Get warning content for this variation
+  const warning = warningContent[variation];
   
-  const Icon = icons[icon];
-  
+  // If no warning content, don't render
+  if (!warning || !warning.text) {
+    return null;
+  }
+
   return (
-    <div className={`flex items-start gap-3 p-4 rounded-lg border-l-4 ${colors.bg} ${colors.border} mb-4`}>
-      <div className={`flex-shrink-0 ${colors.text} mt-0.5`}>
-        <Icon className="w-5 h-5" />
+    <section className="py-8 bg-muted/50">
+      <div className="container mx-auto px-4">
+        <Alert variant="default" className={`border-l-4 ${warning.accent === 'warning' ? 'border-yellow-500' : warning.accent === 'info' ? 'border-blue-500' : 'border-primary'}`}>
+          <AlertTriangle className="h-5 w-5" />
+          <AlertDescription className="ml-2">
+            <span className="font-semibold">{warning.title}</span>
+            <br />
+            {warning.text}
+          </AlertDescription>
+        </Alert>
       </div>
-      <div className={`flex-1 ${colors.text} text-sm leading-relaxed`}>
-        {children}
-      </div>
-    </div>
+    </section>
   );
 }
+
