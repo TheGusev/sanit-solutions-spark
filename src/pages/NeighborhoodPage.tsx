@@ -1,8 +1,8 @@
-import { useParams, Link, useLocation } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Clock, Check, Phone, ArrowRight, Shield, Award, Users, CheckCircle, Bug, Wind } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { MapPin, Clock, Phone, ArrowRight, Shield, Award, CheckCircle } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -12,13 +12,17 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CalculatorModal from '@/components/CalculatorModal';
 import InternalLinks from '@/components/InternalLinks';
 import { ImageGallery } from '@/components/ImageGallery';
-import { getNeighborhoodBySlug, getNeighborhoodsByDistrict, neighborhoods, Neighborhood } from '@/data/neighborhoods';
-import { getDistrictById, districtPages } from '@/data/districtPages';
-import { getNeighborhoodContent } from '@/data/neighborhoodContent';
-import { getNeighborhoodImages, getCategoryLabel } from '@/data/neighborhoodImages';
+import { getNeighborhoodBySlug, getNeighborhoodsByDistrict, getNeighborhoodContent, getNeighborhoodImages, getCategoryLabel } from '@/data/neighborhoods';
+import { getDistrictById } from '@/data/districtPages';
 import { SEO_CONFIG } from '@/lib/seo';
 import { useState } from 'react';
 import { IconFromKey, type IconKey } from '@/lib/iconMap';
+
+// Variation system imports
+import { VariableHeading } from '@/components/ui/VariableHeading';
+import { WarningBlock } from '@/components/ui/WarningBlock';
+import { VariableCTA } from '@/components/ui/VariableCTA';
+import { getPageVariation, cardStyles } from '@/lib/contentVariations';
 
 const NeighborhoodPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -29,105 +33,102 @@ const NeighborhoodPage = () => {
     return <NotFound />;
   }
 
-  // Get parent district
+  // Variation slug
+  const variationSlug = `/rajony/${neighborhood.slug}`;
+  const variation = getPageVariation(variationSlug);
+
+  // Parent district
   const parentDistrict = getDistrictById(neighborhood.districtId);
   
-  // Get sibling neighborhoods (same district)
+  // Sibling neighborhoods
   const siblingNeighborhoods = getNeighborhoodsByDistrict(neighborhood.districtId)
     .filter(n => n.slug !== neighborhood.slug)
     .slice(0, 6);
 
-  // Расширенный контент для района
   const extendedContent = getNeighborhoodContent(neighborhood.slug);
-  
-  // Изображения для района
   const neighborhoodImagesData = getNeighborhoodImages(neighborhood.slug);
 
   // Services with prices
   const services: { title: string; href: string; price: number; iconKey: IconKey }[] = [
-    { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: 1000 + neighborhood.surcharge, iconKey: "virus" },
-    { title: "Дезинсекция", href: "/uslugi/dezinsekciya", price: 1200 + neighborhood.surcharge, iconKey: "bug" },
-    { title: "Дератизация", href: "/uslugi/deratizaciya", price: 1400 + neighborhood.surcharge, iconKey: "mouse" },
-    { title: "Озонирование", href: "/uslugi/ozonirovanie", price: 1500 + neighborhood.surcharge, iconKey: "wind" },
+    { title: 'Дезинфекция', href: '/uslugi/dezinfekciya', price: 1000 + neighborhood.surcharge, iconKey: 'virus' },
+    { title: 'Дезинсекция', href: '/uslugi/dezinsekciya', price: 1200 + neighborhood.surcharge, iconKey: 'bug' },
+    { title: 'Дератизация', href: '/uslugi/deratizaciya', price: 1400 + neighborhood.surcharge, iconKey: 'mouse' },
+    { title: 'Озонирование', href: '/uslugi/ozonirovanie', price: 1500 + neighborhood.surcharge, iconKey: 'wind' },
   ];
 
-  // Schema.org LocalBusiness with areaServed
+  // Schema.org LocalBusiness
   const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "Санитарные Решения",
-    "description": neighborhood.metaDescription,
-    "telephone": SEO_CONFIG.phone,
-    "url": `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`,
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Москва",
-      "addressRegion": neighborhood.fullName
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'Санитарные Решения',
+    description: neighborhood.metaDescription,
+    telephone: SEO_CONFIG.phone,
+    url: `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Москва',
+      addressRegion: neighborhood.fullName,
     },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": neighborhood.center[0],
-      "longitude": neighborhood.center[1]
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: neighborhood.center[0],
+      longitude: neighborhood.center[1],
     },
-    "areaServed": {
-      "@type": "Place",
-      "name": `${neighborhood.fullName}, Москва`
+    areaServed: {
+      '@type': 'Place',
+      name: `${neighborhood.fullName}, Москва`,
     },
-    "priceRange": `от ${1000 + neighborhood.surcharge}₽`,
-    "openingHours": "Mo-Su 00:00-23:59"
+    priceRange: `от ${1000 + neighborhood.surcharge}₽`,
+    openingHours: 'Mo-Su 00:00-23:59',
   };
 
-  // Service Schema
   const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "serviceType": "Дезинфекция",
-    "name": `Дезинфекция в ${neighborhood.name}`,
-    "description": neighborhood.metaDescription,
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": "Санитарные Решения"
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    serviceType: 'Дезинфекция',
+    name: `Дезинфекция в ${neighborhood.name}`,
+    description: neighborhood.metaDescription,
+    provider: {
+      '@type': 'LocalBusiness',
+      name: 'Санитарные Решения',
     },
-    "areaServed": {
-      "@type": "Place",
-      "name": `${neighborhood.fullName}, Москва`
+    areaServed: {
+      '@type': 'Place',
+      name: `${neighborhood.fullName}, Москва`,
     },
-    "offers": {
-      "@type": "Offer",
-      "price": 1000 + neighborhood.surcharge,
-      "priceCurrency": "RUB"
-    }
+    offers: {
+      '@type': 'Offer',
+      price: 1000 + neighborhood.surcharge,
+      priceCurrency: 'RUB',
+    },
   };
 
-  // FAQ Schema
   const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": neighborhood.faq.map(item => ({
-      "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.answer
-      }
-    }))
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: neighborhood.faq.map(item => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
   };
 
-  // Breadcrumb Schema
   const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Главная", "item": SEO_CONFIG.baseUrl },
-      { "@type": "ListItem", "position": 2, "name": "Районы Москвы", "item": `${SEO_CONFIG.baseUrl}/rajony` },
-      { "@type": "ListItem", "position": 3, "name": neighborhood.name, "item": `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}` }
-    ]
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: SEO_CONFIG.baseUrl },
+      { '@type': 'ListItem', position: 2, name: 'Районы Москвы', item: `${SEO_CONFIG.baseUrl}/rajony` },
+      { '@type': 'ListItem', position: 3, name: neighborhood.name, item: `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}` },
+    ],
   };
 
-  // Breadcrumb items for component
   const breadcrumbItems = [
-    { label: "Районы Москвы", href: "/rajony" },
-    { label: neighborhood.name }
+    { label: 'Районы Москвы', href: '/rajony' },
+    { label: neighborhood.name },
   ];
 
   return (
@@ -139,8 +140,7 @@ const NeighborhoodPage = () => {
         <link rel="alternate" hrefLang="ru" href={`${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`} />
         <link rel="alternate" hrefLang="x-default" href={`${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`} />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
-        
-        {/* Open Graph */}
+
         <meta property="og:title" content={neighborhood.metaTitle} />
         <meta property="og:description" content={neighborhood.metaDescription} />
         <meta property="og:url" content={`${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`} />
@@ -148,14 +148,12 @@ const NeighborhoodPage = () => {
         <meta property="og:image" content={SEO_CONFIG.ogImage} />
         <meta property="og:locale" content={SEO_CONFIG.locale} />
         <meta property="og:site_name" content={SEO_CONFIG.companyName} />
-        
-        {/* Twitter */}
+
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={neighborhood.metaTitle} />
         <meta name="twitter:description" content={neighborhood.metaDescription} />
         <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
-        
-        {/* Schema.org */}
+
         <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
         <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
@@ -165,45 +163,38 @@ const NeighborhoodPage = () => {
       <Header />
 
       <main className="min-h-screen pt-20">
-        {/* Breadcrumbs */}
         <div className="container mx-auto px-4 py-4">
           <Breadcrumbs items={breadcrumbItems} />
         </div>
 
-        {/* Hero Section with Background Image */}
+        {/* Hero */}
         <section className="relative py-16 md:py-24 min-h-[60vh] flex items-center overflow-hidden">
-          {/* Background image */}
           {neighborhoodImagesData && (
             <>
-              {/* Цветовая подложка */}
               <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
-              <div 
+              <div
                 className="absolute inset-0 bg-cover bg-center"
-                style={{ 
+                style={{
                   backgroundImage: `url('${neighborhoodImagesData.heroImage}')`,
                   filter: 'blur(8px)',
                   transform: 'scale(1.1)',
-                  opacity: 0.30
+                  opacity: 0.3,
                 }}
                 role="img"
                 aria-label={neighborhoodImagesData.altText}
               />
-              {/* Gradient overlay for readability */}
               <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/50 to-background/40 dark:from-background/70 dark:via-background/60 dark:to-background/50" />
             </>
           )}
-          {/* Fallback gradient if no image */}
           {!neighborhoodImagesData && (
             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
           )}
-          
+
           <div className="container mx-auto px-4 relative z-10">
             <div className="grid lg:grid-cols-2 gap-8 items-center">
-              {/* Left column - text content */}
               <div className="max-w-xl">
-                {/* District badge */}
                 {parentDistrict && (
-                  <Link 
+                  <Link
                     to={`/uslugi/${parentDistrict.slug}`}
                     className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-4 bg-background/80 backdrop-blur-sm px-3 py-1.5 rounded-full"
                   >
@@ -212,55 +203,54 @@ const NeighborhoodPage = () => {
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 )}
-                
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                  {neighborhood.h1}
-                </h1>
-                
+
+                <VariableHeading
+                  slug={variationSlug}
+                  category="hero"
+                  level="h1"
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
+                />
+
                 <p className="text-lg md:text-xl text-muted-foreground mb-6">
                   {neighborhood.description.slice(0, 200)}...
                 </p>
 
-                {/* Trust badges */}
-                <div className="flex flex-wrap gap-3 mb-8">
-                  <Badge className="bg-success/20 text-success py-2 px-4 backdrop-blur-sm">
-                    <Clock className="w-4 h-4 mr-2" />
-                    Выезд {neighborhood.responseTime}
-                  </Badge>
-                  <Badge className="bg-primary/20 text-primary py-2 px-4 backdrop-blur-sm">
-                    <Shield className="w-4 h-4 mr-2" />
-                    Гарантия 1 год
-                  </Badge>
-                  <Badge className="bg-warning/20 text-warning py-2 px-4 backdrop-blur-sm">
-                    от {1000 + neighborhood.surcharge}₽
-                  </Badge>
-                </div>
+                <WarningBlock slug={variationSlug} icon="info">
+                  <div className="flex flex-wrap gap-3">
+                    <Badge className="bg-success/20 text-success py-2 px-4 backdrop-blur-sm">
+                      <Clock className="w-4 h-4 mr-2" />
+                      Выезд {neighborhood.responseTime}
+                    </Badge>
+                    <Badge className="bg-primary/20 text-primary py-2 px-4 backdrop-blur-sm">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Гарантия 1 год
+                    </Badge>
+                    <Badge className="bg-warning/20 text-warning py-2 px-4 backdrop-blur-sm">
+                      от {1000 + neighborhood.surcharge}₽
+                    </Badge>
+                  </div>
+                </WarningBlock>
 
-                {/* CTA buttons */}
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 mt-6">
                   <Button size="lg" asChild>
                     <a href={`tel:${SEO_CONFIG.phoneClean}`}>
                       <Phone className="w-5 h-5 mr-2" />
                       {SEO_CONFIG.phone}
                     </a>
                   </Button>
-                  <Button size="lg" variant="outline" onClick={() => setIsCalculatorOpen(true)}>
-                    Рассчитать стоимость
-                  </Button>
+                  <VariableCTA slug={variationSlug} variant="outline" />
                 </div>
               </div>
-              
-              {/* Right column - hero image card (desktop only) */}
+
               {neighborhoodImagesData && (
                 <div className="hidden lg:block">
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                    <img 
+                    <img
                       src={neighborhoodImagesData.heroImage}
                       alt={neighborhoodImagesData.altText}
                       className="w-full h-80 object-cover"
                       loading="eager"
                     />
-                    {/* Badge overlay */}
                     <div className="absolute bottom-4 left-4 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg">
                       <p className="font-bold">Гарантия 12 месяцев!</p>
                       <p className="text-sm opacity-90">На все виды услуг</p>
@@ -272,16 +262,19 @@ const NeighborhoodPage = () => {
           </div>
         </section>
 
-        {/* Services Grid */}
+        {/* Services */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              Услуги в {neighborhood.name}
-            </h2>
+            <VariableHeading
+              slug={variationSlug}
+              category="services"
+              level="h2"
+              className="text-2xl md:text-3xl font-bold mb-6"
+            />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {services.map((service) => (
+              {services.map(service => (
                 <Link key={service.href} to={service.href}>
-                  <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1 border-2 hover:border-primary/50">
+                  <Card className={`h-full hover:shadow-lg transition-all hover:-translate-y-1 border-2 hover:border-primary/50 ${cardStyles[variation.cardStyle]}`}>
                     <CardContent className="p-6 text-center">
                       <div className="mb-3 flex justify-center">
                         <IconFromKey iconKey={service.iconKey} className="w-8 h-8 text-primary" />
@@ -303,9 +296,12 @@ const NeighborhoodPage = () => {
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6">
-                О дезинфекции в {neighborhood.name}
-              </h2>
+              <VariableHeading
+                slug={variationSlug}
+                category="about"
+                level="h2"
+                className="text-2xl md:text-3xl font-bold mb-6"
+              />
               <div className="prose prose-lg dark:prose-invert max-w-none">
                 <p className="text-muted-foreground leading-relaxed">
                   {neighborhood.description}
@@ -315,7 +311,7 @@ const NeighborhoodPage = () => {
           </div>
         </section>
 
-        {/* Property Gallery Section */}
+        {/* Gallery */}
         {neighborhoodImagesData && neighborhoodImagesData.galleryImages.length > 0 && (
           <section className="py-12">
             <div className="container mx-auto px-4">
@@ -325,27 +321,21 @@ const NeighborhoodPage = () => {
               <p className="text-muted-foreground mb-8 max-w-2xl">
                 От старого фонда до элитной недвижимости — гарантируем результат для любого типа помещений
               </p>
-              
-              {/* Gallery Grid with Lightbox */}
               <div className="grid md:grid-cols-3 gap-6">
                 {neighborhoodImagesData.galleryImages.map((image, index) => (
-                  <div 
-                    key={index} 
-                    className="group relative rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                  <div
+                    key={index}
+                    className={`group relative rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 ${cardStyles[variation.cardStyle]}`}
                   >
                     <div className="aspect-[4/3] overflow-hidden">
-                      <img 
+                      <img
                         src={image.url}
                         alt={`${image.title} - дезинфекция в ${neighborhood.name}`}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                       />
                     </div>
-                    
-                    {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    
-                    {/* Content */}
                     <div className="absolute bottom-4 left-4 right-4">
                       <h3 className="text-white font-semibold text-lg mb-1">{image.title}</h3>
                       <div className="flex items-center text-white/80 text-sm">
@@ -353,8 +343,6 @@ const NeighborhoodPage = () => {
                         Обработка от 2500₽
                       </div>
                     </div>
-                    
-                    {/* Category badge */}
                     <Badge className="absolute top-4 right-4" variant="secondary">
                       {getCategoryLabel(image.category)}
                     </Badge>
@@ -365,16 +353,18 @@ const NeighborhoodPage = () => {
           </section>
         )}
 
-        {/* Расширенный контент для района */}
+        {/* Extended content */}
         {extendedContent && (
           <>
-            {/* Введение с фоном */}
             <section className="py-12 bg-primary/5">
               <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto">
-                  <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                    Дезинфекция и дезинсекция в районе {extendedContent.name}
-                  </h2>
+                  <VariableHeading
+                    slug={variationSlug}
+                    category="intro"
+                    level="h2"
+                    className="text-2xl md:text-3xl font-bold mb-4"
+                  />
                   <p className="text-muted-foreground text-lg leading-relaxed">
                     {extendedContent.intro}
                   </p>
@@ -382,18 +372,20 @@ const NeighborhoodPage = () => {
               </div>
             </section>
 
-            {/* Почему мы */}
             <section className="py-12">
               <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto">
-                  <h2 className="text-2xl font-bold mb-6">
-                    Почему выбирают нас в {extendedContent.name}
-                  </h2>
+                  <VariableHeading
+                    slug={variationSlug}
+                    category="whyChooseUs"
+                    level="h2"
+                    className="text-2xl font-bold mb-6"
+                  />
                   <div className="grid md:grid-cols-2 gap-4">
                     {extendedContent.whyUs.map((reason, index) => (
-                      <div 
+                      <div
                         key={index}
-                        className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg"
+                        className={`flex items-start gap-3 p-4 rounded-lg ${cardStyles[variation.cardStyle]}`}
                       >
                         <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                         <span>{reason}</span>
@@ -404,7 +396,6 @@ const NeighborhoodPage = () => {
               </div>
             </section>
 
-            {/* Зона покрытия */}
             <section className="py-12 bg-muted/30">
               <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto">
@@ -434,16 +425,20 @@ const NeighborhoodPage = () => {
               </div>
             </section>
 
-            {/* Преимущества */}
             <section className="py-12">
               <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto">
-                  <h2 className="text-2xl font-bold mb-6">Наши преимущества</h2>
+                  <VariableHeading
+                    slug={variationSlug}
+                    category='benefits'
+                    level="h2"
+                    className="text-2xl font-bold mb-6"
+                  />
                   <div className="grid md:grid-cols-2 gap-4">
                     {extendedContent.advantages.map((advantage, index) => (
-                      <div 
+                      <div
                         key={index}
-                        className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg"
+                        className={`flex items-start gap-3 p-4 rounded-lg ${cardStyles[variation.cardStyle]}`}
                       >
                         <Award className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                         <span>{advantage}</span>
@@ -492,40 +487,40 @@ const NeighborhoodPage = () => {
           </div>
         </section>
 
-        {/* Why Us */}
+        {/* Why Us static cards */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8">
-              Почему выбирают нас в {neighborhood.name}
-            </h2>
+            <VariableHeading
+              slug={variationSlug}
+              category="guarantees"
+              level="h2"
+              className="text-2xl md:text-3xl font-bold mb-8"
+            />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="border-2">
+              <Card className={cardStyles[variation.cardStyle]}>
                 <CardContent className="p-6">
                   <Clock className="w-10 h-10 text-primary mb-4" />
                   <h3 className="font-bold text-lg mb-2">Быстрый выезд</h3>
                   <p className="text-muted-foreground">
-                    Приезжаем в {neighborhood.name} за {neighborhood.responseTime}. 
-                    Работаем круглосуточно без выходных.
+                    Приезжаем в {neighborhood.name} за {neighborhood.responseTime}. Работаем круглосуточно без выходных.
                   </p>
                 </CardContent>
               </Card>
-              <Card className="border-2">
+              <Card className={cardStyles[variation.cardStyle]}>
                 <CardContent className="p-6">
                   <Shield className="w-10 h-10 text-primary mb-4" />
                   <h3 className="font-bold text-lg mb-2">Гарантия результата</h3>
                   <p className="text-muted-foreground">
-                    Даём гарантию 1 год на все виды работ. 
-                    Если проблема вернётся — обработаем бесплатно.
+                    Даём гарантию 1 год на все виды работ. Если проблема вернётся — обработаем бесплатно.
                   </p>
                 </CardContent>
               </Card>
-              <Card className="border-2">
+              <Card className={cardStyles[variation.cardStyle]}>
                 <CardContent className="p-6">
                   <Award className="w-10 h-10 text-primary mb-4" />
                   <h3 className="font-bold text-lg mb-2">Сертифицированные средства</h3>
                   <p className="text-muted-foreground">
-                    Используем только безопасные препараты, 
-                    разрешённые Роспотребнадзором.
+                    Используем только безопасные препараты, разрешённые Роспотребнадзором.
                   </p>
                 </CardContent>
               </Card>
@@ -550,12 +545,15 @@ const NeighborhoodPage = () => {
           </div>
         </section>
 
-        {/* CTA Section */}
+        {/* CTA */}
         <section className="py-16 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Вызвать дезинфектора в {neighborhood.name}
-            </h2>
+            <VariableHeading
+              slug={variationSlug}
+              category="cta"
+              level="h2"
+              className="text-2xl md:text-3xl font-bold mb-4"
+            />
             <p className="text-lg mb-8 opacity-90">
               Выезд за {neighborhood.responseTime} • Гарантия 1 год • От {1000 + neighborhood.surcharge}₽
             </p>
@@ -566,14 +564,12 @@ const NeighborhoodPage = () => {
                   {SEO_CONFIG.phone}
                 </a>
               </Button>
-              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" onClick={() => setIsCalculatorOpen(true)}>
-                Рассчитать стоимость
-              </Button>
+              <VariableCTA slug={variationSlug} variant="ghost" />
             </div>
           </div>
         </section>
 
-        {/* Sibling Neighborhoods */}
+        {/* Sibling neighborhoods */}
         {siblingNeighborhoods.length > 0 && (
           <section className="py-12">
             <div className="container mx-auto px-4">
@@ -581,9 +577,9 @@ const NeighborhoodPage = () => {
                 Другие районы {parentDistrict?.name || 'округа'}
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                {siblingNeighborhoods.map((n) => (
+                {siblingNeighborhoods.map(n => (
                   <Link key={n.slug} to={`/rajony/${n.slug}`}>
-                    <Card className="h-full hover:shadow-md transition-all hover:-translate-y-1">
+                    <Card className={`h-full hover:shadow-md transition-all hover:-translate-y-1 ${cardStyles[variation.cardStyle]}`}>
                       <CardContent className="p-4 text-center">
                         <h3 className="font-semibold text-sm">{n.name}</h3>
                         <p className="text-xs text-muted-foreground">{n.responseTime}</p>
@@ -601,11 +597,10 @@ const NeighborhoodPage = () => {
           </section>
         )}
 
-        {/* Parent District Link */}
         {parentDistrict && (
           <section className="py-8 bg-muted/30">
             <div className="container mx-auto px-4 text-center">
-              <Link 
+              <Link
                 to={`/uslugi/${parentDistrict.slug}`}
                 className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
               >
@@ -616,7 +611,6 @@ const NeighborhoodPage = () => {
           </section>
         )}
 
-        {/* Internal Links for SEO */}
         <InternalLinks
           currentNeighborhood={neighborhood.slug}
           currentService="dezinsekciya"
@@ -627,10 +621,9 @@ const NeighborhoodPage = () => {
 
       <Footer />
 
-      {/* Calculator Modal */}
-      <CalculatorModal 
-        open={isCalculatorOpen} 
-        onOpenChange={setIsCalculatorOpen} 
+      <CalculatorModal
+        open={isCalculatorOpen}
+        onOpenChange={setIsCalculatorOpen}
       />
     </>
   );
