@@ -1,23 +1,35 @@
-import { getPageVariation, textVariants, buttonStyles, colorSchemes } from '@/lib/contentVariations';
 import { Button } from '@/components/ui/button';
+import { getPageVariation, ctaButtons } from '@/lib/contentVariations';
 
 interface VariableCTAProps {
   slug: string;
   onClick?: () => void;
-  variant?: 'primary' | 'secondary';
+  variant?: 'default' | 'outline' | 'secondary';
   className?: string;
+  fallback: string;
 }
 
-export function VariableCTA({ slug, onClick, variant = 'primary', className = '' }: VariableCTAProps) {
+export function VariableCTA({ 
+  slug, 
+  onClick, 
+  variant = 'outline',
+  className = '',
+  fallback 
+}: VariableCTAProps) {
+  // Get variation
   const variation = getPageVariation(slug);
-  const texts = variant === 'primary' ? textVariants.ctaButtons : textVariants.ctaSecondary;
-  const text = texts[variation.ctaTextVariant % texts.length];
-  const btnStyle = buttonStyles[variation.buttonStyle];
-  const colors = colorSchemes[variation.accentColor];
   
+  // Get CTA text for this variation
+  const ctaText = ctaButtons[variation] || fallback;
+
   return (
-    <Button onClick={onClick} className={`${btnStyle} ${colors.accent} text-white font-semibold transition-colors ${className}`}>
-      {text}
+    <Button 
+      size="lg" 
+      variant={variant} 
+      className={className}
+      onClick={onClick}
+    >
+      {ctaText}
     </Button>
   );
 }
