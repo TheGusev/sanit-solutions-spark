@@ -24,6 +24,12 @@ import { getPestsByService } from '@/data/pests';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 import { generateFAQSchema } from '@/lib/contentGenerator';
 
+// Variation system imports
+import { VariableHeading } from '@/components/ui/VariableHeading';
+import { WarningBlock } from '@/components/ui/WarningBlock';
+import { VariableCTA } from '@/components/ui/VariableCTA';
+import { getPageVariation, cardStyles } from '@/lib/contentVariations';
+
 export default function MoscowRegionServicePage() {
   const { city: citySlug, service: serviceSlug } = useParams<{ city: string; service: string }>();
   
@@ -42,6 +48,10 @@ export default function MoscowRegionServicePage() {
   if (!city || !serviceData || !moscowRegionServices.includes(serviceSlug as MoscowRegionService)) {
     return <NotFound />;
   }
+  
+  // Generate slug for variation system
+  const slug = `/moscow-oblast/${citySlug}/${serviceSlug}`;
+  const variation = getPageVariation(slug);
   
   // Цена с наценкой за выезд
   const priceWithSurcharge = serviceData.priceFrom + city.surcharge;
@@ -159,31 +169,31 @@ export default function MoscowRegionServicePage() {
                 {serviceData.heroSubtitle}
               </p>
               
-              <div className="flex flex-wrap gap-4 mb-8">
-                <div className="flex items-center gap-2 text-sm">
-                  <Clock className="w-5 h-5 text-primary" />
-                  <span>Выезд {city.responseTime}</span>
+              <WarningBlock slug={slug} icon="info">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-primary" />
+                    <span>Выезд {city.responseTime}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Car className="w-5 h-5 text-primary" />
+                    <span>{city.distance} км от МКАД</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-5 h-5 text-primary" />
+                    <span>Гарантия 1 год</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Car className="w-5 h-5 text-primary" />
-                  <span>{city.distance} км от МКАД</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Shield className="w-5 h-5 text-primary" />
-                  <span>Гарантия 1 год</span>
-                </div>
-              </div>
+              </WarningBlock>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 mt-6">
                 <Button size="lg" asChild className="whitespace-normal">
                   <a href={`tel:${SEO_CONFIG.phoneClean}`}>
                     <Phone className="w-5 h-5 mr-2" />
                     {SEO_CONFIG.phone}
                   </a>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="whitespace-normal">
-                  <Link to="/#calculator">Рассчитать стоимость</Link>
-                </Button>
+                <VariableCTA slug={slug} variant="secondary" />
               </div>
             </div>
           </div>
@@ -193,10 +203,13 @@ export default function MoscowRegionServicePage() {
         <AnimatedSection className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto text-center">
-              <h2 className="text-2xl font-bold mb-4">
-                Стоимость {serviceData.title.toLowerCase()} {city.prepositional}
-              </h2>
-              <div className="bg-background rounded-xl p-6 shadow-sm">
+              <VariableHeading 
+                slug={slug} 
+                category="pricing" 
+                level="h2" 
+                className="text-2xl font-bold mb-4" 
+              />
+              <div className={`bg-background rounded-xl p-6 ${cardStyles[variation.cardStyle]}`}>
                 <div className="text-4xl font-bold text-primary mb-2">
                   от {priceWithSurcharge}₽
                 </div>
@@ -225,10 +238,15 @@ export default function MoscowRegionServicePage() {
         {/* Methods */}
         <AnimatedSection className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6 text-center">Методы обработки</h2>
+            <VariableHeading 
+              slug={slug} 
+              category="benefits" 
+              level="h2" 
+              className="text-2xl font-bold mb-6 text-center" 
+            />
             <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
               {serviceData.methods.map((method, index) => (
-                <Card key={index}>
+                <Card key={index} className={cardStyles[variation.cardStyle]}>
                   <CardContent className="p-4">
                     <h3 className="font-semibold mb-2">{method.title}</h3>
                     <p className="text-sm text-muted-foreground">{method.description}</p>
@@ -250,7 +268,7 @@ export default function MoscowRegionServicePage() {
                 {servicePests.map((pest) => (
                   <div
                     key={pest.slug}
-                    className="p-4 bg-background rounded-lg text-center"
+                    className={`p-4 bg-background rounded-lg text-center ${cardStyles[variation.cardStyle]}`}
                   >
                     <span className="text-2xl mb-2 block">{pest.icon}</span>
                     <div className="font-medium text-sm">{pest.name}</div>
@@ -268,9 +286,12 @@ export default function MoscowRegionServicePage() {
         <AnimatedSection className="py-12">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl font-bold mb-6">
-                {serviceData.title} {city.prepositional}: особенности
-              </h2>
+              <VariableHeading 
+                slug={slug} 
+                category="guarantees" 
+                level="h2" 
+                className="text-2xl font-bold mb-6" 
+              />
               <div className="prose prose-sm">
                 <p>
                   Мы предоставляем услуги {serviceData.title.toLowerCase()} {city.prepositional} с 2015 года.
@@ -336,3 +357,4 @@ export default function MoscowRegionServicePage() {
     </>
   );
 }
+
