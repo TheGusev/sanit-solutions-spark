@@ -26,6 +26,9 @@ import { WarningBlock } from '@/components/ui/WarningBlock';
 import { VariableCTA } from '@/components/ui/VariableCTA';
 import { getPageVariation, cardStyles } from '@/lib/contentVariations';
 
+// JSON-LD imports
+import { generateNeighborhoodLD, generateBreadcrumbLD, generateFAQLD, generateServiceLD, renderJSONLD } from '@/lib/jsonLD';
+
 const NeighborhoodPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const neighborhood = slug ? getNeighborhoodBySlug(slug) : undefined;
@@ -61,78 +64,36 @@ const NeighborhoodPage = () => {
     { title: "Озонирование", href: "/uslugi/ozonirovanie", price: 1500 + neighborhood.surcharge, iconKey: "wind" },
   ];
 
-  // Schema.org LocalBusiness with areaServed
-  const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "Санитарные Решения",
-    "description": neighborhood.metaDescription,
-    "telephone": SEO_CONFIG.phone,
-    "url": `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`,
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Москва",
-      "addressRegion": neighborhood.fullName
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": neighborhood.center[0],
-      "longitude": neighborhood.center[1]
-    },
-    "areaServed": {
-      "@type": "Place",
-      "name": `${neighborhood.fullName}, Москва`
-    },
-    "priceRange": `от ${1000 + neighborhood.surcharge}₽`,
-    "openingHours": "Mo-Su 00:00-23:59"
-  };
+  // ========== JSON-LD SCHEMAS (NEW!) ==========
+  
+  // LocalBusiness schema
+  const localBusinessSchema = generateNeighborhoodLD({
+    name: neighborhood.name,
+    slug: neighborhood.slug,
+    description: neighborhood.metaDescription,
+    coordinates: neighborhood.center
+  });
 
-  // Service Schema
-  const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "serviceType": "Дезинфекция",
-    "name": `Дезинфекция в ${neighborhood.name}`,
-    "description": neighborhood.metaDescription,
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": "Санитарные Решения"
-    },
-    "areaServed": {
-      "@type": "Place",
-      "name": `${neighborhood.fullName}, Москва`
-    },
-    "offers": {
-      "@type": "Offer",
-      "price": 1000 + neighborhood.surcharge,
-      "priceCurrency": "RUB"
-    }
-  };
+  // Breadcrumb schema
+  const breadcrumbSchema = generateBreadcrumbLD([
+    { name: "Главная", url: SEO_CONFIG.baseUrl },
+    { name: "Районы Москвы", url: `${SEO_CONFIG.baseUrl}/rajony` },
+    { name: neighborhood.name, url: `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}` }
+  ]);
 
-  // FAQ Schema
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": neighborhood.faq.map(item => ({
-      "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.answer
-      }
-    }))
-  };
+  // FAQ schema
+  const faqSchema = generateFAQLD(neighborhood.faq.map(item => ({
+    question: item.question,
+    answer: item.answer
+  })));
 
-  // Breadcrumb Schema
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Главная", "item": SEO_CONFIG.baseUrl },
-      { "@type": "ListItem", "position": 2, "name": "Районы Москвы", "item": `${SEO_CONFIG.baseUrl}/rajony` },
-      { "@type": "ListItem", "position": 3, "name": neighborhood.name, "item": `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}` }
-    ]
-  };
+  // Service schema for main service
+  const serviceSchema = generateServiceLD({
+    name: `Дезинфекция в ${neighborhood.name}`,
+    description: neighborhood.metaDescription,
+    url: `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`,
+    price: 1000 + neighborhood.surcharge
+  });
 
   // Breadcrumb items for component
   const breadcrumbItems = [
@@ -165,11 +126,19 @@ const NeighborhoodPage = () => {
         <meta name="twitter:description" content={neighborhood.metaDescription} />
         <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
         
-        {/* Schema.org */}
-        <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
-        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+        {/* JSON-LD Structured Data (NEW!) */}
+        <script type="application/ld+json">
+          {renderJSONLD(localBusinessSchema)}
+        </script>
+        <script type="application/ld+json">
+          {renderJSONLD(breadcrumbSchema)}
+        </script>
+        <script type="application/ld+json">
+          {renderJSONLD(faqSchema)}
+        </script>
+        <script type="application/ld+json">
+          {renderJSONLD(serviceSchema)}
+        </script>
       </Helmet>
 
       <Header />
