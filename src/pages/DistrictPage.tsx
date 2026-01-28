@@ -24,15 +24,17 @@ import DistrictReviews from '@/components/district/DistrictReviews';
 import DistrictCTA from '@/components/district/DistrictCTA';
 
 // Variation system imports
-import { VariableHeading } from '@/components/ui/VariableHeading';
-import { WarningBlock } from '@/components/ui/WarningBlock';
-import { VariableCTA } from '@/components/ui/VariableCTA';
-import { getPageVariation } from '@/lib/contentVariations';
+import VariableHeading from '@/components/ui/VariableHeading';
+import WarningBlock from '@/components/ui/WarningBlock';
+import VariableCTA from '@/components/ui/VariableCTA';
+
+// District variations
+import { getDistrictType, districtHeadings, districtWarnings, districtCTA, districtBenefits } from '@/lib/districtVariations';
 
 const DistrictPage = () => {
   const location = useLocation();
-  // Extract district ID from URL path (e.g., /uslugi/dezinfekciya-cao -> cao)
-  const pathMatch = location.pathname.match(/\/uslugi\/dezinfekciya-(\w+)/);
+  // Extract district ID from URL path (e.g., /okruga/cao -> cao)
+  const pathMatch = location.pathname.match(/\/okruga\/(\w+)/);
   const districtId = pathMatch ? pathMatch[1] : undefined;
   const district = districtId ? getDistrictById(districtId) : undefined;
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
@@ -41,9 +43,12 @@ const DistrictPage = () => {
     return <Navigate to="/uslugi/po-okrugam-moskvy" replace />;
   }
 
-  // Generate slug for variation system
-  const slug = `/uslugi/${district.slug}`;
-  const variation = getPageVariation(slug);
+  // Get district type and content variations
+  const districtType = getDistrictType(district.id);
+  const headings = districtHeadings[districtType];
+  const warning = districtWarnings[districtType];
+  const ctaText = districtCTA[districtType];
+  const benefits = districtBenefits[districtType];
 
   const services = [
     { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: 1000 + district.surcharge },
@@ -53,13 +58,13 @@ const DistrictPage = () => {
   ];
 
   const otherDistricts = districtPages.filter(d => d.id !== district.id).slice(0, 4);
-  const canonicalUrl = `${SEO_CONFIG.baseUrl}/uslugi/${district.slug}`;
+  const canonicalUrl = `${SEO_CONFIG.baseUrl}/okruga/${district.id}`;
 
-  // Schema.org LocalBusiness (primary for GEO pages)
+  // Schema.org LocalBusiness
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "name": `${SEO_CONFIG.companyName} — Дезинфекция в ${district.name}`,
+    "name": `${SEO_CONFIG.companyName} — ${headings.hero}`,
     "description": district.metaDescription,
     "telephone": SEO_CONFIG.phone,
     "url": canonicalUrl,
@@ -87,7 +92,7 @@ const DistrictPage = () => {
     "@context": "https://schema.org",
     "@type": "Service",
     "serviceType": "Дезинфекция",
-    "name": `Дезинфекция в ${district.name} Москвы`,
+    "name": headings.hero,
     "description": district.metaDescription,
     "provider": {
       "@type": "LocalBusiness",
@@ -124,15 +129,14 @@ const DistrictPage = () => {
       { "@type": "ListItem", "position": 1, "name": "Главная", "item": SEO_CONFIG.baseUrl },
       { "@type": "ListItem", "position": 2, "name": "Услуги", "item": `${SEO_CONFIG.baseUrl}/#services` },
       { "@type": "ListItem", "position": 3, "name": "По округам Москвы", "item": `${SEO_CONFIG.baseUrl}/uslugi/po-okrugam-moskvy` },
-      { "@type": "ListItem", "position": 4, "name": `Дезинфекция в ${district.name}`, "item": canonicalUrl }
+      { "@type": "ListItem", "position": 4, "name": `${district.name}`, "item": canonicalUrl }
     ]
   };
 
-  // Breadcrumb items for this district (Главная is auto-prepended by Breadcrumbs component)
   const breadcrumbItems = [
     { label: "Услуги", href: "/#services" },
     { label: "По округам Москвы", href: "/uslugi/po-okrugam-moskvy" },
-    { label: `Дезинфекция в ${district.name}` }
+    { label: district.name }
   ];
 
   return (
@@ -146,7 +150,7 @@ const DistrictPage = () => {
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
         
         {/* Open Graph */}
-        <meta property="og:title" content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`} />
+        <meta property="og:title" content={`${headings.hero} — ${SEO_CONFIG.companyName}`} />
         <meta property="og:description" content={district.metaDescription} />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
@@ -156,7 +160,7 @@ const DistrictPage = () => {
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`} />
+        <meta name="twitter:title" content={`${headings.hero} — ${SEO_CONFIG.companyName}`} />
         <meta name="twitter:description" content={district.metaDescription} />
         <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
         
@@ -175,26 +179,78 @@ const DistrictPage = () => {
           <Breadcrumbs items={breadcrumbItems} />
         </div>
 
-        {/* Hero with parallax */}
-        <DistrictHero 
-          district={district} 
-          onCalculatorOpen={() => setIsCalculatorOpen(true)} 
-        />
+        {/* Hero Section with Variable Heading */}
+        <section className="py-16 bg-gradient-to-br from-primary/5 to-primary/10">
+          <div className="container mx-auto px-4">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">{headings.hero}</h1>
+            <p className="text-xl text-gray-700 mb-8">{district.description}</p>
+            
+            {/* Warning Block */}
+            <div className={`p-6 rounded-lg ${warning.accent === 'warning' ? 'bg-amber-50 border-amber-300' : 'bg-blue-50 border-blue-300'} border-2`}>
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  {warning.accent === 'warning' ? '⚠️' : 'ℹ️'}
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg mb-2">{warning.title}</h3>
+                  <p className="text-gray-700">{warning.text}</p>
+                </div>
+              </div>
+            </div>
 
-        {/* District specifics (2x3 grid) */}
-        <DistrictSpecifics district={district} />
+            <div className="mt-8">
+              <Button 
+                size="lg" 
+                onClick={() => setIsCalculatorOpen(true)}
+                className="text-lg px-8 py-6"
+              >
+                {ctaText}
+              </Button>
+            </div>
+          </div>
+        </section>
 
-        {/* Neighborhoods with links to neighborhood pages */}
+        {/* Services Section */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <VariableHeading 
-              slug={slug} 
-              category="whyChooseUs" 
-              level="h2" 
-              className="text-2xl md:text-3xl font-bold mb-6" 
-            />
+            <h2 className="text-3xl font-bold mb-8">{headings.services}</h2>
             
-            {/* Clickable neighborhood links */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {services.map((service) => (
+                <Link key={service.href} to={service.href}>
+                  <Card className="h-full hover:shadow-lg border-2 hover:border-primary/50 transition-all">
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-semibold mb-3">{service.title}</h3>
+                      <p className="text-2xl font-bold text-primary mb-2">от {service.price}₽</p>
+                      <span className="text-primary font-semibold hover:underline">Подробнее →</span>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Benefits */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-8">Наши преимущества</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {benefits.map((benefit, index) => (
+                <div key={index} className="flex items-start gap-4 p-4 bg-white rounded-lg shadow">
+                  <span className="text-2xl flex-shrink-0">✅</span>
+                  <p className="text-lg">{benefit}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Neighborhoods */}
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-6">Районы в {district.name}</h2>
+            
             {(() => {
               const neighborhoodPages = getNeighborhoodsByDistrict(district.id);
               if (neighborhoodPages.length > 0) {
@@ -227,105 +283,18 @@ const DistrictPage = () => {
               );
             })()}
             
-            {/* Link to all neighborhoods */}
             <div className="mb-6">
               <Link 
                 to="/rajony" 
                 className="text-primary hover:underline font-medium"
               >
-                Смотреть все 125 районов Москвы →
+                Смотреть все районы Москвы →
               </Link>
             </div>
             
-            {/* Response time badge with variable warning */}
-            <WarningBlock slug={slug} icon="info">
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                <span className="font-medium">Среднее время выезда: {district.responseTime}</span>
-              </div>
-            </WarningBlock>
-          </div>
-        </section>
-
-        {/* Pricing with tabs */}
-        <DistrictPricing district={district} />
-
-        {/* Cases */}
-        <DistrictCases district={district} />
-
-        {/* Reviews */}
-        <DistrictReviews district={district} />
-
-        {/* Services in district */}
-        <section className="py-12">
-          <div className="container mx-auto px-4">
-            <VariableHeading 
-              slug={slug} 
-              category="benefits" 
-              level="h2" 
-              className="text-2xl md:text-3xl font-bold mb-6" 
-            />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {services.map((service) => (
-                <Link key={service.href} to={service.href}>
-                  <Card className="h-full hover:shadow-md transition-shadow hover:-translate-y-1">
-                    <CardContent className="p-6 text-center">
-                      <h3 className="font-bold text-lg mb-2">{service.title}</h3>
-                      <p className="text-2xl font-bold text-primary">от {service.price}₽</p>
-                      {district.surcharge > 0 && (
-                        <p className="text-xs text-muted-foreground mt-1">включая выезд</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Popular objects */}
-        <section className="py-12 bg-muted/30">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Популярные объекты в {district.name}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {district.popularObjects.map((obj, idx) => (
-                <Card key={idx}>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                      {idx === 0 && <Home className="w-5 h-5 text-primary" />}
-                      {idx === 1 && <Building className="w-5 h-5 text-primary" />}
-                      {idx === 2 && <Utensils className="w-5 h-5 text-primary" />}
-                      {obj.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-1 text-sm text-muted-foreground">
-                      {obj.items.map((item, i) => (
-                        <li key={i}>• {item}</li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Worked streets */}
-        <section className="py-12">
-          <div className="container mx-auto px-4">
-            <div className="bg-muted/50 rounded-2xl p-6 md:p-8">
-              <h2 className="text-2xl font-bold mb-4">Мы уже работали на этих улицах</h2>
-              <p className="text-muted-foreground mb-4">
-                Вот некоторые адреса в {district.name}, где мы успешно провели обработку:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {district.workedStreets.map((street, idx) => (
-                  <Badge key={idx} variant="outline" className="text-sm">
-                    {street}
-                  </Badge>
-                ))}
-              </div>
+            <div className="flex items-center gap-3 p-4 bg-blue-50 border-2 border-blue-300 rounded-lg">
+              <Clock className="w-6 h-6 text-blue-600" />
+              <span className="font-medium">Среднее время выезда: {district.responseTime}</span>
             </div>
           </div>
         </section>
@@ -333,7 +302,7 @@ const DistrictPage = () => {
         {/* FAQ */}
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Частые вопросы про {district.name}</h2>
+            <h2 className="text-3xl font-bold mb-6">Частые вопросы про {district.name}</h2>
             <Accordion type="single" collapsible className="max-w-3xl">
               {district.faq.map((item, idx) => (
                 <AccordionItem key={idx} value={`faq-${idx}`}>
@@ -345,16 +314,30 @@ const DistrictPage = () => {
           </div>
         </section>
 
-        {/* Final CTA with stats */}
-        <DistrictCTA district={district} />
-
-        {/* Other districts */}
+        {/* CTA */}
         <section className="py-12">
+          <div className="container mx-auto px-4 text-center">
+            <div className="bg-primary/5 rounded-2xl p-12">
+              <h2 className="text-3xl font-bold mb-6">{ctaText}</h2>
+              <Button 
+                size="lg" 
+                onClick={() => setIsCalculatorOpen(true)}
+                className="text-lg px-8 py-6"
+              >
+                {ctaText}
+              </Button>
+              <p className="mt-6 text-lg">Звоните: <a href="tel:+74951234567" className="font-bold text-primary">+7 (495) 123-45-67</a></p>
+            </div>
+          </div>
+        </section>
+
+        {/* Other Districts */}
+        <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Другие округа Москвы</h2>
+            <h2 className="text-3xl font-bold mb-6">Другие округа Москвы</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {otherDistricts.map((d) => (
-                <Link key={d.id} to={`/uslugi/${d.slug}`}>
+                <Link key={d.id} to={`/okruga/${d.id}`}>
                   <Card className="hover:shadow-md transition-shadow hover:-translate-y-1">
                     <CardContent className="p-4 text-center">
                       <h3 className="font-bold text-primary">{d.name}</h3>
@@ -364,25 +347,12 @@ const DistrictPage = () => {
                 </Link>
               ))}
             </div>
-            <div className="text-center mt-6">
-              <Link to="/uslugi/po-okrugam-moskvy" className="text-primary hover:underline font-medium">
-                Все округа Москвы →
-              </Link>
-            </div>
           </div>
         </section>
-
-        {/* Internal Links for SEO */}
-        <InternalLinks
-          currentService="dezinfekciya"
-          title="Другие услуги в Москве"
-          maxLinks={12}
-        />
       </main>
 
       <Footer />
 
-      {/* Calculator Modal */}
       <CalculatorModal 
         open={isCalculatorOpen} 
         onOpenChange={setIsCalculatorOpen} 
@@ -392,4 +362,3 @@ const DistrictPage = () => {
 };
 
 export default DistrictPage;
-
