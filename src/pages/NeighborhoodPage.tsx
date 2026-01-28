@@ -1,8 +1,8 @@
-import { useParams, Link, useLocation } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Clock, Check, Phone, ArrowRight, Shield, Award, Users, CheckCircle, Bug, Wind } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { MapPin, Clock, Phone, ArrowRight, Shield, Award, CheckCircle } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -12,13 +12,19 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import CalculatorModal from '@/components/CalculatorModal';
 import InternalLinks from '@/components/InternalLinks';
 import { ImageGallery } from '@/components/ImageGallery';
-import { getNeighborhoodBySlug, getNeighborhoodsByDistrict, neighborhoods, Neighborhood } from '@/data/neighborhoods';
-import { getDistrictById, districtPages } from '@/data/districtPages';
+import { getNeighborhoodBySlug, getNeighborhoodsByDistrict } from '@/data/neighborhoods';
+import { getDistrictById } from '@/data/districtPages';
 import { getNeighborhoodContent } from '@/data/neighborhoodContent';
 import { getNeighborhoodImages, getCategoryLabel } from '@/data/neighborhoodImages';
 import { SEO_CONFIG } from '@/lib/seo';
 import { useState } from 'react';
 import { IconFromKey, type IconKey } from '@/lib/iconMap';
+
+// Variation system imports
+import { VariableHeading } from '@/components/ui/VariableHeading';
+import { WarningBlock } from '@/components/ui/WarningBlock';
+import { VariableCTA } from '@/components/ui/VariableCTA';
+import { getPageVariation, cardStyles } from '@/lib/contentVariations';
 
 const NeighborhoodPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -28,6 +34,10 @@ const NeighborhoodPage = () => {
   if (!neighborhood) {
     return <NotFound />;
   }
+
+  // Get variation for this neighborhood
+  const variation = getPageVariation(neighborhood.slug);
+  const variationSlug = neighborhood.slug;
 
   // Get parent district
   const parentDistrict = getDistrictById(neighborhood.districtId);
@@ -213,9 +223,14 @@ const NeighborhoodPage = () => {
                   </Link>
                 )}
                 
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                  {neighborhood.h1}
-                </h1>
+                {/* Variable H1 with fallback */}
+                <VariableHeading 
+                  slug={variationSlug} 
+                  category="hero" 
+                  level="h1" 
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
+                  fallback={neighborhood.h1}
+                />
                 
                 <p className="text-lg md:text-xl text-muted-foreground mb-6">
                   {neighborhood.description.slice(0, 200)}...
@@ -236,7 +251,7 @@ const NeighborhoodPage = () => {
                   </Badge>
                 </div>
 
-                {/* CTA buttons */}
+                {/* CTA buttons with variation */}
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button size="lg" asChild>
                     <a href={`tel:${SEO_CONFIG.phoneClean}`}>
@@ -244,9 +259,11 @@ const NeighborhoodPage = () => {
                       {SEO_CONFIG.phone}
                     </a>
                   </Button>
-                  <Button size="lg" variant="outline" onClick={() => setIsCalculatorOpen(true)}>
-                    Рассчитать стоимость
-                  </Button>
+                  <VariableCTA 
+                    slug={variationSlug} 
+                    onClick={() => setIsCalculatorOpen(true)}
+                    fallback="Рассчитать стоимость"
+                  />
                 </div>
               </div>
               
@@ -272,16 +289,23 @@ const NeighborhoodPage = () => {
           </div>
         </section>
 
+        {/* Warning Block */}
+        <WarningBlock slug={variationSlug} />
+
         {/* Services Grid */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              Услуги в {neighborhood.name}
-            </h2>
+            <VariableHeading 
+              slug={variationSlug} 
+              category="services" 
+              level="h2" 
+              className="text-2xl md:text-3xl font-bold mb-6"
+              fallback={`Услуги в ${neighborhood.name}`}
+            />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {services.map((service) => (
                 <Link key={service.href} to={service.href}>
-                  <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1 border-2 hover:border-primary/50">
+                  <Card className={`h-full transition-all ${cardStyles[variation]}`}>
                     <CardContent className="p-6 text-center">
                       <div className="mb-3 flex justify-center">
                         <IconFromKey iconKey={service.iconKey} className="w-8 h-8 text-primary" />
@@ -326,7 +350,7 @@ const NeighborhoodPage = () => {
                 От старого фонда до элитной недвижимости — гарантируем результат для любого типа помещений
               </p>
               
-              {/* Gallery Grid with Lightbox */}
+              {/* Gallery Grid */}
               <div className="grid md:grid-cols-3 gap-6">
                 {neighborhoodImagesData.galleryImages.map((image, index) => (
                   <div 
@@ -553,9 +577,13 @@ const NeighborhoodPage = () => {
         {/* CTA Section */}
         <section className="py-16 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Вызвать дезинфектора в {neighborhood.name}
-            </h2>
+            <VariableHeading 
+              slug={variationSlug} 
+              category="cta" 
+              level="h2" 
+              className="text-2xl md:text-3xl font-bold mb-4"
+              fallback={`Вызвать дезинфектора в ${neighborhood.name}`}
+            />
             <p className="text-lg mb-8 opacity-90">
               Выезд за {neighborhood.responseTime} • Гарантия 1 год • От {1000 + neighborhood.surcharge}₽
             </p>
@@ -566,9 +594,13 @@ const NeighborhoodPage = () => {
                   {SEO_CONFIG.phone}
                 </a>
               </Button>
-              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" onClick={() => setIsCalculatorOpen(true)}>
-                Рассчитать стоимость
-              </Button>
+              <VariableCTA 
+                slug={variationSlug} 
+                onClick={() => setIsCalculatorOpen(true)}
+                variant="outline"
+                className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10"
+                fallback="Рассчитать стоимость"
+              />
             </div>
           </div>
         </section>
