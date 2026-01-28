@@ -27,46 +27,82 @@ class SeededRandom {
   }
 }
 
-export interface PageVariation {
-  warningColor: 'orange' | 'red' | 'purple' | 'blue';
-  accentColor: 'blue' | 'green' | 'teal' | 'cyan';
-  headingVariant: number;
-  ctaTextVariant: number;
-  benefitsHeadingVariant: number;
-  guaranteesHeadingVariant: number;
-  showFAQBeforeTestimonials: boolean;
-  showPricingBeforeGallery: boolean;
-  showCertificatesInHero: boolean;
-  tableStyle: 'compact' | 'spacious' | 'bordered';
-  buttonStyle: 'rounded' | 'square' | 'pill';
-  cardStyle: 'shadow' | 'border' | 'outline';
-  showPatrioticBadge: boolean;
-  highlightCertificates: boolean;
-  showUrgencyBanner: boolean;
-}
+// Variation type based on neighborhood characteristics
+export type PageVariationType = 'elite' | 'residential' | 'business' | 'industrial';
 
-export function getPageVariation(slug: string): PageVariation {
+// Determine variation type from slug
+export function getPageVariation(slug: string): PageVariationType {
   const seed = simpleHash(slug);
   const rng = new SeededRandom(seed);
-  return {
-    warningColor: rng.choice(['orange', 'red', 'purple', 'blue']),
-    accentColor: rng.choice(['blue', 'green', 'teal', 'cyan']),
-    headingVariant: rng.nextInt(0, 4),
-    ctaTextVariant: rng.nextInt(0, 2),
-    benefitsHeadingVariant: rng.nextInt(0, 4),
-    guaranteesHeadingVariant: rng.nextInt(0, 4),
-    showFAQBeforeTestimonials: rng.next() > 0.5,
-    showPricingBeforeGallery: rng.next() > 0.5,
-    showCertificatesInHero: rng.next() > 0.7,
-    tableStyle: rng.choice(['compact', 'spacious', 'bordered']),
-    buttonStyle: rng.choice(['rounded', 'square', 'pill']),
-    cardStyle: rng.choice(['shadow', 'border', 'outline']),
-    showPatrioticBadge: rng.next() < 0.15,
-    highlightCertificates: rng.next() < 0.25,
-    showUrgencyBanner: rng.next() < 0.20
-  };
+  const types: PageVariationType[] = ['elite', 'residential', 'business', 'industrial'];
+  return rng.choice(types);
 }
 
+// Headings for different variations
+export const headings: Record<PageVariationType, { hero: string; services: string; cta: string }> = {
+  elite: {
+    hero: 'Премиальная дезинфекция для элитной недвижимости',
+    services: 'Эксклюзивные услуги',
+    cta: 'Получить индивидуальное предложение'
+  },
+  residential: {
+    hero: 'Доступная дезинфекция для вашего дома',
+    services: 'Услуги для квартир и домов',
+    cta: 'Заказать обработку квартиры'
+  },
+  business: {
+    hero: 'Профессиональная дезинфекция для бизнеса',
+    services: 'Решения для офисов и коммерции',
+    cta: 'Заказать обработку офиса'
+  },
+  industrial: {
+    hero: 'Дезинфекция промышленных объектов',
+    services: 'Комплексные решения для производства',
+    cta: 'Получить коммерческое предложение'
+  }
+};
+
+// Warning blocks for different variations
+export const warningContent: Record<PageVariationType, { title: string; text: string; accent: 'warning' | 'info' }> = {
+  elite: {
+    title: 'Особый подход к элитной недвижимости',
+    text: 'Используем только премиальные препараты без запаха. Работаем конфиденциально и деликатно.',
+    accent: 'info'
+  },
+  residential: {
+    title: 'Безопасно для детей и животных',
+    text: 'Все препараты сертифицированы Роспотребнадзором. Можно находиться в помещении через 2 часа.',
+    accent: 'info'
+  },
+  business: {
+    title: 'Работаем без остановки бизнеса',
+    text: 'Обработка в нерабочее время или выходные дни. Минимум неудобств для сотрудников.',
+    accent: 'warning'
+  },
+  industrial: {
+    title: 'Полное соблюдение требований СанПиН',
+    text: 'Договор, акты, документация. Регулярное обслуживание крупных объектов.',
+    accent: 'warning'
+  }
+};
+
+// CTA buttons for different variations
+export const ctaButtons: Record<PageVariationType, string> = {
+  elite: 'Заказать консультацию',
+  residential: 'Рассчитать стоимость',
+  business: 'Получить КП для офиса',
+  industrial: 'Запросить коммерческое предложение'
+};
+
+// Card styles for different variations
+export const cardStyles: Record<PageVariationType, string> = {
+  elite: 'hover:shadow-2xl transition-all hover:-translate-y-2 border-2 hover:border-primary/50',
+  residential: 'hover:shadow-lg transition-all hover:-translate-y-1 border-2 hover:border-primary/50',
+  business: 'hover:shadow-xl transition-all hover:-translate-y-1 border-2 hover:border-blue-500/50',
+  industrial: 'hover:shadow-lg transition-all border-2 hover:border-gray-400'
+};
+
+// Legacy support (keep for backward compatibility)
 export const textVariants = {
   whyChooseUs: ['Почему выбирают нас','Наши преимущества','Что мы гарантируем','Профессиональный подход','Работаем для вашей безопасности'],
   benefits: ['Преимущества нашей службы','Почему мы лучшие','Что отличает нас от конкурентов','Наши сильные стороны','Качество и надёжность'],
@@ -96,18 +132,12 @@ export const tableStyles = {
   bordered: { wrapper: 'overflow-x-auto border-2 border-gray-300 rounded-lg', table: 'min-w-full text-base', th: 'px-4 py-3 bg-gray-200 font-semibold text-left border-b-2 border-gray-400', td: 'px-4 py-3 border border-gray-300' }
 };
 
-export const cardStyles = {
-  shadow: 'shadow-lg rounded-lg p-6 bg-white',
-  border: 'border-2 border-gray-200 rounded-lg p-6 bg-white',
-  outline: 'border border-gray-300 rounded-xl p-6 bg-gray-50'
-};
-
 export function getTextVariant(slug: string, category: keyof typeof textVariants, variantIndex?: number): string {
   const variants = textVariants[category];
   if (variantIndex !== undefined) return variants[variantIndex % variants.length];
-  const variation = getPageVariation(slug);
-  return variants[variation.headingVariant % variants.length];
+  const seed = simpleHash(slug);
+  const rng = new SeededRandom(seed);
+  return rng.choice(variants);
 }
 
 export { simpleHash };
-
