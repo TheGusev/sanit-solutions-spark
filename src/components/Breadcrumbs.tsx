@@ -1,81 +1,62 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { Link } from 'react-router-dom';
+import { ChevronRight, Home } from 'lucide-react';
 
-interface BreadcrumbItemType {
+interface BreadcrumbItem {
   label: string;
   href?: string;
 }
 
 interface BreadcrumbsProps {
-  items: BreadcrumbItemType[];
-  className?: string;
+  items: BreadcrumbItem[];
 }
 
-const BASE_URL = "https://goruslugimsk.ru";
-
-const Breadcrumbs = ({ items, className = "" }: BreadcrumbsProps) => {
-  // Build full breadcrumb list with "Главная" as first item
-  const fullItems: BreadcrumbItemType[] = [
-    { label: "Главная", href: "/" },
-    ...items,
-  ];
-
-  // Generate Schema.org BreadcrumbList (SSR-safe)
-  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
-  const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: fullItems.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: item.label,
-      item: item.href ? `${BASE_URL}${item.href}` : `${BASE_URL}${currentPath}`,
-    })),
-  };
-
+const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
   return (
-    <>
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify(schemaData)}
-        </script>
-      </Helmet>
-
-      <Breadcrumb className={`hidden md:block ${className}`}>
-        <BreadcrumbList>
-          {fullItems.map((item, index) => {
-            const isLast = index === fullItems.length - 1;
-
-            return (
-              <React.Fragment key={index}>
-                <BreadcrumbItem>
-                  {!isLast && item.href ? (
-                    <BreadcrumbLink asChild>
-                      <Link to={item.href} className="hover:text-primary transition-colors">
-                        {item.label}
-                      </Link>
-                    </BreadcrumbLink>
-                  ) : (
-                    <BreadcrumbPage className="text-russia-red font-medium">{item.label}</BreadcrumbPage>
-                  )}
-                </BreadcrumbItem>
-                {!isLast && <BreadcrumbSeparator />}
-              </React.Fragment>
-            );
-          })}
-        </BreadcrumbList>
-      </Breadcrumb>
-    </>
+    <nav aria-label="Breadcrumb" className="flex items-center text-sm text-muted-foreground">
+      {/* Home link */}
+      <Link 
+        to="/" 
+        className="flex items-center hover:text-primary transition-colors"
+        aria-label="Главная страница"
+      >
+        <Home className="w-4 h-4" />
+      </Link>
+      
+      {/* Separator after Home */}
+      <ChevronRight className="w-4 h-4 mx-2 flex-shrink-0" aria-hidden="true" />
+      
+      {/* Dynamic breadcrumb items */}
+      {items.map((item, index) => {
+        const isLast = index === items.length - 1;
+        
+        return (
+          <div key={index} className="flex items-center">
+            {item.href && !isLast ? (
+              <Link 
+                to={item.href} 
+                className="hover:text-primary transition-colors whitespace-nowrap"
+              >
+                {item.label}
+              </Link>
+            ) : (
+              <span 
+                className={`whitespace-nowrap ${isLast ? 'font-medium text-foreground' : ''}`}
+                aria-current={isLast ? 'page' : undefined}
+              >
+                {item.label}
+              </span>
+            )}
+            
+            {/* Separator between items (but not after last) */}
+            {!isLast && (
+              <ChevronRight className="w-4 h-4 mx-2 flex-shrink-0" aria-hidden="true" />
+            )}
+          </div>
+        );
+      })}
+    </nav>
   );
 };
 
 export default Breadcrumbs;
+
