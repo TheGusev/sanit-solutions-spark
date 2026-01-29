@@ -25,7 +25,8 @@ import DistrictCTA from '@/components/district/DistrictCTA';
 
 const DistrictPage = () => {
   const location = useLocation();
-  // Extract district ID from URL path (e.g., /uslugi/dezinfekciya-cao -> cao)
+
+  // /uslugi/dezinfekciya-nao -> nao
   const pathMatch = location.pathname.match(/\/uslugi\/dezinfekciya-(\w+)/);
   const districtId = pathMatch ? pathMatch[1] : undefined;
   const district = districtId ? getDistrictById(districtId) : undefined;
@@ -36,93 +37,90 @@ const DistrictPage = () => {
   }
 
   const services = [
-    { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: 1000 + district.surcharge },
-    { title: "Дезинсекция", href: "/uslugi/dezinsekciya", price: 1200 + district.surcharge },
-    { title: "Дератизация", href: "/uslugi/deratizaciya", price: 1400 + district.surcharge },
-    { title: "Озонирование", href: "/uslugi/ozonirovanie", price: 1500 + district.surcharge },
+    { title: 'Дезинфекция', href: '/uslugi/dezinfekciya', price: 1000 + district.surcharge },
+    { title: 'Дезинсекция', href: '/uslugi/dezinsekciya', price: 1200 + district.surcharge },
+    { title: 'Дератизация', href: '/uslugi/deratizaciya', price: 1400 + district.surcharge },
+    { title: 'Озонирование', href: '/uslugi/ozonirovanie', price: 1500 + district.surcharge },
   ];
 
-  const otherDistricts = districtPages.filter(d => d.id !== district.id).slice(0, 4);
+  const otherDistricts = districtPages.filter((d) => d.id !== district.id).slice(0, 4);
   const canonicalUrl = `${SEO_CONFIG.baseUrl}/uslugi/${district.slug}`;
 
-  // Schema.org LocalBusiness (primary for GEO pages)
   const localBusinessSchema = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": `${SEO_CONFIG.companyName} — Дезинфекция в ${district.name}`,
-    "description": district.metaDescription,
-    "telephone": SEO_CONFIG.phone,
-    "url": canonicalUrl,
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Москва",
-      "addressRegion": district.fullName,
-      "addressCountry": "RU"
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: `${SEO_CONFIG.companyName} — Дезинфекция в ${district.name}`,
+    description: district.metaDescription,
+    telephone: SEO_CONFIG.phone,
+    url: canonicalUrl,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Москва',
+      addressRegion: district.fullName,
+      addressCountry: 'RU',
     },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": district.center[0],
-      "longitude": district.center[1]
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: district.center[0],
+      longitude: district.center[1],
     },
-    "areaServed": {
-      "@type": "AdministrativeArea",
-      "name": district.fullName + ", Москва"
+    areaServed: {
+      '@type': 'AdministrativeArea',
+      name: district.fullName + ', Москва',
     },
-    "priceRange": `от ${1000 + district.surcharge}₽`,
-    "openingHours": "Mo-Su 00:00-23:59"
+    priceRange: `от ${1000 + district.surcharge}₽`,
+    openingHours: 'Mo-Su 00:00-23:59',
   };
 
-  // Schema.org Service
   const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "serviceType": "Дезинфекция",
-    "name": `Дезинфекция в ${district.name} Москвы`,
-    "description": district.metaDescription,
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": SEO_CONFIG.companyName
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    serviceType: 'Дезинфекция',
+    name: `Дезинфекция в ${district.name} Москвы`,
+    description: district.metaDescription,
+    provider: {
+      '@type': 'LocalBusiness',
+      name: SEO_CONFIG.companyName,
     },
-    "areaServed": {
-      "@type": "AdministrativeArea",
-      "name": district.fullName + ", Москва"
+    areaServed: {
+      '@type': 'AdministrativeArea',
+      name: district.fullName + ', Москва',
     },
-    "offers": {
-      "@type": "Offer",
-      "price": 1000 + district.surcharge,
-      "priceCurrency": "RUB"
-    }
+    offers: {
+      '@type': 'Offer',
+      price: 1000 + district.surcharge,
+      priceCurrency: 'RUB',
+    },
   };
 
   const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": district.faq.map(item => ({
-      "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.answer
-      }
-    }))
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: district.faq.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
   };
 
   const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Главная", "item": SEO_CONFIG.baseUrl },
-      { "@type": "ListItem", "position": 2, "name": "Услуги", "item": `${SEO_CONFIG.baseUrl}/#services` },
-      { "@type": "ListItem", "position": 3, "name": "По округам Москвы", "item": `${SEO_CONFIG.baseUrl}/uslugi/po-okrugam-moskvy` },
-      { "@type": "ListItem", "position": 4, "name": `Дезинфекция в ${district.name}`, "item": canonicalUrl }
-    ]
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: SEO_CONFIG.baseUrl },
+      { '@type': 'ListItem', position: 2, name: 'Услуги', item: `${SEO_CONFIG.baseUrl}/#services` },
+      { '@type': 'ListItem', position: 3, name: 'По округам Москвы', item: `${SEO_CONFIG.baseUrl}/uslugi/po-okrugam-moskvy` },
+      { '@type': 'ListItem', position: 4, name: `Дезинфекция в ${district.name}`, item: canonicalUrl },
+    ],
   };
 
-  // Breadcrumb items for this district (Главная is auto-prepended by Breadcrumbs component)
   const breadcrumbItems = [
-    { label: "Услуги", href: "/#services" },
-    { label: "По округам Москвы", href: "/uslugi/po-okrugam-moskvy" },
-    { label: `Дезинфекция в ${district.name}` }
+    { label: 'Услуги', href: '/#services' },
+    { label: 'По округам Москвы', href: '/uslugi/po-okrugam-moskvy' },
+    { label: `Дезинфекция в ${district.name}` },
   ];
 
   return (
@@ -133,24 +131,30 @@ const DistrictPage = () => {
         <link rel="canonical" href={canonicalUrl} />
         <link rel="alternate" hrefLang="ru" href={canonicalUrl} />
         <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
-        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        
-        {/* Open Graph */}
-        <meta property="og:title" content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`} />
+        <meta
+          name="robots"
+          content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+        />
+
+        <meta
+          property="og:title"
+          content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
+        />
         <meta property="og:description" content={district.metaDescription} />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:image" content={SEO_CONFIG.ogImage} />
         <meta property="og:locale" content={SEO_CONFIG.locale} />
         <meta property="og:site_name" content={SEO_CONFIG.companyName} />
-        
-        {/* Twitter */}
+
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`} />
+        <meta
+          name="twitter:title"
+          content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
+        />
         <meta name="twitter:description" content={district.metaDescription} />
         <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
-        
-        {/* Schema.org */}
+
         <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
@@ -160,37 +164,25 @@ const DistrictPage = () => {
       <Header />
 
       <main className="min-h-screen pt-20">
-        {/* Breadcrumbs */}
         <div className="container mx-auto px-4 py-4">
           <Breadcrumbs items={breadcrumbItems} />
         </div>
 
-        {/* Hero with parallax */}
-        <DistrictHero 
-          district={district} 
-          onCalculatorOpen={() => setIsCalculatorOpen(true)} 
-        />
+        <DistrictHero district={district} onCalculatorOpen={() => setIsCalculatorOpen(true)} />
 
-        {/* District specifics (2x3 grid) */}
         <DistrictSpecifics district={district} />
 
-        {/* Neighborhoods with links to neighborhood pages */}
         <section className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">Районы в {district.name}</h2>
-            
-            {/* Clickable neighborhood links */}
+
             {(() => {
               const neighborhoodPages = getNeighborhoodsByDistrict(district.id);
               if (neighborhoodPages.length > 0) {
                 return (
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-6">
                     {neighborhoodPages.map((n) => (
-                      <Link 
-                        key={n.id} 
-                        to={`/rajony/${n.slug}`}
-                        className="block"
-                      >
+                      <Link key={n.id} to={`/rajony/${n.slug}`} className="block">
                         <Card className="hover:shadow-md transition-all hover:-translate-y-0.5 h-full">
                           <CardContent className="p-3 text-center">
                             <span className="font-medium text-sm">{n.name}</span>
@@ -211,18 +203,13 @@ const DistrictPage = () => {
                 </div>
               );
             })()}
-            
-            {/* Link to all neighborhoods */}
+
             <div className="mb-6">
-              <Link 
-                to="/rajony" 
-                className="text-primary hover:underline font-medium"
-              >
+              <Link to="/rajony" className="text-primary hover:underline font-medium">
                 Смотреть все 125 районов Москвы →
               </Link>
             </div>
-            
-            {/* Response time badge */}
+
             <div className="flex items-center gap-2 p-4 bg-blue-50 border-2 border-blue-300 rounded-lg">
               <Clock className="w-5 h-5" />
               <span className="font-medium">Среднее время выезда: {district.responseTime}</span>
@@ -230,19 +217,17 @@ const DistrictPage = () => {
           </div>
         </section>
 
-        {/* Pricing with tabs */}
         <DistrictPricing district={district} />
 
-        {/* Cases */}
         <DistrictCases district={district} />
 
-        {/* Reviews */}
         <DistrictReviews district={district} />
 
-        {/* Services in district */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Услуги дезинфекции в {district.name}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">
+              Услуги дезинфекции в {district.name}
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {services.map((service) => (
                 <Link key={service.href} to={service.href}>
@@ -261,10 +246,11 @@ const DistrictPage = () => {
           </div>
         </section>
 
-        {/* Popular objects */}
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Популярные объекты в {district.name}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">
+              Популярные объекты в {district.name}
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {district.popularObjects.map((obj, idx) => (
                 <Card key={idx}>
@@ -289,7 +275,6 @@ const DistrictPage = () => {
           </div>
         </section>
 
-        {/* Worked streets */}
         <section className="py-12">
           <div className="container mx-auto px-4">
             <div className="bg-muted/50 rounded-2xl p-6 md:p-8">
@@ -308,10 +293,11 @@ const DistrictPage = () => {
           </div>
         </section>
 
-        {/* FAQ */}
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Частые вопросы про {district.name}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">
+              Частые вопросы про {district.name}
+            </h2>
             <Accordion type="single" collapsible className="max-w-3xl">
               {district.faq.map((item, idx) => (
                 <AccordionItem key={idx} value={`faq-${idx}`}>
@@ -323,10 +309,8 @@ const DistrictPage = () => {
           </div>
         </section>
 
-        {/* Final CTA with stats */}
         <DistrictCTA district={district} />
 
-        {/* Other districts */}
         <section className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">Другие округа Москвы</h2>
@@ -350,21 +334,12 @@ const DistrictPage = () => {
           </div>
         </section>
 
-        {/* Internal Links for SEO */}
-        <InternalLinks
-          currentService="dezinfekciya"
-          title="Другие услуги в Москве"
-          maxLinks={12}
-        />
+        <InternalLinks currentService="dezinfekciya" title="Другие услуги в Москве" maxLinks={12} />
       </main>
 
       <Footer />
 
-      {/* Calculator Modal */}
-      <CalculatorModal 
-        open={isCalculatorOpen} 
-        onOpenChange={setIsCalculatorOpen} 
-      />
+      <CalculatorModal open={isCalculatorOpen} onOpenChange={setIsCalculatorOpen} />
     </>
   );
 };
