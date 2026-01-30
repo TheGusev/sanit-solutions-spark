@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import SectionLoader from "@/components/SectionLoader";
 
-const Calculator = lazy(() => import("@/components/Calculator"));
+const Calculator = lazy(() => import("./Calculator"));
 
 interface CalculatorModalProps {
   open: boolean;
