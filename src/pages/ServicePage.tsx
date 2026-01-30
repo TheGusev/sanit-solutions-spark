@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import NotFound from './NotFound';
-import { useEffect } from "react";
+import { useEffect, Suspense, lazy } from "react";
 import { Check, Phone, ChevronRight, Shield, Clock, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,12 +23,15 @@ import Footer from "@/components/Footer";
 import WorkProcess from "@/components/WorkProcess";
 import AnimatedSection from "@/components/AnimatedSection";
 import { getServiceBySlug, servicePages, getRelatedArticlesForService } from "@/data/services";
-import { getDistrictBySlug } from "@/data/districtPages"; // Добавлен импорт
+import { getDistrictById } from "@/data/districtPages";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 import SEOHead from "@/components/SEOHead";
 import { generateServiceMetadata } from "@/lib/metadata";
-import { DistrictPageContent } from "./DistrictPage"; // Добавлен импорт
+import PageLoader from "@/components/PageLoader";
+
+// Ленивая загрузка DistrictPage для избежания циклических зависимостей
+const DistrictPage = lazy(() => import("./DistrictPage"));
 
 const ServicePage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -40,11 +43,17 @@ const ServicePage = () => {
   const isDistrictPage = districtSlug.startsWith('dezinfekciya-');
   
   if (isDistrictPage) {
-    // Пробуем найти округ по полному slug
-    const district = getDistrictBySlug(districtSlug);
+    // Извлекаем districtId из slug (удаляем префикс "dezinfekciya-")
+    const districtId = districtSlug.replace('dezinfekciya-', '');
+    const district = getDistrictById(districtId);
+    
     if (district) {
-      // Рендерим страницу округа напрямую
-      return <DistrictPageContent district={district} />;
+      // Рендерим DistrictPage через ленивую загрузку
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <DistrictPage districtId={districtId} />
+        </Suspense>
+      );
     }
   }
 
