@@ -23,16 +23,33 @@ import Footer from "@/components/Footer";
 import WorkProcess from "@/components/WorkProcess";
 import AnimatedSection from "@/components/AnimatedSection";
 import { getServiceBySlug, servicePages, getRelatedArticlesForService } from "@/data/services";
+import { getDistrictBySlug } from "@/data/districtPages"; // Добавлен импорт
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 import SEOHead from "@/components/SEOHead";
 import { generateServiceMetadata } from "@/lib/metadata";
+import { DistrictPageContent } from "./DistrictPage"; // Добавлен импорт
 
 const ServicePage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { context } = useTraffic();
-  const service = getServiceBySlug(slug || "");
+
+  // Проверяем, является ли это страницей округа ДЕЗИНФЕКЦИИ
+  const districtSlug = slug || "";
+  const isDistrictPage = districtSlug.startsWith('dezinfekciya-');
+  
+  if (isDistrictPage) {
+    // Пробуем найти округ по полному slug
+    const district = getDistrictBySlug(districtSlug);
+    if (district) {
+      // Рендерим страницу округа напрямую
+      return <DistrictPageContent district={district} />;
+    }
+  }
+
+  // Если не округ, то проверяем как обычную услугу
+  const service = getServiceBySlug(districtSlug);
 
   useEffect(() => {
     window.scrollTo(0, 0);
