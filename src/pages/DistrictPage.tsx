@@ -1,4 +1,4 @@
-import { Link, Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Clock, Building, Home, Utensils } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,28 +22,10 @@ import DistrictReviews from '@/components/district/DistrictReviews';
 import DistrictCTA from '@/components/district/DistrictCTA';
 
 const DistrictPage = () => {
-  const location = useLocation();
+  const { districtId } = useParams<{ districtId: string }>();
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
-  // ---------------------------------------------------------------------------
-  // 1. Аккуратно парсим districtId из URL
-  //    Ожидаемые URL: /uslugi/dezinfekciya-cao, /uslugi/dezinfekciya-nao и т.д.
-  // ---------------------------------------------------------------------------
-  const pathMatch = location.pathname.match(
-    /^\/uslugi\/dezinfekciya-([a-z0-9-]+)\/?$/
-  );
-  const districtId = pathMatch?.[1];
-
   const district = districtId ? getDistrictById(districtId) : undefined;
-
-  // Временный лог — увидеть, что происходит (потом можно удалить)
-  console.log(
-    'DISTRICT_PAGE',
-    'PATH=', location.pathname,
-    'MATCH=', pathMatch,
-    'DISTRICT_ID=', districtId,
-    'DISTRICT=', district
-  );
 
   // Если округ не найден по id — уводим на список округов
   if (!district) {
