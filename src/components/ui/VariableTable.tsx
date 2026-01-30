@@ -14,7 +14,14 @@ interface VariableTableProps {
 
 export function VariableTable({ slug, columns, data, className = '' }: VariableTableProps) {
   const variation = getPageVariation(slug);
-  const styles = tableStyles[variation.tableStyle];
+  // Map PageVariationType to table style
+  const tableStyleMap: Record<string, keyof typeof tableStyles> = {
+    elite: 'spacious',
+    residential: 'compact',
+    business: 'bordered',
+    industrial: 'compact'
+  };
+  const styles = tableStyles[tableStyleMap[variation]];
   
   return (
     <div className={`${styles.wrapper} ${className}`}>
