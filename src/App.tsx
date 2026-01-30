@@ -79,13 +79,8 @@ const App = () => (
 
                   {/* Округа Москвы */}
                   <Route path="/uslugi/po-okrugam-moskvy" element={<DistrictsOverview />} />
-                  {/* ОДИН универсальный роут для всех округов:
-                      /uslugi/dezinfekciya-cao
-                      /uslugi/dezinfekciya-sao
-                      /uslugi/dezinfekciya-nao
-                      /uslugi/dezinfekciya-tao
-                      /uslugi/dezinfekciya-zelao и т.д. */}
-                  <Route path="/uslugi/dezinfekciya-:districtId" element={<DistrictPage />} />
+                  {/* УДАЛЕНО: отдельный роут для округов - теперь обрабатывается в ServicePage */}
+                  {/* <Route path="/uslugi/dezinfekciya-:districtId" element={<DistrictPage />} /> */}
 
                   {/* Районы Москвы */}
                   <Route path="/rajony" element={<NeighborhoodsOverview />} />
@@ -108,6 +103,7 @@ const App = () => (
                     path="/uslugi/:parentSlug/:subSlug"
                     element={<ServiceRouteResolver />}
                   />
+                  {/* Универсальный роут для всех услуг и округов */}
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
 
                   {/* Админка */}
