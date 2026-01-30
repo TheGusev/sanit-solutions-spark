@@ -1,8 +1,7 @@
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Clock, Check, Building, Home, Utensils, Phone } from 'lucide-react';
+import { Clock, Building, Home, Utensils } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Header from '@/components/Header';
@@ -15,7 +14,6 @@ import { getNeighborhoodsByDistrict } from '@/data/neighborhoods';
 import { SEO_CONFIG } from '@/lib/seo';
 import { useState } from 'react';
 
-// New district components
 import DistrictHero from '@/components/district/DistrictHero';
 import DistrictSpecifics from '@/components/district/DistrictSpecifics';
 import DistrictPricing from '@/components/district/DistrictPricing';
@@ -25,13 +23,33 @@ import DistrictCTA from '@/components/district/DistrictCTA';
 
 const DistrictPage = () => {
   const location = useLocation();
-
-  // /uslugi/dezinfekciya-nao -> nao
-  const pathMatch = location.pathname.match(/\/uslugi\/dezinfekciya-(\w+)/);
-  const districtId = pathMatch ? pathMatch[1] : undefined;
-  const district = districtId ? getDistrictById(districtId) : undefined;
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
+  /**
+   * ОЖИДАЕМЫЕ URL:
+   *  /uslugi/dezinfekciya-cao
+   *  /uslugi/dezinfekciya-nao
+   *  /uslugi/dezinfekciya-zelenograd
+   *
+   * Забираем всё после `dezinfekciya-` до конца строки.
+   * Разрешаем латиницу, цифры и дефис.
+   */
+  const pathMatch = location.pathname.match(
+    /^\/uslugi\/dezinfekciya-([a-z0-9-]+)\/?$/
+  );
+  const districtId = pathMatch?.[1];
+  const district = districtId ? getDistrictById(districtId) : undefined;
+
+  // ВРЕМЕННЫЙ ЛОГ ДЛЯ ОТЛАДКИ (можно убрать после фикса)
+  console.log(
+    'DISTRICT_PAGE:',
+    'PATH=', location.pathname,
+    'MATCH=', pathMatch,
+    'DISTRICT_ID=', districtId,
+    'DISTRICT=', district
+  );
+
+  // Если не нашли округ — уводим на список округов
   if (!district) {
     return <Navigate to="/uslugi/po-okrugam-moskvy" replace />;
   }
@@ -66,7 +84,7 @@ const DistrictPage = () => {
     },
     areaServed: {
       '@type': 'AdministrativeArea',
-      name: district.fullName + ', Москва',
+      name: `${district.fullName}, Москва`,
     },
     priceRange: `от ${1000 + district.surcharge}₽`,
     openingHours: 'Mo-Su 00:00-23:59',
@@ -84,7 +102,7 @@ const DistrictPage = () => {
     },
     areaServed: {
       '@type': 'AdministrativeArea',
-      name: district.fullName + ', Москва',
+      name: `${district.fullName}, Москва`,
     },
     offers: {
       '@type': 'Offer',
