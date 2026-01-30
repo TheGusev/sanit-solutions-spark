@@ -1,130 +1,97 @@
 
-# План исправления: Восстановление работоспособности роутинга округов и исправление ошибок TypeScript
+# План исправления: Восстановление роутинга округов Москвы
 
 ## Диагностика проблемы
 
-Обнаружено две основные категории проблем:
+**Корневая причина**: React Router v6.30.1 изменил поведение маршрутов с динамическими параметрами после дефиса.
 
-### A. Критические ошибки TypeScript (блокируют сборку)
+- **Старое поведение**: `path="prefix-:id"` → при URL `/prefix-123` → `params.id = "123"`
+- **Новое поведение**: такой синтаксис больше НЕ поддерживается
 
-Файл `src/pages/MoscowRegionServicePage.tsx` содержит 9 ошибок TypeScript, связанных с неправильным использованием компонентов вариативности:
-
-1. **WarningBlock** — передаются неподдерживаемые пропсы `icon` и `children`
-2. **VariableCTA** — отсутствует обязательный параметр `fallback`
-3. **VariableHeading** — используются неподдерживаемые категории (`pricing`, `benefits`, `guarantees` вместо `hero`, `services`, `cta`)
-4. **variation.cardStyle** — обращение к несуществующему свойству объекта
-
-### B. Проблема роутинга округов
-
-Файл `src/pages/DistrictPage.tsx` некорректно получает параметр округа — использует ручной парсинг URL вместо `useParams()` от React Router.
+Роут `/uslugi/dezinfekciya-:districtId` не матчится, запросы попадают в `/uslugi/:slug`, где ServicePage ищет сервис по slug="dezinfekciya-cao" и не находит — отсюда 404.
 
 ---
 
-## Технический план исправлений
+## Решение: Обрабатывать округа внутри ServicePage
 
-### Шаг 1: Исправить `DistrictPage.tsx` — использовать useParams()
+Вместо отдельного роута для округов, расширим логику ServicePage для определения, является ли slug страницей округа.
 
-**Что менять:**
-
-```text
-// Было:
-const pathMatch = location.pathname.match(
-  /^\/uslugi\/dezinfekciya-([a-z0-9-]+)\/?$/
-);
-const districtId = pathMatch?.[1];
-
-// Станет:
-const { districtId } = useParams<{ districtId: string }>();
-```
-
-- Импортировать `useParams` из `react-router-dom`
-- Удалить ручной парсинг через regex
-- Использовать стандартный механизм React Router
-
-### Шаг 2: Исправить `MoscowRegionServicePage.tsx`
-
-#### 2.1. Заменить WarningBlock на стандартный блок
-
-Компонент `WarningBlock` принимает только `slug`, но на странице нужен кастомный контент. Решение — заменить на прямое использование компонента `Alert`:
+### Изменения в `src/pages/ServicePage.tsx`
 
 ```tsx
-// Вместо:
-<WarningBlock slug={slug} icon="info">
-  <div>...</div>
-</WarningBlock>
+import { getDistrictBySlug } from '@/data/districtPages';
+import DistrictPage from './DistrictPage';
 
-// Использовать стандартный Alert:
-<Alert className="mb-6 border-blue-200 bg-blue-50">
-  <AlertDescription>
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      ...
-    </div>
-  </AlertDescription>
-</Alert>
+const ServicePage = () => {
+  const { slug } = useParams<{ slug: string }>();
+  
+  // Проверяем, является ли это страницей округа
+  const district = getDistrictBySlug(slug || "");
+  if (district) {
+    // Рендерим DistrictPage напрямую с переданным district
+    return <DistrictPageContent district={district} />;
+  }
+  
+  // Обычная логика сервисной страницы
+  const service = getServiceBySlug(slug || "");
+  if (!service) {
+    return <NotFound />;
+  }
+  // ...остальной код
+};
 ```
 
-#### 2.2. Добавить fallback в VariableCTA
+### Изменения в `src/App.tsx`
+
+Удалить отдельный роут для округов:
 
 ```tsx
-// Было:
-<VariableCTA slug={slug} variant="secondary" />
-
-// Станет:
-<VariableCTA slug={slug} variant="secondary" fallback="Оставить заявку" />
+// УДАЛИТЬ эту строку:
+<Route path="/uslugi/dezinfekciya-:districtId" element={<DistrictPage />} />
 ```
 
-#### 2.3. Заменить VariableHeading на стандартные заголовки
+Роут `/uslugi/:slug` уже существует и будет обрабатывать все случаи.
 
-Компонент `VariableHeading` поддерживает только категории `hero`, `services`, `cta`. Для других секций использовать обычные заголовки:
+### Изменения в `src/pages/DistrictPage.tsx`
+
+Экспортировать внутренний компонент для использования в ServicePage:
 
 ```tsx
-// Вместо:
-<VariableHeading slug={slug} category="pricing" ... />
+// Новый экспорт для использования из ServicePage
+export const DistrictPageContent = ({ district }: { district: DistrictPage }) => {
+  // Вся логика рендеринга страницы округа
+};
 
-// Использовать:
-<h2 className="text-2xl font-bold mb-4">Стоимость услуг</h2>
+// Основной компонент для прямых переходов (если останутся)
+const DistrictPage = () => {
+  const { districtId } = useParams<{ districtId: string }>();
+  const district = districtId ? getDistrictById(districtId) : undefined;
+  
+  if (!district) {
+    return <Navigate to="/uslugi/po-okrugam-moskvy" replace />;
+  }
+  
+  return <DistrictPageContent district={district} />;
+};
 ```
-
-#### 2.4. Исправить обращение к cardStyles
-
-```tsx
-// Было:
-cardStyles[variation.cardStyle]
-
-// Станет:
-cardStyles[variation]
-```
-
-Переменная `variation` уже содержит строку типа `PageVariationType`, которая является ключом для `cardStyles`.
 
 ---
 
 ## Файлы для изменения
 
-| Файл | Тип изменений |
-|------|--------------|
-| `src/pages/DistrictPage.tsx` | Рефакторинг получения параметра роута |
-| `src/pages/MoscowRegionServicePage.tsx` | Исправление 9 ошибок TypeScript |
+| Файл | Изменения |
+|------|-----------|
+| `src/App.tsx` | Удалить роут `dezinfekciya-:districtId` |
+| `src/pages/ServicePage.tsx` | Добавить проверку на округ через `getDistrictBySlug()` |
+| `src/pages/DistrictPage.tsx` | Экспортировать `DistrictPageContent` |
 
 ---
 
-## Проверка после исправлений
+## Ожидаемый результат
 
-1. Билд должен проходить без ошибок TypeScript
-2. URL `/uslugi/dezinfekciya-cao` должен корректно отображать страницу ЦАО
-3. URL `/uslugi/dezinfekciya-nao` должен отображать страницу НАО
-4. URL `/uslugi/dezinfekciya-zelao` должен отображать страницу Зеленограда
-5. Все 12 округов должны работать без 404
-6. Переходы с `/uslugi/po-okrugam-moskvy` должны работать корректно
-
----
-
-## Данные синхронизированы корректно
-
-Проверка показала, что:
-- `districtSlugs` в `seoRoutes.ts` содержит все 12 округов
-- `districtPages` в `districtPages.ts` содержит данные для всех 12 округов
-- `getDistrictById()` ищет по полю `id`, которое совпадает со slug в URL
-- SSG генерирует все `/uslugi/dezinfekciya-*` маршруты корректно
-
-**Корневая причина 404**: DistrictPage.tsx парсил URL вручную вместо использования useParams(), что могло приводить к ошибкам при SSR/hydration.
+После исправления:
+- `/uslugi/dezinfekciya-cao` → ServicePage определит округ → отрендерит DistrictPageContent
+- `/uslugi/dezinfekciya-nao` → аналогично
+- `/uslugi/dezinfekciya-zelao` → аналогично
+- `/uslugi/dezinfekciya` → обычная страница сервиса
+- Все 12 округов будут работать корректно
