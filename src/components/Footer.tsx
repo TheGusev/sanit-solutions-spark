@@ -14,6 +14,16 @@ const Footer = memo(() => {
       source: 'footer'
     });
   };
+
+  const handleMessengerClick = (messenger: string) => {
+    trackGoal('messenger_click', {
+      intent: context?.intent,
+      variant: context?.variantId,
+      messenger: messenger,
+      source: 'footer'
+    });
+  };
+
   return (
     <footer className="bg-foreground text-background">
       {/* Триколор-полоса сверху */}
@@ -161,7 +171,11 @@ const Footer = memo(() => {
             <ul className="space-y-3 text-sm opacity-80">
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 flex-shrink-0" />
-                <a href="tel:+79069989888" onClick={handlePhoneClick} className="hover:opacity-100">
+                <a 
+                  href="tel:+79069989888" 
+                  onClick={handlePhoneClick} 
+                  className="hover:opacity-100"
+                >
                   +7 (906) 998-98-88
                 </a>
               </li>
@@ -173,13 +187,25 @@ const Footer = memo(() => {
               </li>
               <li className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4 flex-shrink-0" />
-                <a href="https://wa.me/79069989888" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">
+                <a 
+                  href="https://wa.me/79069989888" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  onClick={() => handleMessengerClick('whatsapp')}
+                  className="hover:opacity-100"
+                >
                   WhatsApp
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Send className="h-4 w-4 flex-shrink-0" />
-                <a href="https://t.me/one_help" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">
+                <a 
+                  href="https://t.me/one_help" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  onClick={() => handleMessengerClick('telegram')}
+                  className="hover:opacity-100"
+                >
                   Telegram: @one_help
                 </a>
               </li>
