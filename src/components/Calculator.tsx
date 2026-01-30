@@ -17,6 +17,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { LeadFormModal } from "./LeadFormModal";
+import { CompactRequestModal } from "./CompactRequestModal"; // ← ДОБАВЛЕНО
 import { QuickCallForm } from "./QuickCallForm";
 import StickyCTA from "./StickyCTA";
 import DesktopStickySidebar from "./DesktopStickySidebar";
@@ -50,20 +51,6 @@ interface CalculatorProps {
   isModal?: boolean;
 }
 
-// Интерфейс для данных калькулятора
-interface CalculatorData {
-  premiseType: string;
-  area: number;
-  serviceType: string;
-  treatmentType: string;
-  period: string;
-  clientType: string;
-  totalPrice: number;
-  discount: number;
-  discountAmount: number;
-  finalPrice: number;
-}
-
 const Calculator = ({ isModal = false }: CalculatorProps) => {
   const { context } = useTraffic();
   
@@ -83,11 +70,9 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
   const [areaError, setAreaError] = useState<string | null>(null);
   const [areaValid, setAreaValid] = useState(true);
   const [showLeadForm, setShowLeadForm] = useState(false);
+  const [showCompactForm, setShowCompactForm] = useState(false); // ← ДОБАВЛЕНО
   const [showClientType, setShowClientType] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
-
-  // Состояние для компактной формы - временно отключено
-  const [showCompactForm] = useState(false);
 
   // Предзаполнение калькулятора на основе интента
   useEffect(() => {
@@ -324,10 +309,16 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     setShowLeadForm(true);
   };
 
-  // Обработка компактной формы - временно отключено
+  // Обработка компактной формы
   const handleCompactRequest = () => {
-    // Временное решение - открываем полную форму
-    handleOrder();
+    trackGoal('compact_form_open', {
+      intent: context?.intent,
+      variant: context?.variantId,
+      area,
+      finalPrice
+    });
+    
+    setShowCompactForm(true);
   };
 
   // Получить КП для бизнеса
@@ -917,6 +908,24 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
       <LeadFormModal
         open={showLeadForm}
         onOpenChange={setShowLeadForm}
+        calculatorData={{
+          premiseType,
+          area,
+          serviceType,
+          treatmentType,
+          period,
+          clientType,
+          totalPrice,
+          discount,
+          discountAmount,
+          finalPrice,
+        }}
+      />
+
+      {/* Модальное окно компактной формы */}
+      <CompactRequestModal
+        open={showCompactForm}
+        onOpenChange={setShowCompactForm}
         calculatorData={{
           premiseType,
           area,
