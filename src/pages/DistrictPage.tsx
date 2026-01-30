@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CalculatorModal from '@/components/CalculatorModal';
 import InternalLinks from '@/components/InternalLinks';
-import { getDistrictById, districtPages } from '@/data/districtPages';
+import { getDistrictById, districtPages, getDistrictBySlug } from '@/data/districtPages'; // Добавлен getDistrictBySlug
 import { getNeighborhoodsByDistrict } from '@/data/neighborhoods';
 import { SEO_CONFIG } from '@/lib/seo';
 import { useState } from 'react';
@@ -21,16 +21,9 @@ import DistrictCases from '@/components/district/DistrictCases';
 import DistrictReviews from '@/components/district/DistrictReviews';
 import DistrictCTA from '@/components/district/DistrictCTA';
 
-const DistrictPage = () => {
-  const { districtId } = useParams<{ districtId: string }>();
+// Экспортируемый компонент для использования из ServicePage
+export const DistrictPageContent = ({ district }: { district: any }) => {
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
-
-  const district = districtId ? getDistrictById(districtId) : undefined;
-
-  // Если округ не найден по id — уводим на список округов
-  if (!district) {
-    return <Navigate to="/uslugi/po-okrugam-moskvy" replace />;
-  }
 
   // ---------------------------------------------------------------------------
   // 2. Сервисы, другие округа, канонический URL
@@ -98,7 +91,7 @@ const DistrictPage = () => {
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: district.faq.map((item) => ({
+    mainEntity: district.faq.map((item: any) => ({
       '@type': 'Question',
       name: item.question,
       acceptedAnswer: {
@@ -200,7 +193,7 @@ const DistrictPage = () => {
               }
               return (
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {district.neighborhoods.map((n, idx) => (
+                  {district.neighborhoods.map((n: string, idx: number) => (
                     <Badge key={idx} variant="secondary" className="text-sm py-1.5 px-3">
                       {n}
                     </Badge>
@@ -257,7 +250,7 @@ const DistrictPage = () => {
               Популярные объекты в {district.name}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {district.popularObjects.map((obj, idx) => (
+              {district.popularObjects.map((obj: any, idx: number) => (
                 <Card key={idx}>
                   <CardHeader className="pb-3">
                     <CardTitle className="flex items-center gap-2 text-lg">
@@ -269,7 +262,7 @@ const DistrictPage = () => {
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-1 text-sm text-muted-foreground">
-                      {obj.items.map((item, i) => (
+                      {obj.items.map((item: string, i: number) => (
                         <li key={i}>• {item}</li>
                       ))}
                     </ul>
@@ -288,7 +281,7 @@ const DistrictPage = () => {
                 Вот некоторые адреса в {district.name}, где мы успешно провели обработку:
               </p>
               <div className="flex flex-wrap gap-2">
-                {district.workedStreets.map((street, idx) => (
+                {district.workedStreets.map((street: string, idx: number) => (
                   <Badge key={idx} variant="outline" className="text-sm">
                     {street}
                   </Badge>
@@ -304,7 +297,7 @@ const DistrictPage = () => {
               Частые вопросы про {district.name}
             </h2>
             <Accordion type="single" collapsible className="max-w-3xl">
-              {district.faq.map((item, idx) => (
+              {district.faq.map((item: any, idx: number) => (
                 <AccordionItem key={idx} value={`faq-${idx}`}>
                   <AccordionTrigger className="text-left">{item.question}</AccordionTrigger>
                   <AccordionContent>{item.answer}</AccordionContent>
@@ -347,6 +340,26 @@ const DistrictPage = () => {
       <CalculatorModal open={isCalculatorOpen} onOpenChange={setIsCalculatorOpen} />
     </>
   );
+};
+
+// Основной компонент для обратной совместимости (если остались прямые переходы)
+const DistrictPage = () => {
+  const { districtId } = useParams<{ districtId: string }>();
+  
+  // Сначала пробуем найти по districtId (старый формат: "cao")
+  let district = districtId ? getDistrictById(districtId) : undefined;
+  
+  // Если не нашли, пробуем найти по полному slug (новый формат: "dezinfekciya-cao")
+  if (!district && districtId) {
+    district = getDistrictBySlug(`dezinfekciya-${districtId}`);
+  }
+
+  // Если округ не найден по id — уводим на список округов
+  if (!district) {
+    return <Navigate to="/uslugi/po-okrugam-moskvy" replace />;
+  }
+
+  return <DistrictPageContent district={district} />;
 };
 
 export default DistrictPage;
