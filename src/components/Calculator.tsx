@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/collapsible";
 import { LeadFormModal } from "./LeadFormModal";
 import { QuickCallForm } from "./QuickCallForm";
-import { CompactRequestModal } from "./CompactRequestModal";
 import StickyCTA from "./StickyCTA";
 import DesktopStickySidebar from "./DesktopStickySidebar";
 import { useTraffic } from "@/contexts/TrafficContext";
@@ -51,6 +50,20 @@ interface CalculatorProps {
   isModal?: boolean;
 }
 
+// Интерфейс для данных калькулятора
+interface CalculatorData {
+  premiseType: string;
+  area: number;
+  serviceType: string;
+  treatmentType: string;
+  period: string;
+  clientType: string;
+  totalPrice: number;
+  discount: number;
+  discountAmount: number;
+  finalPrice: number;
+}
+
 const Calculator = ({ isModal = false }: CalculatorProps) => {
   const { context } = useTraffic();
   
@@ -70,9 +83,11 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
   const [areaError, setAreaError] = useState<string | null>(null);
   const [areaValid, setAreaValid] = useState(true);
   const [showLeadForm, setShowLeadForm] = useState(false);
-  const [showCompactForm, setShowCompactForm] = useState(false);
   const [showClientType, setShowClientType] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+
+  // Состояние для компактной формы - временно отключено
+  const [showCompactForm] = useState(false);
 
   // Предзаполнение калькулятора на основе интента
   useEffect(() => {
@@ -83,8 +98,6 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
         if (defaults.serviceType) setServiceType(defaults.serviceType);
         if (defaults.clientType) setClientType(defaults.clientType);
         if (defaults.treatmentType) setTreatmentType(defaults.treatmentType);
-        
-        console.log(`Calculator initialized with intent: ${context.intent}`, defaults);
       }
       setInitialized(true);
     }
@@ -194,7 +207,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
   ];
 
   // Расчёт цены
-  const calculatePrice = () => {
+  const calculatePrice = (): number => {
     let basePrice = 20;
 
     const premiseMultiplier: Record<string, number> = {
@@ -215,16 +228,16 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     };
 
     const price = basePrice * area * 
-      premiseMultiplier[premiseType] * 
-      treatmentMultiplier[treatmentType] * 
-      serviceMultiplier[serviceType] * 
-      periodMultiplier[period];
+      (premiseMultiplier[premiseType] || 1) * 
+      (treatmentMultiplier[treatmentType] || 1) * 
+      (serviceMultiplier[serviceType] || 1) * 
+      (periodMultiplier[period] || 1);
 
     return Math.round(price);
   };
 
   // Улучшенный расчет скидки
-  const calculateDiscount = () => {
+  const calculateDiscount = (): number => {
     let baseDiscount = 0;
     
     // Базовая скидка от площади
@@ -232,11 +245,10 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     
     // Дополнительные скидки по типу помещения
     if (premiseType === 'apartment' && area >= 100) {
-      baseDiscount += 5; // +5% для квартир от 100 м²
+      baseDiscount += 5;
     }
     
     if ((premiseType === 'office' || premiseType === 'warehouse') && area >= 100) {
-      // Для коммерческих помещений прогрессивная скидка
       if (area >= 200) baseDiscount += 10;
       else if (area >= 100) baseDiscount += 5;
     }
@@ -251,7 +263,6 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
       baseDiscount += 3;
     }
     
-    // Максимальная скидка 40%
     return Math.min(40, baseDiscount);
   };
 
@@ -313,16 +324,10 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     setShowLeadForm(true);
   };
 
-  // Обработка компактной формы
+  // Обработка компактной формы - временно отключено
   const handleCompactRequest = () => {
-    trackGoal('compact_form_open', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      area,
-      finalPrice
-    });
-    
-    setShowCompactForm(true);
+    // Временное решение - открываем полную форму
+    handleOrder();
   };
 
   // Получить КП для бизнеса
@@ -349,7 +354,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
   };
 
   // Вспомогательные функции для получения названий
-  const getPremiseLabel = () => {
+  const getPremiseLabel = (): string => {
     const labels: Record<string, string> = {
       apartment: 'Квартира', house: 'Частный дом', office: 'Офис',
       warehouse: 'Склад', shop: 'Магазин', restaurant: 'Ресторан',
@@ -358,7 +363,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     return labels[premiseType] || premiseType;
   };
 
-  const getServiceLabel = () => {
+  const getServiceLabel = (): string => {
     const labels: Record<string, string> = {
       disinfection: 'Дезинфекция', disinsection: 'Дезинсекция',
       deratization: 'Дератизация', complex: 'Комплекс'
@@ -366,7 +371,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     return labels[serviceType] || serviceType;
   };
 
-  const getTreatmentLabel = () => {
+  const getTreatmentLabel = (): string => {
     const labels: Record<string, string> = {
       cold: 'Холодный туман', hot: 'Горячий туман',
       spot: 'Точечная', complex: 'Комплексная'
@@ -374,7 +379,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     return labels[treatmentType] || treatmentType;
   };
 
-  const getPeriodLabel = () => {
+  const getPeriodLabel = (): string => {
     const labels: Record<string, string> = {
       once: 'Разово', monthly: 'Ежемесячно', quarterly: 'Ежеквартально'
     };
@@ -912,24 +917,6 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
       <LeadFormModal
         open={showLeadForm}
         onOpenChange={setShowLeadForm}
-        calculatorData={{
-          premiseType,
-          area,
-          serviceType,
-          treatmentType,
-          period,
-          clientType,
-          totalPrice,
-          discount,
-          discountAmount,
-          finalPrice,
-        }}
-      />
-
-      {/* Модальное окно компактной формы */}
-      <CompactRequestModal
-        open={showCompactForm}
-        onOpenChange={setShowCompactForm}
         calculatorData={{
           premiseType,
           area,
