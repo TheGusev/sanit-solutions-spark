@@ -11,34 +11,39 @@ import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
 import { CookieBanner } from "@/components/CookieBanner";
 
-// Critical - loads immediately (main landing page)
+// Главная загружается сразу
 import Index from "./pages/Index";
 
-// Lazy loaded pages - load on demand
+// Ленивые страницы
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const ServicePage = lazy(() => import("./pages/ServicePage"));
-const ServiceSubpage = lazy(() => import("./pages/ServiceSubpage"));
-const ServicePestPage = lazy(() => import("./pages/ServicePestPage"));
-const ServiceObjectPage = lazy(() => import("./pages/ServiceObjectPage"));
-const ServiceDistrictPage = lazy(() => import("./pages/ServiceDistrictPage"));
-const ServiceObjectDistrictPage = lazy(() => import("./pages/ServiceObjectDistrictPage"));
+const ServiceRouteResolver = lazy(() => import("./pages/ServiceRouteResolver"));
+const ThreeSegmentRouteResolver = lazy(
+  () => import("./pages/ThreeSegmentRouteResolver")
+);
 const NchPage = lazy(() => import("./pages/NchPage"));
 const Contacts = lazy(() => import("./pages/Contacts"));
 const DistrictsOverview = lazy(() => import("./pages/DistrictsOverview"));
 const DistrictPage = lazy(() => import("./pages/DistrictPage"));
 const NeighborhoodPage = lazy(() => import("./pages/NeighborhoodPage"));
-const NeighborhoodsOverview = lazy(() => import("./pages/NeighborhoodsOverview"));
-const MoscowRegionOverview = lazy(() => import("./pages/MoscowRegionOverview"));
-const MoscowRegionCityPage = lazy(() => import("./pages/MoscowRegionCityPage"));
-const MoscowRegionServicePage = lazy(() => import("./pages/MoscowRegionServicePage"));
+const NeighborhoodsOverview = lazy(
+  () => import("./pages/NeighborhoodsOverview")
+);
+const MoscowRegionOverview = lazy(
+  () => import("./pages/MoscowRegionOverview")
+);
+const MoscowRegionCityPage = lazy(
+  () => import("./pages/MoscowRegionCityPage")
+);
+const MoscowRegionServicePage = lazy(
+  () => import("./pages/MoscowRegionServicePage")
+);
 const NotFound = lazy(() => import("./pages/NotFound"));
-const ServiceRouteResolver = lazy(() => import("./pages/ServiceRouteResolver"));
-const ThreeSegmentRouteResolver = lazy(() => import("./pages/ThreeSegmentRouteResolver"));
 
-// Admin pages - separate chunk, load on demand
+// Админка
 const AdminLogin = lazy(() => import("./pages/admin/Login"));
 const AdminSetup = lazy(() => import("./pages/admin/Setup"));
 const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
@@ -64,37 +69,48 @@ const App = () => (
               <CookieBanner />
               <Suspense fallback={<PageLoader />}>
                 <Routes>
+                  {/* Главная и статичные */}
                   <Route path="/" element={<Index />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/terms" element={<Terms />} />
-                  <Route path="/uslugi/po-okrugam-moskvy" element={<DistrictsOverview />} />
-                  <Route path="/uslugi/dezinfekciya-cao" element={<DistrictPage />} />
-                  <Route path="/uslugi/dezinfekciya-sao" element={<DistrictPage />} />
-                  <Route path="/uslugi/dezinfekciya-svao" element={<DistrictPage />} />
-                  <Route path="/uslugi/dezinfekciya-vao" element={<DistrictPage />} />
-                  <Route path="/uslugi/dezinfekciya-yuvao" element={<DistrictPage />} />
-                  <Route path="/uslugi/dezinfekciya-yao" element={<DistrictPage />} />
-                  <Route path="/uslugi/dezinfekciya-yzao" element={<DistrictPage />} />
-                  <Route path="/uslugi/dezinfekciya-zao" element={<DistrictPage />} />
-                  <Route path="/uslugi/dezinfekciya-szao" element={<DistrictPage />} />
-                  {/* 3 сегмента - умный роутер определяет тип страницы */}
-                  <Route path="/uslugi/:service/:segment2/:segment3" element={<ThreeSegmentRouteResolver />} />
-                  
-                  {/* 2 сегмента - умный роутер определяет тип страницы */}
-                  <Route path="/uslugi/:parentSlug/:subSlug" element={<ServiceRouteResolver />} />
-                  
-                  {/* 1 сегмент */}
-                  <Route path="/uslugi/:slug" element={<ServicePage />} />
                   <Route path="/contacts" element={<Contacts />} />
+
+                  {/* Округа Москвы */}
+                  <Route path="/uslugi/po-okrugam-moskvy" element={<DistrictsOverview />} />
+                  {/* ОДИН универсальный роут для всех округов:
+                      /uslugi/dezinfekciya-cao
+                      /uslugi/dezinfekciya-sao
+                      /uslugi/dezinfekciya-nao
+                      /uslugi/dezinfekciya-tao
+                      /uslugi/dezinfekciya-zelao и т.д. */}
+                  <Route path="/uslugi/dezinfekciya-:districtId" element={<DistrictPage />} />
+
+                  {/* Районы Москвы */}
                   <Route path="/rajony" element={<NeighborhoodsOverview />} />
                   <Route path="/rajony/:slug" element={<NeighborhoodPage />} />
+
+                  {/* Московская область */}
                   <Route path="/moscow-oblast" element={<MoscowRegionOverview />} />
                   <Route path="/moscow-oblast/:citySlug" element={<MoscowRegionCityPage />} />
-                  <Route path="/moscow-oblast/:citySlug/:serviceSlug" element={<MoscowRegionServicePage />} />
-                  
-                  {/* Admin routes */}
+                  <Route
+                    path="/moscow-oblast/:citySlug/:serviceSlug"
+                    element={<MoscowRegionServicePage />}
+                  />
+
+                  {/* Сложные маршруты услуг */}
+                  <Route
+                    path="/uslugi/:service/:segment2/:segment3"
+                    element={<ThreeSegmentRouteResolver />}
+                  />
+                  <Route
+                    path="/uslugi/:parentSlug/:subSlug"
+                    element={<ServiceRouteResolver />}
+                  />
+                  <Route path="/uslugi/:slug" element={<ServicePage />} />
+
+                  {/* Админка */}
                   <Route path="/admin/setup" element={<AdminSetup />} />
                   <Route path="/admin/login" element={<AdminLogin />} />
                   <Route path="/admin" element={<AdminDashboard />}>
@@ -105,8 +121,8 @@ const App = () => (
                     <Route path="mvt" element={<AdminMVT />} />
                     <Route path="settings" element={<AdminSettings />} />
                   </Route>
-                  
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+
+                  {/* 404 */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
