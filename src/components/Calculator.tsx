@@ -7,7 +7,7 @@ import {
   Home, Building2, Warehouse, Factory, 
   Snowflake, Flame, Target, Diamond, Microscope, Bug, Rat, Sparkles, 
   Calendar, CalendarCheck, FileText, User, Briefcase, Building, Phone, 
-  Percent, TrendingUp, Check, ChevronDown, MoreHorizontal
+  Percent, TrendingUp, Check, ChevronDown, MoreHorizontal, FileText as FileTextIcon
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/collapsible";
 import { LeadFormModal } from "./LeadFormModal";
 import { QuickCallForm } from "./QuickCallForm";
+import { CompactRequestModal } from "./CompactRequestModal";
 import StickyCTA from "./StickyCTA";
 import DesktopStickySidebar from "./DesktopStickySidebar";
 import { useTraffic } from "@/contexts/TrafficContext";
@@ -69,10 +70,11 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
   const [areaError, setAreaError] = useState<string | null>(null);
   const [areaValid, setAreaValid] = useState(true);
   const [showLeadForm, setShowLeadForm] = useState(false);
+  const [showCompactForm, setShowCompactForm] = useState(false);
   const [showClientType, setShowClientType] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
-  // Предзаполнение калькулятора на основе интента (только при первой загрузке)
+  // Предзаполнение калькулятора на основе интента
   useEffect(() => {
     if (!initialized && context?.intent) {
       const defaults = CALCULATOR_DEFAULTS_BY_INTENT[context.intent];
@@ -88,7 +90,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     }
   }, [context, initialized]);
 
-  // Логирование calc_open при первом появлении калькулятора в viewport
+  // Логирование calc_open при первом появлении калькулятора
   useEffect(() => {
     const calcElement = document.getElementById('calculator');
     if (!calcElement || !context) return;
@@ -110,11 +112,10 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     return () => observer.disconnect();
   }, [context]);
 
-  // Логирование calc_calculate при изменении ключевых полей (с debounce)
+  // Логирование calc_calculate при изменении ключевых полей
   useEffect(() => {
     if (!context || !initialized) return;
 
-    // Трекаем calc_calculate при любом изменении
     trackGoal('calc_calculate', {
       intent: context?.intent,
       variant: context?.variantId,
@@ -154,14 +155,12 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
           }
         }
       }).catch(err => console.debug('Traffic event logging failed:', err));
-    }, 2000); // Debounce 2 секунды
+    }, 2000);
 
     return () => clearTimeout(timeoutId);
   }, [area, premiseType, serviceType, treatmentType, period, clientType, context, initialized]);
 
-  // Убрано агрессивное автооткрытие - вместо этого показываем inline форму
-
-  // Типы помещений с иконками (упрощено до 5 самых популярных)
+  // Типы помещений
   const premiseTypes = [
     { key: 'apartment', label: 'Квартира', icon: Home },
     { key: 'house', label: 'Дом', icon: Building2 },
@@ -224,8 +223,36 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     return Math.round(price);
   };
 
+  // Улучшенный расчет скидки
   const calculateDiscount = () => {
-    return Math.min(30, Math.floor((area / 100) * 10));
+    let baseDiscount = 0;
+    
+    // Базовая скидка от площади
+    baseDiscount = Math.min(30, Math.floor((area / 100) * 10));
+    
+    // Дополнительные скидки по типу помещения
+    if (premiseType === 'apartment' && area >= 100) {
+      baseDiscount += 5; // +5% для квартир от 100 м²
+    }
+    
+    if ((premiseType === 'office' || premiseType === 'warehouse') && area >= 100) {
+      // Для коммерческих помещений прогрессивная скидка
+      if (area >= 200) baseDiscount += 10;
+      else if (area >= 100) baseDiscount += 5;
+    }
+    
+    // Скидка за комплексную услугу
+    if (serviceType === 'complex') {
+      baseDiscount += 8;
+    }
+    
+    // Скидка за горячий туман
+    if (treatmentType === 'hot') {
+      baseDiscount += 3;
+    }
+    
+    // Максимальная скидка 40%
+    return Math.min(40, baseDiscount);
   };
 
   const totalPrice = calculatePrice();
@@ -244,6 +271,114 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
       setAreaError(null);
       setAreaValid(true);
     }
+  };
+
+  // Обработка заказа (полная форма)
+  const handleOrder = () => {
+    trackGoal('calc_submit', {
+      intent: context?.intent,
+      variant: context?.variantId,
+      area,
+      premiseType,
+      serviceType,
+      finalPrice
+    });
+    
+    if (context) {
+      supabase.functions.invoke('log-traffic-event', {
+        body: {
+          session_id: context.sessionId,
+          page_url: window.location.href,
+          utm_source: context.utm_source,
+          utm_medium: context.utm_medium,
+          utm_campaign: context.utm_campaign,
+          utm_content: context.utm_content,
+          utm_term: context.utm_term,
+          keyword_raw: context.keyword,
+          intent: context.intent,
+          device_type: context.deviceType,
+          event_type: 'calc_submit',
+          event_data: {
+            area,
+            premiseType,
+            serviceType,
+            totalPrice,
+            discount,
+            finalPrice
+          }
+        }
+      }).catch(err => console.debug('Traffic event logging failed:', err));
+    }
+    
+    setShowLeadForm(true);
+  };
+
+  // Обработка компактной формы
+  const handleCompactRequest = () => {
+    trackGoal('compact_form_open', {
+      intent: context?.intent,
+      variant: context?.variantId,
+      area,
+      finalPrice
+    });
+    
+    setShowCompactForm(true);
+  };
+
+  // Получить КП для бизнеса
+  const handleGetOffer = () => {
+    const email = prompt("Введите ваш email для отправки коммерческого предложения:");
+    if (email && email.trim()) {
+      const message = `📄 Запрос коммерческого предложения
+    
+📧 Email: ${email}
+📐 Площадь: ${area} м²
+🏢 Помещение: ${getPremiseLabel()}
+🔧 Услуга: ${getServiceLabel()}
+⚙️ Обработка: ${getTreatmentLabel()}
+📅 Периодичность: ${getPeriodLabel()}
+
+💰 Расчётная стоимость: ${finalPrice}₽
+📉 Скидка: ${discount}%`;
+
+      const whatsappUrl = `https://wa.me/79069989888?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+      
+      toast.success("Коммерческое предложение будет отправлено на ваш email в течение часа.");
+    }
+  };
+
+  // Вспомогательные функции для получения названий
+  const getPremiseLabel = () => {
+    const labels: Record<string, string> = {
+      apartment: 'Квартира', house: 'Частный дом', office: 'Офис',
+      warehouse: 'Склад', shop: 'Магазин', restaurant: 'Ресторан',
+      production: 'Производство', other: 'Другое'
+    };
+    return labels[premiseType] || premiseType;
+  };
+
+  const getServiceLabel = () => {
+    const labels: Record<string, string> = {
+      disinfection: 'Дезинфекция', disinsection: 'Дезинсекция',
+      deratization: 'Дератизация', complex: 'Комплекс'
+    };
+    return labels[serviceType] || serviceType;
+  };
+
+  const getTreatmentLabel = () => {
+    const labels: Record<string, string> = {
+      cold: 'Холодный туман', hot: 'Горячий туман',
+      spot: 'Точечная', complex: 'Комплексная'
+    };
+    return labels[treatmentType] || treatmentType;
+  };
+
+  const getPeriodLabel = () => {
+    const labels: Record<string, string> = {
+      once: 'Разово', monthly: 'Ежемесячно', quarterly: 'Ежеквартально'
+    };
+    return labels[period] || period;
   };
 
   // График данных
@@ -282,103 +417,21 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     });
   };
 
-  // Получить название помещения
-  const getPremiseLabel = () => {
-    const labels: Record<string, string> = {
-      apartment: 'Квартира', house: 'Частный дом', office: 'Офис',
-      warehouse: 'Склад', shop: 'Магазин', restaurant: 'Ресторан',
-      production: 'Производство', other: 'Другое'
-    };
-    return labels[premiseType] || premiseType;
-  };
-
-  const getServiceLabel = () => {
-    const labels: Record<string, string> = {
-      disinfection: 'Дезинфекция', disinsection: 'Дезинсекция',
-      deratization: 'Дератизация', complex: 'Комплекс'
-    };
-    return labels[serviceType] || serviceType;
-  };
-
-  const getTreatmentLabel = () => {
-    const labels: Record<string, string> = {
-      cold: 'Холодный туман', hot: 'Горячий туман',
-      spot: 'Точечная', complex: 'Комплексная'
-    };
-    return labels[treatmentType] || treatmentType;
-  };
-
-  const getPeriodLabel = () => {
-    const labels: Record<string, string> = {
-      once: 'Разово', monthly: 'Ежемесячно', quarterly: 'Ежеквартально'
-    };
-    return labels[period] || period;
-  };
-
-  // Обработка заказа
-  const handleOrder = () => {
-    // Трекаем цель в Яндекс.Метрике
-    trackGoal('calc_submit', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      area,
-      premiseType,
-      serviceType,
-      finalPrice
-    });
-    
-    // Логируем calc_submit в Supabase
-    if (context) {
-      supabase.functions.invoke('log-traffic-event', {
-        body: {
-          session_id: context.sessionId,
-          page_url: window.location.href,
-          utm_source: context.utm_source,
-          utm_medium: context.utm_medium,
-          utm_campaign: context.utm_campaign,
-          utm_content: context.utm_content,
-          utm_term: context.utm_term,
-          keyword_raw: context.keyword,
-          intent: context.intent,
-          device_type: context.deviceType,
-          event_type: 'calc_submit',
-          event_data: {
-            area,
-            premiseType,
-            serviceType,
-            totalPrice,
-            discount,
-            finalPrice
-          }
-        }
-      }).catch(err => console.debug('Traffic event logging failed:', err));
-    }
-    
-    setShowLeadForm(true);
-  };
-
-  // Получить КП
-  const handleGetOffer = () => {
-    const email = prompt("Введите ваш email для отправки коммерческого предложения:");
-    if (email && email.trim()) {
-      const message = `📄 Запрос коммерческого предложения
-    
-📧 Email: ${email}
-📐 Площадь: ${area} м²
-🏢 Помещение: ${getPremiseLabel()}
-🔧 Услуга: ${getServiceLabel()}
-⚙️ Обработка: ${getTreatmentLabel()}
-📅 Периодичность: ${getPeriodLabel()}
-
-💰 Расчётная стоимость: ${finalPrice}₽
-📉 Скидка: ${discount}%`;
-
-      const whatsappUrl = `https://wa.me/79069989888?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
-      
-      toast.success("Коммерческое предложение будет отправлено на ваш email в течение часа.");
-    }
-  };
+  // Компонент для компактной кнопки
+  const CompactRequestButton = () => (
+    <button
+      onClick={handleCompactRequest}
+      className="group flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-foreground/30 rounded-xl hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 w-full mt-4"
+    >
+      <div className="bg-primary/10 p-1.5 rounded-lg group-hover:bg-primary/20 transition-colors">
+        <FileTextIcon className="w-4 h-4 text-primary" />
+      </div>
+      <div className="flex-1 text-left">
+        <div className="font-medium text-sm text-foreground">📝 Оставить заявку</div>
+        <div className="text-xs text-muted-foreground">Откроется форма для заполнения</div>
+      </div>
+    </button>
+  );
 
   // Wrapper based on mode
   const Wrapper = isModal ? 'div' : 'section';
@@ -577,6 +630,9 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
                 }}
               />
 
+              {/* Компактная кнопка для формы */}
+              <CompactRequestButton />
+              
               {/* Альтернативная кнопка для полной формы */}
               <div className="text-center">
                 <button
@@ -809,7 +865,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
           </div>
           </div>
           
-          {/* Right column - Desktop Sticky Sidebar (hidden on mobile and in modal) */}
+          {/* Right column - Desktop Sticky Sidebar */}
           {!isModal && (
             <div className="hidden lg:block lg:w-5/12">
               <DesktopStickySidebar
@@ -827,7 +883,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
         </div>
       </div>
 
-      {/* Улучшенный липкий нижний бар на мобильных - только для страницы */}
+      {/* Мобильный липкий бар */}
       {!isModal && (
         <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t shadow-2xl p-4 md:hidden z-50 animate-slide-up">
           <div className="container mx-auto flex items-center justify-between gap-4">
@@ -852,7 +908,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
         </div>
       )}
 
-      {/* Lead Form Modal */}
+      {/* Модальное окно полной формы */}
       <LeadFormModal
         open={showLeadForm}
         onOpenChange={setShowLeadForm}
@@ -870,7 +926,25 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
         }}
       />
 
-      {/* Sticky CTA после прокрутки калькулятора - только для страницы */}
+      {/* Модальное окно компактной формы */}
+      <CompactRequestModal
+        open={showCompactForm}
+        onOpenChange={setShowCompactForm}
+        calculatorData={{
+          premiseType,
+          area,
+          serviceType,
+          treatmentType,
+          period,
+          clientType,
+          totalPrice,
+          discount,
+          discountAmount,
+          finalPrice,
+        }}
+      />
+
+      {/* Sticky CTA после прокрутки */}
       {!isModal && (
         <StickyCTA 
           price={finalPrice}
