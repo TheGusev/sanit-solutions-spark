@@ -25,35 +25,34 @@ const DistrictPage = () => {
   const location = useLocation();
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
-  /**
-   * ОЖИДАЕМЫЕ URL:
-   *  /uslugi/dezinfekciya-cao
-   *  /uslugi/dezinfekciya-nao
-   *  /uslugi/dezinfekciya-zelenograd
-   *
-   * Забираем всё после `dezinfekciya-` до конца строки.
-   * Разрешаем латиницу, цифры и дефис.
-   */
+  // ---------------------------------------------------------------------------
+  // 1. Аккуратно парсим districtId из URL
+  //    Ожидаемые URL: /uslugi/dezinfekciya-cao, /uslugi/dezinfekciya-nao и т.д.
+  // ---------------------------------------------------------------------------
   const pathMatch = location.pathname.match(
     /^\/uslugi\/dezinfekciya-([a-z0-9-]+)\/?$/
   );
   const districtId = pathMatch?.[1];
+
   const district = districtId ? getDistrictById(districtId) : undefined;
 
-  // ВРЕМЕННЫЙ ЛОГ ДЛЯ ОТЛАДКИ (можно убрать после фикса)
+  // Временный лог — увидеть, что происходит (потом можно удалить)
   console.log(
-    'DISTRICT_PAGE:',
+    'DISTRICT_PAGE',
     'PATH=', location.pathname,
     'MATCH=', pathMatch,
     'DISTRICT_ID=', districtId,
     'DISTRICT=', district
   );
 
-  // Если не нашли округ — уводим на список округов
+  // Если округ не найден по id — уводим на список округов
   if (!district) {
     return <Navigate to="/uslugi/po-okrugam-moskvy" replace />;
   }
 
+  // ---------------------------------------------------------------------------
+  // 2. Сервисы, другие округа, канонический URL
+  // ---------------------------------------------------------------------------
   const services = [
     { title: 'Дезинфекция', href: '/uslugi/dezinfekciya', price: 1000 + district.surcharge },
     { title: 'Дезинсекция', href: '/uslugi/dezinsekciya', price: 1200 + district.surcharge },
@@ -64,6 +63,9 @@ const DistrictPage = () => {
   const otherDistricts = districtPages.filter((d) => d.id !== district.id).slice(0, 4);
   const canonicalUrl = `${SEO_CONFIG.baseUrl}/uslugi/${district.slug}`;
 
+  // ---------------------------------------------------------------------------
+  // 3. JSON‑LD схемы
+  // ---------------------------------------------------------------------------
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -141,6 +143,9 @@ const DistrictPage = () => {
     { label: `Дезинфекция в ${district.name}` },
   ];
 
+  // ---------------------------------------------------------------------------
+  // 4. Рендер страницы
+  // ---------------------------------------------------------------------------
   return (
     <>
       <Helmet>
