@@ -22,7 +22,7 @@ export function generateNchPageMetadata(ctx: ContentContext): PageMetadata {
     title: `${serviceName} от ${pestGenitive} в ${location} — от ${priceFrom}₽`,
     description: `Уничтожение ${pestGenitive} в районе ${location} • Выезд за ${ctx.responseTime || '30-60 минут'} • Гарантия до 1 года • Безопасные препараты • +7 (906) 998-98-88`,
     h1: `${serviceName} от ${pestGenitive} в ${location}`,
-    canonical: `https://goruslugimsk.ru/uslugi/${ctx.service}/${ctx.pest?.slug}/${ctx.neighborhoodName || ctx.cityName}`,
+    canonical: `https://goruslugimsk.ru/uslugi/${ctx.service}/${ctx.pest?.slug}/${ctx.neighborhoodName || ctx.cityName}/`,
     keywords: [
       `${pestGenitive} ${location}`,
       `уничтожение ${pestGenitive} ${location}`,
@@ -47,7 +47,7 @@ export function generateObjectPageMetadata(params: {
     title: `${service} ${objectGenitive} в Москве — от ${priceFrom}₽`,
     description: `Профессиональная ${serviceGenitive} ${objectGenitive} в Москве • Лицензия Роспотребнадзора • Выезд за 30 минут • Гарантия до 1 года • +7 (906) 998-98-88`,
     h1: `${service} ${objectGenitive}`,
-    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${object}`,
+    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${object}/`,
     keywords: [`${serviceGenitive} ${objectGenitive} москва`, `${service.toLowerCase()} ${objectGenitive}`],
   }, { pageType: 'service', autoFix: true }).metadata;
 }
@@ -68,7 +68,7 @@ export function generateServiceDistrictMetadata(params: {
     title: `${service} в ${location} — от ${priceFrom}₽`,
     description: `${service} в районе ${location} • Выезд за ${responseTime || '30 минут'} • Профессиональная обработка • Гарантия • +7 (906) 998-98-88`,
     h1: `${service} в районе ${location}`,
-    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${location}`,
+    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${location}/`,
     keywords: [`${serviceGenitive} ${location}`, `${service.toLowerCase()} ${location}`],
   }, { pageType: 'nch', autoFix: true }).metadata;
 }
@@ -91,7 +91,7 @@ export function generateObjectDistrictMetadata(params: {
     title: `${service} ${objectGenitive} в ${location} — от ${priceFrom}₽`,
     description: `${service} ${objectGenitive} в районе ${location} • Выезд за ${responseTime || '30 минут'} • Профессиональная обработка • Гарантия • +7 (906) 998-98-88`,
     h1: `${service} ${objectGenitive} в ${location}`,
-    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${object}/${location}`,
+    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${object}/${location}/`,
     keywords: [`${serviceGenitive} ${objectGenitive} ${location}`],
   }, { pageType: 'nch', autoFix: true }).metadata;
 }

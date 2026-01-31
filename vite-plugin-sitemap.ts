@@ -45,12 +45,12 @@ ${sitemapEntries}
 // Статические страницы
 const staticUrls: SitemapUrl[] = [
   { loc: '/', lastmod: '', changefreq: 'weekly', priority: '1.0' },
-  { loc: '/contacts', lastmod: '', changefreq: 'monthly', priority: '0.8' },
-  { loc: '/blog', lastmod: '', changefreq: 'weekly', priority: '0.7' },
-  { loc: '/rajony', lastmod: '', changefreq: 'monthly', priority: '0.85' },
-  { loc: '/moscow-oblast', lastmod: '', changefreq: 'monthly', priority: '0.8' },
-  { loc: '/uslugi/po-okrugam-moskvy', lastmod: '', changefreq: 'monthly', priority: '0.85' },
-  { loc: '/privacy', lastmod: '', changefreq: 'yearly', priority: '0.2' },
+  { loc: '/contacts/', lastmod: '', changefreq: 'monthly', priority: '0.8' },
+  { loc: '/blog/', lastmod: '', changefreq: 'weekly', priority: '0.7' },
+  { loc: '/rajony/', lastmod: '', changefreq: 'monthly', priority: '0.85' },
+  { loc: '/moscow-oblast/', lastmod: '', changefreq: 'monthly', priority: '0.8' },
+  { loc: '/uslugi/po-okrugam-moskvy/', lastmod: '', changefreq: 'monthly', priority: '0.85' },
+  { loc: '/privacy/', lastmod: '', changefreq: 'yearly', priority: '0.2' },
 ];
 
 // Услуги
@@ -240,14 +240,14 @@ export function sitemapPlugin(): Plugin {
       const serviceUrls: SitemapUrl[] = [
         // Основные услуги
         ...servicesSlugs.map(slug => ({
-          loc: `/uslugi/${slug}`,
+          loc: `/uslugi/${slug}/`,
           lastmod: currentDate,
           changefreq: 'monthly',
           priority: '0.9',
         })),
         // Подстраницы услуг
         ...serviceSubpageRoutes.map(({ parent, sub }) => ({
-          loc: `/uslugi/${parent}/${sub}`,
+          loc: `/uslugi/${parent}/${sub}/`,
           lastmod: currentDate,
           changefreq: 'monthly',
           priority: '0.85',
@@ -258,14 +258,14 @@ export function sitemapPlugin(): Plugin {
       const servicePestUrls: SitemapUrl[] = [
         // Дезинсекция + вредители
         ...dezinsekciyaPestSlugs.map(pestSlug => ({
-          loc: `/uslugi/dezinsekciya/${pestSlug}`,
+          loc: `/uslugi/dezinsekciya/${pestSlug}/`,
           lastmod: currentDate,
           changefreq: 'monthly',
           priority: '0.85',
         })),
         // Дератизация + вредители
         ...deratizaciyaPestSlugs.map(pestSlug => ({
-          loc: `/uslugi/deratizaciya/${pestSlug}`,
+          loc: `/uslugi/deratizaciya/${pestSlug}/`,
           lastmod: currentDate,
           changefreq: 'monthly',
           priority: '0.85',
@@ -276,14 +276,14 @@ export function sitemapPlugin(): Plugin {
       const moscowUrls: SitemapUrl[] = [
         // Страницы округов (dezinfekciya-cao и т.д.)
         ...districtSlugs.map(d => ({
-          loc: `/uslugi/dezinfekciya-${d}`,
+          loc: `/uslugi/dezinfekciya-${d}/`,
           lastmod: currentDate,
           changefreq: 'monthly',
           priority: '0.85',
         })),
         // Страницы районов
         ...neighborhoodSlugs.map(slug => ({
-          loc: `/rajony/${slug}`,
+          loc: `/rajony/${slug}/`,
           lastmod: currentDate,
           changefreq: 'monthly',
           priority: '0.75',
@@ -296,7 +296,7 @@ export function sitemapPlugin(): Plugin {
       // Города МО
       moscowRegionCitySlugs.forEach(citySlug => {
         moscowRegionUrls.push({
-          loc: `/moscow-oblast/${citySlug}`,
+          loc: `/moscow-oblast/${citySlug}/`,
           lastmod: currentDate,
           changefreq: 'monthly',
           priority: '0.8',
@@ -305,7 +305,7 @@ export function sitemapPlugin(): Plugin {
         // Услуги в городах МО
         moscowRegionServices.forEach(serviceSlug => {
           moscowRegionUrls.push({
-            loc: `/moscow-oblast/${citySlug}/${serviceSlug}`,
+            loc: `/moscow-oblast/${citySlug}/${serviceSlug}/`,
             lastmod: currentDate,
             changefreq: 'monthly',
             priority: '0.75',
@@ -320,7 +320,7 @@ export function sitemapPlugin(): Plugin {
       dezinsekciyaPestSlugs.forEach(pestSlug => {
         neighborhoodSlugs.forEach(neighborhoodSlug => {
           nchUrls.push({
-            loc: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}`,
+            loc: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}/`,
             lastmod: currentDate,
             changefreq: 'monthly',
             priority: '0.7',
@@ -332,7 +332,7 @@ export function sitemapPlugin(): Plugin {
       deratizaciyaPestSlugs.forEach(pestSlug => {
         neighborhoodSlugs.forEach(neighborhoodSlug => {
           nchUrls.push({
-            loc: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}`,
+            loc: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/`,
             lastmod: currentDate,
             changefreq: 'monthly',
             priority: '0.7',
@@ -345,7 +345,7 @@ export function sitemapPlugin(): Plugin {
       servicesForObjects.forEach(serviceSlug => {
         objectSlugs.forEach(objectSlug => {
           serviceObjectUrls.push({
-            loc: `/uslugi/${serviceSlug}/${objectSlug}`,
+            loc: `/uslugi/${serviceSlug}/${objectSlug}/`,
             lastmod: currentDate,
             changefreq: 'monthly',
             priority: '0.8',
@@ -358,7 +358,7 @@ export function sitemapPlugin(): Plugin {
       servicesForObjects.forEach(serviceSlug => {
         neighborhoodSlugs.forEach(districtSlug => {
           serviceDistrictUrls.push({
-            loc: `/uslugi/${serviceSlug}/${districtSlug}`,
+            loc: `/uslugi/${serviceSlug}/${districtSlug}/`,
             lastmod: currentDate,
             changefreq: 'monthly',
             priority: '0.75',
@@ -372,7 +372,7 @@ export function sitemapPlugin(): Plugin {
         objectSlugs.forEach(objectSlug => {
           top100Neighborhoods.forEach(districtSlug => {
             serviceObjectDistrictUrls.push({
-              loc: `/uslugi/${serviceSlug}/${objectSlug}/${districtSlug}`,
+              loc: `/uslugi/${serviceSlug}/${objectSlug}/${districtSlug}/`,
               lastmod: currentDate,
               changefreq: 'monthly',
               priority: '0.7',
@@ -383,7 +383,7 @@ export function sitemapPlugin(): Plugin {
       
       // ========== SITEMAP-BLOG.XML (блог) ==========
       const blogUrls: SitemapUrl[] = blogSlugs.map(slug => ({
-        loc: `/blog/${slug}`,
+        loc: `/blog/${slug}/`,
         lastmod: currentDate,
         changefreq: 'monthly',
         priority: '0.6',
