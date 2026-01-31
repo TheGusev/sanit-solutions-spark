@@ -1,79 +1,48 @@
 
-# План исправления: Восстановление роутинга округов Москвы
+# План: Улучшение страницы 404 для соответствия рекомендациям Яндекс.Вебмастера
 
 ## Диагностика проблемы
 
-**Корневая причина**: React Router v6.30.1 изменил поведение маршрутов с динамическими параметрами после дефиса.
+Яндекс.Вебмастер сообщает: **"Некорректно настроено отображение несуществующих файлов и страниц"** и рекомендует **"настроить корректную страницу 404 с ссылками на популярные услуги"**.
 
-- **Старое поведение**: `path="prefix-:id"` → при URL `/prefix-123` → `params.id = "123"`
-- **Новое поведение**: такой синтаксис больше НЕ поддерживается
+### Текущее состояние
 
-Роут `/uslugi/dezinfekciya-:districtId` не матчится, запросы попадают в `/uslugi/:slug`, где ServicePage ищет сервис по slug="dezinfekciya-cao" и не находит — отсюда 404.
+Обе страницы 404 (`public/404.html` и `src/pages/NotFound.tsx`) содержат:
+- Код ошибки 404
+- Сообщение "Страница не найдена"  
+- **Только одну кнопку "На главную"**
+- Телефон компании
+
+**Проблема**: Нет ссылок на популярные услуги, что не соответствует рекомендациям Яндекса для улучшения пользовательского опыта и индексации.
 
 ---
 
-## Решение: Обрабатывать округа внутри ServicePage
+## План исправления
 
-Вместо отдельного роута для округов, расширим логику ServicePage для определения, является ли slug страницей округа.
+### Шаг 1: Обновить `public/404.html`
 
-### Изменения в `src/pages/ServicePage.tsx`
+Добавить блок "Популярные услуги" с ссылками:
 
-```tsx
-import { getDistrictBySlug } from '@/data/districtPages';
-import DistrictPage from './DistrictPage';
-
-const ServicePage = () => {
-  const { slug } = useParams<{ slug: string }>();
-  
-  // Проверяем, является ли это страницей округа
-  const district = getDistrictBySlug(slug || "");
-  if (district) {
-    // Рендерим DistrictPage напрямую с переданным district
-    return <DistrictPageContent district={district} />;
-  }
-  
-  // Обычная логика сервисной страницы
-  const service = getServiceBySlug(slug || "");
-  if (!service) {
-    return <NotFound />;
-  }
-  // ...остальной код
-};
+```text
+Добавляемые ссылки:
+├── Дезинфекция → /uslugi/dezinfekciya/
+├── Дезинсекция → /uslugi/dezinsekciya/
+├── Дератизация → /uslugi/deratizaciya/
+├── Озонирование → /uslugi/ozonirovanie/
+└── Все услуги → /uslugi/po-okrugam-moskvy/
 ```
 
-### Изменения в `src/App.tsx`
+Структура блока:
+- Заголовок "Возможно, вы искали:"
+- Сетка из 4 основных услуг с иконками
+- Ссылка на обзор по округам
 
-Удалить отдельный роут для округов:
+### Шаг 2: Обновить `src/pages/NotFound.tsx`
 
-```tsx
-// УДАЛИТЬ эту строку:
-<Route path="/uslugi/dezinfekciya-:districtId" element={<DistrictPage />} />
-```
-
-Роут `/uslugi/:slug` уже существует и будет обрабатывать все случаи.
-
-### Изменения в `src/pages/DistrictPage.tsx`
-
-Экспортировать внутренний компонент для использования в ServicePage:
-
-```tsx
-// Новый экспорт для использования из ServicePage
-export const DistrictPageContent = ({ district }: { district: DistrictPage }) => {
-  // Вся логика рендеринга страницы округа
-};
-
-// Основной компонент для прямых переходов (если останутся)
-const DistrictPage = () => {
-  const { districtId } = useParams<{ districtId: string }>();
-  const district = districtId ? getDistrictById(districtId) : undefined;
-  
-  if (!district) {
-    return <Navigate to="/uslugi/po-okrugam-moskvy" replace />;
-  }
-  
-  return <DistrictPageContent district={district} />;
-};
-```
+Аналогичное добавление блока популярных услуг для React-версии:
+- Использовать компоненты `Card` и иконки из `lucide-react`
+- Добавить ссылки на 4 основные услуги
+- Сохранить единый стиль с остальным сайтом
 
 ---
 
@@ -81,17 +50,20 @@ const DistrictPage = () => {
 
 | Файл | Изменения |
 |------|-----------|
-| `src/App.tsx` | Удалить роут `dezinfekciya-:districtId` |
-| `src/pages/ServicePage.tsx` | Добавить проверку на округ через `getDistrictBySlug()` |
-| `src/pages/DistrictPage.tsx` | Экспортировать `DistrictPageContent` |
+| `public/404.html` | Добавить CSS и HTML-блок с ссылками на услуги |
+| `src/pages/NotFound.tsx` | Добавить React-компоненты со ссылками на услуги |
 
 ---
 
 ## Ожидаемый результат
 
-После исправления:
-- `/uslugi/dezinfekciya-cao` → ServicePage определит округ → отрендерит DistrictPageContent
-- `/uslugi/dezinfekciya-nao` → аналогично
-- `/uslugi/dezinfekciya-zelao` → аналогично
-- `/uslugi/dezinfekciya` → обычная страница сервиса
-- Все 12 округов будут работать корректно
+После исправления страница 404 будет содержать:
+1. Код ошибки и сообщение
+2. Кнопку "На главную"
+3. **Блок "Популярные услуги" с 4-5 ссылками**
+4. Контакты компании
+
+Это соответствует требованиям Яндекс.Вебмастера и улучшает:
+- Пользовательский опыт (быстрый переход к нужному разделу)
+- Внутреннюю перелинковку (дополнительные ссылки для краулеров)
+- Снижение показателя отказов на 404 страницах
