@@ -155,6 +155,9 @@ def send_telegram_report(stats: Optional[Dict], health: Dict) -> bool:
         return True
     except requests.RequestException as e:
         print(f"❌ Ошибка отправки в Telegram: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"   HTTP Status: {e.response.status_code}")
+            print(f"   Response: {e.response.text[:500]}")
         return False
 
 
@@ -200,6 +203,13 @@ def main():
     """Главная функция мониторинга."""
     print("🚀 Запуск мониторинга goruslugimsk.ru")
     print(f"📅 {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
+    print("-" * 40)
+    
+    # Диагностика конфигурации
+    print("📋 Проверка конфигурации:")
+    print(f"   TELEGRAM_BOT_TOKEN: {'✅ задан' if TELEGRAM_BOT_TOKEN else '❌ НЕ ЗАДАН'}")
+    print(f"   TELEGRAM_CHAT_ID: {'✅ задан' if TELEGRAM_CHAT_ID else '❌ НЕ ЗАДАН'}")
+    print(f"   YANDEX_METRIKA_TOKEN: {'✅ задан' if METRIKA_TOKEN else '❌ НЕ ЗАДАН'}")
     print("-" * 40)
     
     # Получаем данные
