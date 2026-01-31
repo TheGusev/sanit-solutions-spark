@@ -1,60 +1,126 @@
 
 
-# План: Улучшение страницы 404 для соответствия рекомендациям Яндекс.Вебмастера
+# План: Унификация canonical URL с trailing slash
 
-## Проблема
+## Диагностика
 
-Яндекс.Вебмастер сообщает: **"Некорректно настроено отображение несуществующих файлов и страниц"** и рекомендует **"настроить корректную страницу 404 с ссылками на популярные услуги"**.
+Google Search Console сообщает о проблеме "Вариант страницы с тегом canonical" потому что:
 
-### Текущее состояние обеих страниц 404:
-- Код ошибки 404
-- Сообщение "Страница не найдена"  
-- **Только одна кнопка "На главную"**
-- Телефон компании
+| Элемент | Текущее значение | Фактический URL |
+|---------|-----------------|-----------------|
+| Canonical | `https://goruslugimsk.ru/uslugi/dezinfekciya` | - |
+| Файл на сервере | `uslugi/dezinfekciya/index.html` | `https://goruslugimsk.ru/uslugi/dezinfekciya/` |
 
-**Проблема**: Нет ссылок на популярные услуги — это ухудшает пользовательский опыт и индексацию.
+Google интерпретирует это как **две разные страницы** с неправильным canonical.
+
+**Примечание**: Ваши SEO-лимиты (Title: 40-65 символов, Description: 140-165) настроены правильно в `src/lib/seoValidation.ts` — это не связано с текущей проблемой.
 
 ---
 
 ## Решение
 
-Добавить блок "Возможно, вы искали:" с ссылками на 4 основные услуги:
+Добавить trailing slash ко **всем canonical URL** для соответствия структуре файлов `*/index.html`.
 
-| Услуга | URL | Цена от |
-|--------|-----|---------|
-| Дезинфекция | /uslugi/dezinfekciya/ | 1 000 ₽ |
-| Дезинсекция | /uslugi/dezinsekciya/ | 1 200 ₽ |
-| Дератизация | /uslugi/deratizaciya/ | 1 400 ₽ |
-| Озонирование | /uslugi/ozonirovanie/ | 1 500 ₽ |
+### Файлы для изменения
+
+| Файл | Изменения |
+|------|-----------|
+| `src/lib/seo.ts` | Нормализация пути с trailing slash в `generateSEOMeta()` |
+| `src/lib/metadata.ts` | Добавить `/` в конец canonical для всех функций |
+| `src/lib/contentGenerator.ts` | Добавить `/` в конец canonical во всех генераторах |
+| `vite-plugin-sitemap.ts` | Добавить `/` к `loc` во всех URL sitemap |
+| `public/uslugi/*/index.html` (12 файлов) | Обновить canonical с trailing slash |
+| `public/blog/*/index.html` (8 файлов) | Обновить canonical с trailing slash |
+| `public/contacts/index.html` | Обновить canonical |
+| `public/privacy/index.html` | Обновить canonical |
+| `public/terms/index.html` | Обновить canonical |
 
 ---
 
-## Файлы для изменения
+## Технические детали изменений
 
-### 1. `public/404.html`
-Добавить CSS-стили для сетки услуг и HTML-блок:
-- Заголовок "Возможно, вы искали:"
-- 4 карточки услуг с иконками, названиями и ценами
-- Адаптивная сетка (2x2 на десктопе, 1 колонка на мобильных)
+### 1. `src/lib/seo.ts` — добавить нормализацию URL
 
-### 2. `src/pages/NotFound.tsx`
-Добавить React-компоненты:
-- Импорт иконок из lucide-react (Bug, Mouse, Wind, Shield)
-- Сетка из 4 карточек услуг
-- Использование компонентов Card из UI библиотеки
+```typescript
+export function generateSEOMeta(
+  path: string, 
+  title: string, 
+  description: string,
+  options?: {...}
+): SEOMeta {
+  // Нормализация: добавляем trailing slash (кроме корня)
+  const normalizedPath = path === '/' ? path : 
+    (path.endsWith('/') ? path : `${path}/`);
+  const fullUrl = `${SEO_CONFIG.baseUrl}${normalizedPath}`;
+  
+  return {
+    ...
+    canonical: fullUrl,
+    hreflangRu: fullUrl,
+    hreflangDefault: fullUrl,
+  };
+}
+```
+
+### 2. `src/lib/metadata.ts` — все canonical с trailing slash
+
+```typescript
+// Было:
+canonical: `https://goruslugimsk.ru/uslugi/${serviceSlug}`
+
+// Станет:
+canonical: `https://goruslugimsk.ru/uslugi/${serviceSlug}/`
+```
+
+Изменения в функциях:
+- `generateIndexMetadata()` — оставить `/`
+- `generateServiceMetadata()` — добавить `/`
+- `generateNchMetadata()` — добавить `/`
+- `generateObjectDistrictMetadata()` — добавить `/`
+- `generateBlogMetadata()` — добавить `/`
+
+### 3. `src/lib/contentGenerator.ts` — все canonical с trailing slash
+
+Обновить все функции генерации метаданных:
+- `generateNchPageMetadata()`
+- `generateObjectPageMetadata()`
+- `generateServiceDistrictMetadata()`
+- `generateObjectDistrictMetadata()`
+
+### 4. `vite-plugin-sitemap.ts` — все loc с trailing slash
+
+```typescript
+// Было:
+loc: `/uslugi/${slug}`,
+
+// Станет:
+loc: `/uslugi/${slug}/`,
+```
+
+Нужно обновить все места генерации `loc` (примерно 15 мест в файле).
+
+### 5. Статические HTML в `public/` — 23 файла
+
+Обновить `<link rel="canonical">` во всех файлах:
+
+```html
+<!-- Было: -->
+<link rel="canonical" href="https://goruslugimsk.ru/contacts">
+
+<!-- Станет: -->
+<link rel="canonical" href="https://goruslugimsk.ru/contacts/">
+```
 
 ---
 
 ## Ожидаемый результат
 
-После исправления страница 404 будет содержать:
-1. Код ошибки и сообщение
-2. Кнопку "На главную"
-3. **Блок "Возможно, вы искали:" с 4 ссылками на услуги**
-4. Контакты компании
+После применения изменений:
 
-Это соответствует требованиям Яндекс.Вебмастера и улучшает:
-- Пользовательский опыт (быстрый переход к нужному разделу)
-- Внутреннюю перелинковку (дополнительные ссылки для краулеров)
-- Снижение показателя отказов на 404 страницах
+1. **Canonical URL** будут соответствовать фактическим URL файлов
+2. **Google** перестанет видеть дубликаты страниц
+3. **Sitemap** будет содержать корректные URL с trailing slash
+4. **Индексация** нормализуется в течение 2-4 недель при следующем пересканировании
+
+**Важно**: После публикации нужно запросить повторное сканирование в Google Search Console для ускорения переиндексации.
 
