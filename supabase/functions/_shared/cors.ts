@@ -30,7 +30,8 @@ export function getCorsHeaders(origin: string | null): Record<string, string> {
     ALLOWED_ORIGINS.includes(origin) ||
     DEV_ORIGINS.includes(origin) ||
     // Allow all Lovable preview subdomains
-    origin.endsWith('.lovable.app')
+    origin.endsWith('.lovable.app') ||
+    origin.endsWith('.lovableproject.com')
   );
   
   // Return validated origin or first allowed origin as fallback
