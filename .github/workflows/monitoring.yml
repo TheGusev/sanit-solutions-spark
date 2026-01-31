@@ -2,34 +2,42 @@ name: Daily Site Monitoring
 
 on:
   schedule:
-    - cron: '0 6 * * *' # 09:00 MSK
-  workflow_dispatch:
+    # Каждый день в 09:00 MSK (06:00 UTC)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Ручной запуск
 
 jobs:
   monitor:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests beautifulsoup4
+    - name: Install dependencies
+      run: |
+        pip install requests beautifulsoup4
 
-      - name: Run monitor script
-        run: python scripts/monitor.py
-        env:
-          YANDEX_METRIKA_TOKEN: ${{ secrets.YANDEX_METRIKA_TOKEN }}
+    - name: Run monitoring script
+      env:
+        YANDEX_METRIKA_TOKEN: ${{ secrets.YANDEX_METRIKA_TOKEN }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        SITE_URL: "https://goruslugimsk.ru"
+        METRIKA_ID: "105828040"
+      run: |
+        python scripts/monitor.py
 
-      - name: Commit and push if changed
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add MONITORING.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(monitoring): daily update MONITORING.md" && git push)
+    - name: Commit and push if changed
+      run: |
+        git config --global user.name 'Monitoring Bot'
+        git config --global user.email 'bot@goruslugimsk.ru'
+        git add MONITORING.md
+        git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Автообновление мониторинга $(date +'%d.%m.%Y %H:%M')" && git push)
