@@ -67,60 +67,37 @@ export const CompactRequestModal = ({
     });
     
     try {
-      // Отправка в Supabase
-      const { error } = await supabase
-        .from('leads')
-        .insert({
+      // Отправка через Edge Function handle-lead
+      const { data, error } = await supabase.functions.invoke("handle-lead", {
+        body: {
           name: name.trim() || "Не указано",
           phone,
-          area: calculatorData.area,
-          premise_type: calculatorData.premiseType,
-          service_type: calculatorData.serviceType,
-          treatment_type: calculatorData.treatmentType,
-          periodicity: calculatorData.period,
+          object_type: calculatorData.premiseType,
+          area_m2: calculatorData.area,
+          service: calculatorData.serviceType,
+          method: calculatorData.treatmentType,
+          frequency: calculatorData.period,
           client_type: calculatorData.clientType,
-          total_price: calculatorData.totalPrice,
-          discount: calculatorData.discount,
+          base_price: calculatorData.totalPrice,
+          discount_percent: calculatorData.discount,
+          discount_amount: calculatorData.discountAmount,
           final_price: calculatorData.finalPrice,
           source: 'calculator_compact_form',
-          utm_source: context?.utm_source,
-          utm_medium: context?.utm_medium,
-          utm_campaign: context?.utm_campaign,
-          utm_content: context?.utm_content,
-          utm_term: context?.utm_term,
-          intent: context?.intent,
-          session_id: context?.sessionId
-        });
+          session_id: context?.sessionId || null,
+          intent: context?.intent || 'default',
+          variant_id: context?.variantId || null,
+          device_type: context?.deviceType || null,
+          last_page_url: window.location.href,
+          utm_source: context?.utm_source || null,
+          utm_medium: context?.utm_medium || null,
+          utm_campaign: context?.utm_campaign || null,
+          utm_content: context?.utm_content || null,
+          utm_term: context?.utm_term || null,
+        }
+      });
 
-      if (error) throw error;
-
-      // Трекинг события в Supabase Functions
-      if (context) {
-        supabase.functions.invoke('log-traffic-event', {
-          body: {
-            session_id: context.sessionId,
-            page_url: window.location.href,
-            utm_source: context.utm_source,
-            utm_medium: context.utm_medium,
-            utm_campaign: context.utm_campaign,
-            utm_content: context.utm_content,
-            utm_term: context.utm_term,
-            keyword_raw: context.keyword,
-            intent: context.intent,
-            device_type: context.deviceType,
-            event_type: 'compact_form_submit',
-            event_data: {
-              name: name.trim() || "Не указано",
-              phone,
-              area: calculatorData.area,
-              premiseType: calculatorData.premiseType,
-              serviceType: calculatorData.serviceType,
-              totalPrice: calculatorData.totalPrice,
-              discount: calculatorData.discount,
-              finalPrice: calculatorData.finalPrice
-            }
-          }
-        }).catch(err => console.debug('Traffic event logging failed:', err));
+      if (error || !data?.success) {
+        throw error || new Error("Failed to submit lead");
       }
 
       toast.success("✅ Заявка отправлена! Мы перезвоним вам в течение 15 минут");
