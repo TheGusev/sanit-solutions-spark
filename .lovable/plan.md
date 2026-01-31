@@ -1,106 +1,83 @@
 
+# План: Исправление CompactRequestModal
 
-# План: Исправление отправки мониторинга в Telegram
+## Проблема
 
-## Диагностика проблемы
+Форма калькулятора (`CompactRequestModal`) выдаёт ошибку при отправке заявки:
+- Данные НЕ сохраняются в БД
+- Уведомления НЕ приходят в Telegram
 
-**Причина**: Скрипт `scripts/monitor.py` запускается в GitHub Actions, а НЕ в Lovable Cloud. Поэтому он **не видит секреты** из Lovable Cloud.
+## Причина
 
-| Среда | Где работает | Секреты |
-|-------|-------------|---------|
-| Lovable Cloud | Edge Functions (`handle-lead`, и т.д.) | ✅ Есть `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` |
-| GitHub Actions | `scripts/monitor.py` через workflow | ❌ Секреты нужно добавить отдельно |
+Компонент использует **прямую вставку в БД** с неправильными названиями полей:
 
----
+| Отправляется | Правильное поле в БД |
+|--------------|---------------------|
+| `area` | `area_m2` |
+| `premise_type` | `object_type` |
+| `service_type` | `service` |
+| `treatment_type` | `method` |
+| `periodicity` | `frequency` |
+| `total_price` | `base_price` |
+| `discount` | `discount_percent` |
 
-## Что нужно сделать
+Рабочая форма (`LeadFormModal`) использует Edge Function `handle-lead`, которая:
+- Правильно маппит поля
+- Отправляет Telegram уведомления
+- Трекает MVT конверсии
 
-### 1. Вам нужно добавить секреты в GitHub репозиторий
+## Решение
 
-Я **не имею доступа** к настройкам GitHub репозитория. Вам нужно вручную добавить секреты:
+Переписать `CompactRequestModal` для использования Edge Function `handle-lead`.
 
-1. Откройте: **GitHub → Settings → Secrets and variables → Actions**
-2. Нажмите **New repository secret**
-3. Добавьте три секрета:
+## Изменения
 
-| Secret Name | Value |
-|-------------|-------|
-| `TELEGRAM_BOT_TOKEN` | `6958845812:AAH48RU65h0f6wR8rCChjkmmkR1UxPndudI` |
-| `TELEGRAM_CHAT_ID` | `-3429956285` |
-| `YANDEX_METRIKA_TOKEN` | `y0__xCf0pjNBxi1sD0gwuuioBZlsy_3A7DHIQ6VVxvOSc5UJStOMg` |
+**Файл**: `src/components/CompactRequestModal.tsx`
 
-### 2. Улучшить скрипт для диагностики
+Заменить строки 69-126 (прямой insert + log-traffic-event) на:
 
-Обновить `scripts/monitor.py` чтобы показывать больше деталей при ошибках:
+```typescript
+try {
+  // Отправка через Edge Function handle-lead
+  const { data, error } = await supabase.functions.invoke("handle-lead", {
+    body: {
+      name: name.trim() || "Не указано",
+      phone,
+      object_type: calculatorData.premiseType,
+      area_m2: calculatorData.area,
+      service: calculatorData.serviceType,
+      method: calculatorData.treatmentType,
+      frequency: calculatorData.period,
+      client_type: calculatorData.clientType,
+      base_price: calculatorData.totalPrice,
+      discount_percent: calculatorData.discount,
+      discount_amount: calculatorData.discountAmount,
+      final_price: calculatorData.finalPrice,
+      source: 'calculator_compact_form',
+      session_id: context?.sessionId || null,
+      intent: context?.intent || 'default',
+      variant_id: context?.variantId || null,
+      device_type: context?.deviceType || null,
+      last_page_url: window.location.href,
+      utm_source: context?.utm_source || null,
+      utm_medium: context?.utm_medium || null,
+      utm_campaign: context?.utm_campaign || null,
+      utm_content: context?.utm_content || null,
+      utm_term: context?.utm_term || null,
+    }
+  });
 
-- Вывод статуса всех переменных окружения в начале
-- Подробный вывод ответа Telegram API при ошибке
-- Тест отправки пустого сообщения для проверки токенов
+  if (error || !data?.success) {
+    throw error || new Error("Failed to submit lead");
+  }
 
-```python
-# В начале main():
-print(f"📋 Проверка конфигурации:")
-print(f"   TELEGRAM_BOT_TOKEN: {'✅ задан' if TELEGRAM_BOT_TOKEN else '❌ НЕ ЗАДАН'}")
-print(f"   TELEGRAM_CHAT_ID: {'✅ задан' if TELEGRAM_CHAT_ID else '❌ НЕ ЗАДАН'}")
-print(f"   YANDEX_METRIKA_TOKEN: {'✅ задан' if METRIKA_TOKEN else '❌ НЕ ЗАДАН'}")
+  toast.success("✅ Заявка отправлена! Мы перезвоним вам в течение 15 минут");
 ```
 
-```python
-# В send_telegram_report() — детальный вывод ошибки:
-except requests.RequestException as e:
-    print(f"❌ Ошибка отправки в Telegram: {e}")
-    if hasattr(e, 'response') and e.response:
-        print(f"   Response: {e.response.text}")
-    return False
-```
+## Результат
 
----
-
-## Файлы для изменения
-
-| Файл | Действие |
-|------|----------|
-| `scripts/monitor.py` | Добавить диагностику переменных окружения |
-| GitHub Secrets | **Вручную** добавить 3 секрета |
-
----
-
-## Проверка после добавления секретов
-
-После добавления секретов в GitHub:
-
-1. Перейдите в **Actions → Daily Site Monitoring**
-2. Нажмите **Run workflow**
-3. Проверьте логи — должно появиться:
-   - `✅ TELEGRAM_BOT_TOKEN: задан`
-   - `✅ TELEGRAM_CHAT_ID: задан`
-   - `✅ Отчёт отправлен в Telegram`
-4. Проверьте Telegram чат — сообщение должно прийти
-
----
-
-## Важно
-
-Секреты в Lovable Cloud и в GitHub — это **разные хранилища**:
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│ Lovable Cloud                                               │
-│ ┌─────────────────┐   ┌─────────────────┐                   │
-│ │ Edge Functions  │ ← │ Secrets (5 шт)  │                   │
-│ │ handle-lead     │   │ TELEGRAM_*      │                   │
-│ │ submit-review   │   │ YANDEX_*        │                   │
-│ └─────────────────┘   └─────────────────┘                   │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│ GitHub Actions                                              │
-│ ┌─────────────────┐   ┌─────────────────┐                   │
-│ │ Workflow        │ ← │ GitHub Secrets  │ ← Нужно добавить! │
-│ │ monitor.py      │   │ (пусто сейчас?) │                   │
-│ └─────────────────┘   └─────────────────┘                   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-Я **не могу** добавить секреты в GitHub — это нужно сделать вручную в настройках репозитория.
-
+После исправления:
+1. Заявки из калькулятора сохраняются с правильными полями
+2. Уведомления приходят в Telegram
+3. MVT-трекинг работает корректно
+4. Обе формы используют единый механизм обработки
