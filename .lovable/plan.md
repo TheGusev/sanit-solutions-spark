@@ -1,99 +1,117 @@
 
 
-# План: Унификация canonical URL с trailing slash
+# План: Доработка системы мониторинга с Яндекс.Метрикой и Telegram
 
-## Проблема
+## Текущее состояние
 
-Google Search Console сообщает о проблеме **"Вариант страницы с тегом canonical"** потому что:
+**Проблема**: Скрипт `scripts/monitor.py` — это заглушка, которая:
+- НЕ получает данные из Яндекс.Метрики API
+- НЕ отправляет уведомления в Telegram
+- Просто заменяет плейсхолдеры захардкоженными числами
 
-| Элемент | Текущее значение | Фактический URL файла |
-|---------|-----------------|----------------------|
-| Canonical | `https://goruslugimsk.ru/uslugi/dezinfekciya` | - |
-| Файл на сервере | `uslugi/dezinfekciya/index.html` | `https://goruslugimsk.ru/uslugi/dezinfekciya/` |
-
-Google интерпретирует это как **две разные страницы** с неправильным canonical.
+**Что уже настроено**:
+| Компонент | Статус |
+|-----------|--------|
+| `.github/workflows/monitoring.yml` | Настроен правильно (env variables) |
+| `MONITORING.md` | Шаблон готов |
+| Telegram секреты в Lovable Cloud | Есть (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) |
+| `YANDEX_METRIKA_TOKEN` | НЕТ (нужно добавить) |
 
 ---
 
-## Решение
+## Что нужно сделать
 
-Добавить trailing slash (`/`) ко **всем canonical URL** для соответствия структуре файлов `*/index.html`.
+### 1. Добавить секрет YANDEX_METRIKA_TOKEN в Lovable Cloud
+Добавить OAuth-токен Яндекс.Метрики: `y0__xCf0pjNBxi1sD0gwuuioBZlsy_3A7DHIQ6VVxvOSc5UJStOMg`
+
+### 2. Переписать scripts/monitor.py
+Создать полноценный скрипт мониторинга:
+
+```text
+Функции скрипта:
+├── get_metrika_stats() — запрос к API Яндекс.Метрики
+│   └── Метрики: визиты, посетители, просмотры, отказы, время на сайте
+├── check_site_health() — проверка доступности сайта
+│   └── HTTP статус, время ответа
+├── send_telegram_report() — отправка отчёта в Telegram
+│   └── Форматированное сообщение с данными
+├── update_monitoring_file() — обновление MONITORING.md
+│   └── Замена плейсхолдеров реальными данными
+└── main() — точка входа
+```
+
+**Структура Telegram-отчёта**:
+```
+📊 Ежедневный отчёт goruslugimsk.ru
+
+📈 Метрика (7 дней):
+• Визиты: 1,234
+• Посетители: 987
+• Отказы: 25.4%
+• Время: 2:45
+
+🌐 Сайт:
+• Статус: ✅ OK (234ms)
+• SSL: ✅ Активен
+
+🕐 01.02.2026 09:00 MSK
+```
+
+### 3. Пользователю: добавить секреты в GitHub
+Поскольку GitHub Actions запускается отдельно от Lovable Cloud, секреты нужно добавить в двух местах:
+
+**Для GitHub Actions** (Settings → Secrets → Actions):
+- `TELEGRAM_BOT_TOKEN`: `6958845812:AAH48RU65h0f6wR8rCChjkmmkR1UxPndudI`
+- `TELEGRAM_CHAT_ID`: `-3429956285`
+- `YANDEX_METRIKA_TOKEN`: `y0__xCf0pjNBxi1sD0gwuuioBZlsy_3A7DHIQ6VVxvOSc5UJStOMg`
 
 ---
 
 ## Файлы для изменения
 
-### 1. `src/lib/seo.ts`
-Добавить функцию нормализации пути и обновить `generateSEOMeta()`:
-- Новая функция `normalizePathWithTrailingSlash(path)`
-- Автоматическое добавление `/` к canonical URL
+| Файл | Действие |
+|------|----------|
+| `scripts/monitor.py` | Полностью переписать (добавить API Метрики + Telegram) |
+| Lovable Cloud Secrets | Добавить `YANDEX_METRIKA_TOKEN` |
 
-### 2. `src/lib/metadata.ts` (5 изменений)
-Обновить canonical во всех функциях генерации метаданных:
-- `generateServiceMetadata()` — строка 137: `uslugi/${serviceSlug}/`
-- `generateNchMetadata()` — строка 158: `uslugi/${service}/${pest}/${location}/`
-- `generateObjectDistrictMetadata()` — строка 180: `uslugi/${service}/${object}/${location}/`
-- `generateBlogMetadata()` — строка 201: `blog/${slug}/`
+---
 
-### 3. `src/lib/contentGenerator.ts` (4 изменения)
-Обновить canonical во всех генераторах:
-- `generateNchPageMetadata()` — строка 25
-- `generateObjectPageMetadata()` — строка 50
-- `generateServiceDistrictMetadata()` — строка 71
-- `generateObjectDistrictMetadata()` — строка 94
+## Технические детали скрипта
 
-### 4. `vite-plugin-sitemap.ts` (15+ мест)
-Добавить `/` к `loc` во всех URL sitemap:
-- Статические URL (строки 46-54)
-- URL услуг (строки 243, 251)
-- URL вредителей (строки 261, 268)
-- URL округов и районов (строки 279, 286)
-- URL городов МО (строки 299, 308)
-- НЧ-страницы (строки 323, 335)
-- Объекты (строки 347)
-- Районы (строки 360)
-- Объект+Район (строки 375)
-- Блог (строки 385)
+### API Яндекс.Метрики
+```python
+# Endpoint
+url = f"https://api-metrika.yandex.net/stat/v1/data"
+params = {
+    "id": METRIKA_ID,  # 105828040
+    "metrics": "ym:s:visits,ym:s:users,ym:s:bounceRate,ym:s:avgVisitDurationSeconds",
+    "date1": "7daysAgo",
+    "date2": "today"
+}
+headers = {"Authorization": f"OAuth {token}"}
+```
 
-### 5. Статические HTML в `public/` (23 файла)
-Обновить `<link rel="canonical">` с trailing slash:
-
-**Услуги (10 файлов):**
-- `public/uslugi/dezinfekciya/index.html`
-- `public/uslugi/dezinsekciya/index.html`
-- `public/uslugi/deratizaciya/index.html`
-- `public/uslugi/ozonirovanie/index.html`
-- `public/uslugi/dezodoraciya/index.html`
-- `public/uslugi/sertifikaciya/index.html`
-- `public/uslugi/po-okrugam-moskvy/index.html`
-- `public/uslugi/dezinfekciya-cao/index.html` (и все 8 других округов)
-
-**Блог (9 файлов):**
-- `public/blog/index.html`
-- `public/blog/borba-s-tarakanami/index.html`
-- `public/blog/dezinfekciya-ofisa/index.html`
-- `public/blog/gryzuny-v-dome/index.html`
-- `public/blog/kak-podgotovit-pomeshchenie/index.html`
-- `public/blog/klopy-v-kvartire/index.html`
-- `public/blog/ozonirovaniye-pomeshcheniy/index.html`
-- `public/blog/sezonnost-vreditelej/index.html`
-- `public/blog/vidy-dezinfekcii/index.html`
-
-**Остальные страницы (4 файла):**
-- `public/contacts/index.html`
-- `public/privacy/index.html`
-- `public/terms/index.html`
+### Telegram Bot API
+```python
+# Endpoint
+url = f"https://api.telegram.org/bot{token}/sendMessage"
+payload = {
+    "chat_id": chat_id,
+    "text": message,
+    "parse_mode": "Markdown"
+}
+```
 
 ---
 
 ## Ожидаемый результат
 
-После применения изменений:
+После выполнения:
+1. Каждый день в 09:00 MSK запускается мониторинг
+2. Скрипт получает реальные данные из Яндекс.Метрики
+3. Отправляет отчёт в Telegram группу `-3429956285`
+4. Обновляет файл `MONITORING.md` с актуальными данными
+5. Коммитит изменения в репозиторий
 
-1. **Canonical URL** будут соответствовать фактическим URL файлов
-2. **Google** перестанет видеть дубликаты страниц
-3. **Sitemap** будет содержать корректные URL с trailing slash
-4. **Индексация** нормализуется в течение 2-4 недель
-
-**После публикации**: запросите повторное сканирование в Google Search Console для ускорения переиндексации.
+**Важно**: После моих изменений вам нужно добавить 3 секрета в GitHub репозиторий вручную (Settings → Secrets → Actions), потому что я не имею доступа к настройкам GitHub.
 
