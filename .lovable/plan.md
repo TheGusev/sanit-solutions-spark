@@ -2,114 +2,87 @@
 
 # План: Унификация canonical URL с trailing slash
 
-## Диагностика
+## Проблема
 
-Google Search Console сообщает о проблеме "Вариант страницы с тегом canonical" потому что:
+Google Search Console сообщает о проблеме **"Вариант страницы с тегом canonical"** потому что:
 
-| Элемент | Текущее значение | Фактический URL |
-|---------|-----------------|-----------------|
+| Элемент | Текущее значение | Фактический URL файла |
+|---------|-----------------|----------------------|
 | Canonical | `https://goruslugimsk.ru/uslugi/dezinfekciya` | - |
 | Файл на сервере | `uslugi/dezinfekciya/index.html` | `https://goruslugimsk.ru/uslugi/dezinfekciya/` |
 
 Google интерпретирует это как **две разные страницы** с неправильным canonical.
 
-**Примечание**: Ваши SEO-лимиты (Title: 40-65 символов, Description: 140-165) настроены правильно в `src/lib/seoValidation.ts` — это не связано с текущей проблемой.
-
 ---
 
 ## Решение
 
-Добавить trailing slash ко **всем canonical URL** для соответствия структуре файлов `*/index.html`.
-
-### Файлы для изменения
-
-| Файл | Изменения |
-|------|-----------|
-| `src/lib/seo.ts` | Нормализация пути с trailing slash в `generateSEOMeta()` |
-| `src/lib/metadata.ts` | Добавить `/` в конец canonical для всех функций |
-| `src/lib/contentGenerator.ts` | Добавить `/` в конец canonical во всех генераторах |
-| `vite-plugin-sitemap.ts` | Добавить `/` к `loc` во всех URL sitemap |
-| `public/uslugi/*/index.html` (12 файлов) | Обновить canonical с trailing slash |
-| `public/blog/*/index.html` (8 файлов) | Обновить canonical с trailing slash |
-| `public/contacts/index.html` | Обновить canonical |
-| `public/privacy/index.html` | Обновить canonical |
-| `public/terms/index.html` | Обновить canonical |
+Добавить trailing slash (`/`) ко **всем canonical URL** для соответствия структуре файлов `*/index.html`.
 
 ---
 
-## Технические детали изменений
+## Файлы для изменения
 
-### 1. `src/lib/seo.ts` — добавить нормализацию URL
+### 1. `src/lib/seo.ts`
+Добавить функцию нормализации пути и обновить `generateSEOMeta()`:
+- Новая функция `normalizePathWithTrailingSlash(path)`
+- Автоматическое добавление `/` к canonical URL
 
-```typescript
-export function generateSEOMeta(
-  path: string, 
-  title: string, 
-  description: string,
-  options?: {...}
-): SEOMeta {
-  // Нормализация: добавляем trailing slash (кроме корня)
-  const normalizedPath = path === '/' ? path : 
-    (path.endsWith('/') ? path : `${path}/`);
-  const fullUrl = `${SEO_CONFIG.baseUrl}${normalizedPath}`;
-  
-  return {
-    ...
-    canonical: fullUrl,
-    hreflangRu: fullUrl,
-    hreflangDefault: fullUrl,
-  };
-}
-```
+### 2. `src/lib/metadata.ts` (5 изменений)
+Обновить canonical во всех функциях генерации метаданных:
+- `generateServiceMetadata()` — строка 137: `uslugi/${serviceSlug}/`
+- `generateNchMetadata()` — строка 158: `uslugi/${service}/${pest}/${location}/`
+- `generateObjectDistrictMetadata()` — строка 180: `uslugi/${service}/${object}/${location}/`
+- `generateBlogMetadata()` — строка 201: `blog/${slug}/`
 
-### 2. `src/lib/metadata.ts` — все canonical с trailing slash
+### 3. `src/lib/contentGenerator.ts` (4 изменения)
+Обновить canonical во всех генераторах:
+- `generateNchPageMetadata()` — строка 25
+- `generateObjectPageMetadata()` — строка 50
+- `generateServiceDistrictMetadata()` — строка 71
+- `generateObjectDistrictMetadata()` — строка 94
 
-```typescript
-// Было:
-canonical: `https://goruslugimsk.ru/uslugi/${serviceSlug}`
+### 4. `vite-plugin-sitemap.ts` (15+ мест)
+Добавить `/` к `loc` во всех URL sitemap:
+- Статические URL (строки 46-54)
+- URL услуг (строки 243, 251)
+- URL вредителей (строки 261, 268)
+- URL округов и районов (строки 279, 286)
+- URL городов МО (строки 299, 308)
+- НЧ-страницы (строки 323, 335)
+- Объекты (строки 347)
+- Районы (строки 360)
+- Объект+Район (строки 375)
+- Блог (строки 385)
 
-// Станет:
-canonical: `https://goruslugimsk.ru/uslugi/${serviceSlug}/`
-```
+### 5. Статические HTML в `public/` (23 файла)
+Обновить `<link rel="canonical">` с trailing slash:
 
-Изменения в функциях:
-- `generateIndexMetadata()` — оставить `/`
-- `generateServiceMetadata()` — добавить `/`
-- `generateNchMetadata()` — добавить `/`
-- `generateObjectDistrictMetadata()` — добавить `/`
-- `generateBlogMetadata()` — добавить `/`
+**Услуги (10 файлов):**
+- `public/uslugi/dezinfekciya/index.html`
+- `public/uslugi/dezinsekciya/index.html`
+- `public/uslugi/deratizaciya/index.html`
+- `public/uslugi/ozonirovanie/index.html`
+- `public/uslugi/dezodoraciya/index.html`
+- `public/uslugi/sertifikaciya/index.html`
+- `public/uslugi/po-okrugam-moskvy/index.html`
+- `public/uslugi/dezinfekciya-cao/index.html` (и все 8 других округов)
 
-### 3. `src/lib/contentGenerator.ts` — все canonical с trailing slash
+**Блог (9 файлов):**
+- `public/blog/index.html`
+- `public/blog/borba-s-tarakanami/index.html`
+- `public/blog/dezinfekciya-ofisa/index.html`
+- `public/blog/gryzuny-v-dome/index.html`
+- `public/blog/kak-podgotovit-pomeshchenie/index.html`
+- `public/blog/klopy-v-kvartire/index.html`
+- `public/blog/ozonirovaniye-pomeshcheniy/index.html`
+- `public/blog/sezonnost-vreditelej/index.html`
+- `public/blog/vidy-dezinfekcii/index.html`
 
-Обновить все функции генерации метаданных:
-- `generateNchPageMetadata()`
-- `generateObjectPageMetadata()`
-- `generateServiceDistrictMetadata()`
-- `generateObjectDistrictMetadata()`
-
-### 4. `vite-plugin-sitemap.ts` — все loc с trailing slash
-
-```typescript
-// Было:
-loc: `/uslugi/${slug}`,
-
-// Станет:
-loc: `/uslugi/${slug}/`,
-```
-
-Нужно обновить все места генерации `loc` (примерно 15 мест в файле).
-
-### 5. Статические HTML в `public/` — 23 файла
-
-Обновить `<link rel="canonical">` во всех файлах:
-
-```html
-<!-- Было: -->
-<link rel="canonical" href="https://goruslugimsk.ru/contacts">
-
-<!-- Станет: -->
-<link rel="canonical" href="https://goruslugimsk.ru/contacts/">
-```
+**Остальные страницы (4 файла):**
+- `public/contacts/index.html`
+- `public/privacy/index.html`
+- `public/terms/index.html`
 
 ---
 
@@ -120,7 +93,7 @@ loc: `/uslugi/${slug}/`,
 1. **Canonical URL** будут соответствовать фактическим URL файлов
 2. **Google** перестанет видеть дубликаты страниц
 3. **Sitemap** будет содержать корректные URL с trailing slash
-4. **Индексация** нормализуется в течение 2-4 недель при следующем пересканировании
+4. **Индексация** нормализуется в течение 2-4 недель
 
-**Важно**: После публикации нужно запросить повторное сканирование в Google Search Console для ускорения переиндексации.
+**После публикации**: запросите повторное сканирование в Google Search Console для ускорения переиндексации.
 
