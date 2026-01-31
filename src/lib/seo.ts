@@ -26,6 +26,14 @@ export interface SEOMeta {
 }
 
 /**
+ * Нормализует путь, добавляя trailing slash (кроме корня)
+ */
+export function normalizePathWithTrailingSlash(path: string): string {
+  if (path === '/' || path === '') return '/';
+  return path.endsWith('/') ? path : `${path}/`;
+}
+
+/**
  * Генерирует полный набор SEO-метаданных для страницы.
  */
 export function generateSEOMeta(
@@ -38,7 +46,9 @@ export function generateSEOMeta(
     ogImage?: string;
   }
 ): SEOMeta {
-  const fullUrl = `${SEO_CONFIG.baseUrl}${path}`;
+  // Нормализуем путь с trailing slash
+  const normalizedPath = normalizePathWithTrailingSlash(path);
+  const fullUrl = `${SEO_CONFIG.baseUrl}${normalizedPath}`;
   
   return {
     title,

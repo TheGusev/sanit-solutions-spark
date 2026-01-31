@@ -134,7 +134,7 @@ export function generateServiceMetadata(params: {
     title: `${serviceName} в Москве — от ${priceFrom}₽ за ${pricePer}`,
     description: description || `Профессиональная ${serviceName.toLowerCase()} в Москве • Лицензия Роспотребнадзора • Выезд за 30 минут • Гарантия до 1 года • +7 (906) 998-98-88`,
     h1: `${serviceName} в Москве`,
-    canonical: `https://goruslugimsk.ru/uslugi/${serviceSlug}`,
+    canonical: `https://goruslugimsk.ru/uslugi/${serviceSlug}/`,
     keywords: [`${serviceName.toLowerCase()} москва`, `${serviceName.toLowerCase()} цена`],
   }).metadata;
 }
@@ -155,7 +155,7 @@ export function generateNchMetadata(params: {
     title: `${service} от ${pestGenitive} в ${location} — от ${priceFrom}₽`,
     description: `Уничтожение ${pestGenitive} в ${location} • Выезд за 30 минут • Гарантия до 1 года • Безопасные препараты • +7 (906) 998-98-88`,
     h1: `${service} от ${pestGenitive} в районе ${location}`,
-    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${pest}/${location}`,
+    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${pest}/${location}/`,
     keywords: [`${pest} ${location}`, `уничтожение ${pestGenitive} ${location}`],
   }, { pageType: 'nch' }).metadata;
 }
@@ -177,7 +177,7 @@ export function generateObjectDistrictMetadata(params: {
     title: `${service} ${objectGenitive} в ${location} — от ${priceFrom}₽`,
     description: `${service} ${objectGenitive} в районе ${location} • Профессиональная обработка • Выезд за 30 минут • Гарантия • +7 (906) 998-98-88`,
     h1: `${service} ${objectGenitive} в ${location}`,
-    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${object}/${location}`,
+    canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${object}/${location}/`,
     keywords: [`${serviceGenitive} ${objectGenitive} ${location}`],
   }, { pageType: 'nch' }).metadata;
 }
@@ -198,7 +198,7 @@ export function generateBlogMetadata(params: {
     title: `${title} — Блог Санитарные Решения`,
     description: excerpt,
     h1: title,
-    canonical: `https://goruslugimsk.ru/blog/${slug}`,
+    canonical: `https://goruslugimsk.ru/blog/${slug}/`,
     keywords: category ? [category.toLowerCase()] : [],
   }, { pageType: 'blog' }).metadata;
 }
