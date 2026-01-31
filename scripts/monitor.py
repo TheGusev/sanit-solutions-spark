@@ -29,26 +29,17 @@ def main():
     with open(MONITORING_FILE, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # Имитация сбора данных (здесь можно добавить реальные API вызовы)
-    # 1. Индексация (заглушка или простой парсинг)
-    yandex_index = 215 # Пример значения
-    google_index = 198 # Пример значения
-    
-    # 2. PageSpeed (заглушка)
+    # Сбор данных (заглушки)
+    yandex_index = 215
+    google_index = 198
     ps_desktop = 95
     ps_mobile = 88
 
-    # Обновление контента
-    # Обновляем таблицу индексации Яндекс
     content = update_placeholder(content, "Яндекс", yandex_index)
-    # Обновляем таблицу индексации Google
     content = update_placeholder(content, "Google", google_index)
-    
-    # Обновляем технические показатели
     content = update_placeholder(content, "Главная (/)", ps_desktop)
     content = update_placeholder(content, "Главная (/)", ps_mobile)
 
-    # Обновляем дату последнего обновления в конце
     now_str = datetime.now().strftime("%d.%m.%Y %H:%M MSK")
     content = re.sub(r"\*\*Последнее обновление:\*\* .*", f"**Последнее обновление:** {now_str}", content)
 
