@@ -1,228 +1,101 @@
 
-# План: Полная переработка блога — авторы, даты и удаление AI-паттернов
+# План: Исправление парсинга Markdown и удаление AI-паттернов
 
-## Исправленные данные специалистов
+## Диагноз проблемы
 
-| Специалист | Должность | Стаж | Стиль | Специализация |
-|------------|-----------|------|-------|---------------|
-| Максим Гусев | Ведущий дезинфектор | **8 лет** | Практичный | Тараканы, клопы, квартиры |
-| Александр Афанасьев | Специалист по дератизации | **5 лет** | Экспертный | Грызуны, крысы, мыши |
-| Владимир Гусев | Технолог-дезинфектолог | **7 лет** | Технический | Препараты, технологии, озонирование |
-| Андрей Иванов | Мастер-дезинсектор | 10 лет | Дружелюбный | Муравьи, блохи, моль |
-| Эдуард Васильев | Эксперт по санитарии | **12 лет** | Формальный | Законы, СанПиН, документация |
-| Владимир Учаев | Специалист по коммерческим объектам | 7 лет | Лаконичный | Офисы, рестораны, склады |
+На скриншоте видно, что markdown-разметка **не парсится** и отображается как есть:
+- `**Примеры:**` вместо **Примеры:**
+- `**Инфекционные заболевания**` вместо **Инфекционные заболевания**
 
----
+### Причина
 
-## Этап 1: Расширение типов
+Функция `generateContentWithIds` в `TableOfContents.tsx` обрабатывает только:
+- Блочные элементы (заголовки, списки, таблицы, blockquotes)
+- Строки, **целиком** состоящие из `**text**`
 
-**Файл:** `src/data/blog/types.ts`
-
-Добавить интерфейс Author и массив blogAuthors с исправленным стажем:
-
-```typescript
-export interface Author {
-  id: string;
-  name: string;
-  role: string;
-  experience: string;
-  style: 'formal' | 'practical' | 'technical' | 'friendly' | 'expert' | 'concise';
-  specialization: string[];
-}
-
-export const blogAuthors: Author[] = [
-  {
-    id: 'gusev-m',
-    name: 'Максим Гусев',
-    role: 'Ведущий дезинфектор',
-    experience: '8 лет',
-    style: 'practical',
-    specialization: ['тараканы', 'клопы', 'квартиры']
-  },
-  {
-    id: 'afanasiev',
-    name: 'Александр Афанасьев',
-    role: 'Специалист по дератизации',
-    experience: '5 лет',
-    style: 'expert',
-    specialization: ['грызуны', 'крысы', 'мыши', 'склады']
-  },
-  // ... остальные авторы
-];
-```
-
-Расширить BlogArticle:
-```typescript
-export interface BlogArticle {
-  // ... существующие поля
-  author?: string;
-  authorRole?: string;
-}
-```
+НО не обрабатывает **inline-markdown** внутри параграфов и элементов списков.
 
 ---
 
-## Этап 2: Система назначения авторов и генерации дат
+## Решение
 
-**Файл:** `src/lib/blogContentGenerator.ts` (расширение)
-
-Добавить функции:
-
-```typescript
-// Генератор дат (ноябрь 2025 — февраль 2026)
-export function generateArticleDate(articleId: number, slug: string): string {
-  const startDate = new Date('2025-11-01');
-  const totalDays = 93; // до 01.02.2026
-  const hash = simpleHash(slug);
-  const dayOffset = Math.abs(hash) % totalDays;
-  
-  const articleDate = new Date(startDate);
-  articleDate.setDate(articleDate.getDate() + dayOffset);
-  return articleDate.toISOString().split('T')[0];
-}
-
-// Назначение автора по специализации
-export function assignAuthor(article: { category: string; tags: string[]; pest?: string }): Author {
-  // Логика сопоставления...
-}
-```
-
----
-
-## Этап 3: Расширенная очистка AI-паттернов
+### Шаг 1: Создать функцию обработки inline-markdown
 
 **Файл:** `src/components/TableOfContents.tsx`
 
-Расширить функцию `cleanAIContent`:
+Добавить функцию `processInlineMarkdown`:
 
 ```typescript
-const cleanAIContent = (text: string): string => {
+// Обработка inline markdown (bold, italic, links)
+const processInlineMarkdown = (text: string): string => {
   return text
-    // Эмодзи в начале строк
-    .replace(/^[✅❌⚠️📍🔴🟢🟡🎯💡📌🔒✨🛡️⭐🏆]\s*/gm, '')
-    
-    // AI-вводные фразы
-    .replace(/^(Важно|Следует|Необходимо|Обратите внимание|Примечание|Стоит отметить|Нельзя не упомянуть):\s*/gim, '')
-    .replace(/^(Рассмотрим подробнее|Давайте разберём|Итак|В данной статье|В этой статье|Начнём с того)[,:.]?\s*/gim, '')
-    .replace(/^(Как уже упоминалось|Как было сказано|Как мы видим|Очевидно, что)[,:.]?\s*/gim, '')
-    
-    // Переходные фразы AI
-    .replace(/(Таким образом|Подводя итог|В заключение|Резюмируя|Исходя из вышесказанного)[,:.]?\s*/gi, '')
-    .replace(/(Безусловно|Несомненно|Очевидно|Конечно же)[,:.]?\s*/gi, '')
-    
-    // Избыточные усилители
-    .replace(/\bочень\s+/gi, '')
-    .replace(/\bдостаточно\s+(легко|просто|быстро)\b/gi, '$1')
-    .replace(/\bабсолютно\s+(необходимо|важно)\b/gi, 'необходимо')
-    
-    // Формальные конструкции
-    .replace(/представляется возможным/gi, 'можно')
-    .replace(/является\s+(\w+)\s+решением/gi, '— $1 решение')
-    .replace(/данн(ый|ая|ое|ые)\s+/gi, '')
-    
-    // Двойные пробелы
-    .replace(/  +/g, ' ')
-    .trim();
+    // Bold: **text** → <strong>text</strong>
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    // Italic: *text* → <em>text</em> (но не внутри bold)
+    .replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>')
+    // Links: [text](url) → <a href="url">text</a>
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:underline">$1</a>')
+    // Inline code: `text` → <code>text</code>
+    .replace(/`([^`]+)`/g, '<code class="bg-muted px-1 py-0.5 rounded text-sm">$1</code>');
 };
 ```
 
----
+### Шаг 2: Применить к каждому выходному элементу
 
-## Этап 4: Обновление генераторов статей
+Обновить `generateContentWithIds` для применения `processInlineMarkdown` ко всем текстовым выводам:
 
-**Файлы:** `pests-articles.ts`, `premises-articles.ts`, `legal-articles.ts`
-
-Для каждой статьи добавить:
-- `author` — имя автора
-- `authorRole` — должность
-- `date` — сгенерированная дата
-
-Пример:
 ```typescript
-const author = assignAuthor({ category: template.category, tags: [...], pest: pest.id });
+// Вместо:
+result += `<p>${line}</p>`;
 
-return {
-  // ... существующие поля
-  author: author.name,
-  authorRole: author.role,
-  date: generateArticleDate(id, slug),
-};
+// Должно быть:
+result += `<p>${processInlineMarkdown(line)}</p>`;
 ```
 
----
-
-## Этап 5: Отображение автора в BlogPost
-
-**Файл:** `src/pages/BlogPost.tsx`
-
-Добавить импорт иконки User и блок автора в шапку статьи:
-
-```tsx
-import { User } from "lucide-react";
-
-// В шапке статьи после даты и времени чтения:
-{post.author && (
-  <div className="flex items-center justify-center gap-3 mt-4">
-    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-      <User className="w-5 h-5 text-primary" />
-    </div>
-    <div className="text-left">
-      <p className="font-medium text-foreground">{post.author}</p>
-      <p className="text-sm text-muted-foreground">{post.authorRole}</p>
-    </div>
-  </div>
-)}
-```
+Аналогично для:
+- Элементов списков (`<li>`)
+- Ячеек таблиц (`<td>`)
+- Заголовков (`<h2>`, `<h3>`)
+- Blockquotes
+- Callouts
 
 ---
 
-## Распределение авторов
-
-| Автор | Логика назначения | Ориентировочно статей |
-|-------|-------------------|----------------------|
-| Эдуард Васильев | Категория "Законы", теги с "СанПиН" | ~25 |
-| Александр Афанасьев | Категория "Дератизация", теги с "грызуны" | ~15 |
-| Владимир Гусев | Теги "озонирование", "технологии", "препараты" | ~20 |
-| Владимир Учаев | Теги "офис", "ресторан", "склад" | ~25 |
-| Андрей Иванов | Вредители: муравьи, блохи, моль | ~20 |
-| Максим Гусев | Тараканы, клопы, квартиры (по умолчанию) | ~50 |
-
----
-
-## Распределение дат
-
-Статьи будут равномерно распределены с **1 ноября 2025** по **1 февраля 2026**:
-
-| Месяц | Примерно статей |
-|-------|-----------------|
-| Ноябрь 2025 | ~40 |
-| Декабрь 2025 | ~50 |
-| Январь 2026 | ~50 |
-| Февраль 2026 | ~18 |
-
----
-
-## Файлы для изменения
+## Файл для изменения
 
 | Файл | Изменения |
 |------|-----------|
-| `src/data/blog/types.ts` | Добавить Author, blogAuthors, расширить BlogArticle |
-| `src/lib/blogContentGenerator.ts` | Добавить generateArticleDate, assignAuthor |
-| `src/components/TableOfContents.tsx` | Расширить cleanAIContent |
-| `src/data/blog/pests-articles.ts` | Интегрировать авторов и даты |
-| `src/data/blog/premises-articles.ts` | Интегрировать авторов и даты |
-| `src/data/blog/legal-articles.ts` | Добавить авторов и обновить даты |
-| `src/data/blogPosts.ts` | Добавить авторов к legacy-статьям |
-| `src/pages/BlogPost.tsx` | Отображение автора |
+| `src/components/TableOfContents.tsx` | Добавить `processInlineMarkdown`, применить ко всем текстовым элементам |
+
+---
+
+## Проверочный тест
+
+После изменений:
+
+**БЫЛО:** `**Примеры:** Ксулат Микро, Дельта Зона`
+
+**СТАНЕТ:** **Примеры:** Ксулат Микро, Дельта Зона (жирный текст)
+
+---
+
+## Места применения processInlineMarkdown
+
+| Элемент | Строки в коде | Применить |
+|---------|---------------|-----------|
+| Заголовки H2 | `result += \`<h2...\`` | title → processInlineMarkdown(title) |
+| Заголовки H3 | `result += \`<h3...\`` | title → processInlineMarkdown(title) |
+| Параграфы | `result += \`<p>\${line}</p>\`` | line → processInlineMarkdown(line) |
+| Списки | `result += \`<li>\${line.replace...}</li>\`` | Применить к содержимому |
+| Таблицы | `${cell}` в processTable | cell → processInlineMarkdown(cell) |
+| Blockquotes | blockquoteLines.join | Применить к каждой строке |
+| Callouts | calloutLines.join | Применить к каждой строке |
 
 ---
 
 ## Ожидаемый результат
 
 После изменений:
-- Все 158 статей имеют уникального автора с должностью и стажем
-- Даты распределены с ноября 2025 по февраль 2026
-- AI-паттерны удалены из отображаемого контента
-- Каждый автор имеет узнаваемый стиль
-- Статьи выглядят как написанные реальными специалистами
-- Schema.org разметка включает информацию об авторе
+- Весь inline-markdown (`**bold**`, `*italic*`, `[links](url)`, `` `code` ``) корректно отображается как HTML
+- Статьи выглядят профессионально без сырой markdown-разметки
+- Улучшается читаемость и восприятие контента
