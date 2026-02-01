@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { Calculator, CheckCircle, Gift, Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Calculator, CheckCircle, Info } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import {
   Accordion,
@@ -28,7 +26,7 @@ const servicePricesData = [
   { id: 15, service: "Сертификация", object: "Документы для СЭС", price: "от 3000 ₽" },
 ];
 
-// Группировка услуг по типу для мобильного accordion
+// Группировка услуг по типу для accordion
 const groupedServices = {
   "Дезинфекция": servicePricesData.filter(s => s.service.startsWith("Дезинфекция")),
   "Дезинсекция": servicePricesData.filter(s => s.service.startsWith("Дезинсекция")),
@@ -38,32 +36,18 @@ const groupedServices = {
   "Сертификация": servicePricesData.filter(s => s.service.startsWith("Сертификация")),
 };
 
-
-// Что входит в стоимость
-const includedServicesData = [
-  "Бесплатный выезд и диагностика (ЦАО/САО)",
-  "Обработка помещения (холодный/горячий туман)",
-  "Безопасные препараты IV класса",
-  "Гарантия до 1 года",
-  "Договор и акт",
-  "Консультация 24/7",
-];
-
-// Скидки и акции
-const discountsData = [
-  { text: "15% при заказе 2+ услуг" },
-  { text: "10% для постоянных клиентов" },
-  { text: "5% при оплате онлайн" },
-  { text: "Бесплатная повторная обработка (по гарантии)" },
+// Что входит в стоимость (для примечаний)
+const includedNotes = [
+  { icon: Info, text: "Выезд и диагностика в пределах МКАД — бесплатно" },
+  { icon: CheckCircle, text: "Обработка помещения (холодный/горячий туман)" },
+  { icon: CheckCircle, text: "Безопасные препараты IV класса" },
+  { icon: CheckCircle, text: "Гарантия до 1 года" },
+  { icon: CheckCircle, text: "Договор и акт — бесплатно" },
+  { icon: CheckCircle, text: "Консультация 24/7" },
 ];
 
 const PricingByArea = () => {
   const { ref: tableRef, isVisible } = useScrollAnimation({ threshold: 0.1 });
-
-  const scrollToCalculator = () => {
-    document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth" });
-  };
-
 
   const getMinPrice = (items: typeof servicePricesData) => {
     return items[0]?.price || "";
@@ -72,13 +56,13 @@ const PricingByArea = () => {
   return (
     <section className="py-16 bg-muted/30" id="pricing-by-area">
       <div className="container mx-auto px-4">
-        {/* СЕКЦИЯ 1: БАЗОВЫЕ ЦЕНЫ */}
+        {/* Заголовок секции */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Цены на услуги в Москве
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Прозрачное ценообразование. Выезд в ЦАО/САО — бесплатно!
+            Прозрачное ценообразование. Выезд и диагностика в пределах МКАД — бесплатно!
           </p>
         </div>
 
@@ -91,7 +75,7 @@ const PricingByArea = () => {
             </h3>
           </div>
           
-          {/* Unified Accordion for all devices */}
+          {/* Accordion */}
           <Accordion type="single" collapsible className="divide-y divide-border">
             {Object.entries(groupedServices).map(([serviceName, items]) => (
               <AccordionItem key={serviceName} value={serviceName} className="border-0">
@@ -125,75 +109,17 @@ const PricingByArea = () => {
             ))}
           </Accordion>
 
-          {/* 4 примечания под таблицей */}
+          {/* Примечания под таблицей */}
           <div className="p-4 bg-muted/30 border-t border-border">
-            <div className="grid sm:grid-cols-2 gap-3 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Info className="w-3 h-3 text-primary flex-shrink-0" />
-                <span>Цены указаны для ЦАО/САО (выезд бесплатно)</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Gift className="w-3 h-3 text-primary flex-shrink-0" />
-                <span>Скидка 15% при заказе 2+ услуг</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
-                <span>В стоимость входит: диагностика, обработка, гарантия</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
-                <span>Договор и акт — бесплатно</span>
-              </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs text-muted-foreground">
+              {includedNotes.map((note, index) => (
+                <div key={index} className="flex items-center gap-1">
+                  <note.icon className="w-3 h-3 text-primary flex-shrink-0" />
+                  <span>{note.text}</span>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-
-
-        {/* СЕКЦИЯ 3: ЧТО ВХОДИТ + СКИДКИ */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {/* Что входит в стоимость */}
-          <div className="bg-card rounded-2xl p-6 border border-border">
-            <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-primary" />
-              Что входит в стоимость
-            </h4>
-            <ul className="space-y-3">
-              {includedServicesData.map((item, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <span className="text-success mt-0.5 flex-shrink-0">✅</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Скидки и акции */}
-          <div className="bg-card rounded-2xl p-6 border border-border">
-            <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Gift className="w-5 h-5 text-primary" />
-              Скидки и акции
-            </h4>
-            <ul className="space-y-3">
-              {discountsData.map((item, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <span className="text-success mt-0.5 flex-shrink-0">✅</span>
-                  {item.text}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* СЕКЦИЯ 4: CTA-КНОПКА */}
-        <div className="flex justify-center">
-          <Button 
-            size="lg" 
-            onClick={scrollToCalculator}
-            className="gap-2"
-          >
-            <Calculator className="w-5 h-5" />
-            Рассчитать стоимость
-          </Button>
         </div>
       </div>
     </section>
