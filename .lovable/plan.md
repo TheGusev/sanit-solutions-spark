@@ -1,101 +1,182 @@
 
-# План: Исправление парсинга Markdown и удаление AI-паттернов
+# План: Добавление Schema.org Person разметки для авторов
 
-## Диагноз проблемы
+## Текущая ситуация
 
-На скриншоте видно, что markdown-разметка **не парсится** и отображается как есть:
-- `**Примеры:**` вместо **Примеры:**
-- `**Инфекционные заболевания**` вместо **Инфекционные заболевания**
+Сейчас в `generateArticle` и `generateBlogPosting` автор указан как Organization:
 
-### Причина
+```json
+"author": {
+  "@type": "Organization",
+  "name": "ООО Санитарные Решения"
+}
+```
 
-Функция `generateContentWithIds` в `TableOfContents.tsx` обрабатывает только:
-- Блочные элементы (заголовки, списки, таблицы, blockquotes)
-- Строки, **целиком** состоящие из `**text**`
-
-НО не обрабатывает **inline-markdown** внутри параграфов и элементов списков.
+Нужно заменить на Person schema с полными данными об авторе.
 
 ---
 
 ## Решение
 
-### Шаг 1: Создать функцию обработки inline-markdown
+### Шаг 1: Расширить интерфейс BlogPostData
 
-**Файл:** `src/components/TableOfContents.tsx`
+**Файл:** `src/components/StructuredData.tsx`
 
-Добавить функцию `processInlineMarkdown`:
-
-```typescript
-// Обработка inline markdown (bold, italic, links)
-const processInlineMarkdown = (text: string): string => {
-  return text
-    // Bold: **text** → <strong>text</strong>
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    // Italic: *text* → <em>text</em> (но не внутри bold)
-    .replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>')
-    // Links: [text](url) → <a href="url">text</a>
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:underline">$1</a>')
-    // Inline code: `text` → <code>text</code>
-    .replace(/`([^`]+)`/g, '<code class="bg-muted px-1 py-0.5 rounded text-sm">$1</code>');
-};
-```
-
-### Шаг 2: Применить к каждому выходному элементу
-
-Обновить `generateContentWithIds` для применения `processInlineMarkdown` ко всем текстовым выводам:
+Добавить поля автора:
 
 ```typescript
-// Вместо:
-result += `<p>${line}</p>`;
-
-// Должно быть:
-result += `<p>${processInlineMarkdown(line)}</p>`;
+export interface BlogPostData {
+  // ... существующие поля
+  author?: string;
+  authorRole?: string;      // НОВОЕ
+  authorExperience?: string; // НОВОЕ
+}
 ```
 
-Аналогично для:
-- Элементов списков (`<li>`)
-- Ячеек таблиц (`<td>`)
-- Заголовков (`<h2>`, `<h3>`)
-- Blockquotes
-- Callouts
+### Шаг 2: Обновить generateArticle для Person schema
+
+**Файл:** `src/components/StructuredData.tsx`
+
+Заменить Organization на Person с полными данными:
+
+```typescript
+const generateArticle = (post: BlogPostData, baseUrl: string) => ({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": post.title,
+  "description": post.excerpt,
+  "datePublished": post.date,
+  "dateModified": post.dateModified || post.date,
+  "author": post.author ? {
+    "@type": "Person",
+    "name": post.author,
+    "jobTitle": post.authorRole || "Специалист по дезинфекции",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ООО Санитарные Решения",
+      "url": baseUrl
+    }
+  } : {
+    "@type": "Organization",
+    "name": "ООО Санитарные Решения",
+    "url": baseUrl
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ООО Санитарные Решения",
+    "url": baseUrl,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${baseUrl}/og-image.jpg`
+    }
+  },
+  // ... остальное
+});
+```
+
+### Шаг 3: Аналогично обновить generateBlogPosting
+
+```typescript
+const generateBlogPosting = (post: BlogPostData, baseUrl: string) => ({
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.title,
+  "description": post.excerpt,
+  "datePublished": post.date,
+  "author": post.author ? {
+    "@type": "Person",
+    "name": post.author,
+    "jobTitle": post.authorRole || "Специалист по дезинфекции",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ООО Санитарные Решения",
+      "url": baseUrl
+    }
+  } : {
+    "@type": "Organization",
+    "name": "ООО Санитарные Решения"
+  },
+  // ... остальное
+});
+```
+
+### Шаг 4: Передать данные автора из BlogPost
+
+**Файл:** `src/pages/BlogPost.tsx`
+
+Обновить вызов StructuredData:
+
+```tsx
+<StructuredData 
+  type="Article"
+  post={{
+    title: post.title,
+    excerpt: post.excerpt,
+    date: post.date,
+    slug: post.slug,
+    author: post.author,           // ДОБАВИТЬ
+    authorRole: post.authorRole,   // ДОБАВИТЬ
+    category: post.category,
+    keywords: post.tags,
+    wordCount: post.wordCount || post.content?.split(/\s+/).length
+  }}
+  baseUrl={SEO_CONFIG.baseUrl}
+/>
+```
 
 ---
 
-## Файл для изменения
+## Результат Schema.org разметки
+
+После изменений JSON-LD будет выглядеть так:
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Чем опасны муравьи в квартире",
+  "author": {
+    "@type": "Person",
+    "name": "Андрей Иванов",
+    "jobTitle": "Мастер-дезинсектор",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ООО Санитарные Решения",
+      "url": "https://goruslugimsk.ru"
+    }
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ООО Санитарные Решения"
+  }
+}
+```
+
+---
+
+## SEO-преимущества
+
+| Аспект | Улучшение |
+|--------|-----------|
+| E-E-A-T | Явное указание экспертизы автора (jobTitle) |
+| Knowledge Graph | Google может связать автора с организацией |
+| Rich Snippets | Возможность отображения автора в SERP |
+| Доверие | Пользователи видят реального специалиста |
+
+---
+
+## Файлы для изменения
 
 | Файл | Изменения |
 |------|-----------|
-| `src/components/TableOfContents.tsx` | Добавить `processInlineMarkdown`, применить ко всем текстовым элементам |
-
----
-
-## Проверочный тест
-
-После изменений:
-
-**БЫЛО:** `**Примеры:** Ксулат Микро, Дельта Зона`
-
-**СТАНЕТ:** **Примеры:** Ксулат Микро, Дельта Зона (жирный текст)
-
----
-
-## Места применения processInlineMarkdown
-
-| Элемент | Строки в коде | Применить |
-|---------|---------------|-----------|
-| Заголовки H2 | `result += \`<h2...\`` | title → processInlineMarkdown(title) |
-| Заголовки H3 | `result += \`<h3...\`` | title → processInlineMarkdown(title) |
-| Параграфы | `result += \`<p>\${line}</p>\`` | line → processInlineMarkdown(line) |
-| Списки | `result += \`<li>\${line.replace...}</li>\`` | Применить к содержимому |
-| Таблицы | `${cell}` в processTable | cell → processInlineMarkdown(cell) |
-| Blockquotes | blockquoteLines.join | Применить к каждой строке |
-| Callouts | calloutLines.join | Применить к каждой строке |
+| `src/components/StructuredData.tsx` | Добавить authorRole в интерфейс, обновить generateArticle и generateBlogPosting |
+| `src/pages/BlogPost.tsx` | Передать author и authorRole в StructuredData |
 
 ---
 
 ## Ожидаемый результат
 
-После изменений:
-- Весь inline-markdown (`**bold**`, `*italic*`, `[links](url)`, `` `code` ``) корректно отображается как HTML
-- Статьи выглядят профессионально без сырой markdown-разметки
-- Улучшается читаемость и восприятие контента
+- Все 158 статей имеют Person schema с именем автора и должностью
+- Google индексирует авторов как реальных специалистов
+- Улучшается E-E-A-T сигнал для SEO
+- Статьи выглядят более профессионально в результатах поиска
