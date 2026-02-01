@@ -54,7 +54,7 @@ export const districtSlugs = [
 // Статьи блога - динамически из allBlogArticles
 // Импорт будет добавлен при сборке SSG
 
-// Районы Москвы (125 районов)
+// Районы Москвы (130 районов)
 export const neighborhoodSlugs = [
   // ЦАО
   'arbat', 'tverskoy', 'zamoskvorechye', 'khamovniki', 'presnensky', 'basmannyy', 'krasnoselsky', 'meshchansky', 'tagansky', 'yakimanka',
@@ -164,7 +164,7 @@ export function getAllSSGRoutes() {
     });
   });
   
-  // Услуга + Район (500 страниц: 4 услуги × 125 районов)
+  // Услуга + Район (520 страниц: 4 услуги × 130 районов)
   servicesForObjects.forEach(serviceSlug => {
     neighborhoodSlugs.forEach(districtSlug => {
       routes.push({
