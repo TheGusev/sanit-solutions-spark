@@ -15,6 +15,7 @@ import { ImageGallery } from '@/components/ImageGallery';
 import { getNeighborhoodBySlug, getNeighborhoodsByDistrict } from '@/data/neighborhoods';
 import { getDistrictById } from '@/data/districtPages';
 import { getNeighborhoodContent } from '@/data/neighborhoodContent';
+import { generateNeighborhoodContent } from '@/lib/neighborhoodContentGenerator';
 import { getNeighborhoodImages, getCategoryLabel } from '@/data/neighborhoodImages';
 import { SEO_CONFIG } from '@/lib/seo';
 import { useState } from 'react';
@@ -50,8 +51,9 @@ const NeighborhoodPage = () => {
     .filter(n => n.slug !== neighborhood.slug)
     .slice(0, 6);
 
-  // Расширенный контент для района
-  const extendedContent = getNeighborhoodContent(neighborhood.slug);
+  // Расширенный контент для района (ручной или автогенерированный)
+  const extendedContent = getNeighborhoodContent(neighborhood.slug) 
+    || generateNeighborhoodContent(neighborhood);
   
   // Изображения для района
   const neighborhoodImagesData = getNeighborhoodImages(neighborhood.slug);

@@ -21,9 +21,28 @@ export interface Neighborhood {
   faq: NeighborhoodFAQ[];
 }
 
-// Helper to generate description
-const genDescription = (name: string, districtName: string, landmarks: string[]): string => {
-  return `Район ${name} в ${districtName} — один из районов Москвы, где мы оказываем услуги профессиональной дезинфекции, дезинсекции и дератизации. Наши специалисты хорошо знают особенности местной застройки и оперативно выезжают на объекты в этом районе. Обрабатываем квартиры, офисы, рестораны, склады и другие помещения. Используем сертифицированные препараты, безопасные для людей и домашних животных. Среди известных мест района: ${landmarks.slice(0, 3).join(', ')}. Гарантия на все виды работ — 1 год.`;
+// Маппинг округов на названия в предложном падеже
+const districtNamesLocative: Record<string, string> = {
+  'cao': 'Центральном округе',
+  'sao': 'Северном округе',
+  'svao': 'Северо-Восточном округе',
+  'vao': 'Восточном округе',
+  'yuvao': 'Юго-Восточном округе',
+  'yao': 'Южном округе',
+  'yzao': 'Юго-Западном округе',
+  'zao': 'Западном округе',
+  'szao': 'Северо-Западном округе',
+  'nao': 'Новомосковском округе',
+  'tao': 'Троицком округе',
+  'zelao': 'Зеленоградском округе'
+};
+
+// Helper to generate description (исправлена тавтология)
+const genDescription = (name: string, districtId: string, landmarks: string[], responseTime: string): string => {
+  const districtName = districtNamesLocative[districtId] || 'Москве';
+  const landmarkText = landmarks.slice(0, 3).join(', ');
+  
+  return `${name} — район в ${districtName} Москвы, где мы оказываем услуги профессиональной дезинфекции, дезинсекции и дератизации. Время прибытия мастера — ${responseTime}. Обрабатываем квартиры, офисы, рестораны, склады и другие помещения. Используем сертифицированные препараты, безопасные для людей и домашних животных. Ориентиры: ${landmarkText}. Гарантия 1 год.`;
 };
 
 // Helper to generate FAQ
@@ -1529,7 +1548,7 @@ const newDistrictsNeighborhoods: Neighborhood[] = [
 function fillNeighborhoodData(neighborhoods: Neighborhood[]): Neighborhood[] {
   return neighborhoods.map(n => ({
     ...n,
-    description: genDescription(n.name, n.fullName, n.landmarks),
+    description: genDescription(n.name, n.districtId, n.landmarks, n.responseTime),
     faq: genFAQ(n.name, n.responseTime, n.surcharge)
   }));
 }
