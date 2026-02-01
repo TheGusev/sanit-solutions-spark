@@ -36,7 +36,7 @@ export const blogAuthors: Author[] = [
   {
     id: 'gusev-v',
     name: 'Владимир Гусев',
-    role: 'Технолог-дезинфектолог',
+    role: 'Мастер-дезинфектор',
     experience: '7 лет',
     style: 'technical',
     specialization: ['препараты', 'технологии', 'озонирование', 'туман']
