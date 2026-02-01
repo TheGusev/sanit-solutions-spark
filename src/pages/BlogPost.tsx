@@ -136,9 +136,6 @@ const BlogPost = () => {
                   year: 'numeric'
                 })}
               </span>
-              <span className="text-sm text-muted-foreground">
-                {post.readTime}
-              </span>
             </div>
             <h1 className="text-3xl md:text-5xl font-bold text-foreground">
               {post.title}
