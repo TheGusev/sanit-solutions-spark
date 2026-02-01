@@ -1,210 +1,124 @@
 
-# План: Исправление тавтологии и генератор уникального контента для районов
+# План: Устранение дублирования текста на страницах районов
 
-## Диагностика проблемы
+## Диагноз проблемы
 
-### Тавтология в `genDescription`
+На странице района (например, `/rajony/tverskoy`) один и тот же текст показывается **трижды**:
 
-**Файл:** `src/data/neighborhoods.ts`, строки 25-27
+| Место | Источник | Что показывается |
+|-------|----------|------------------|
+| Hero (под H1) | `neighborhood.description.slice(0, 200)...` | Обрезанный текст из description |
+| Секция "О дезинфекции в X" | `neighborhood.description` | **Тот же текст полностью** |
+| Секция "Дезинфекция в районе X" | `extendedContent.intro` | Похожий сгенерированный текст |
 
-```typescript
-// ТЕКУЩИЙ КОД (ОШИБКА):
-const genDescription = (name: string, districtName: string, landmarks: string[]): string => {
-  return `Район ${name} в ${districtName} — один из районов Москвы...`;
-};
-```
-
-При вызове с `n.fullName` = "район Арбат" получается:
-> "Район Арбат в **район Арбат** — один из районов Москвы..."
-
-### Масштаб проблемы
-
-| Статус | Количество | Источник контента |
-|--------|------------|-------------------|
-| С уникальным контентом | 10 районов | `neighborhoodContent.ts` |
-| Шаблонный контент | **120 районов** | `genDescription()` с тавтологией |
+**Почему так произошло:**
+- `description` генерируется в `neighborhoods.ts` функцией `genDescription()`
+- `extendedContent.intro` генерируется в `neighborhoodContentGenerator.ts` функцией `generateIntro()`
+- Оба текста описывают одно и то же разными словами
+- В Hero показывается обрезанная версия, а ниже — полная (это не имеет смысла)
 
 ---
 
 ## Решение
 
-### Этап 1: Исправление тавтологии
+Убрать дублирующие секции и реорганизовать контент:
 
-**Файл:** `src/data/neighborhoods.ts`
+### Изменение 1: Убрать обрезанный текст из Hero
 
-Изменить функцию `genDescription` для корректной работы с `districtId` вместо `fullName`:
+**Файл:** `src/pages/NeighborhoodPage.tsx`, строки 206-208
 
-```typescript
-// НОВЫЙ КОД:
-const genDescription = (
-  name: string, 
-  districtId: string, 
-  landmarks: string[],
-  responseTime: string
-): string => {
-  const districtNames: Record<string, string> = {
-    'cao': 'Центральном округе',
-    'sao': 'Северном округе', 
-    'svao': 'Северо-Восточном округе',
-    'vao': 'Восточном округе',
-    'yuvao': 'Юго-Восточном округе',
-    'yao': 'Южном округе',
-    'yzao': 'Юго-Западном округе',
-    'zao': 'Западном округе',
-    'szao': 'Северо-Западном округе',
-    'nao': 'Новомосковском округе',
-    'tao': 'Троицком округе',
-    'zelao': 'Зеленоградском округе'
-  };
-  
-  const districtName = districtNames[districtId] || 'Москве';
-  const landmarkText = landmarks.slice(0, 3).join(', ');
-  
-  return `${name} — район в ${districtName} Москвы, где мы оказываем услуги 
-профессиональной дезинфекции. Время прибытия мастера — ${responseTime}. 
-Обрабатываем квартиры, офисы, рестораны и другие помещения. 
-Ориентиры: ${landmarkText}. Гарантия 1 год.`;
-};
+Заменить обрезанный description на краткое УТП без повторов:
+
+```tsx
+// БЫЛО:
+<p className="text-lg md:text-xl text-muted-foreground mb-6">
+  {neighborhood.description.slice(0, 200)}...
+</p>
+
+// СТАНЕТ:
+<p className="text-lg md:text-xl text-muted-foreground mb-6">
+  Профессиональная обработка квартир, офисов и коммерческих помещений. 
+  Выезд мастера — {neighborhood.responseTime}. Гарантия результата.
+</p>
 ```
 
-Обновить вызов в `fillNeighborhoodData`:
+### Изменение 2: Удалить секцию "О дезинфекции в X"
 
-```typescript
-description: genDescription(n.name, n.districtId, n.landmarks, n.responseTime),
+**Файл:** `src/pages/NeighborhoodPage.tsx`, строки 297-311
+
+Полностью удалить секцию, которая дублирует description:
+
+```tsx
+// УДАЛИТЬ ПОЛНОСТЬЮ:
+{/* Description */}
+<section className="py-12 bg-muted/30">
+  <div className="container mx-auto px-4">
+    <div className="max-w-4xl">
+      <h2 className="text-2xl md:text-3xl font-bold mb-6">
+        О дезинфекции в {neighborhood.name}
+      </h2>
+      <div className="prose prose-lg dark:prose-invert max-w-none">
+        <p className="text-muted-foreground leading-relaxed">
+          {neighborhood.description}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+```
+
+### Изменение 3: Оставить только extendedContent.intro
+
+Секция "Дезинфекция и дезинсекция в районе X" (строки 363-378) останется — это уникальный контент из генератора, который **разный для каждого типа округа**.
+
+---
+
+## Структура страницы после исправления
+
+```text
+1. Breadcrumbs
+2. Hero Section
+   - H1: "Дезинфекция в Тверском районе — выезд за 15 минут"
+   - Краткое УТП (новое, без повторов)
+   - Badges (время выезда, гарантия, цена)
+   - CTA кнопки
+3. Warning Block (вариативный)
+4. Services Grid (4 услуги с ценами)
+5. [УДАЛЕНО] Секция "О дезинфекции в X" ← дублирование
+6. Property Gallery (типы объектов)
+7. Секция "Дезинфекция в районе X" — extendedContent.intro
+8. Секция "Почему выбирают нас" — extendedContent.whyUs
+9. Секция "Зона обслуживания" — extendedContent.coverage
+10. Преимущества — extendedContent.advantages
+11. FAQ
+12. Соседние районы
+13. Internal Links
+14. Footer
 ```
 
 ---
 
-### Этап 2: Создание генератора уникального контента
+## Файлы для изменения
 
-**Новый файл:** `src/lib/neighborhoodContentGenerator.ts`
-
-Генератор будет создавать уникальный контент для районов на основе:
-- Типа округа (центральный, спальный, промышленный)
-- Времени прибытия (`responseTime`)
-- Наценки (`surcharge`)
-- Ориентиров (`landmarks`)
-
-```typescript
-export function generateNeighborhoodContent(neighborhood: Neighborhood): NeighborhoodContent {
-  const districtType = getDistrictType(neighborhood.districtId);
-  const rng = new SeededRandom(hashCode(neighborhood.slug));
-  
-  return {
-    slug: neighborhood.slug,
-    name: neighborhood.name,
-    intro: generateUniqueIntro(neighborhood, districtType, rng),
-    whyUs: generateWhyUs(neighborhood, districtType, rng),
-    coverage: generateCoverage(neighborhood),
-    advantages: generateAdvantages(districtType, rng),
-    landmarks: neighborhood.landmarks
-  };
-}
-```
-
-**Вариативность генератора:**
-
-| Компонент | Количество вариаций | Зависит от |
-|-----------|---------------------|------------|
-| Вступление (intro) | 12 шаблонов | districtType + hash(slug) |
-| Почему мы (whyUs) | 20+ фраз | districtType + responseTime |
-| Преимущества | 16 фраз | districtType |
-| Покрытие | Динамическое | landmarks + streets |
-
-**Типы округов:**
-
-| Тип | Округа | Характеристика |
-|-----|--------|----------------|
-| `central` | ЦАО | Элитная застройка, исторические здания |
-| `residential` | САО, СВАО, ЮАО | Спальные районы, панельные дома |
-| `business` | ЗАО, ЮЗАО, СЗАО | Бизнес-центры, офисы |
-| `industrial` | ВАО, ЮВАО | Промзоны, склады, производство |
-| `suburban` | НАО, ТАО, ЗелАО | Пригород, удалённые районы |
-
----
-
-### Этап 3: Интеграция в NeighborhoodPage
-
-**Файл:** `src/pages/NeighborhoodPage.tsx`, строка 54
-
-```typescript
-// ТЕКУЩИЙ КОД:
-const extendedContent = getNeighborhoodContent(neighborhood.slug);
-
-// НОВЫЙ КОД:
-import { generateNeighborhoodContent } from '@/lib/neighborhoodContentGenerator';
-
-const extendedContent = getNeighborhoodContent(neighborhood.slug) 
-  || generateNeighborhoodContent(neighborhood);
-```
-
-Это обеспечит:
-- Приоритет ручного контента из `neighborhoodContent.ts`
-- Автоматическую генерацию для остальных 120 районов
-
----
-
-## Технические изменения
-
-### Файлы для изменения:
-
-| Файл | Изменения |
+| Файл | Изменение |
 |------|-----------|
-| `src/data/neighborhoods.ts` | Исправить `genDescription`, обновить `fillNeighborhoodData` |
-| `src/lib/neighborhoodContentGenerator.ts` | Новый файл — генератор уникального контента |
-| `src/pages/NeighborhoodPage.tsx` | Добавить fallback на генератор |
-
-### Структура нового генератора:
-
-```text
-src/lib/neighborhoodContentGenerator.ts
-├── getDistrictType(districtId) → 'central' | 'residential' | 'business' | 'industrial' | 'suburban'
-├── generateUniqueIntro(neighborhood, type, rng) → string
-├── generateWhyUs(neighborhood, type, rng) → string[]
-├── generateCoverage(neighborhood) → string
-├── generateAdvantages(type, rng) → string[]
-└── generateNeighborhoodContent(neighborhood) → NeighborhoodContent
-```
+| `src/pages/NeighborhoodPage.tsx` | Заменить текст в Hero, удалить секцию "О дезинфекции" |
 
 ---
 
-## Примеры результата
+## SEO-соображения
 
-### До исправления (Северное Медведково):
-> "Район Северное Медведково в **район Северное Медведково** — один из районов Москвы..."
-
-### После исправления:
-> "Северное Медведково — район в **Северо-Восточном округе** Москвы, где мы оказываем услуги 
-> профессиональной дезинфекции. Время прибытия мастера — 40-50 минут. 
-> Обрабатываем квартиры, офисы, рестораны. Ориентиры: метро Медведково, парк Медведково, 
-> Заповедная улица. Гарантия 1 год."
-
-### Сгенерированный контент для секции "Почему мы":
-- Знаем особенности панельных домов СВАО
-- Работаем со старым жилым фондом 70-80-х годов
-- Быстрый выезд — 40-50 минут в ваш район
-- Опыт обработки первых этажей над подвалами
-- Скидки для пенсионеров 10%
+- **H2 "О дезинфекции в X"** удаляется, но остаётся **H2 "Дезинфекция и дезинсекция в районе X"** — семантика сохранена
+- Контент становится уникальным благодаря генератору по типам округов
+- Каннибализация ключевых слов устраняется
+- Страница становится более читаемой для пользователей
 
 ---
 
-## Безопасность изменений
+## Ожидаемый результат
 
-| Аспект | Статус |
-|--------|--------|
-| URL-структура | Без изменений |
-| Schema.org разметка | Без изменений |
-| Canonical URLs | Без изменений |
-| Существующий контент | Приоритет сохраняется |
-| SEO-метаданные | Без изменений |
-
----
-
-## Порядок выполнения
-
-```text
-1. Исправить genDescription() в neighborhoods.ts
-2. Создать neighborhoodContentGenerator.ts
-3. Обновить NeighborhoodPage.tsx для использования генератора
-4. Протестировать на /rajony/severnoe-medvedkovo
-```
+После изменений:
+- Нет дублирования текста на страницах районов
+- Каждый блок контента несёт уникальную информацию
+- Сохранена вся семантическая структура (H1, H2, FAQ)
+- Генератор создаёт уникальный контент для 130 районов
