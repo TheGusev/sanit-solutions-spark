@@ -279,3 +279,100 @@ export function countWords(htmlContent: string): number {
   const textContent = htmlContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
   return textContent.split(' ').filter(word => word.length > 0).length;
 }
+
+// =====================================================
+// СИСТЕМА АВТОРОВ И ДАТ ДЛЯ СТАТЕЙ БЛОГА
+// =====================================================
+
+import { blogAuthors, type Author } from '@/data/blog/types';
+
+/**
+ * Генерирует дату публикации статьи в диапазоне ноябрь 2025 — февраль 2026
+ */
+export function generateArticleDate(articleId: number, slug: string): string {
+  const startDate = new Date('2025-11-01');
+  const totalDays = 93; // до 01.02.2026
+  
+  // Детерминированный хеш от slug для равномерного распределения
+  const hash = simpleHash(slug + articleId.toString());
+  const dayOffset = Math.abs(hash) % totalDays;
+  
+  const articleDate = new Date(startDate);
+  articleDate.setDate(articleDate.getDate() + dayOffset);
+  
+  return articleDate.toISOString().split('T')[0];
+}
+
+/**
+ * Назначает автора статьи на основе категории и тегов
+ */
+export function assignAuthor(article: { 
+  category: string; 
+  tags: string[]; 
+  pest?: string;
+  objectType?: string;
+  slug?: string;
+}): Author {
+  const { category, tags, pest, objectType, slug } = article;
+  const tagString = tags.join(' ').toLowerCase();
+  const slugLower = (slug || '').toLowerCase();
+  
+  // Эдуард Васильев — законы и документация
+  if (category === 'Законы' || 
+      tagString.includes('санпин') || 
+      tagString.includes('роспотребнадзор') ||
+      tagString.includes('документ') ||
+      tagString.includes('штраф') ||
+      tagString.includes('лицензия')) {
+    return blogAuthors.find(a => a.id === 'vasiliev')!;
+  }
+  
+  // Александр Афанасьев — грызуны и дератизация
+  if (category === 'Дератизация' || 
+      pest === 'rats' || 
+      pest === 'mice' ||
+      tagString.includes('грызун') ||
+      tagString.includes('крыс') ||
+      tagString.includes('мыш')) {
+    return blogAuthors.find(a => a.id === 'afanasiev')!;
+  }
+  
+  // Владимир Гусев — технологии и препараты
+  if (tagString.includes('озонирование') || 
+      tagString.includes('туман') ||
+      tagString.includes('препарат') ||
+      tagString.includes('технолог') ||
+      slugLower.includes('ozon') ||
+      slugLower.includes('tuman') ||
+      category === 'Препараты') {
+    return blogAuthors.find(a => a.id === 'gusev-v')!;
+  }
+  
+  // Владимир Учаев — коммерческие объекты
+  if (tagString.includes('офис') || 
+      tagString.includes('ресторан') ||
+      tagString.includes('склад') ||
+      tagString.includes('производств') ||
+      tagString.includes('общепит') ||
+      objectType === 'office' ||
+      objectType === 'restaurant' ||
+      objectType === 'warehouse') {
+    return blogAuthors.find(a => a.id === 'uchaev')!;
+  }
+  
+  // Андрей Иванов — мелкие насекомые и жильё
+  if (pest === 'ants' || 
+      pest === 'fleas' || 
+      pest === 'moths' ||
+      pest === 'flies' ||
+      pest === 'mosquitoes' ||
+      tagString.includes('муравь') ||
+      tagString.includes('блох') ||
+      tagString.includes('моль') ||
+      tagString.includes('мух')) {
+    return blogAuthors.find(a => a.id === 'ivanov')!;
+  }
+  
+  // По умолчанию — Максим Гусев (тараканы, клопы, квартиры)
+  return blogAuthors.find(a => a.id === 'gusev-m')!;
+}

@@ -6,6 +6,7 @@
 import { Home, Building, Warehouse, Utensils, Factory, Shield, FileText } from "lucide-react";
 import { objectTypes } from "@/data/objects";
 import type { BlogArticle } from "./types";
+import { generateArticleDate, assignAuthor } from "@/lib/blogContentGenerator";
 
 // Шаблоны для генерации статей
 const premisesTemplates = [
@@ -357,32 +358,43 @@ ${obj.features.map(f => `- ${f}`).join('\n')}
   }
 ];
 
-// Генерируем статьи
+// Генерируем статьи с авторами и датами
 export const premisesArticles: BlogArticle[] = objectTypes.flatMap((obj, objIndex) =>
-  premisesTemplates.map((template, templateIndex) => ({
-    id: 3000 + objIndex * 100 + templateIndex,
-    slug: `${template.slugPrefix}-${obj.slug}`,
-    title: template.titleTemplate
-      .replace('{genitive}', obj.genitive)
-      .replace('{accusative}', obj.accusative)
-      .replace('{prepositional}', obj.prepositional),
-    excerpt: template.excerptTemplate
-      .replace('{genitive}', obj.genitive)
-      .replace('{accusative}', obj.accusative)
-      .replace('{prepositional}', obj.prepositional),
-    content: template.contentGenerator(obj),
-    category: template.category,
-    date: '2026-01-15',
-    updatedAt: '2026-01-20',
-    readTime: template.readTime,
-    wordCount: template.wordCount,
-    image: obj.icon === '🏠' ? Home : obj.icon === '🏡' ? Home : obj.icon === '🏢' ? Building : obj.icon === '🍽️' ? Utensils : obj.icon === '🏭' ? Warehouse : Factory,
-    tags: [obj.name.toLowerCase(), obj.slug, 'помещения', 'обработка'],
-    objectType: obj.id,
-    faq: [
-      { question: `Сколько стоит обработка ${obj.genitive}?`, answer: `Стоимость от ${Math.round(1200 * obj.priceMultiplier)}₽ в зависимости от площади и вида вредителей.` },
-      { question: `Сколько времени занимает обработка ${obj.genitive}?`, answer: `Среднее время обработки: ${obj.averageTime}.` },
-    ],
-    relatedServices: ['dezinsekciya', 'deratizaciya']
-  }))
+  premisesTemplates.map((template, templateIndex) => {
+    const id = 3000 + objIndex * 100 + templateIndex;
+    const slug = `${template.slugPrefix}-${obj.slug}`;
+    const category = template.category;
+    const tags = [obj.name.toLowerCase(), obj.slug, 'помещения', 'обработка'];
+    
+    const author = assignAuthor({ category, tags, objectType: obj.id, slug });
+    
+    return {
+      id,
+      slug,
+      title: template.titleTemplate
+        .replace('{genitive}', obj.genitive)
+        .replace('{accusative}', obj.accusative)
+        .replace('{prepositional}', obj.prepositional),
+      excerpt: template.excerptTemplate
+        .replace('{genitive}', obj.genitive)
+        .replace('{accusative}', obj.accusative)
+        .replace('{prepositional}', obj.prepositional),
+      content: template.contentGenerator(obj),
+      category,
+      date: generateArticleDate(id, slug),
+      updatedAt: generateArticleDate(id + 300, slug + '-upd'),
+      readTime: template.readTime,
+      wordCount: template.wordCount,
+      image: obj.icon === '🏠' ? Home : obj.icon === '🏡' ? Home : obj.icon === '🏢' ? Building : obj.icon === '🍽️' ? Utensils : obj.icon === '🏭' ? Warehouse : Factory,
+      tags,
+      objectType: obj.id,
+      faq: [
+        { question: `Сколько стоит обработка ${obj.genitive}?`, answer: `Стоимость от ${Math.round(1200 * obj.priceMultiplier)}₽ в зависимости от площади и вида вредителей.` },
+        { question: `Сколько времени занимает обработка ${obj.genitive}?`, answer: `Среднее время обработки: ${obj.averageTime}.` },
+      ],
+      relatedServices: ['dezinsekciya', 'deratizaciya'],
+      author: author.name,
+      authorRole: author.role
+    };
+  })
 );
