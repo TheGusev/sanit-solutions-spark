@@ -14,6 +14,13 @@ const HERO_BACKGROUNDS = [
   '/images/work/living-room-treatment.png'
 ];
 
+// Фоновые изображения для карточек
+const HERO_CARD_BACKGROUNDS = [
+  '/images/hero-cards/fast-response.jpg',
+  '/images/hero-cards/certificates.jpg',
+  '/images/hero-cards/guarantee.jpg'
+];
+
 interface HeroProps {
   onCalculatorClick?: () => void;
 }
@@ -135,48 +142,69 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <AnimatedSection animation="fade-up" delay={0}>
-              <div className="bg-card p-3 md:p-6 lg:p-8 rounded-xl shadow-sm hover-lift flex md:flex-col items-center md:items-start justify-between md:justify-start">
-                <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
-                  <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-primary/10 md:flex md:items-center md:justify-center">
-                    <Zap className="w-5 h-5 md:w-6 md:h-6 text-primary flex-shrink-0" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-sm md:text-lg md:mb-2">
-                      Выезд за 15 минут <span className="text-muted-foreground font-normal md:hidden">— Самый быстрый в Москве</span>
-                    </h3>
-                    <p className="hidden md:block text-sm text-muted-foreground">Самый быстрый выезд в Москве</p>
+              <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
+                <div 
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[0]}')`, opacity: 0.15 }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-card/90 via-card/85 to-card/80" />
+                <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col items-center md:items-start justify-between md:justify-start">
+                  <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
+                    <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-primary/10 md:flex md:items-center md:justify-center">
+                      <Zap className="w-5 h-5 md:w-6 md:h-6 text-primary flex-shrink-0" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm md:text-lg md:mb-2">
+                        Выезд за 15 минут <span className="text-muted-foreground font-normal md:hidden">— Самый быстрый в Москве</span>
+                      </h3>
+                      <p className="hidden md:block text-sm text-muted-foreground">Самый быстрый выезд в Москве</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </AnimatedSection>
             
             <AnimatedSection animation="fade-up" delay={150}>
-              <div className="bg-card p-3 md:p-6 lg:p-8 rounded-xl shadow-sm hover-lift flex md:flex-col items-center md:items-start justify-between md:justify-start">
-                <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
-                  <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-success/10 md:flex md:items-center md:justify-center">
-                    <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-success flex-shrink-0" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-sm md:text-lg md:mb-2">
-                      Сертификаты <span className="text-muted-foreground font-normal md:hidden">— Все документы</span>
-                    </h3>
-                    <p className="hidden md:block text-sm text-muted-foreground">Все необходимые документы</p>
+              <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
+                <div 
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[1]}')`, opacity: 0.15 }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-card/90 via-card/85 to-card/80" />
+                <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col items-center md:items-start justify-between md:justify-start">
+                  <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
+                    <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-success/10 md:flex md:items-center md:justify-center">
+                      <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-success flex-shrink-0" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm md:text-lg md:mb-2">
+                        Сертификаты <span className="text-muted-foreground font-normal md:hidden">— Все документы</span>
+                      </h3>
+                      <p className="hidden md:block text-sm text-muted-foreground">Все необходимые документы</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </AnimatedSection>
             
             <AnimatedSection animation="fade-up" delay={300}>
-              <div className="bg-card p-3 md:p-6 lg:p-8 rounded-xl shadow-sm hover-lift flex md:flex-col items-center md:items-start justify-between md:justify-start">
-                <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
-                  <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-accent/10 md:flex md:items-center md:justify-center">
-                    <Shield className="w-5 h-5 md:w-6 md:h-6 text-accent flex-shrink-0" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-sm md:text-lg md:mb-2">
-                      Гарантия <span className="text-muted-foreground font-normal md:hidden">— На все работы</span>
-                    </h3>
-                    <p className="hidden md:block text-sm text-muted-foreground">На все виды работ</p>
+              <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
+                <div 
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[2]}')`, opacity: 0.15 }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-card/90 via-card/85 to-card/80" />
+                <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col items-center md:items-start justify-between md:justify-start">
+                  <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
+                    <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-accent/10 md:flex md:items-center md:justify-center">
+                      <Shield className="w-5 h-5 md:w-6 md:h-6 text-accent flex-shrink-0" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm md:text-lg md:mb-2">
+                        Гарантия <span className="text-muted-foreground font-normal md:hidden">— На все работы</span>
+                      </h3>
+                      <p className="hidden md:block text-sm text-muted-foreground">На все виды работ</p>
+                    </div>
                   </div>
                 </div>
               </div>
