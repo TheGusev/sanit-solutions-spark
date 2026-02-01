@@ -92,13 +92,20 @@ export const extractHeadings = (content: string): TocItem[] => {
   const headings: TocItem[] = [];
   const cleanedContent = cleanAIContent(content);
   const lines = cleanedContent.split('\n');
+  const usedIds = new Map<string, number>();
 
   lines.forEach((line) => {
     const match = line.match(/^(#{2,3})\s+(.+)$/);
     if (match) {
       const level = match[1].length;
       const title = match[2].trim();
-      const id = transliterate(title);
+      const baseId = transliterate(title);
+      
+      // Add index if ID already used
+      const count = usedIds.get(baseId) || 0;
+      const id = count > 0 ? `${baseId}-${count}` : baseId;
+      usedIds.set(baseId, count + 1);
+      
       headings.push({ id, title, level });
     }
   });
@@ -151,6 +158,7 @@ export const generateContentWithIds = (content: string): string => {
   let inCallout = false;
   let calloutType = '';
   let calloutLines: string[] = [];
+  const usedIds = new Map<string, number>();
   
   const closeList = () => {
     if (inList) {
@@ -251,12 +259,18 @@ export const generateContentWithIds = (content: string): string => {
     if (line.startsWith('## ')) {
       closeList();
       const title = line.replace('## ', '');
-      const id = transliterate(title);
+      const baseId = transliterate(title);
+      const count = usedIds.get(baseId) || 0;
+      const id = count > 0 ? `${baseId}-${count}` : baseId;
+      usedIds.set(baseId, count + 1);
       result += `<h2 id="${id}">${processInlineMarkdown(title)}</h2>`;
     } else if (line.startsWith('### ')) {
       closeList();
       const title = line.replace('### ', '');
-      const id = transliterate(title);
+      const baseId = transliterate(title);
+      const count = usedIds.get(baseId) || 0;
+      const id = count > 0 ? `${baseId}-${count}` : baseId;
+      usedIds.set(baseId, count + 1);
       result += `<h3 id="${id}">${processInlineMarkdown(title)}</h3>`;
     } else if (line.startsWith('#### ')) {
       closeList();
