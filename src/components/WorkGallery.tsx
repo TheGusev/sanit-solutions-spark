@@ -8,36 +8,18 @@ type MediaItem = {
 };
 
 const mediaItems: MediaItem[] = [
-  { 
-    type: "video",
-    src: "/images/work/work-video.mov", 
-    title: "Процесс обработки", 
-    desc: "Видео с объекта" 
-  },
-  { 
-    type: "image",
-    src: "/images/work/bedroom-disinfection.png", 
-    title: "Дезинсекция квартиры", 
-    desc: "Обработка спальни от клопов" 
-  },
-  { 
-    type: "image",
-    src: "/images/work/commercial-kitchen.png", 
-    title: "Дезинфекция кухни", 
-    desc: "Промышленное оборудование" 
-  },
-  { 
-    type: "image",
-    src: "/images/work/plumbing-treatment.png", 
-    title: "Герметизация", 
-    desc: "Обработка коммуникаций" 
-  },
-  { 
-    type: "image",
-    src: "/images/work/basement-work.png", 
-    title: "Техпомещения", 
-    desc: "Работа в подвалах" 
-  },
+  { type: "video", src: "/images/work/work-video.mov", title: "Процесс обработки", desc: "Видео с объекта" },
+  { type: "image", src: "/images/work/bedroom-disinfection.png", title: "Дезинсекция квартиры", desc: "Обработка спальни от клопов" },
+  { type: "image", src: "/images/work/commercial-kitchen.png", title: "Дезинфекция кухни", desc: "Промышленное оборудование" },
+  { type: "image", src: "/images/work/plumbing-treatment.png", title: "Герметизация", desc: "Обработка коммуникаций" },
+  { type: "image", src: "/images/work/basement-work.png", title: "Техпомещения", desc: "Работа в подвалах" },
+  { type: "video", src: "/images/work/fog-treatment-video.mp4", title: "Холодный туман", desc: "Обработка помещения" },
+  { type: "video", src: "/images/work/site-work-video.mp4", title: "Работа на объекте", desc: "Реальный выезд" },
+  { type: "image", src: "/images/work/fog-generator.jpg", title: "Генератор тумана", desc: "Профессиональное оборудование" },
+  { type: "image", src: "/images/work/clean-room.jpg", title: "Результат работы", desc: "Помещение после обработки" },
+  { type: "image", src: "/images/work/professional-chemicals.jpg", title: "Препараты", desc: "Сертифицированная химия" },
+  { type: "image", src: "/images/work/specialist-documents.jpg", title: "Оформление документов", desc: "Договор и акт" },
+  { type: "image", src: "/images/work/pipes-treatment.jpg", title: "Обработка труб", desc: "Работа с коммуникациями" },
 ];
 
 const WorkGallery = () => {
@@ -53,7 +35,7 @@ const WorkGallery = () => {
           </p>
         </AnimatedSection>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {mediaItems.map((item, index) => (
             <AnimatedSection 
               key={index} 
