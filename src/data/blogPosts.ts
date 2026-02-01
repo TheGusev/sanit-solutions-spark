@@ -1,4 +1,6 @@
 import { Home, Wind, Bug, Wind as WindAlt, Rat, Calendar, ThermometerSun, Briefcase, Scale, FileText, FlaskConical, FolderOpen, type LucideIcon } from "lucide-react";
+import { blogAuthors } from "@/data/blog/types";
+import { generateArticleDate, assignAuthor } from "@/lib/blogContentGenerator";
 
 export const categories = ["Все", "Дезинфекция", "Дезинсекция", "Дератизация", "Советы", "Законы", "Препараты", "Кейсы"];
 
@@ -13,6 +15,8 @@ export interface BlogPost {
   date: string;
   readTime: string;
   tags: string[];
+  author?: string;
+  authorRole?: string;
 }
 
 export const blogPosts: BlogPost[] = [
@@ -3876,3 +3880,19 @@ export const blogPosts: BlogPost[] = [
     `
   }
 ];
+
+// Добавляем авторов и даты ко всем legacy-статьям
+export const blogPostsWithAuthors: BlogPost[] = blogPosts.map(post => {
+  const author = assignAuthor({ 
+    category: post.category, 
+    tags: post.tags, 
+    slug: post.slug 
+  });
+  
+  return {
+    ...post,
+    date: generateArticleDate(post.id, post.slug),
+    author: author.name,
+    authorRole: author.role
+  };
+});

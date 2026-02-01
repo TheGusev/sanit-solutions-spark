@@ -6,6 +6,7 @@
 import { Bug, Shield, AlertTriangle, Home, Sparkles, HelpCircle, Banknote, Clock, Search } from "lucide-react";
 import { pests } from "@/data/pests";
 import type { BlogArticle } from "./types";
+import { generateArticleDate, assignAuthor } from "@/lib/blogContentGenerator";
 
 // Шаблоны для генерации статей
 const articleTemplates = [
@@ -452,63 +453,86 @@ ${pest.shortDescription}
 // Фильтруем только насекомых (dezinsekciya)
 const insectPests = pests.filter(p => p.serviceType === 'dezinsekciya');
 
-// Генерируем статьи
+// Генерируем статьи с авторами и датами
 export const pestsArticles: BlogArticle[] = insectPests.flatMap((pest, pestIndex) =>
-  articleTemplates.map((template, templateIndex) => ({
-    id: 1000 + pestIndex * 100 + templateIndex,
-    slug: `${template.slugPrefix}-${pest.slug}`,
-    title: template.titleTemplate
-      .replace('{genitive}', pest.genitive)
-      .replace('{name}', pest.name)
-      .replace('{namePlural}', pest.namePlural)
-      .replace('{accusative}', pest.accusative),
-    excerpt: template.excerptTemplate
-      .replace('{genitive}', pest.genitive)
-      .replace('{accusative}', pest.accusative)
-      .replace('{namePlural}', pest.namePlural.toLowerCase()),
-    content: template.contentGenerator(pest),
-    category: pest.serviceType === 'deratizaciya' ? 'Дератизация' : template.category,
-    date: '2026-01-15',
-    updatedAt: '2026-01-20',
-    readTime: template.readTime,
-    wordCount: template.wordCount,
-    image: template.icon,
-    tags: [pest.name.toLowerCase(), pest.slug, 'дезинсекция', 'вредители'],
-    pest: pest.id,
-    faq: template.faqGenerator(pest),
-    relatedServices: [pest.serviceType]
-  }))
+  articleTemplates.map((template, templateIndex) => {
+    const id = 1000 + pestIndex * 100 + templateIndex;
+    const slug = `${template.slugPrefix}-${pest.slug}`;
+    const category = pest.serviceType === 'deratizaciya' ? 'Дератизация' : template.category;
+    const tags = [pest.name.toLowerCase(), pest.slug, 'дезинсекция', 'вредители'];
+    
+    const author = assignAuthor({ category, tags, pest: pest.id, slug });
+    
+    return {
+      id,
+      slug,
+      title: template.titleTemplate
+        .replace('{genitive}', pest.genitive)
+        .replace('{name}', pest.name)
+        .replace('{namePlural}', pest.namePlural)
+        .replace('{accusative}', pest.accusative),
+      excerpt: template.excerptTemplate
+        .replace('{genitive}', pest.genitive)
+        .replace('{accusative}', pest.accusative)
+        .replace('{namePlural}', pest.namePlural.toLowerCase()),
+      content: template.contentGenerator(pest),
+      category,
+      date: generateArticleDate(id, slug),
+      updatedAt: generateArticleDate(id + 1000, slug + '-upd'),
+      readTime: template.readTime,
+      wordCount: template.wordCount,
+      image: template.icon,
+      tags,
+      pest: pest.id,
+      faq: template.faqGenerator(pest),
+      relatedServices: [pest.serviceType],
+      author: author.name,
+      authorRole: author.role
+    };
+  })
 );
 
 // Добавляем статьи для грызунов (deratizaciya)
 const rodentPests = pests.filter(p => p.serviceType === 'deratizaciya');
 const rodentArticleTemplates = articleTemplates.slice(0, 5); // Берём первые 5 шаблонов
 
+// Статьи для грызунов с авторами и датами
 export const rodentsArticles: BlogArticle[] = rodentPests.flatMap((pest, pestIndex) =>
-  rodentArticleTemplates.map((template, templateIndex) => ({
-    id: 2000 + pestIndex * 100 + templateIndex,
-    slug: `${template.slugPrefix}-${pest.slug}`,
-    title: template.titleTemplate
-      .replace('{genitive}', pest.genitive)
-      .replace('{name}', pest.name)
-      .replace('{namePlural}', pest.namePlural)
-      .replace('{accusative}', pest.accusative),
-    excerpt: template.excerptTemplate
-      .replace('{genitive}', pest.genitive)
-      .replace('{accusative}', pest.accusative)
-      .replace('{namePlural}', pest.namePlural.toLowerCase()),
-    content: template.contentGenerator(pest),
-    category: 'Дератизация' as const,
-    date: '2026-01-15',
-    updatedAt: '2026-01-20',
-    readTime: template.readTime,
-    wordCount: template.wordCount,
-    image: template.icon,
-    tags: [pest.name.toLowerCase(), pest.slug, 'дератизация', 'грызуны'],
-    pest: pest.id,
-    faq: template.faqGenerator(pest),
-    relatedServices: ['deratizaciya']
-  }))
+  rodentArticleTemplates.map((template, templateIndex) => {
+    const id = 2000 + pestIndex * 100 + templateIndex;
+    const slug = `${template.slugPrefix}-${pest.slug}`;
+    const category = 'Дератизация' as const;
+    const tags = [pest.name.toLowerCase(), pest.slug, 'дератизация', 'грызуны'];
+    
+    const author = assignAuthor({ category, tags, pest: pest.id, slug });
+    
+    return {
+      id,
+      slug,
+      title: template.titleTemplate
+        .replace('{genitive}', pest.genitive)
+        .replace('{name}', pest.name)
+        .replace('{namePlural}', pest.namePlural)
+        .replace('{accusative}', pest.accusative),
+      excerpt: template.excerptTemplate
+        .replace('{genitive}', pest.genitive)
+        .replace('{accusative}', pest.accusative)
+        .replace('{namePlural}', pest.namePlural.toLowerCase()),
+      content: template.contentGenerator(pest),
+      category,
+      date: generateArticleDate(id, slug),
+      updatedAt: generateArticleDate(id + 500, slug + '-upd'),
+      readTime: template.readTime,
+      wordCount: template.wordCount,
+      image: template.icon,
+      tags,
+      pest: pest.id,
+      faq: template.faqGenerator(pest),
+      relatedServices: ['deratizaciya'],
+      author: author.name,
+      authorRole: author.role
+    };
+  })
 );
 
 // Все статьи про вредителей

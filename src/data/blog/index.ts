@@ -3,16 +3,16 @@
  * Объединяет все категории статей.
  */
 
-import { blogPosts } from '@/data/blogPosts';
+import { blogPostsWithAuthors } from '@/data/blogPosts';
 import { allPestsArticles } from './pests-articles';
 import { premisesArticles } from './premises-articles';
 import { allLegalArticles } from './legal-articles';
 import type { BlogArticle } from './types';
-export { blogCategories } from './types';
-export type { BlogArticle } from './types';
+export { blogCategories, blogAuthors } from './types';
+export type { BlogArticle, Author } from './types';
 
-// Конвертируем старые статьи в новый формат
-const legacyArticles: BlogArticle[] = blogPosts.map(post => ({
+// Конвертируем старые статьи в новый формат (теперь с авторами)
+const legacyArticles: BlogArticle[] = blogPostsWithAuthors.map(post => ({
   ...post,
   wordCount: post.content.split(/\s+/).length,
 }));
