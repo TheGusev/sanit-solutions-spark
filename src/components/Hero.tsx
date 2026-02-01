@@ -155,9 +155,9 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
                     </div>
                     <div>
                       <h3 className="font-bold text-sm md:text-lg md:mb-2">
-                        Выезд за 15 минут <span className="text-muted-foreground font-normal md:hidden">— Самый быстрый в Москве</span>
+                        Выезд за 15 минут <span className="font-normal md:hidden">— Самый быстрый в Москве</span>
                       </h3>
-                      <p className="hidden md:block text-sm text-muted-foreground">Самый быстрый выезд в Москве</p>
+                      <p className="hidden md:block text-sm font-medium">Самый быстрый выезд в Москве</p>
                     </div>
                   </div>
                 </div>
@@ -178,9 +178,9 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
                     </div>
                     <div>
                       <h3 className="font-bold text-sm md:text-lg md:mb-2">
-                        Сертификаты <span className="text-muted-foreground font-normal md:hidden">— Все документы</span>
+                        Сертификаты <span className="font-normal md:hidden">— Все документы</span>
                       </h3>
-                      <p className="hidden md:block text-sm text-muted-foreground">Все необходимые документы</p>
+                      <p className="hidden md:block text-sm font-medium">Все необходимые документы</p>
                     </div>
                   </div>
                 </div>
@@ -201,9 +201,9 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
                     </div>
                     <div>
                       <h3 className="font-bold text-sm md:text-lg md:mb-2">
-                        Гарантия <span className="text-muted-foreground font-normal md:hidden">— На все работы</span>
+                        Гарантия <span className="font-normal md:hidden">— На все работы</span>
                       </h3>
-                      <p className="hidden md:block text-sm text-muted-foreground">На все виды работ</p>
+                      <p className="hidden md:block text-sm font-medium">На все виды работ</p>
                     </div>
                   </div>
                 </div>
