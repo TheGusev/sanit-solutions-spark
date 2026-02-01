@@ -204,7 +204,8 @@ const NeighborhoodPage = () => {
                 />
                 
                 <p className="text-lg md:text-xl text-muted-foreground mb-6">
-                  {neighborhood.description.slice(0, 200)}...
+                  Профессиональная обработка квартир, офисов и коммерческих помещений. 
+                  Выезд мастера — {neighborhood.responseTime}. Гарантия результата.
                 </p>
 
                 {/* Trust badges */}
@@ -294,21 +295,6 @@ const NeighborhoodPage = () => {
           </div>
         </section>
 
-        {/* Description */}
-        <section className="py-12 bg-muted/30">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6">
-                О дезинфекции в {neighborhood.name}
-              </h2>
-              <div className="prose prose-lg dark:prose-invert max-w-none">
-                <p className="text-muted-foreground leading-relaxed">
-                  {neighborhood.description}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Property Gallery Section */}
         {neighborhoodImagesData && neighborhoodImagesData.galleryImages.length > 0 && (
