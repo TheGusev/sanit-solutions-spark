@@ -75,6 +75,19 @@ const cleanAIContent = (text: string): string => {
     .trim();
 };
 
+// Process inline markdown (bold, italic, links, code)
+const processInlineMarkdown = (text: string): string => {
+  return text
+    // Bold: **text** → <strong>text</strong>
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    // Italic: *text* → <em>text</em> (but not inside bold)
+    .replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>')
+    // Links: [text](url) → <a href="url">text</a>
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:underline">$1</a>')
+    // Inline code: `text` → <code>text</code>
+    .replace(/`([^`]+)`/g, '<code class="bg-muted px-1 py-0.5 rounded text-sm">$1</code>');
+};
+
 export const extractHeadings = (content: string): TocItem[] => {
   const headings: TocItem[] = [];
   const cleanedContent = cleanAIContent(content);
@@ -95,7 +108,7 @@ export const extractHeadings = (content: string): TocItem[] => {
 
 // Process Markdown table rows into HTML
 const processTable = (rows: string[]): string => {
-  if (rows.length < 2) return rows.map(r => `<p>${r}</p>`).join('');
+  if (rows.length < 2) return rows.map(r => `<p>${processInlineMarkdown(r)}</p>`).join('');
   
   // Filter out separator row (|---|---|)
   const dataRows = rows.filter(row => !row.match(/^\|[\s-:|]+\|$/));
@@ -107,7 +120,7 @@ const processTable = (rows: string[]): string => {
   let html = '<div class="overflow-x-auto my-6"><table class="blog-table w-full border-collapse rounded-lg overflow-hidden">';
   html += '<thead><tr>';
   headerCells.forEach(cell => {
-    html += `<th class="bg-primary text-primary-foreground px-4 py-3 text-left font-semibold text-sm">${cell}</th>`;
+    html += `<th class="bg-primary text-primary-foreground px-4 py-3 text-left font-semibold text-sm">${processInlineMarkdown(cell)}</th>`;
   });
   html += '</tr></thead><tbody>';
   
@@ -116,7 +129,7 @@ const processTable = (rows: string[]): string => {
     const bgClass = i % 2 === 0 ? 'bg-background' : 'bg-muted/30';
     html += `<tr class="${bgClass} hover:bg-muted/50 transition-colors">`;
     cells.forEach(cell => {
-      html += `<td class="px-4 py-3 border-b border-border text-muted-foreground">${cell}</td>`;
+      html += `<td class="px-4 py-3 border-b border-border text-muted-foreground">${processInlineMarkdown(cell)}</td>`;
     });
     html += '</tr>';
   });
@@ -148,7 +161,8 @@ export const generateContentWithIds = (content: string): string => {
   
   const processBlockquote = () => {
     if (blockquoteLines.length > 0) {
-      result += `<blockquote class="blog-quote">${blockquoteLines.join('<br/>')}</blockquote>`;
+      const processedLines = blockquoteLines.map(line => processInlineMarkdown(line));
+      result += `<blockquote class="blog-quote">${processedLines.join('<br/>')}</blockquote>`;
       blockquoteLines = [];
     }
     inBlockquote = false;
@@ -161,7 +175,8 @@ export const generateContentWithIds = (content: string): string => {
       const variantClass = calloutType === 'tip' ? 'callout-tip' : 
                            calloutType === 'warning' ? 'callout-warning' :
                            calloutType === 'danger' ? 'callout-danger' : 'callout-info';
-      result += `<div class="blog-callout ${variantClass}"><span class="callout-icon">${icon}</span><div class="callout-content">${calloutLines.join(' ')}</div></div>`;
+      const processedContent = calloutLines.map(line => processInlineMarkdown(line)).join(' ');
+      result += `<div class="blog-callout ${variantClass}"><span class="callout-icon">${icon}</span><div class="callout-content">${processedContent}</div></div>`;
       calloutLines = [];
     }
     inCallout = false;
@@ -237,16 +252,16 @@ export const generateContentWithIds = (content: string): string => {
       closeList();
       const title = line.replace('## ', '');
       const id = transliterate(title);
-      result += `<h2 id="${id}">${title}</h2>`;
+      result += `<h2 id="${id}">${processInlineMarkdown(title)}</h2>`;
     } else if (line.startsWith('### ')) {
       closeList();
       const title = line.replace('### ', '');
       const id = transliterate(title);
-      result += `<h3 id="${id}">${title}</h3>`;
+      result += `<h3 id="${id}">${processInlineMarkdown(title)}</h3>`;
     } else if (line.startsWith('#### ')) {
       closeList();
       const title = line.replace('#### ', '');
-      result += `<p><strong>${title}</strong></p>`;
+      result += `<p><strong>${processInlineMarkdown(title)}</strong></p>`;
     } else if (line.startsWith('**') && line.endsWith('**')) {
       closeList();
       result += `<p><strong>${line.replace(/\*\*/g, '')}</strong></p>`;
@@ -258,7 +273,7 @@ export const generateContentWithIds = (content: string): string => {
         inList = true;
         listType = 'ul';
       }
-      result += `<li>${line.replace('- ', '')}</li>`;
+      result += `<li>${processInlineMarkdown(line.replace('- ', ''))}</li>`;
     } else if (/^\d+\.\s/.test(line)) {
       // Ordered list
       if (!inList || listType !== 'ol') {
@@ -267,12 +282,12 @@ export const generateContentWithIds = (content: string): string => {
         inList = true;
         listType = 'ol';
       }
-      result += `<li>${line.replace(/^\d+\.\s/, '')}</li>`;
+      result += `<li>${processInlineMarkdown(line.replace(/^\d+\.\s/, ''))}</li>`;
     } else if (trimmedLine === '') {
       closeList();
     } else {
       closeList();
-      result += `<p>${line}</p>`;
+      result += `<p>${processInlineMarkdown(line)}</p>`;
     }
   }
   
