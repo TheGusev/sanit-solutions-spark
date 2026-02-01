@@ -145,9 +145,9 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
               <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
                 <div 
                   className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[0]}')`, opacity: 0.15 }}
+                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[0]}')`, opacity: 0.96 }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-card/90 via-card/85 to-card/80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-card/70 via-card/30 to-transparent" />
                 <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col items-center md:items-start justify-between md:justify-start">
                   <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
                     <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-primary/10 md:flex md:items-center md:justify-center">
@@ -168,9 +168,9 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
               <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
                 <div 
                   className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[1]}')`, opacity: 0.15 }}
+                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[1]}')`, opacity: 0.96 }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-card/90 via-card/85 to-card/80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-card/70 via-card/30 to-transparent" />
                 <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col items-center md:items-start justify-between md:justify-start">
                   <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
                     <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-success/10 md:flex md:items-center md:justify-center">
@@ -191,9 +191,9 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
               <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
                 <div 
                   className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[2]}')`, opacity: 0.15 }}
+                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[2]}')`, opacity: 0.96 }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-card/90 via-card/85 to-card/80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-card/70 via-card/30 to-transparent" />
                 <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col items-center md:items-start justify-between md:justify-start">
                   <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
                     <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-accent/10 md:flex md:items-center md:justify-center">
