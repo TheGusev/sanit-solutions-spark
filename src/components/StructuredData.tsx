@@ -17,6 +17,7 @@ export interface BlogPostData {
   date: string;
   slug: string;
   author?: string;
+  authorRole?: string;
   dateModified?: string;
   wordCount?: number;
   category?: string;
@@ -79,9 +80,19 @@ const generateBlogPosting = (post: BlogPostData, baseUrl: string) => ({
   "headline": post.title,
   "description": post.excerpt,
   "datePublished": post.date,
-  "author": {
+  "author": post.author ? {
+    "@type": "Person",
+    "name": post.author,
+    "jobTitle": post.authorRole || "Специалист по дезинфекции",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ООО Санитарные Решения",
+      "url": baseUrl
+    }
+  } : {
     "@type": "Organization",
-    "name": post.author || "ООО Санитарные Решения"
+    "name": "ООО Санитарные Решения",
+    "url": baseUrl
   },
   "publisher": {
     "@type": "Organization",
@@ -127,9 +138,18 @@ const generateArticle = (post: BlogPostData, baseUrl: string) => ({
   "description": post.excerpt,
   "datePublished": post.date,
   "dateModified": post.dateModified || post.date,
-  "author": {
+  "author": post.author ? {
+    "@type": "Person",
+    "name": post.author,
+    "jobTitle": post.authorRole || "Специалист по дезинфекции",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "ООО Санитарные Решения",
+      "url": baseUrl
+    }
+  } : {
     "@type": "Organization",
-    "name": post.author || "ООО Санитарные Решения",
+    "name": "ООО Санитарные Решения",
     "url": baseUrl
   },
   "publisher": {
