@@ -122,7 +122,7 @@ const ServiceDistricts = () => {
         <div className="text-center">
           <Button asChild variant="outline" size="lg">
             <Link to="/rajony" className="flex items-center gap-2">
-              Все 125 районов Москвы
+              Все 130 районов Москвы
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>

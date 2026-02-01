@@ -316,7 +316,7 @@ const Contacts = () => {
                   to="/rajony" 
                   className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
                 >
-                  Все 125 районов Москвы
+                  Все 130 районов Москвы
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

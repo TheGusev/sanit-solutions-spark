@@ -217,8 +217,8 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
             })()}
 
             <div className="mb-6">
-              <Link to="/rajony" className="text-primary hover:underline font-medium">
-                Смотреть все 125 районов Москвы →
+            <Link to="/rajony" className="text-primary hover:underline font-medium">
+              Смотреть все 130 районов Москвы →
               </Link>
             </div>
 

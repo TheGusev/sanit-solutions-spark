@@ -72,7 +72,7 @@ const districtSlugs = [
   'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao', 'nao', 'tao', 'zelao'
 ];
 
-// Районы Москвы (125 районов) - синхронизировано с src/data/neighborhoods.ts
+// Районы Москвы (130 районов) - синхронизировано с src/data/neighborhoods.ts
 const neighborhoodSlugs = [
   // ЦАО (10)
   'arbat', 'basmannyy', 'zamoskvorechye', 'krasnoselsky', 'meshchansky',
@@ -237,7 +237,7 @@ function getAllRoutes(): SSGRoute[] {
     });
   });
   
-  // Услуга + Район (500 страниц: 4 услуги × 125 районов)
+  // Услуга + Район (520 страниц: 4 услуги × 130 районов)
   servicesForObjects.forEach(serviceSlug => {
     neighborhoodSlugs.forEach(districtSlug => {
       routes.push({
@@ -263,7 +263,7 @@ function getAllRoutes(): SSGRoute[] {
   
   // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
   
-  // НЧ-страницы (услуга + вредитель + район) - NchPage (все 125 районов = 875 страниц)
+  // НЧ-страницы (услуга + вредитель + район) - NchPage (все 130 районов = 910 страниц)
   neighborhoodSlugs.forEach(neighborhoodSlug => {
     dezinsekciyaPestSlugs.forEach(pestSlug => {
       routes.push({
@@ -310,7 +310,7 @@ function getAllRoutes(): SSGRoute[] {
     outputPath: 'rajony/index.html'
   });
   
-  // Страницы районов (125 страниц)
+  // Страницы районов (130 страниц)
   neighborhoodSlugs.forEach(slug => {
     routes.push({
       path: `/rajony/${slug}`,
