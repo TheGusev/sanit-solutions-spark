@@ -81,6 +81,8 @@ const BlogPost = () => {
           excerpt: post.excerpt,
           date: post.date,
           slug: post.slug,
+          author: post.author,
+          authorRole: post.authorRole,
           category: post.category,
           keywords: post.tags,
           wordCount: post.wordCount || post.content?.split(/\s+/).length
