@@ -1,167 +1,111 @@
 
-# План: Добавление Schema.org Person разметки для авторов
+# План: Добавление фоновых изображений в карточки Hero
 
-## Текущая ситуация
+## Задача
+Добавить фоновые фотографии в три карточки на главной странице:
 
-Сейчас в `generateArticle` и `generateBlogPosting` автор указан как Organization:
-
-```json
-"author": {
-  "@type": "Organization",
-  "name": "ООО Санитарные Решения"
-}
-```
-
-Нужно заменить на Person schema с полными данными об авторе.
+| Блок | Фотография | Описание |
+|------|------------|----------|
+| Выезд за 15 минут | photo_2026-02-01_16-32-18.jpg | Дезинфектор на складе с оборудованием |
+| Сертификаты | photo_2026-02-01_16-32-19.jpg | Документы и сертификаты на столе |
+| Гарантия на все виды работ | photo_2026-02-01_16-32-21.jpg | Тараканы (демонстрация проблемы) |
 
 ---
 
-## Решение
+## Шаг 1: Скопировать изображения в public
 
-### Шаг 1: Расширить интерфейс BlogPostData
+Скопировать загруженные фотографии в папку `public/images/hero-cards/`:
 
-**Файл:** `src/components/StructuredData.tsx`
-
-Добавить поля автора:
-
-```typescript
-export interface BlogPostData {
-  // ... существующие поля
-  author?: string;
-  authorRole?: string;      // НОВОЕ
-  authorExperience?: string; // НОВОЕ
-}
+```text
+user-uploads://photo_2026-02-01_16-32-18.jpg → public/images/hero-cards/fast-response.jpg
+user-uploads://photo_2026-02-01_16-32-19.jpg → public/images/hero-cards/certificates.jpg
+user-uploads://photo_2026-02-01_16-32-21.jpg → public/images/hero-cards/guarantee.jpg
 ```
 
-### Шаг 2: Обновить generateArticle для Person schema
+---
 
-**Файл:** `src/components/StructuredData.tsx`
+## Шаг 2: Обновить Hero.tsx
 
-Заменить Organization на Person с полными данными:
+**Файл:** `src/components/Hero.tsx`
 
-```typescript
-const generateArticle = (post: BlogPostData, baseUrl: string) => ({
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": post.title,
-  "description": post.excerpt,
-  "datePublished": post.date,
-  "dateModified": post.dateModified || post.date,
-  "author": post.author ? {
-    "@type": "Person",
-    "name": post.author,
-    "jobTitle": post.authorRole || "Специалист по дезинфекции",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "ООО Санитарные Решения",
-      "url": baseUrl
-    }
-  } : {
-    "@type": "Organization",
-    "name": "ООО Санитарные Решения",
-    "url": baseUrl
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "ООО Санитарные Решения",
-    "url": baseUrl,
-    "logo": {
-      "@type": "ImageObject",
-      "url": `${baseUrl}/og-image.jpg`
-    }
-  },
-  // ... остальное
-});
-```
-
-### Шаг 3: Аналогично обновить generateBlogPosting
+### 2.1 Добавить массив с фоновыми изображениями для карточек
 
 ```typescript
-const generateBlogPosting = (post: BlogPostData, baseUrl: string) => ({
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": post.title,
-  "description": post.excerpt,
-  "datePublished": post.date,
-  "author": post.author ? {
-    "@type": "Person",
-    "name": post.author,
-    "jobTitle": post.authorRole || "Специалист по дезинфекции",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "ООО Санитарные Решения",
-      "url": baseUrl
-    }
-  } : {
-    "@type": "Organization",
-    "name": "ООО Санитарные Решения"
-  },
-  // ... остальное
-});
+const HERO_CARD_BACKGROUNDS = [
+  '/images/hero-cards/fast-response.jpg',
+  '/images/hero-cards/certificates.jpg',
+  '/images/hero-cards/guarantee.jpg'
+];
 ```
 
-### Шаг 4: Передать данные автора из BlogPost
+### 2.2 Обновить структуру карточек
 
-**Файл:** `src/pages/BlogPost.tsx`
+Текущая структура карточки:
+```tsx
+<div className="bg-card p-3 md:p-6 lg:p-8 rounded-xl shadow-sm hover-lift ...">
+  {/* содержимое */}
+</div>
+```
 
-Обновить вызов StructuredData:
+Обновить каждую карточку для добавления фонового изображения:
 
 ```tsx
-<StructuredData 
-  type="Article"
-  post={{
-    title: post.title,
-    excerpt: post.excerpt,
-    date: post.date,
-    slug: post.slug,
-    author: post.author,           // ДОБАВИТЬ
-    authorRole: post.authorRole,   // ДОБАВИТЬ
-    category: post.category,
-    keywords: post.tags,
-    wordCount: post.wordCount || post.content?.split(/\s+/).length
-  }}
-  baseUrl={SEO_CONFIG.baseUrl}
-/>
+<div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
+  {/* Фоновое изображение */}
+  <div 
+    className="absolute inset-0 bg-cover bg-center"
+    style={{ 
+      backgroundImage: `url('${HERO_CARD_BACKGROUNDS[0]}')`,
+      opacity: 0.15
+    }}
+  />
+  {/* Градиент для читаемости текста */}
+  <div className="absolute inset-0 bg-gradient-to-r from-card/90 via-card/85 to-card/80" />
+  
+  {/* Контент поверх фона */}
+  <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col ...">
+    {/* существующий контент карточки */}
+  </div>
+</div>
 ```
 
 ---
 
-## Результат Schema.org разметки
+## Структура изменений для каждой карточки
 
-После изменений JSON-LD будет выглядеть так:
+### Карточка 1: Выезд за 15 минут
+- Фон: `fast-response.jpg` (дезинфектор на складе)
+- Иконка: Zap
+- Цвет акцента: primary
 
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "Чем опасны муравьи в квартире",
-  "author": {
-    "@type": "Person",
-    "name": "Андрей Иванов",
-    "jobTitle": "Мастер-дезинсектор",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "ООО Санитарные Решения",
-      "url": "https://goruslugimsk.ru"
-    }
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "ООО Санитарные Решения"
-  }
-}
-```
+### Карточка 2: Сертификаты
+- Фон: `certificates.jpg` (документы)
+- Иконка: CheckCircle
+- Цвет акцента: success
+
+### Карточка 3: Гарантия
+- Фон: `guarantee.jpg` (демонстрация проблемы)
+- Иконка: Shield
+- Цвет акцента: accent
 
 ---
 
-## SEO-преимущества
+## Технические детали
 
-| Аспект | Улучшение |
-|--------|-----------|
-| E-E-A-T | Явное указание экспертизы автора (jobTitle) |
-| Knowledge Graph | Google может связать автора с организацией |
-| Rich Snippets | Возможность отображения автора в SERP |
-| Доверие | Пользователи видят реального специалиста |
+### Параметры фонового изображения
+
+| Параметр | Значение | Причина |
+|----------|----------|---------|
+| opacity | 0.15 | Лёгкий эффект, не мешает читаемости |
+| bg-cover | Да | Полное покрытие карточки |
+| bg-center | Да | Центрирование изображения |
+| overflow-hidden | Да | Обрезка по границам карточки |
+
+### Градиент поверх изображения
+```css
+bg-gradient-to-r from-card/90 via-card/85 to-card/80
+```
+Обеспечивает читаемость текста при сохранении видимости изображения.
 
 ---
 
@@ -169,14 +113,16 @@ const generateBlogPosting = (post: BlogPostData, baseUrl: string) => ({
 
 | Файл | Изменения |
 |------|-----------|
-| `src/components/StructuredData.tsx` | Добавить authorRole в интерфейс, обновить generateArticle и generateBlogPosting |
-| `src/pages/BlogPost.tsx` | Передать author и authorRole в StructuredData |
+| `public/images/hero-cards/` | Новая папка с 3 изображениями |
+| `src/components/Hero.tsx` | Добавить фоновые изображения в 3 карточки |
 
 ---
 
 ## Ожидаемый результат
 
-- Все 158 статей имеют Person schema с именем автора и должностью
-- Google индексирует авторов как реальных специалистов
-- Улучшается E-E-A-T сигнал для SEO
-- Статьи выглядят более профессионально в результатах поиска
+После изменений:
+- Карточка "Выезд за 15 минут" имеет фон с профессиональным дезинфектором
+- Карточка "Сертификаты" имеет фон с официальными документами
+- Карточка "Гарантия" имеет фон, демонстрирующий проблему вредителей
+- Фоновые изображения деликатные (opacity ~15%), не мешают чтению текста
+- Плавная интеграция с существующим дизайном карточек
