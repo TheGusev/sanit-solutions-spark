@@ -1,124 +1,228 @@
 
-# План: Устранение дублирования текста на страницах районов
+# План: Полная переработка блога — авторы, даты и удаление AI-паттернов
 
-## Диагноз проблемы
+## Исправленные данные специалистов
 
-На странице района (например, `/rajony/tverskoy`) один и тот же текст показывается **трижды**:
-
-| Место | Источник | Что показывается |
-|-------|----------|------------------|
-| Hero (под H1) | `neighborhood.description.slice(0, 200)...` | Обрезанный текст из description |
-| Секция "О дезинфекции в X" | `neighborhood.description` | **Тот же текст полностью** |
-| Секция "Дезинфекция в районе X" | `extendedContent.intro` | Похожий сгенерированный текст |
-
-**Почему так произошло:**
-- `description` генерируется в `neighborhoods.ts` функцией `genDescription()`
-- `extendedContent.intro` генерируется в `neighborhoodContentGenerator.ts` функцией `generateIntro()`
-- Оба текста описывают одно и то же разными словами
-- В Hero показывается обрезанная версия, а ниже — полная (это не имеет смысла)
+| Специалист | Должность | Стаж | Стиль | Специализация |
+|------------|-----------|------|-------|---------------|
+| Максим Гусев | Ведущий дезинфектор | **8 лет** | Практичный | Тараканы, клопы, квартиры |
+| Александр Афанасьев | Специалист по дератизации | **5 лет** | Экспертный | Грызуны, крысы, мыши |
+| Владимир Гусев | Технолог-дезинфектолог | **7 лет** | Технический | Препараты, технологии, озонирование |
+| Андрей Иванов | Мастер-дезинсектор | 10 лет | Дружелюбный | Муравьи, блохи, моль |
+| Эдуард Васильев | Эксперт по санитарии | **12 лет** | Формальный | Законы, СанПиН, документация |
+| Владимир Учаев | Специалист по коммерческим объектам | 7 лет | Лаконичный | Офисы, рестораны, склады |
 
 ---
 
-## Решение
+## Этап 1: Расширение типов
 
-Убрать дублирующие секции и реорганизовать контент:
+**Файл:** `src/data/blog/types.ts`
 
-### Изменение 1: Убрать обрезанный текст из Hero
+Добавить интерфейс Author и массив blogAuthors с исправленным стажем:
 
-**Файл:** `src/pages/NeighborhoodPage.tsx`, строки 206-208
+```typescript
+export interface Author {
+  id: string;
+  name: string;
+  role: string;
+  experience: string;
+  style: 'formal' | 'practical' | 'technical' | 'friendly' | 'expert' | 'concise';
+  specialization: string[];
+}
 
-Заменить обрезанный description на краткое УТП без повторов:
-
-```tsx
-// БЫЛО:
-<p className="text-lg md:text-xl text-muted-foreground mb-6">
-  {neighborhood.description.slice(0, 200)}...
-</p>
-
-// СТАНЕТ:
-<p className="text-lg md:text-xl text-muted-foreground mb-6">
-  Профессиональная обработка квартир, офисов и коммерческих помещений. 
-  Выезд мастера — {neighborhood.responseTime}. Гарантия результата.
-</p>
+export const blogAuthors: Author[] = [
+  {
+    id: 'gusev-m',
+    name: 'Максим Гусев',
+    role: 'Ведущий дезинфектор',
+    experience: '8 лет',
+    style: 'practical',
+    specialization: ['тараканы', 'клопы', 'квартиры']
+  },
+  {
+    id: 'afanasiev',
+    name: 'Александр Афанасьев',
+    role: 'Специалист по дератизации',
+    experience: '5 лет',
+    style: 'expert',
+    specialization: ['грызуны', 'крысы', 'мыши', 'склады']
+  },
+  // ... остальные авторы
+];
 ```
 
-### Изменение 2: Удалить секцию "О дезинфекции в X"
+Расширить BlogArticle:
+```typescript
+export interface BlogArticle {
+  // ... существующие поля
+  author?: string;
+  authorRole?: string;
+}
+```
 
-**Файл:** `src/pages/NeighborhoodPage.tsx`, строки 297-311
+---
 
-Полностью удалить секцию, которая дублирует description:
+## Этап 2: Система назначения авторов и генерации дат
+
+**Файл:** `src/lib/blogContentGenerator.ts` (расширение)
+
+Добавить функции:
+
+```typescript
+// Генератор дат (ноябрь 2025 — февраль 2026)
+export function generateArticleDate(articleId: number, slug: string): string {
+  const startDate = new Date('2025-11-01');
+  const totalDays = 93; // до 01.02.2026
+  const hash = simpleHash(slug);
+  const dayOffset = Math.abs(hash) % totalDays;
+  
+  const articleDate = new Date(startDate);
+  articleDate.setDate(articleDate.getDate() + dayOffset);
+  return articleDate.toISOString().split('T')[0];
+}
+
+// Назначение автора по специализации
+export function assignAuthor(article: { category: string; tags: string[]; pest?: string }): Author {
+  // Логика сопоставления...
+}
+```
+
+---
+
+## Этап 3: Расширенная очистка AI-паттернов
+
+**Файл:** `src/components/TableOfContents.tsx`
+
+Расширить функцию `cleanAIContent`:
+
+```typescript
+const cleanAIContent = (text: string): string => {
+  return text
+    // Эмодзи в начале строк
+    .replace(/^[✅❌⚠️📍🔴🟢🟡🎯💡📌🔒✨🛡️⭐🏆]\s*/gm, '')
+    
+    // AI-вводные фразы
+    .replace(/^(Важно|Следует|Необходимо|Обратите внимание|Примечание|Стоит отметить|Нельзя не упомянуть):\s*/gim, '')
+    .replace(/^(Рассмотрим подробнее|Давайте разберём|Итак|В данной статье|В этой статье|Начнём с того)[,:.]?\s*/gim, '')
+    .replace(/^(Как уже упоминалось|Как было сказано|Как мы видим|Очевидно, что)[,:.]?\s*/gim, '')
+    
+    // Переходные фразы AI
+    .replace(/(Таким образом|Подводя итог|В заключение|Резюмируя|Исходя из вышесказанного)[,:.]?\s*/gi, '')
+    .replace(/(Безусловно|Несомненно|Очевидно|Конечно же)[,:.]?\s*/gi, '')
+    
+    // Избыточные усилители
+    .replace(/\bочень\s+/gi, '')
+    .replace(/\bдостаточно\s+(легко|просто|быстро)\b/gi, '$1')
+    .replace(/\bабсолютно\s+(необходимо|важно)\b/gi, 'необходимо')
+    
+    // Формальные конструкции
+    .replace(/представляется возможным/gi, 'можно')
+    .replace(/является\s+(\w+)\s+решением/gi, '— $1 решение')
+    .replace(/данн(ый|ая|ое|ые)\s+/gi, '')
+    
+    // Двойные пробелы
+    .replace(/  +/g, ' ')
+    .trim();
+};
+```
+
+---
+
+## Этап 4: Обновление генераторов статей
+
+**Файлы:** `pests-articles.ts`, `premises-articles.ts`, `legal-articles.ts`
+
+Для каждой статьи добавить:
+- `author` — имя автора
+- `authorRole` — должность
+- `date` — сгенерированная дата
+
+Пример:
+```typescript
+const author = assignAuthor({ category: template.category, tags: [...], pest: pest.id });
+
+return {
+  // ... существующие поля
+  author: author.name,
+  authorRole: author.role,
+  date: generateArticleDate(id, slug),
+};
+```
+
+---
+
+## Этап 5: Отображение автора в BlogPost
+
+**Файл:** `src/pages/BlogPost.tsx`
+
+Добавить импорт иконки User и блок автора в шапку статьи:
 
 ```tsx
-// УДАЛИТЬ ПОЛНОСТЬЮ:
-{/* Description */}
-<section className="py-12 bg-muted/30">
-  <div className="container mx-auto px-4">
-    <div className="max-w-4xl">
-      <h2 className="text-2xl md:text-3xl font-bold mb-6">
-        О дезинфекции в {neighborhood.name}
-      </h2>
-      <div className="prose prose-lg dark:prose-invert max-w-none">
-        <p className="text-muted-foreground leading-relaxed">
-          {neighborhood.description}
-        </p>
-      </div>
+import { User } from "lucide-react";
+
+// В шапке статьи после даты и времени чтения:
+{post.author && (
+  <div className="flex items-center justify-center gap-3 mt-4">
+    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+      <User className="w-5 h-5 text-primary" />
+    </div>
+    <div className="text-left">
+      <p className="font-medium text-foreground">{post.author}</p>
+      <p className="text-sm text-muted-foreground">{post.authorRole}</p>
     </div>
   </div>
-</section>
+)}
 ```
-
-### Изменение 3: Оставить только extendedContent.intro
-
-Секция "Дезинфекция и дезинсекция в районе X" (строки 363-378) останется — это уникальный контент из генератора, который **разный для каждого типа округа**.
 
 ---
 
-## Структура страницы после исправления
+## Распределение авторов
 
-```text
-1. Breadcrumbs
-2. Hero Section
-   - H1: "Дезинфекция в Тверском районе — выезд за 15 минут"
-   - Краткое УТП (новое, без повторов)
-   - Badges (время выезда, гарантия, цена)
-   - CTA кнопки
-3. Warning Block (вариативный)
-4. Services Grid (4 услуги с ценами)
-5. [УДАЛЕНО] Секция "О дезинфекции в X" ← дублирование
-6. Property Gallery (типы объектов)
-7. Секция "Дезинфекция в районе X" — extendedContent.intro
-8. Секция "Почему выбирают нас" — extendedContent.whyUs
-9. Секция "Зона обслуживания" — extendedContent.coverage
-10. Преимущества — extendedContent.advantages
-11. FAQ
-12. Соседние районы
-13. Internal Links
-14. Footer
-```
+| Автор | Логика назначения | Ориентировочно статей |
+|-------|-------------------|----------------------|
+| Эдуард Васильев | Категория "Законы", теги с "СанПиН" | ~25 |
+| Александр Афанасьев | Категория "Дератизация", теги с "грызуны" | ~15 |
+| Владимир Гусев | Теги "озонирование", "технологии", "препараты" | ~20 |
+| Владимир Учаев | Теги "офис", "ресторан", "склад" | ~25 |
+| Андрей Иванов | Вредители: муравьи, блохи, моль | ~20 |
+| Максим Гусев | Тараканы, клопы, квартиры (по умолчанию) | ~50 |
+
+---
+
+## Распределение дат
+
+Статьи будут равномерно распределены с **1 ноября 2025** по **1 февраля 2026**:
+
+| Месяц | Примерно статей |
+|-------|-----------------|
+| Ноябрь 2025 | ~40 |
+| Декабрь 2025 | ~50 |
+| Январь 2026 | ~50 |
+| Февраль 2026 | ~18 |
 
 ---
 
 ## Файлы для изменения
 
-| Файл | Изменение |
+| Файл | Изменения |
 |------|-----------|
-| `src/pages/NeighborhoodPage.tsx` | Заменить текст в Hero, удалить секцию "О дезинфекции" |
-
----
-
-## SEO-соображения
-
-- **H2 "О дезинфекции в X"** удаляется, но остаётся **H2 "Дезинфекция и дезинсекция в районе X"** — семантика сохранена
-- Контент становится уникальным благодаря генератору по типам округов
-- Каннибализация ключевых слов устраняется
-- Страница становится более читаемой для пользователей
+| `src/data/blog/types.ts` | Добавить Author, blogAuthors, расширить BlogArticle |
+| `src/lib/blogContentGenerator.ts` | Добавить generateArticleDate, assignAuthor |
+| `src/components/TableOfContents.tsx` | Расширить cleanAIContent |
+| `src/data/blog/pests-articles.ts` | Интегрировать авторов и даты |
+| `src/data/blog/premises-articles.ts` | Интегрировать авторов и даты |
+| `src/data/blog/legal-articles.ts` | Добавить авторов и обновить даты |
+| `src/data/blogPosts.ts` | Добавить авторов к legacy-статьям |
+| `src/pages/BlogPost.tsx` | Отображение автора |
 
 ---
 
 ## Ожидаемый результат
 
 После изменений:
-- Нет дублирования текста на страницах районов
-- Каждый блок контента несёт уникальную информацию
-- Сохранена вся семантическая структура (H1, H2, FAQ)
-- Генератор создаёт уникальный контент для 130 районов
+- Все 158 статей имеют уникального автора с должностью и стажем
+- Даты распределены с ноября 2025 по февраль 2026
+- AI-паттерны удалены из отображаемого контента
+- Каждый автор имеет узнаваемый стиль
+- Статьи выглядят как написанные реальными специалистами
+- Schema.org разметка включает информацию об авторе
