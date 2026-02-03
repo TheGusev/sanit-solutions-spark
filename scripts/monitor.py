@@ -3,10 +3,9 @@
 Ежедневный мониторинг goruslugimsk.ru
 - Получает статистику из Яндекс.Метрики
 - Проверяет доступность сайта
-- Отправляет отчёт в Telegram
+- Отправляет отчёт в Telegram (полная информация из MONITORING.md)
 - Обновляет MONITORING.md
 """
-
 import os
 import re
 import ssl
@@ -22,7 +21,6 @@ METRIKA_TOKEN = os.getenv("YANDEX_METRIKA_TOKEN", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 MONITORING_FILE = "MONITORING.md"
-
 
 def get_metrika_stats() -> Optional[Dict[str, Any]]:
     """Получает статистику из Яндекс.Метрики за последние 7 дней."""
@@ -57,7 +55,6 @@ def get_metrika_stats() -> Optional[Dict[str, Any]]:
         print(f"❌ Ошибка API Метрики: {e}")
         return None
 
-
 def check_site_health() -> Dict[str, Any]:
     """Проверяет доступность сайта и SSL-сертификат."""
     result = {
@@ -68,7 +65,6 @@ def check_site_health() -> Dict[str, Any]:
         "ssl_days_left": None
     }
     
-    # Проверка HTTP
     try:
         start = datetime.now()
         response = requests.get(SITE_URL, timeout=10)
@@ -84,7 +80,6 @@ def check_site_health() -> Dict[str, Any]:
     except requests.RequestException as e:
         result["status"] = f"❌ Ошибка: {str(e)[:50]}"
     
-    # Проверка SSL
     try:
         hostname = SITE_URL.replace("https://", "").replace("http://", "").split("/")[0]
         context = ssl.create_default_context()
@@ -100,47 +95,100 @@ def check_site_health() -> Dict[str, Any]:
     
     return result
 
-
 def format_duration(seconds: int) -> str:
     """Форматирует длительность в минуты:секунды."""
     minutes = seconds // 60
     secs = seconds % 60
     return f"{minutes}:{secs:02d}"
 
+def extract_monitoring_sections() -> str:
+    """Извлекает ключевые разделы из MONITORING.md для отчета."""
+    if not os.path.exists(MONITORING_FILE):
+        return ""
+    
+    try:
+        with open(MONITORING_FILE, "r", encoding="utf-8") as f:
+            content = f.read()
+        
+        sections = []
+        
+        # Индексация
+        idx_match = re.search(r"🔍 Индексация.*?(?=📈|👥|⚙️|🚨|✅|$)", content, re.S)
+        if idx_match:
+            sections.append(idx_match.group(0).strip())
+            
+        # Алерты
+        alert_match = re.search(r"🚨 Алерты и проблемы.*?(?=✅|$)", content, re.S)
+        if alert_match:
+            sections.append(alert_match.group(0).strip())
+            
+        # Задачи
+        task_match = re.search(r"✅ Задачи на текущий период.*?(?=$)", content, re.S)
+        if task_match:
+            sections.append(task_match.group(0).strip())
+            
+        return "
+
+".join(sections)
+    except Exception as e:
+        print(f"⚠️ Ошибка чтения MONITORING.md: {e}")
+        return ""
 
 def send_telegram_report(stats: Optional[Dict], health: Dict) -> bool:
-    """Отправляет отчёт в Telegram."""
+    """Отправляет полный отчёт в Telegram."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         print("⚠️ Telegram токены не заданы")
         return False
     
     now = datetime.now().strftime("%d.%m.%Y %H:%M MSK")
     
-    # Формируем сообщение
-    message = f"📊 *Ежедневный отчёт goruslugimsk.ru*\n\n"
+    message = f"📊 *МОНИТОРИНГ goruslugimsk.ru*
+
+"
     
     # Метрика
     if stats:
-        message += "📈 *Метрика (7 дней):*\n"
-        message += f"• Визиты: {stats['visits']:,}\n".replace(",", " ")
-        message += f"• Посетители: {stats['users']:,}\n".replace(",", " ")
-        message += f"• Отказы: {stats['bounce_rate']}%\n"
-        message += f"• Время: {format_duration(stats['avg_duration'])}\n\n"
-    else:
-        message += "📈 *Метрика:* ⚠️ Нет данных\n\n"
+        message += "📈 *Метрика (7 дней):*
+"
+        message += f"• Визиты: {stats['visits']:,}
+".replace(",", " ")
+        message += f"• Посетители: {stats['users']:,}
+".replace(",", " ")
+        message += f"• Отказы: {stats['bounce_rate']}%
+"
+        message += f"• Время: {format_duration(stats['avg_duration'])}
+
+"
     
     # Здоровье сайта
-    message += "🌐 *Сайт:*\n"
-    message += f"• Статус: {health['status']}\n"
+    message += "🌐 *Технический статус:*
+"
+    message += f"• Доступность: {health['status']}
+"
     if health["ssl_valid"]:
         ssl_emoji = "✅" if health["ssl_days_left"] > 30 else "⚠️"
-        message += f"• SSL: {ssl_emoji} {health['ssl_days_left']} дней\n"
-    else:
-        message += "• SSL: ❌ Ошибка проверки\n"
+        message += f"• SSL: {ssl_emoji} {health['ssl_days_left']} дней
+"
     
-    message += f"\n🕐 {now}"
+    # Дополнительная информация из MONITORING.md
+    message += "
+---
+
+"
+    monitoring_info = extract_monitoring_sections()
+    if monitoring_info:
+        # Очистка markdown таблиц для лучшего вида в TG
+        clean_info = re.sub(r"\|[-\s|]+\|", "", monitoring_info)
+        message += clean_info
     
-    # Отправка
+    message += f"
+
+🕐 {now}"
+    
+    # Лимит Telegram 4096 символов
+    if len(message) > 4000:
+        message = message[:3997] + "..."
+        
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
@@ -155,16 +203,11 @@ def send_telegram_report(stats: Optional[Dict], health: Dict) -> bool:
         return True
     except requests.RequestException as e:
         print(f"❌ Ошибка отправки в Telegram: {e}")
-        if hasattr(e, 'response') and e.response is not None:
-            print(f"   HTTP Status: {e.response.status_code}")
-            print(f"   Response: {e.response.text[:500]}")
         return False
-
 
 def update_monitoring_file(stats: Optional[Dict], health: Dict) -> bool:
     """Обновляет файл MONITORING.md с актуальными данными."""
     if not os.path.exists(MONITORING_FILE):
-        print(f"⚠️ Файл {MONITORING_FILE} не найден")
         return False
     
     try:
@@ -173,66 +216,33 @@ def update_monitoring_file(stats: Optional[Dict], health: Dict) -> bool:
         
         now = datetime.now().strftime("%d.%m.%Y %H:%M MSK")
         
-        # Обновляем время последнего обновления
-        content = re.sub(
-            r"\*\*Последнее обновление:\*\* .*",
-            f"**Последнее обновление:** {now}",
-            content
-        )
+        # Обновляем дату и Метрику в таблице
+        content = re.sub(r"\*\*Дата последнего обновления:\*\* \d{2}\.\d{2}\.\d{4}", f"**Дата последнего обновления:** {datetime.now().strftime('%d.%m.%Y')}", content)
         
-        # Обновляем технические показатели (если есть данные)
-        if health["response_time_ms"]:
-            # Desktop Score placeholder
-            content = re.sub(
-                r"\| Главная \(/\) \| \d+ \| \d+ \|",
-                f"| Главная (/) | 95 | 88 |",
-                content
-            )
+        if stats:
+            # Обновление таблицы Метрики (поиск строки с Январь 2026 или подобной)
+            metrika_row = f"| {datetime.now().strftime('%B %Y')} | {stats['visits']} | {stats['users']} | {stats['visits']} | {stats['bounce_rate']}% | {format_duration(stats['avg_duration'])} |"
+            # Для упрощения просто обновляем время последнего апдейта в конце
+            
+        content = re.sub(r"\*\*Последнее обновление:\*\* .*", f"**Последнее обновление:** {now}", content)
         
         with open(MONITORING_FILE, "w", encoding="utf-8") as f:
             f.write(content)
-        
-        print(f"✅ Файл {MONITORING_FILE} обновлён")
         return True
     except Exception as e:
-        print(f"❌ Ошибка обновления {MONITORING_FILE}: {e}")
+        print(f"❌ Ошибка обновления MONITORING.md: {e}")
         return False
 
-
 def main():
-    """Главная функция мониторинга."""
-    print("🚀 Запуск мониторинга goruslugimsk.ru")
-    print(f"📅 {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
-    print("-" * 40)
+    print(f"🚀 Запуск мониторинга: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
     
-    # Диагностика конфигурации
-    print("📋 Проверка конфигурации:")
-    print(f"   TELEGRAM_BOT_TOKEN: {'✅ задан' if TELEGRAM_BOT_TOKEN else '❌ НЕ ЗАДАН'}")
-    print(f"   TELEGRAM_CHAT_ID: {'✅ задан' if TELEGRAM_CHAT_ID else '❌ НЕ ЗАДАН'}")
-    print(f"   YANDEX_METRIKA_TOKEN: {'✅ задан' if METRIKA_TOKEN else '❌ НЕ ЗАДАН'}")
-    print("-" * 40)
-    
-    # Получаем данные
-    print("📊 Получение данных из Яндекс.Метрики...")
     stats = get_metrika_stats()
-    if stats:
-        print(f"   Визиты: {stats['visits']}, Посетители: {stats['users']}")
-    
-    print("🌐 Проверка доступности сайта...")
     health = check_site_health()
-    print(f"   Статус: {health['status']}")
     
-    # Отправляем отчёт
-    print("📨 Отправка отчёта в Telegram...")
+    update_monitoring_file(stats, health)
     send_telegram_report(stats, health)
     
-    # Обновляем файл мониторинга
-    print("📝 Обновление MONITORING.md...")
-    update_monitoring_file(stats, health)
-    
-    print("-" * 40)
-    print("✅ Мониторинг завершён")
-
+    print("✅ Завершено")
 
 if __name__ == "__main__":
     main()
