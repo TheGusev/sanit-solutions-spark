@@ -127,7 +127,7 @@ def extract_monitoring_sections() -> str:
         if task_match:
             sections.append(task_match.group(0).strip())
             
-        return "
+        return ""
 
 ".join(sections)
     except Exception as e:
