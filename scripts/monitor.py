@@ -127,7 +127,9 @@ def extract_monitoring_sections() -> str:
         if task_match:
             sections.append(task_match.group(0).strip())
             
-        return " ".join(sections)
+        return "
+
+".join(sections)
     except Exception as e:
         print(f"⚠️ Ошибка чтения MONITORING.md: {e}")
         return ""
@@ -140,7 +142,7 @@ def send_telegram_report(stats: Optional[Dict], health: Dict) -> bool:
     
     now = datetime.now().strftime("%d.%m.%Y %H:%M MSK")
     
-    message = f"📊 *МОНИТОРИНГ goruslugimsk.ru*"
+    message = f"📊 *МОНИТОРИНГ goruslugimsk.ru*
 
 "
     
