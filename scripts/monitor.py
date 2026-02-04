@@ -127,9 +127,7 @@ def extract_monitoring_sections() -> str:
         if task_match:
             sections.append(task_match.group(0).strip())
             
-        return ""
-
-".join(sections)
+        return "".join(sections)
     except Exception as e:
         print(f"⚠️ Ошибка чтения MONITORING.md: {e}")
         return ""
