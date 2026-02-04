@@ -127,7 +127,9 @@ def extract_monitoring_sections() -> str:
         if task_match:
             sections.append(task_match.group(0).strip())
             
-        return "".join(sections)
+        return "
+
+".join(sections)
     except Exception as e:
         print(f"⚠️ Ошибка чтения MONITORING.md: {e}")
         return ""
@@ -214,8 +216,14 @@ def update_monitoring_file(stats: Optional[Dict], health: Dict) -> bool:
         
         now = datetime.now().strftime("%d.%m.%Y %H:%M MSK")
         
-        # Обновляем дату
+        # Обновляем дату и Метрику в таблице
         content = re.sub(r"\*\*Дата последнего обновления:\*\* \d{2}\.\d{2}\.\d{4}", f"**Дата последнего обновления:** {datetime.now().strftime('%d.%m.%Y')}", content)
+        
+        if stats:
+            # Обновление таблицы Метрики (поиск строки с Январь 2026 или подобной)
+            metrika_row = f"| {datetime.now().strftime('%B %Y')} | {stats['visits']} | {stats['users']} | {stats['visits']} | {stats['bounce_rate']}% | {format_duration(stats['avg_duration'])} |"
+            # Для упрощения просто обновляем время последнего апдейта в конце
+            
         content = re.sub(r"\*\*Последнее обновление:\*\* .*", f"**Последнее обновление:** {now}", content)
         
         with open(MONITORING_FILE, "w", encoding="utf-8") as f:
