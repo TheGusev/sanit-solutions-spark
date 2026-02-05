@@ -131,9 +131,7 @@ def extract_monitoring_sections() -> str:
 
 ".join(sections)
     except Exception as e:
-        print(f"⚠️ Ошибка чтения MONITORING.md: {e}")
-        return ""
-
+return "\n".join(sections)
 def send_telegram_report(stats: Optional[Dict], health: Dict) -> bool:
     """Отправляет полный отчёт в Telegram."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
