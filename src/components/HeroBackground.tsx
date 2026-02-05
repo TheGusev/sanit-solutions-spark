@@ -25,8 +25,8 @@ const HeroBackground = ({
   className = ''
 }: HeroBackgroundProps) => {
   // Мобильные значения: по умолчанию более яркие
-  const mobileBlur = blurMobile ?? Math.max(blur - 2, 4);
-  const mobileOpacity = opacityMobile ?? Math.min(opacity + 0.15, 0.55);
+  const mobileBlur = blurMobile ?? Math.max(blur - 2, 3);
+  const mobileOpacity = opacityMobile ?? Math.min(opacity + 0.15, 0.70);
 
   return (
     <>
@@ -62,8 +62,8 @@ const HeroBackground = ({
       {/* Overlay варианты */}
       {overlay === 'gradient' && (
         <>
-          <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-background/50 to-background/40" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/40 to-background/30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background/50" />
         </>
       )}
       

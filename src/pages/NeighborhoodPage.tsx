@@ -158,19 +158,32 @@ const NeighborhoodPage = () => {
             <>
               {/* Цветовая подложка */}
               <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
+              {/* Mobile version: brighter background */}
               <div 
-                className="absolute inset-0 bg-cover bg-center"
+                className="absolute inset-0 bg-cover bg-center md:hidden"
+                style={{ 
+                  backgroundImage: `url('${neighborhoodImagesData.heroImage}')`,
+                  filter: 'blur(6px)',
+                  transform: 'scale(1.1)',
+                  opacity: 0.60
+                }}
+                role="img"
+                aria-label={neighborhoodImagesData.altText}
+              />
+              {/* Desktop version */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center hidden md:block"
                 style={{ 
                   backgroundImage: `url('${neighborhoodImagesData.heroImage}')`,
                   filter: 'blur(8px)',
                   transform: 'scale(1.1)',
-                  opacity: 0.30
+                  opacity: 0.45
                 }}
                 role="img"
                 aria-label={neighborhoodImagesData.altText}
               />
               {/* Gradient overlay for readability */}
-              <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/50 to-background/40 dark:from-background/70 dark:via-background/60 dark:to-background/50" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/50 via-background/35 to-background/25 dark:from-background/60 dark:via-background/50 dark:to-background/40" />
             </>
           )}
           {/* Fallback gradient if no image */}

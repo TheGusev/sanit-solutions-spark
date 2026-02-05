@@ -84,7 +84,7 @@ const Blog = () => {
         <HeroBackground 
           image="/images/neighborhoods/interior-park.png"
           blur={10}
-          opacity={0.25}
+          opacity={0.38}
           overlay="gradient"
           altText="Блог о дезинфекции и борьбе с вредителями"
         />

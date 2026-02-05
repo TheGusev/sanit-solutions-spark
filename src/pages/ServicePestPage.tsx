@@ -154,7 +154,7 @@ export default function ServicePestPage() {
                   backgroundImage: `url('${pestImage.image}')`,
                   filter: 'blur(5px)',
                   transform: 'scale(1.1)',
-                  opacity: 0.50
+                  opacity: 0.75
                 }}
                 aria-hidden="true"
               />
@@ -165,14 +165,13 @@ export default function ServicePestPage() {
                   backgroundImage: `url('${pestImage.image}')`,
                   filter: 'blur(8px)',
                   transform: 'scale(1.1)',
-                  opacity: 0.35
+                  opacity: 0.52
                 }}
                 aria-hidden="true"
               />
               {/* Градиентный overlay для читаемости текста */}
               <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/50 to-background/40" />
-              {/* Дополнительный вертикальный градиент */}
-              <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background/40" />
+              <div className="absolute inset-0 bg-gradient-to-b from-background/15 via-transparent to-background/35" />
             </>
           )}
           {/* Fallback если нет изображения */}

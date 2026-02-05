@@ -202,7 +202,7 @@ export default function NchPage() {
                   backgroundImage: `url('${pestImage.image}')`,
                   filter: 'blur(6px)',
                   transform: 'scale(1.1)',
-                  opacity: 0.45
+                  opacity: 0.68
                 }}
                 aria-hidden="true"
               />
@@ -213,7 +213,7 @@ export default function NchPage() {
                   backgroundImage: `url('${pestImage.image}')`,
                   filter: 'blur(8px)',
                   transform: 'scale(1.1)',
-                  opacity: 0.30
+                  opacity: 0.45
                 }}
                 aria-hidden="true"
               />
@@ -227,14 +227,14 @@ export default function NchPage() {
               backgroundImage: `url('${getNeighborhoodHeroImage(neighborhoodSlug)}')`,
               filter: 'blur(12px)',
               transform: 'scale(1.1)',
-              opacity: 0.15
+              opacity: 0.23
             }}
             aria-hidden="true"
           />
           
           {/* Градиентные overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/50 to-background/40" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/55 via-background/40 to-background/30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/15 via-transparent to-background/35" />
           
           {/* Fallback если нет изображения */}
           {!pestImage && (
