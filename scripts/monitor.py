@@ -142,9 +142,9 @@ def send_telegram_report(stats: Optional[Dict], health: Dict) -> bool:
     
     now = datetime.now().strftime("%d.%m.%Y %H:%M MSK")
     
-    message = f"📊 *МОНИТОРИНГ goruslugimsk.ru*
+    message = f"📊 *МОНИТОРИНГ goruslugimsk.ru*\n"
 
-"
+
     
     # Метрика
     if stats:
