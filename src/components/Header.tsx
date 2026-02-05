@@ -30,6 +30,12 @@ interface HeaderProps {
   onCalculatorClick?: () => void;
 }
 
+// Классы для активного состояния меню (смягчено для dark mode)
+const getActiveMenuClass = (isActive: boolean) => {
+  if (!isActive) return 'hover:bg-muted';
+  return 'bg-russia-red/10 dark:bg-russia-red/5 text-russia-red dark:text-russia-red/90 border-l-4 border-russia-red';
+};
+
 const Header = ({ onCalculatorClick }: HeaderProps) => {
   const { context } = useTraffic();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -111,6 +117,12 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
   ];
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  // Обработчик клика для снятия :focus и закрытия меню
+  const handleMenuItemClick = (e: React.MouseEvent) => {
+    (e.currentTarget as HTMLElement).blur();
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -411,10 +423,9 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     <SheetClose asChild>
                       <Link 
                         to="/blog" 
-                        className={`block py-3 px-4 rounded-lg transition-colors font-medium ${
-                          location.pathname === '/blog' || location.pathname.startsWith('/blog/')
-                            ? 'bg-russia-red/10 text-russia-red border-l-4 border-russia-red'
-                            : 'hover:bg-muted'
+                        onClick={handleMenuItemClick}
+                        className={`block py-3 px-4 rounded-lg transition-colors font-medium focus:outline-none ${
+                          getActiveMenuClass(location.pathname === '/blog' || location.pathname.startsWith('/blog/'))
                         }`}
                       >
                         Блог
@@ -424,10 +435,9 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                     <SheetClose asChild>
                       <Link 
                         to="/contacts" 
-                        className={`block py-3 px-4 rounded-lg transition-colors font-medium ${
-                          location.pathname === '/contacts'
-                            ? 'bg-russia-red/10 text-russia-red border-l-4 border-russia-red'
-                            : 'hover:bg-muted'
+                        onClick={handleMenuItemClick}
+                        className={`block py-3 px-4 rounded-lg transition-colors font-medium focus:outline-none ${
+                          getActiveMenuClass(location.pathname === '/contacts')
                         }`}
                       >
                         Контакты

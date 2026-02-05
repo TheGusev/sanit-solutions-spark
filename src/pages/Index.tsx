@@ -9,6 +9,7 @@ import SEOHead from "@/components/SEOHead";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MobileQuickCTA from "@/components/MobileQuickCTA";
+import TrustBadge from "@/components/TrustBadge";
 
 // New components for restructured layout
 const MiniPricing = lazy(() => import("@/components/MiniPricing"));
@@ -69,6 +70,13 @@ const Index = () => {
       
       {/* Mobile Quick CTA - right after hero for mobile users */}
       <MobileQuickCTA onCalculatorClick={handleOpenCalculator} />
+      
+      {/* Official trust badge */}
+      <section className="py-6 md:py-8">
+        <div className="container mx-auto px-4">
+          <TrustBadge />
+        </div>
+      </section>
       
       {/* Mini pricing - immediately after hero */}
       <Suspense fallback={<SectionLoader />}>

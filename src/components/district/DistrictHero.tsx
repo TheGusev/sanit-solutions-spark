@@ -33,9 +33,16 @@ const DistrictHero = ({ district, onCalculatorOpen }: DistrictHeroProps) => {
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 max-w-3xl">
           {district.h1}
         </h1>
+        
+        {/* Триколор-линия под H1 */}
+        <div className="h-1 w-48 flex rounded-full overflow-hidden mb-6">
+          <div className="flex-1 bg-white/90"></div>
+          <div className="flex-1 bg-blue-400"></div>
+          <div className="flex-1 bg-russia-red"></div>
+        </div>
 
         {/* Subtitle with districts */}
-        <p className="text-lg md:text-xl text-white/90 max-w-2xl mb-6">
+        <p className="text-lg md:text-xl text-white/90 max-w-2xl mb-8">
           Обслуживаем все районы {district.fullName}: {district.neighborhoods.slice(0, 4).join(', ')} и другие. 
           Быстрый выезд в любую точку округа.
         </p>
