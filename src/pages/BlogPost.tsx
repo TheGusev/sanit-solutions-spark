@@ -118,7 +118,7 @@ const BlogPost = () => {
         <HeroBackground 
           image={getBlogCategoryImage(post.category)}
           blur={12}
-          opacity={0.20}
+          opacity={0.30}
           overlay="gradient"
           altText={`${post.category} - ${post.title}`}
         />
