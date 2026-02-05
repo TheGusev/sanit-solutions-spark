@@ -487,4 +487,42 @@ All colors MUST be HSL.
     background: hsl(var(--destructive) / 0.15);
     border-color: hsl(var(--destructive) / 0.4);
   }
+
+  /* Focus reset for mobile navigation */
+  [data-radix-collection-item] a:focus,
+  [role="dialog"] a:focus,
+  [role="dialog"] button:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  /* Tricolor underline utility */
+  .tricolor-underline {
+    height: 4px;
+    display: flex;
+    border-radius: 9999px;
+    overflow: hidden;
+    width: 12rem;
+  }
+
+  .tricolor-underline > span:nth-child(1) {
+    flex: 1;
+    background: white;
+    border: 1px solid hsl(var(--border));
+  }
+
+  .dark .tricolor-underline > span:nth-child(1) {
+    background: hsl(0 0% 90%);
+    border-color: transparent;
+  }
+
+  .tricolor-underline > span:nth-child(2) {
+    flex: 1;
+    background: hsl(var(--primary));
+  }
+
+  .tricolor-underline > span:nth-child(3) {
+    flex: 1;
+    background: hsl(var(--russia-red));
+  }
 }

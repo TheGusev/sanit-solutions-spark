@@ -207,6 +207,12 @@ const ServicePage = () => {
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
                   {service.heroTitle || metadata.h1}
                 </h1>
+                {/* Триколор-линия под H1 */}
+                <div className="tricolor-underline mb-4">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
                 <p className="text-lg md:text-xl text-muted-foreground mb-8">
                   {service.heroSubtitle}
                 </p>

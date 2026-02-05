@@ -142,12 +142,12 @@ const Blog = () => {
               
               const getCategoryClass = () => {
                 if (redCategories.includes(post.category)) {
-                  return "bg-russia-red/10 text-russia-red";
+                  return "bg-russia-red/10 text-russia-red border border-russia-red/30";
                 }
                 if (gradientCategories.includes(post.category)) {
-                  return "bg-gradient-to-r from-primary to-russia-red text-white";
+                  return "bg-gradient-to-r from-primary to-russia-red text-white border border-transparent";
                 }
-                return "bg-primary/10 text-primary";
+                return "bg-primary/10 text-primary border border-primary/30";
               };
               
               const isPopular = popularSlugs.includes(post.slug);
