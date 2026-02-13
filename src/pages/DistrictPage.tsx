@@ -50,7 +50,7 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
   ];
 
   const otherDistricts = districtPages.filter((d) => d.id !== district.id).slice(0, 4);
-  const canonicalUrl = `${SEO_CONFIG.baseUrl}/uslugi/${district.slug}`;
+  const canonicalUrl = `${SEO_CONFIG.baseUrl}/uslugi/${district.slug}/`;
 
   // ---------------------------------------------------------------------------
   // 3. JSON‑LD схемы

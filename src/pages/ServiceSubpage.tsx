@@ -85,7 +85,7 @@ const ServiceSubpage = () => {
         <title>{subpage.metaTitle}</title>
         <meta name="description" content={subpage.metaDescription} />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href={`https://goruslugimsk.ru${subpage.fullPath}`} />
+        <link rel="canonical" href={`https://goruslugimsk.ru${subpage.fullPath.endsWith('/') ? subpage.fullPath : subpage.fullPath + '/'}`} />
         <meta property="og:title" content={subpage.metaTitle} />
         <meta property="og:description" content={subpage.metaDescription} />
         <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>

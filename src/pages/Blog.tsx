@@ -45,10 +45,10 @@ const Blog = () => {
         <title>{`Блог о дезинфекции — ${allBlogArticles.length} статей | Санитарные Решения`}</title>
         <meta name="description" content="Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды. Экспертные советы от специалистов ООО Санитарные Решения." />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href="https://goruslugimsk.ru/blog" />
-        <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/blog" />
+        <link rel="canonical" href="https://goruslugimsk.ru/blog/" />
+        <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/blog/" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://goruslugimsk.ru/blog" />
+        <meta property="og:url" content="https://goruslugimsk.ru/blog/" />
         <meta property="og:title" content="Блог о дезинфекции | Санитарные Решения" />
         <meta property="og:description" content="Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды." />
         <meta property="og:image" content="https://storage.googleapis.com/msgsndr/TPScApsdHM0g97SZIF3E/media/67627bc8700fb0e19a0b3c10.jpeg" />
@@ -58,7 +58,7 @@ const Blog = () => {
         <meta name="twitter:title" content="Блог о дезинфекции | Санитарные Решения" />
         <meta name="twitter:description" content="Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды." />
         <meta name="twitter:image" content="https://storage.googleapis.com/msgsndr/TPScApsdHM0g97SZIF3E/media/67627bc8700fb0e19a0b3c10.jpeg" />
-        <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/blog" />
+        <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/blog/" />
       </Helmet>
 
       {/* ItemList Schema.org for blog articles */}
