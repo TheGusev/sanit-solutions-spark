@@ -9,9 +9,9 @@ const Terms = () => {
       <Helmet>
         <title>{`Пользовательское соглашение | Санитарные Решения`}</title>
         <meta name="description" content="Пользовательское соглашение ООО Санитарные Решения. Условия использования сайта, оказания услуг и права сторон." />
-        <link rel="canonical" href="https://goruslugimsk.ru/terms" />
-        <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/terms" />
-        <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/terms" />
+        <link rel="canonical" href="https://goruslugimsk.ru/terms/" />
+        <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/terms/" />
+        <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/terms/" />
         <meta name="robots" content="noindex, follow" />
       </Helmet>
       

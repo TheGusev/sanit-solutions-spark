@@ -108,15 +108,15 @@ const NeighborhoodPage = () => {
       <Helmet>
         <title>{neighborhood.metaTitle}</title>
         <meta name="description" content={neighborhood.metaDescription} />
-        <link rel="canonical" href={`${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`} />
-        <link rel="alternate" hrefLang="ru" href={`${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`} />
-        <link rel="alternate" hrefLang="x-default" href={`${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`} />
+        <link rel="canonical" href={`${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}/`} />
+        <link rel="alternate" hrefLang="ru" href={`${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}/`} />
+        <link rel="alternate" hrefLang="x-default" href={`${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}/`} />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
         
         {/* Open Graph */}
         <meta property="og:title" content={neighborhood.metaTitle} />
         <meta property="og:description" content={neighborhood.metaDescription} />
-        <meta property="og:url" content={`${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`} />
+        <meta property="og:url" content={`${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}/`} />
         <meta property="og:type" content="website" />
         <meta property="og:image" content={SEO_CONFIG.ogImage} />
         <meta property="og:locale" content={SEO_CONFIG.locale} />

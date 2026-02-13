@@ -57,11 +57,11 @@ const BlogPost = () => {
         <title>{`${post.title} | Санитарные Решения`}</title>
         <meta name="description" content={post.excerpt} />
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-        <link rel="canonical" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}`} />
-        <link rel="alternate" hrefLang="ru" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}`} />
-        <link rel="alternate" hrefLang="x-default" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}`} />
+        <link rel="canonical" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}/`} />
+        <link rel="alternate" hrefLang="ru" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}/`} />
+        <link rel="alternate" hrefLang="x-default" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}/`} />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={`${SEO_CONFIG.baseUrl}/blog/${post.slug}`} />
+        <meta property="og:url" content={`${SEO_CONFIG.baseUrl}/blog/${post.slug}/`} />
         <meta property="og:title" content={`${post.title} | ${SEO_CONFIG.companyName}`} />
         <meta property="og:description" content={post.excerpt} />
         <meta property="og:image" content={SEO_CONFIG.ogImage} />

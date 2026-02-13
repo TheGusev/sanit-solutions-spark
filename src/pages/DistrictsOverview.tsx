@@ -29,7 +29,7 @@ const DistrictsOverview = () => {
       <Helmet>
         <title>Дезинфекция по округам Москвы — все районы | Санитарные Решения</title>
         <meta name="description" content="Профессиональная дезинфекция, дезинсекция и дератизация во всех округах Москвы: ЦАО, САО, СВАО, ВАО, ЮВАО, ЮАО, ЮЗАО, ЗАО, СЗАО. Выезд от 15 минут." />
-        <link rel="canonical" href="https://goruslugimsk.ru/uslugi/po-okrugam-moskvy" />
+        <link rel="canonical" href="https://goruslugimsk.ru/uslugi/po-okrugam-moskvy/" />
         <meta name="robots" content="index, follow" />
       </Helmet>
 

@@ -115,11 +115,11 @@ const Contacts = () => {
           name="description" 
           content="Контакты компании ООО Санитарные Решения. Профессиональная дезинфекция, дезинсекция, дератизация в Москве и Московской области. Звоните: +7 (906) 998-98-88"
         />
-        <link rel="canonical" href="https://goruslugimsk.ru/contacts" />
+        <link rel="canonical" href="https://goruslugimsk.ru/contacts/" />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="Контакты — ООО Санитарные Решения" />
         <meta property="og:description" content="Свяжитесь с нами для заказа услуг дезинфекции в Москве и МО" />
-        <meta property="og:url" content="https://goruslugimsk.ru/contacts" />
+        <meta property="og:url" content="https://goruslugimsk.ru/contacts/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://goruslugimsk.ru/og-image.jpg" />
         <meta property="og:locale" content="ru_RU" />
@@ -128,8 +128,8 @@ const Contacts = () => {
         <meta name="twitter:title" content="Контакты — ООО Санитарные Решения" />
         <meta name="twitter:description" content="Свяжитесь с нами для заказа услуг дезинфекции в Москве и МО" />
         <meta name="twitter:image" content="https://goruslugimsk.ru/og-image.jpg" />
-        <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/contacts" />
-        <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/contacts" />
+        <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/contacts/" />
+        <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/contacts/" />
         <meta name="geo.region" content="RU-MOW" />
         <meta name="geo.placename" content="Москва" />
         <meta name="geo.position" content="55.7558;37.6173" />
