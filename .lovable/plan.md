@@ -1,97 +1,143 @@
 
-# План: Увеличение видимости фоновых изображений на 50%
+# Plan: Fix Canonical URLs and Yandex Indexing Issues
 
-## Текущая ситуация
+## Root Cause Analysis
 
-На сайте используются фоновые изображения с низкой прозрачностью, которые еле видны. Нужно увеличить их opacity на 50% от текущих значений.
+Yandex marks all pages as "non-canonical" with canonical pointing to the homepage (`https://goruslugimsk.ru/`) for two reasons:
 
-## Места с фоновыми изображениями и новые значения
+1. **Static HTML files redirect to SPA**: All 23 static HTML files in `public/` contain `window.location.replace('/path')` which redirects Yandex's JS-capable crawler to the SPA shell. The SPA shell (`index.html`) has `<link rel="canonical" href="https://goruslugimsk.ru/">` -- pointing to the homepage. Yandex follows the JS redirect and sees the homepage canonical.
 
-| Файл | Тип фона | Было (Desktop) | Станет | Было (Mobile) | Станет |
-|------|----------|----------------|--------|---------------|--------|
-| `HeroBackground.tsx` | Дефолт | 0.30 | **0.45** | +0.15 авто | +0.15 авто |
-| `Blog.tsx` | Блог | 0.25 | **0.38** | ~0.40 | ~0.53 |
-| `BlogPost.tsx` | Статья | 0.20 | **0.30** | ~0.35 | ~0.45 |
-| `DistrictHero.tsx` | Округа | 0.35 | **0.52** | ~0.50 | ~0.67 |
-| `ServicePestPage.tsx` | Вредители | Desktop 0.35, Mobile 0.50 | **0.52**, **0.75** | — | — |
-| `NchPage.tsx` (слой 1) | Вредитель | Desktop 0.30, Mobile 0.45 | **0.45**, **0.68** | — | — |
-| `NchPage.tsx` (слой 2) | Район | 0.15 | **0.23** | — | — |
-| `NeighborhoodPage.tsx` | Район | 0.30 | **0.45** | нет отдельного | добавить |
+2. **Missing trailing slashes in React canonical tags**: 10 page components set canonical URLs WITHOUT trailing slash, which conflicts with the directory-based URL structure (`/path/index.html` = `/path/`).
 
-## Изменения по файлам
+## Changes Required
 
-### 1. `src/components/HeroBackground.tsx`
-Увеличить дефолтные значения:
-- `opacity = 0.30` → `opacity = 0.45`
-- Автоматически mobileOpacity увеличится пропорционально
+### Part 1: Remove JS redirects from static HTML files (10 files)
 
-### 2. `src/pages/Blog.tsx`
-```tsx
-<HeroBackground 
-  image="/images/neighborhoods/interior-park.png"
-  blur={10}
-  opacity={0.38}  // было 0.25
-  overlay="gradient"
-/>
+Remove the `window.location.replace()` script from ALL static HTML files in `public/`. These files already have correct SEO metadata -- the redirect destroys it for JS-capable crawlers.
+
+Files to fix:
+- `public/blog/index.html`
+- `public/blog/borba-s-tarakanami/index.html`
+- `public/blog/dezinfekciya-ofisa/index.html`
+- `public/blog/gryzuny-v-dome/index.html`
+- `public/blog/kak-podgotovit-pomeshchenie/index.html`
+- `public/blog/klopy-v-kvartire/index.html`
+- `public/blog/ozonirovaniye-pomeshcheniy/index.html`
+- `public/blog/sezonnost-vreditelej/index.html`
+- `public/blog/vidy-dezinfekcii/index.html`
+- `public/contacts/index.html`
+- `public/privacy/index.html`
+- `public/terms/index.html`
+- `public/uslugi/dezinfekciya/index.html`
+- `public/uslugi/dezinsekciya/index.html`
+- `public/uslugi/deratizaciya/index.html`
+- `public/uslugi/dezodoraciya/index.html`
+- `public/uslugi/ozonirovanie/index.html`
+- `public/uslugi/sertifikaciya/index.html`
+- `public/uslugi/po-okrugam-moskvy/index.html`
+- `public/uslugi/dezinfekciya-cao/index.html` (and all 9 district files)
+
+In each file, remove the entire `<script>` block containing `window.location.replace(...)`.
+
+### Part 2: Add trailing slash to all React canonical URLs (10 files)
+
+| File | Current canonical | Fixed canonical |
+|------|------------------|----------------|
+| `src/pages/Blog.tsx` | `/blog` | `/blog/` |
+| `src/pages/BlogPost.tsx` | `/blog/${slug}` | `/blog/${slug}/` |
+| `src/pages/Privacy.tsx` | `/privacy` | `/privacy/` |
+| `src/pages/Terms.tsx` | `/terms` | `/terms/` |
+| `src/pages/Contacts.tsx` | `/contacts` | `/contacts/` |
+| `src/pages/DistrictsOverview.tsx` | `/uslugi/po-okrugam-moskvy` | `/uslugi/po-okrugam-moskvy/` |
+| `src/pages/NeighborhoodsOverview.tsx` | `/rajony` | `/rajony/` |
+| `src/pages/NeighborhoodPage.tsx` | `/rajony/${slug}` | `/rajony/${slug}/` |
+| `src/pages/DistrictPage.tsx` | `/uslugi/${district.slug}` | `/uslugi/${district.slug}/` |
+| `src/pages/ServiceSubpage.tsx` | `${subpage.fullPath}` | `${subpage.fullPath}/` (with normalization) |
+
+Also fix `hrefLang` and `og:url` tags in the same files to match the trailing-slash canonical.
+
+### Part 3: Verify robots.txt and admin noindex
+
+- `robots.txt` already correctly allows `/blog/` and `/uslugi/` -- no changes needed
+- `/admin` pages are correctly blocked in `robots.txt` (Disallow: /admin/) -- no changes needed
+- Confirm no `noindex` tags on public pages -- they already use `index, follow`
+
+## Full URL List for Resubmission in Yandex Webmaster
+
+After publishing, request recrawl for ALL of these URLs:
+
+**Main pages:**
+- `https://goruslugimsk.ru/`
+- `https://goruslugimsk.ru/contacts/`
+- `https://goruslugimsk.ru/blog/`
+- `https://goruslugimsk.ru/privacy/`
+- `https://goruslugimsk.ru/terms/`
+- `https://goruslugimsk.ru/rajony/`
+- `https://goruslugimsk.ru/moscow-oblast/`
+
+**Services (6):**
+- `https://goruslugimsk.ru/uslugi/dezinfekciya/`
+- `https://goruslugimsk.ru/uslugi/dezinsekciya/`
+- `https://goruslugimsk.ru/uslugi/deratizaciya/`
+- `https://goruslugimsk.ru/uslugi/ozonirovanie/`
+- `https://goruslugimsk.ru/uslugi/dezodoraciya/`
+- `https://goruslugimsk.ru/uslugi/sertifikaciya/`
+- `https://goruslugimsk.ru/uslugi/po-okrugam-moskvy/`
+
+**Districts (9):**
+- `https://goruslugimsk.ru/uslugi/dezinfekciya-cao/`
+- `https://goruslugimsk.ru/uslugi/dezinfekciya-sao/`
+- `https://goruslugimsk.ru/uslugi/dezinfekciya-svao/`
+- `https://goruslugimsk.ru/uslugi/dezinfekciya-szao/`
+- `https://goruslugimsk.ru/uslugi/dezinfekciya-vao/`
+- `https://goruslugimsk.ru/uslugi/dezinfekciya-yao/`
+- `https://goruslugimsk.ru/uslugi/dezinfekciya-yuvao/`
+- `https://goruslugimsk.ru/uslugi/dezinfekciya-yzao/`
+- `https://goruslugimsk.ru/uslugi/dezinfekciya-zao/`
+
+**Blog articles (8):**
+- `https://goruslugimsk.ru/blog/borba-s-tarakanami/`
+- `https://goruslugimsk.ru/blog/dezinfekciya-ofisa/`
+- `https://goruslugimsk.ru/blog/gryzuny-v-dome/`
+- `https://goruslugimsk.ru/blog/kak-podgotovit-pomeshchenie/`
+- `https://goruslugimsk.ru/blog/klopy-v-kvartire/`
+- `https://goruslugimsk.ru/blog/ozonirovaniye-pomeshcheniy/`
+- `https://goruslugimsk.ru/blog/sezonnost-vreditelej/`
+- `https://goruslugimsk.ru/blog/vidy-dezinfekcii/`
+
+**Excluded pages from screenshots (also request recrawl):**
+- `https://goruslugimsk.ru/rajony/voykovskiy/`
+- `https://goruslugimsk.ru/uslugi/dezinsekciya/kvartir/`
+- `https://goruslugimsk.ru/uslugi/deratizaciya/krysy/`
+- `https://goruslugimsk.ru/uslugi/dezinsekciya/ofis/`
+- `https://goruslugimsk.ru/uslugi/deratizaciya/`
+
+**Total: ~37 URLs for priority recrawl**
+
+## Technical Details
+
+### Why Yandex chose homepage as canonical
+
+```text
+User visits /uslugi/dezinsekciya/
+  -> static HTML has correct canonical (/uslugi/dezinsekciya/)
+  -> BUT script executes: window.location.replace('/uslugi/dezinsekciya')
+  -> Browser navigates to /uslugi/dezinsekciya (no trailing slash)
+  -> SPA shell (index.html) loads with canonical = https://goruslugimsk.ru/
+  -> Yandex sees FINAL canonical = homepage
+  -> Marks original page as non-canonical
 ```
 
-### 3. `src/pages/BlogPost.tsx`
-```tsx
-<HeroBackground 
-  image={getBlogCategoryImage(post.category)}
-  blur={12}
-  opacity={0.30}  // было 0.20
-  overlay="gradient"
-/>
+### Fix removes the redirect chain
+
+```text
+User visits /uslugi/dezinsekciya/
+  -> static HTML with correct canonical (/uslugi/dezinsekciya/) 
+  -> NO redirect
+  -> Yandex indexes correct canonical
 ```
 
-### 4. `src/components/district/DistrictHero.tsx`
-```tsx
-<HeroBackground 
-  image={heroImage}
-  blur={8}
-  opacity={0.52}  // было 0.35
-  overlay="none"
-/>
-```
-
-### 5. `src/pages/ServicePestPage.tsx`
-Обновить два слоя:
-- Мобильная версия: `opacity: 0.50` → `opacity: 0.75`
-- Desktop версия: `opacity: 0.35` → `opacity: 0.52`
-
-### 6. `src/pages/NchPage.tsx`
-Обновить все три слоя:
-- Слой 1 mobile: `opacity: 0.45` → `opacity: 0.68`
-- Слой 1 desktop: `opacity: 0.30` → `opacity: 0.45`
-- Слой 2 (район): `opacity: 0.15` → `opacity: 0.23`
-
-### 7. `src/pages/NeighborhoodPage.tsx`
-Текущий код имеет только один слой для обоих версий:
-- Добавить отдельную мобильную версию
-- Desktop: `opacity: 0.30` → `opacity: 0.45`
-- Mobile: добавить новый слой с `opacity: 0.60`
-
-## Также уменьшить overlay-градиенты
-
-Чтобы изображения стали ещё заметнее, слегка снизить плотность градиентов поверх:
-
-### `src/components/HeroBackground.tsx`
-```css
-/* Было */
-from-background/70 via-background/50 to-background/40
-from-background/30 via-transparent to-background/60
-
-/* Станет */
-from-background/60 via-background/40 to-background/30
-from-background/20 via-transparent to-background/50
-```
-
-## Итоговый результат
-
-После изменений фоновые изображения станут на ~50% заметнее:
-- Блог: было едва видно → теперь отчётливо видно
-- Районы: было размыто → теперь хорошо различимо
-- Вредители: было слабо → теперь ярко (особенно на мобильных)
-
-Текст останется читаемым благодаря сохранённым градиентным overlay'ам.
+### Estimated timeline for re-indexing
+- After publishing: request recrawl in Yandex Webmaster
+- Yandex typically re-indexes within 3-7 days for active sites
+- Full re-indexing of all pages: 2-4 weeks
