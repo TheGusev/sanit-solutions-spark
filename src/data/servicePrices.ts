@@ -3,7 +3,7 @@ export interface ServicePrice {
   service: string;
   object: string;
   price: string;
-  category: 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya' | 'ozonirovanie' | 'dezodoraciya' | 'sertifikaciya';
+  category: 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya' | 'ozonirovanie' | 'dezodoraciya' | 'demerkurizaciya';
   isPopular?: boolean;
   icon?: string;
 }
@@ -127,15 +127,15 @@ export const servicePrices: ServicePrice[] = [
     category: "dezodoraciya"
   },
   
-  // Сертификация
+  // Демеркуризация
   { 
-    id: "sert-doc", 
-    service: "Сертификация", 
-    object: "Документы для СЭС", 
+    id: "demerk-kvart", 
+    service: "Демеркуризация", 
+    object: "Квартира (разбитый градусник)", 
     price: "от 3000 ₽",
-    category: "sertifikaciya",
+    category: "demerkurizaciya",
     isPopular: true,
-    icon: "📋"
+    icon: "☣️"
   }
 ];
 

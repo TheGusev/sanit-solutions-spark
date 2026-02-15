@@ -21,7 +21,7 @@ const DistrictsOverview = () => {
     { title: "Дератизация", href: "/uslugi/deratizaciya", price: "от 1400₽" },
     { title: "Озонирование", href: "/uslugi/ozonirovanie", price: "от 1500₽" },
     { title: "Дезодорация", href: "/uslugi/dezodoraciya", price: "от 1000₽" },
-    { title: "Сертификация", href: "/uslugi/sertifikaciya", price: "от 3000₽" },
+    { title: "Демеркуризация", href: "/uslugi/demerkurizaciya", price: "от 3000₽" },
   ];
 
   return (
