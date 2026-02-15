@@ -237,13 +237,6 @@ export const generateLocalBusiness = (
     '@type': 'GeoCoordinates',
     latitude: '55.7558',
     longitude: '37.6173'
-  },
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '4.9',
-    reviewCount: '347',
-    bestRating: '5',
-    worstRating: '1'
   }
 });
 
