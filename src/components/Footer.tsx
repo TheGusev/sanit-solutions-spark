@@ -77,8 +77,8 @@ const Footer = memo(() => {
                 </Link>
               </li>
               <li>
-                <Link to="/uslugi/sertifikaciya" className="hover:opacity-100">
-                  • Санитарная сертификация
+                <Link to="/uslugi/demerkurizaciya" className="hover:opacity-100">
+                  • Демеркуризация
                 </Link>
               </li>
             </ul>

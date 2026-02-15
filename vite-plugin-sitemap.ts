@@ -60,7 +60,7 @@ const servicesSlugs = [
   'deratizaciya',
   'ozonirovanie',
   'dezodoraciya',
-  'sertifikaciya'
+  'demerkurizaciya'
 ];
 
 // Подстраницы услуг
