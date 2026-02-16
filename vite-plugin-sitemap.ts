@@ -143,8 +143,6 @@ const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'pro
 // Услуги для объектов (4 основных)
 const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'];
 
-// Топ-100 районов для Услуга + Объект + Район
-const top100Neighborhoods = neighborhoodSlugs.slice(0, 100);
 
 // Статьи блога (158+ статей)
 const blogSlugs = [
@@ -366,20 +364,6 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // ========== SITEMAP-SERVICES-OBJECT-DISTRICT.XML (услуга + объект + район = 2,400 URL) ==========
-      const serviceObjectDistrictUrls: SitemapUrl[] = [];
-      servicesForObjects.forEach(serviceSlug => {
-        objectSlugs.forEach(objectSlug => {
-          top100Neighborhoods.forEach(districtSlug => {
-            serviceObjectDistrictUrls.push({
-              loc: `/uslugi/${serviceSlug}/${objectSlug}/${districtSlug}/`,
-              lastmod: currentDate,
-              changefreq: 'monthly',
-              priority: '0.7',
-            });
-          });
-        });
-      });
       
       // ========== SITEMAP-BLOG.XML (блог) ==========
       const blogUrls: SitemapUrl[] = blogSlugs.map(slug => ({
@@ -396,7 +380,7 @@ export function sitemapPlugin(): Plugin {
         { filename: 'sitemap-services-pest.xml', urls: servicePestUrls },
         { filename: 'sitemap-services-object.xml', urls: serviceObjectUrls },
         { filename: 'sitemap-services-district.xml', urls: serviceDistrictUrls },
-        { filename: 'sitemap-services-object-district.xml', urls: serviceObjectDistrictUrls },
+        
         { filename: 'sitemap-moscow.xml', urls: moscowUrls },
         { filename: 'sitemap-moscow-region.xml', urls: moscowRegionUrls },
         { filename: 'sitemap-nch.xml', urls: nchUrls },
