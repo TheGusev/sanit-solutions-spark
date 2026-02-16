@@ -267,7 +267,6 @@ function getAllRoutes(): SSGRoute[] {
       });
     });
             });
-  });
   
   // Обзорная страница округов
   routes.push({
