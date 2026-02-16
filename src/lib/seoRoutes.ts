@@ -192,9 +192,9 @@ export function getAllSSGRoutes() {
   
   // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
   
-  // НЧ-страницы: Услуга + Вредитель + Район (875 страниц)
+  // НЧ-страницы: Услуга + Вредитель + Топ-15 районов (~105 страниц)
   dezinsekciyaPestSlugs.forEach(pestSlug => {
-    neighborhoodSlugs.forEach(neighborhoodSlug => {
+    topNeighborhoods.forEach(neighborhoodSlug => {
       routes.push({
         path: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}`,
         outputPath: `uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}/index.html`,
@@ -205,7 +205,7 @@ export function getAllSSGRoutes() {
   });
   
   deratizaciyaPestSlugs.forEach(pestSlug => {
-    neighborhoodSlugs.forEach(neighborhoodSlug => {
+    topNeighborhoods.forEach(neighborhoodSlug => {
       routes.push({
         path: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}`,
         outputPath: `uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/index.html`,

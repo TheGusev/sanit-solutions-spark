@@ -12,7 +12,7 @@
 import { Link } from 'react-router-dom';
 import { pests, getPestsByService } from '@/data/pests';
 import { moscowRegionCities } from '@/data/moscowRegion';
-import { neighborhoodSlugs } from '@/lib/seoRoutes';
+import { neighborhoodSlugs, topNeighborhoods } from '@/lib/seoRoutes';
 import { neighborhoods } from '@/data/neighborhoods';
 import { ArrowRight } from 'lucide-react';
 
@@ -75,7 +75,7 @@ export function InternalLinks({
       currentIndex - 1,
       currentIndex + 1,
       currentIndex + 2
-    ].filter(i => i >= 0 && i < neighborhoodSlugs.length && i !== currentIndex);
+    ].filter(i => i >= 0 && i < neighborhoodSlugs.length && i !== currentIndex && topNeighborhoods.includes(neighborhoodSlugs[i]));
     
     nearbyIndices.slice(0, 4).forEach(index => {
       const neighborhoodSlug = neighborhoodSlugs[index];
