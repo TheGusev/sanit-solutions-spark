@@ -95,7 +95,7 @@ export function InternalLinks({
       currentIndex - 1,
       currentIndex + 1,
       currentIndex + 2
-    ].filter(i => i >= 0 && i < neighborhoodSlugs.length && i !== currentIndex);
+    ].filter(i => i >= 0 && i < neighborhoodSlugs.length && i !== currentIndex && topNeighborhoods.includes(neighborhoodSlugs[i]));
     
     nearbyIndices.slice(0, 3).forEach(index => {
       const neighborhoodSlug = neighborhoodSlugs[index];
