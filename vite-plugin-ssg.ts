@@ -250,6 +250,8 @@ function getAllRoutes(): SSGRoute[] {
   servicesForObjects.forEach(serviceSlug => {
     objectSlugs.forEach(objectSlug => {
 
+          });
+            });
   
   // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
   
