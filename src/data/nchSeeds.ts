@@ -9,7 +9,7 @@
  */
 
 import { pests, dezinsekciyaPestSlugs, deratizaciyaPestSlugs } from './pests';
-import { neighborhoodSlugs } from '@/lib/seoRoutes';
+import { neighborhoodSlugs, topNeighborhoods } from '@/lib/seoRoutes';
 
 export interface NchPage {
   id: string;
@@ -20,13 +20,9 @@ export interface NchPage {
   keyword: string;
 }
 
-// Топ-20 районов по поисковому спросу (ЦАО + популярные)
-export const topNeighborhoods = [
-  'arbat', 'tverskoy', 'presnensky', 'khamovniki', 'basmannyy',
-  'sokol', 'begovoy', 'aeroport', 'marina-roshcha', 'ostankinsky',
-  'izmaylovo', 'sokolniki', 'perovo', 'maryino', 'lyublino',
-  'chertanovo-severnoe', 'yasenevo', 'konkovo', 'kuntsevo', 'strogino'
-];
+// Топ-15 районов — импортированы из seoRoutes.ts (единый источник истины)
+// Re-export для обратной совместимости
+export { topNeighborhoods } from '@/lib/seoRoutes';
 
 // Топ-вредители по спросу
 export const topPests = ['tarakany', 'klopy', 'krysy', 'myshi'];
