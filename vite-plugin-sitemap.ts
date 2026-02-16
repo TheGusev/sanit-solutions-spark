@@ -1,5 +1,5 @@
-demercurizaciyaimport { writeFileSync } from 'fs';
-import { resolve } from 'path';
+import { writeFileSync } from 'fs'
+  ;import { resolve } from 'path';
 import type { Plugin } from 'vite';
 
 interface SitemapUrl {
