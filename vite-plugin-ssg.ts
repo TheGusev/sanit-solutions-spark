@@ -246,12 +246,6 @@ function getAllRoutes(): SSGRoute[] {
     });
   });
   
-  // Услуга + Объект + Район (2,400 страниц: 4 услуги × 6 объектов × 100 районов)
-  servicesForObjects.forEach(serviceSlug => {
-    objectSlugs.forEach(objectSlug => {
-
-          });
-            });
   
   // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
   
