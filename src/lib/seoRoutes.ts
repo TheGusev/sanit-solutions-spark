@@ -103,11 +103,8 @@ export const objectSlugs = [
 // Услуги для объектов (4 основных)
 export const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'];
 
-// Топ-100 районов для Услуга + Объект + Район (ограничиваем для оптимизации)
-export const top100Neighborhoods = neighborhoodSlugs.slice(0, 100);
 
 // Генерация всех маршрутов для SSG
-export function getAllSSGRoutes() {
   const routes = [...staticRoutes];
   
   // Услуги (6 страниц)
@@ -176,21 +173,7 @@ export function getAllSSGRoutes() {
     });
   });
   
-  // Услуга + Объект + Район (2,400 страниц: 4 услуги × 6 объектов × 100 районов)
-  servicesForObjects.forEach(serviceSlug => {
-    objectSlugs.forEach(objectSlug => {
-      top100Neighborhoods.forEach(districtSlug => {
-        routes.push({
-          path: `/uslugi/${serviceSlug}/${objectSlug}/${districtSlug}`,
-          outputPath: `uslugi/${serviceSlug}/${objectSlug}/${districtSlug}/index.html`,
-          priority: '0.7',
-          changefreq: 'monthly'
-        });
-      });
-    });
-  });
-  
-  // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
+
   
   // НЧ-страницы: Услуга + Вредитель + Топ-15 районов (~105 страниц)
   dezinsekciyaPestSlugs.forEach(pestSlug => {
