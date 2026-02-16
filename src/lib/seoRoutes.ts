@@ -1,4 +1,4 @@
-/**
+demercurizaciya/**
  * Единый источник истины для всех индексируемых маршрутов.
  * Используется в SSG (vite-plugin-ssg.ts) и Sitemap (vite-plugin-sitemap.ts).
  */

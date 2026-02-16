@@ -1,4 +1,4 @@
-import { memo } from "react";
+demercurizaciyaimport { memo } from "react";
 import { Link } from "react-router-dom";
 import { Phone, Mail, MessageCircle, Send, MapPin, Clock, Beaker } from "lucide-react";
 import { trackGoal } from "@/lib/analytics";

@@ -1,4 +1,4 @@
-
+demercurizaciyademercurizaciya
 # Исправление HTTP 404: Синхронизация SSG с seoRoutes.ts
 
 ## Проблема

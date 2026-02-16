@@ -1,4 +1,4 @@
-import { Plugin } from 'vite';
+demercurizaciyaimport { Plugin } from 'vite';
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { pathToFileURL } from 'url';

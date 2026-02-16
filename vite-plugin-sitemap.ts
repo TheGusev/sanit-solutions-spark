@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs';
+demercurizaciyaimport { writeFileSync } from 'fs';
 import { resolve } from 'path';
 import type { Plugin } from 'vite';
 

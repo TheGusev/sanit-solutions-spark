@@ -1,4 +1,4 @@
-export interface ServicePrice {
+demercurizaciyademercurizaciyaexport interface ServicePrice {
   id: string;
   service: string;
   object: string;
