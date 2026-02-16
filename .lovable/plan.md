@@ -1,82 +1,97 @@
 
 
-# Day 2: Замена Сертификация → Демеркуризация
+# Day 4: Ограничение NCH до топ-15 районов
 
-## Обзор изменений
+## Цель
 
-Убираем услугу "Санитарная сертификация" (sertifikaciya) из навигации, sitemap и SSG. Добавляем новую услугу "Демеркуризация" (demerkurizaciya). Старый URL `/uslugi/sertifikaciya/` не удаляем физически — просто убираем из sitemap и навигации (безопасный подход).
+Сократить NCH-страницы (услуга + вредитель + район) в sitemap и SSG с ~910 URL до ~105 URL (7 вредителей x 15 районов). Это убирает ~800 doorway-страниц из индексации.
 
-## Затрагиваемые файлы (8 файлов)
+## Текущее состояние
 
-### 1. `src/data/services.ts`
+- `vite-plugin-sitemap.ts` (строки 314-339): генерирует NCH для ВСЕХ 130 районов = 910 URL
+- `src/lib/seoRoutes.ts` (строки 195-216): генерирует SSG маршруты для ВСЕХ 130 районов = 910 URL
+- `src/data/nchSeeds.ts`: использует свой `topNeighborhoods` (20 районов) для приоритизации, но не ограничивает генерацию
+- `src/components/InternalLinks.tsx`: перелинковывает НЧ на соседние районы из полного `neighborhoodSlugs` массива
 
-- Удалить объект `sertifikaciya` (строки 340-398)
-- Заменить на новый объект `demerkurizaciya` с полным контентом:
-  - slug: "demerkurizaciya"
-  - title: "Демеркуризация"
-  - metaTitle: "Демеркуризация в Москве от 3000₽ — Сбор ртути | Санитарные Решения"
-  - metaDescription: описание услуги (140-165 символов)
-  - heroTitle, heroSubtitle, description, benefits, methods, priceFrom: 3000, faq (4 вопроса)
-- В `serviceToArticles` (строка 412): заменить ключ `sertifikaciya` на `demerkurizaciya` с подходящими статьями
+## Изменения (4 файла)
 
-### 2. `src/lib/seoRoutes.ts` (строка 21)
+### 1. `vite-plugin-sitemap.ts` (строки 314-339)
 
-- Заменить `'sertifikaciya'` на `'demerkurizaciya'` в массиве `servicesSlugs`
+Заменить `neighborhoodSlugs` на `topNeighborhoods` (из `seoRoutes.ts`) в генерации `sitemap-nch.xml`:
 
-### 3. `vite-plugin-sitemap.ts` (строка 63)
+```typescript
+// БЫЛО: neighborhoodSlugs.forEach(neighborhoodSlug => {
+// СТАЛО: topNeighborhoods.forEach(neighborhoodSlug => {
+```
 
-- Заменить `'sertifikaciya'` на `'demerkurizaciya'` в массиве `servicesSlugs`
+Это сократит sitemap-nch.xml с ~910 до ~105 URL (5 дезинсекция-вредителей x 15 + 2 дератизация-вредителя x 15).
 
-### 4. `src/components/Header.tsx` (строка 109)
+### 2. `src/lib/seoRoutes.ts` (строки 195-216)
 
-- Заменить `{ title: "Сертификация", href: "/uslugi/sertifikaciya", subItems: [] }` на `{ title: "Демеркуризация", href: "/uslugi/demerkurizaciya", subItems: [] }`
+Заменить `neighborhoodSlugs` на `topNeighborhoods` в генерации SSG маршрутов для НЧ:
 
-### 5. `src/components/Footer.tsx` (строки 80-82)
+```typescript
+// БЫЛО: neighborhoodSlugs.forEach(neighborhoodSlug => {
+// СТАЛО: topNeighborhoods.forEach(neighborhoodSlug => {
+```
 
-- Заменить ссылку `/uslugi/sertifikaciya` на `/uslugi/demerkurizaciya` с текстом "Демеркуризация"
+Это синхронизирует SSG с sitemap. Обе секции (дезинсекция и дератизация) должны использовать `topNeighborhoods`.
 
-### 6. `src/components/MiniPricing.tsx` (строка 11)
+### 3. `src/data/nchSeeds.ts` (строки 24-29)
 
-- Заменить `{ icon: FileCheck, title: "Сертификация СЭС", href: "/uslugi/sertifikaciya" }` на `{ icon: AlertTriangle, title: "Демеркуризация", href: "/uslugi/demerkurizaciya" }` (импортировать AlertTriangle из lucide-react)
+Синхронизировать `topNeighborhoods` с `seoRoutes.ts`. Текущий массив в `nchSeeds.ts` содержит 20 районов, а в `seoRoutes.ts` — 15. Обновить `nchSeeds.ts`, чтобы он импортировал `topNeighborhoods` из `seoRoutes.ts` вместо собственного массива, избегая рассинхрона.
 
-### 7. `src/pages/DistrictsOverview.tsx` (строка 24)
+### 4. `src/components/InternalLinks.tsx` (строки 70-90)
 
-- Заменить `{ title: "Сертификация", href: "/uslugi/sertifikaciya", price: "от 3000₽" }` на `{ title: "Демеркуризация", href: "/uslugi/demerkurizaciya", price: "от 3000₽" }`
+Ограничить перелинковку НЧ-страниц только теми районами, которые входят в `topNeighborhoods`. Добавить проверку:
 
-### 8. `src/data/servicePrices.ts`
+```typescript
+import { topNeighborhoods } from '@/lib/seoRoutes';
+// ...
+// В секции "Соседние районы": фильтровать по topNeighborhoods
+nearbyIndices.filter(i => topNeighborhoods.includes(neighborhoodSlugs[i]))
+```
 
-- Обновить тип `category` (строка 6): заменить `'sertifikaciya'` на `'demerkurizaciya'`
-- Обновить запись (строки 130-139): заменить категорию и название на демеркуризацию
+Это гарантирует, что внутренние ссылки не ведут на "вырезанные" НЧ-страницы.
 
-### Не трогаем
+## Не трогаем
 
-- `src/data/blog/legal-articles.ts` — `relatedServices` с `'sertifikaciya'` оставляем пока как есть (эти статьи просто не будут ссылаться на удалённую услугу, getServiceBySlug вернёт undefined, статьи останутся рабочими)
-- `public/uslugi/sertifikaciya/index.html` — не удаляем, не ставим 410. Просто убираем из навигации и sitemap
-- `src/data/certificates.ts` — не затрагивается
+- Маршруты в `App.tsx` (роутер React) — оставляем как есть, чтобы старые URL не давали 404 через SPA
+- `ServiceDistrictPage` / `NchPage` компоненты — рендерят любой район, не ограничиваем
 
-## Контент для демеркуризации
+## Результат
 
-Услуга демеркуризации — это профессиональный сбор ртути и обеззараживание помещений после разбития ртутного термометра, ламп или других ртутьсодержащих приборов. Актуальная услуга с реальным спросом в Москве.
+| Метрика | Было | Стало |
+|---------|------|-------|
+| sitemap-nch.xml | ~910 URL | ~105 URL |
+| SSG маршруты NCH | ~910 | ~105 |
+| Внутренние ссылки | на все 130 | только на топ-15 |
 
 ## Проверка после изменений
 
-1. Открыть `/uslugi/demerkurizaciya/` — страница рендерится корректно с полным контентом
-2. Проверить JSON-LD на странице — корректный Service schema
-3. Проверить навигацию в Header — "Демеркуризация" вместо "Сертификация"
-4. Проверить Footer — корректная ссылка
-5. Проверить MiniPricing на главной — карточка "Демеркуризация"
-6. Canonical на `/uslugi/demerkurizaciya/` указывает на саму себя
+1. `/uslugi/dezinsekciya/tarakany/arbat/` — рендерится, canonical self-referencing
+2. `/uslugi/dezinsekciya/tarakany/perovo/` — рендерится через SPA (не в sitemap, не ломается)
+3. InternalLinks на НЧ-странице — ссылки только на топ-15 районов
+4. Никаких ссылок на "вырезанные" районы в навигации
 
 ## URL для переобхода после публикации
 
-1. `https://goruslugimsk.ru/uslugi/demerkurizaciya/` (новая)
-2. `https://goruslugimsk.ru/` (обновлена навигация)
-3. `https://goruslugimsk.ru/uslugi/dezinfekciya/` (хаб)
-4. `https://goruslugimsk.ru/uslugi/dezinsekciya/` (хаб)
-5. `https://goruslugimsk.ru/uslugi/deratizaciya/` (хаб)
-6. `https://goruslugimsk.ru/uslugi/po-okrugam-moskvy/` (список услуг)
+Отправить в Яндекс.Вебмастер:
+
+1. `https://goruslugimsk.ru/uslugi/dezinsekciya/tarakany/arbat/`
+2. `https://goruslugimsk.ru/uslugi/dezinsekciya/tarakany/tverskoy/`
+3. `https://goruslugimsk.ru/uslugi/dezinsekciya/klopy/arbat/`
+4. `https://goruslugimsk.ru/uslugi/dezinsekciya/klopy/maryino/`
+5. `https://goruslugimsk.ru/uslugi/deratizaciya/krysy/arbat/`
+6. `https://goruslugimsk.ru/uslugi/deratizaciya/krysy/strogino/`
+7. `https://goruslugimsk.ru/uslugi/deratizaciya/myshi/konkovo/`
+8. `https://goruslugimsk.ru/uslugi/dezinsekciya/muravyi/lyublino/`
+9. `https://goruslugimsk.ru/uslugi/dezinsekciya/blohi/chertanovo-severnoe/`
+10. `https://goruslugimsk.ru/uslugi/dezinsekciya/mol/sokol/`
+11. `https://goruslugimsk.ru/uslugi/dezinsekciya/`
+12. `https://goruslugimsk.ru/uslugi/deratizaciya/`
 
 ## Риски
 
-Минимальный. Сертификация не является высокочастотным запросом. Демеркуризация — реальная услуга с конкретным интентом. Старый URL остаётся доступным через SPA, но перестаёт продвигаться.
+Минимальный. Старые URL продолжают работать через SPA, просто убираются из sitemap и перелинковки. Это стандартный "мягкий" подход к деиндексации doorway-страниц.
 
