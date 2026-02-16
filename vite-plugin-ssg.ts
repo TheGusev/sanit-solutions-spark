@@ -39,7 +39,7 @@ const servicesSlugs = [
   'deratizaciya',
   'ozonirovanie',
   'dezodoraciya',
-  'sertifikaciya'
+  'demerkurizaciya'
 ];
 
 // Подстраницы услуг
@@ -126,8 +126,6 @@ const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'pro
 // Услуги для объектов (4 основных)
 const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'];
 
-// Топ-100 районов для Услуга + Объект + Район
-const top100Neighborhoods = neighborhoodSlugs.slice(0, 100);
 
 // Статьи блога (50 статей)
 const blogSlugs = [
@@ -251,20 +249,12 @@ function getAllRoutes(): SSGRoute[] {
   // Услуга + Объект + Район (2,400 страниц: 4 услуги × 6 объектов × 100 районов)
   servicesForObjects.forEach(serviceSlug => {
     objectSlugs.forEach(objectSlug => {
-      top100Neighborhoods.forEach(districtSlug => {
-        routes.push({
-          path: `/uslugi/${serviceSlug}/${objectSlug}/${districtSlug}`,
-          outputPath: `uslugi/${serviceSlug}/${objectSlug}/${districtSlug}/index.html`,
-          priority: '0.7'
-        });
-      });
-    });
-  });
+
   
   // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
   
-  // НЧ-страницы (услуга + вредитель + район) - NchPage (все 130 районов = 910 страниц)
-  neighborhoodSlugs.forEach(neighborhoodSlug => {
+  // НЧ-страницы (услуга + вредитель + район) - NСНPage (топ-15 районов)
+        topNeighborhoods.forEach(neighborhoodSlug => {
     dezinsekciyaPestSlugs.forEach(pestSlug => {
       routes.push({
         path: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}`,
@@ -280,6 +270,7 @@ function getAllRoutes(): SSGRoute[] {
         priority: '0.7'
       });
     });
+            });
   });
   
   // Обзорная страница округов
