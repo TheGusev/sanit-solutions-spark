@@ -217,5 +217,20 @@ export function validateMetadataInDev(metadata: PageMetadata, pagePath: string) 
     if (result.warnings.length > 0) {
       console.warn(`⚠️ SEO WARNINGS на странице ${pagePath}:`, result.warnings);
     }
+
+    // Проверка соответствия semantic core
+    try {
+      const { semanticCore } = require('@/data/semanticCore');
+      const canonical = metadata.canonical;
+      if (canonical) {
+        const path = canonical.replace('https://goruslugimsk.ru', '');
+        const entries = semanticCore.filter((e: { canonical: string }) => e.canonical === path);
+        if (entries.length === 0 && !pagePath.includes('/admin')) {
+          console.info(`ℹ️ Страница ${pagePath} не найдена в semanticCore (canonical: ${path})`);
+        }
+      }
+    } catch {
+      // semanticCore не загружен — пропускаем
+    }
   }
 }

@@ -351,18 +351,7 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // ========== SITEMAP-SERVICES-DISTRICT.XML (услуга + район = 520 URL) ==========
-      const serviceDistrictUrls: SitemapUrl[] = [];
-      servicesForObjects.forEach(serviceSlug => {
-        neighborhoodSlugs.forEach(districtSlug => {
-          serviceDistrictUrls.push({
-            loc: `/uslugi/${serviceSlug}/${districtSlug}/`,
-            lastmod: currentDate,
-            changefreq: 'monthly',
-            priority: '0.75',
-          });
-        });
-      });
+      // УДАЛЕНО: sitemap-services-district.xml (520 doorway-страниц удалены Day 3-4)
       
       
       // ========== SITEMAP-BLOG.XML (блог) ==========
@@ -379,8 +368,6 @@ export function sitemapPlugin(): Plugin {
         { filename: 'sitemap-services.xml', urls: serviceUrls },
         { filename: 'sitemap-services-pest.xml', urls: servicePestUrls },
         { filename: 'sitemap-services-object.xml', urls: serviceObjectUrls },
-        { filename: 'sitemap-services-district.xml', urls: serviceDistrictUrls },
-        
         { filename: 'sitemap-moscow.xml', urls: moscowUrls },
         { filename: 'sitemap-moscow-region.xml', urls: moscowRegionUrls },
         { filename: 'sitemap-nch.xml', urls: nchUrls },
