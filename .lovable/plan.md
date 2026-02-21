@@ -1,46 +1,122 @@
 
+# Глубокий аудит: Скриншоты плана vs. Текущее состояние сайта
 
-# Plan: Add 118 Missing Blog Articles to SSG
+---
 
-## Problem
-Currently `vite-plugin-ssg.ts` contains only 50 blog slugs (legacy articles). The remaining 118 articles from `pests-articles.ts` (63), `premises-articles.ts` (42), and `legal-articles.ts` (11) are rendered only via client-side SPA, making them invisible to search engines.
+## Промпт 3: Посадочные страницы -- контент и SEO
 
-## Solution
-Add all 118 missing blog slugs to both `vite-plugin-ssg.ts` and `seoRoutes.ts`.
+### Требование: Структура контента коммерческих посадочных (ServicePage, NchPage)
 
-## Technical Details
+| Элемент | Требование | Статус | Детали |
+|---|---|---|---|
+| title с запросом + гео | title содержит услугу + "Москва" + цену | ВЫПОЛНЕНО | ServicePage: "Дезинсекция в Москве -- от 1200р за помещение", NchPage: "Тараканы в Арбат -- от 1200р" |
+| h1 без переспама | h1 совпадает по смыслу с title | ВЫПОЛНЕНО | ServicePage: `service.heroTitle`, NchPage: отдельный h1 |
+| Блок оффера (цена, выезд, гарантия, лицензия, договор) | На первом экране | ЧАСТИЧНО | Есть цена, выезд, гарантия, лицензия. НЕТ упоминания "договор" в hero-секции |
+| Блок преимуществ 3-6 пунктов | Опыт, гарантия, цена, скорость, безопасность | ВЫПОЛНЕНО | ServicePage: 6 benefits, NchPage: trust badges |
+| Детальное описание услуги (методы, препараты, оборудование) | Развёрнутый текст | ВЫПОЛНЕНО | ServicePage: блок methods с 4 карточками, NchPage: генерируемый контент |
+| Юридические гарантии (договор, акты, Роспотребнадзор) | Специальный блок | ЧАСТИЧНО | Упомянуто в benefits, но НЕТ отдельного блока "Юридические гарантии" с перечнем документов |
+| FAQ 5-10 вопросов | По конкретному вредителю/услуге | ВЫПОЛНЕНО | ServicePage: 4 FAQ, NchPage: 5 FAQ (генерируемых). Но 4 -- ниже минимума в 5 |
+| Блок "цены" с таблицей тарифов (однушка, двушка, дом) | Таблица по площадям | НЕ ВЫПОЛНЕНО | На ServicePage нет таблицы цен по типам жилья. Есть только "от X руб" |
+| Блок кейсов/отзывов с привязкой к гео | Конкретные районы Москвы | НЕ ВЫПОЛНЕНО | На ServicePage и NchPage нет блока кейсов. Отзывы без гео-привязки |
 
-### 1. Update `vite-plugin-ssg.ts` (lines 130-186)
+### Требование: НЧ-запросы в тексте
 
-Replace the `blogSlugs` array with the full list of 168 slugs:
+| Элемент | Требование | Статус |
+|---|---|---|
+| 5-10 НЧ запросов в текст, подзаголовки, FAQ | Внедрить в контент | ЧАСТИЧНО | NchPage генерирует контент через `contentGenerator.ts`, включает некоторые НЧ. Но нет системного внедрения "обработка от клопов без запаха химки" и подобных |
+| Естественность, макс 2-3 вхождения ключа | Без переспама | ВЫПОЛНЕНО | Генератор контента не допускает переспама |
 
-**Existing 50 legacy slugs** -- keep as-is
+### Требование: Структурированные данные
 
-**Add 63 pest article slugs** (9 templates x 5 insect pests + 5 templates x 2 rodent pests):
-- Pattern: `{slugPrefix}-{pestSlug}` 
-- Insect slugs: `tarakany`, `klopy`, `muravyi`, `blohi`, `mol`
-- Templates (9): `kak-izbavitsya-ot`, `v-kvartire`, `otkuda-berutsya`, `narodnye-sredstva-ot`, `professionalnaya-obrabotka-ot`, `profilaktika`, `chem-opasny`, `posle-obrabotki`, `ceny-na-unichtozhenie`
-- Rodent slugs: `krysy`, `myshi`
-- Rodent templates (5): first 5 from above list
+| Элемент | Требование | Статус |
+|---|---|---|
+| Service / LocalBusiness schema | Название, описание, гео, цена, телефон, URL | ВЫПОЛНЕНО | Оба шаблона имеют полную schema.org разметку |
+| FAQPage schema | Для блока вопросов/ответов | ВЫПОЛНЕНО | Оба шаблона генерируют FAQPage JSON-LD |
 
-**Add 42 premises article slugs** (7 templates x 6 object types):
-- Pattern: `{slugPrefix}-{objectSlug}`
-- Object slugs: `kvartir`, `domov`, `ofisov`, `restoranov`, `skladov`, `proizvodstv`
-- Templates (7): `dezinsekciya`, `deratizaciya`, `podgotovka-k-obrabotke`, `stoimost-obrabotki`, `posle-obrabotki`, `vrediteli-v`, `profilaktika-vreditelej-v`
+### Требование: UX и конверсия
 
-**Add 11 legal article slugs** (hardcoded):
-- `sanpin-trebovaniya-2026`, `trebovaniya-rospotrebnadzora-2026`, `dokumenty-dlya-obshhepita`, `zhurnal-uchyota-dezinsekcii`, `licenziya-na-dezinfekciyu`, `shtrafy-za-vrediteley`, `haccp-i-dezinsekciya`, `dogovor-na-dezinsekciyu-obrazec`, `proverka-ses-kak-podgotovitsya`, `bezopasnost-preparatov`, `kak-vybrat-kompaniyu`
+| Элемент | Требование | Статус |
+|---|---|---|
+| CTA на первом экране | Кнопка "Заказать обработку" | ВЫПОЛНЕНО | ServicePage: "Рассчитать стоимость" + "Позвонить", NchPage: кнопка телефона |
+| Формы работают, не ломают Edge-функции | Проверка | ВЫПОЛНЕНО | Формы используют существующие handle-lead edge function |
 
-### 2. Update `src/lib/seoRoutes.ts` (lines ~168-233)
+### Требование: Новые услуги "кроты" и "демеркуризация"
 
-Synchronize `blogArticleSlugs` array with the same full list of 168 slugs to keep the single source of truth consistent.
+| Элемент | Требование | Статус |
+|---|---|---|
+| Демеркуризация -- полноценная посадочная | По тем же правилам | ВЫПОЛНЕНО | `src/data/services.ts` содержит полную запись demerkurizaciya (slug, title, methods, FAQ, priceFrom: 3000) |
+| Демеркуризация -- НЧ-семантика | Объекты: квартиры, офисы, школы, больницы | НЕ ВЫПОЛНЕНО | Демеркуризация НЕ включена в objectEntries семантического ядра (только 4 услуги: dezinsekciya, dezinfekciya, deratizaciya, ozonirovanie). НЕТ НЧ-страниц |
+| Кроты -- полноценная посадочная | С сегментами: участок, огород, дача, СНТ | НЕ ВЫПОЛНЕНО | `kroty` НЕТ в `pests.ts` (только 7 вредителей без кротов). Есть только картинка в `pestImages.ts` и упоминание в `deratizaciya.targetPests` |
+| Кроты -- НЧ-страницы | 15 районов x кроты | НЕ ВЫПОЛНЕНО | Нет данных -- нет страниц |
+| Кроты -- блог-статьи (15+) | 3-5 Новорижское, 3-5 Рублёвское, 3-5 Дмитровское | НЕ ВЫПОЛНЕНО | Кроты не добавлены в `rodentSlugs` в `pests-articles.ts`. Нет гео-статей под шоссе |
 
-### 3. Update `src/AppSSR.tsx`
+---
 
-Verify `BlogPost` route `/blog/:slug` is already present (confirmed -- it is).
+## Промпт 4: Семантика -- НЧ и СЧ, цель 100 топ-позиций
 
-### Result
-- Total blog articles in SSG: 50 + 63 + 42 + 11 = **168 articles**
-- All articles will get static HTML at build time
-- Search engines will be able to crawl and index all 168 articles
-- Total sitemap URLs: ~468 --> ~586
+| Элемент | Требование | Статус |
+|---|---|---|
+| Структура ядра: ВЧ, СЧ, НЧ | JSON/TS-объект с приоритетами | ВЫПОЛНЕНО | `semanticCore.ts` содержит SemanticEntry с priority 1-5 |
+| Кластер "кроты" | Сегменты: участок, СНТ, дача, частный дом | НЕ ВЫПОЛНЕНО | Нет записей для кротов в semanticCore |
+| Кластер "демеркуризация" | Сегменты: квартиры, офисы, школы, больницы | ЧАСТИЧНО | Есть 1 запись `демеркуризация москва` в serviceEntries. Но НЕТ объектных подстраниц |
+| Удалить "сертификация СЭС" | Из ключей, кластеров, связей со страницами | НЕ ВЫПОЛНЕНО | `sertifikaciya` присутствует в: `legal-articles.ts` (relatedServices), `PricingByArea.tsx` (таблица цен, вкладка). Хотя страница `/uslugi/sertifikaciya/` уже есть в SSG |
+| Анти-каннибализация: 1 query = 1 URL | Валидация | ВЫПОЛНЕНО | `validateNoDuplicates()` функция существует |
+| 20+ НЧ запросов для кротов | Реальные формулировки (газон, ландшафт, коттеджный посёлок) | НЕ ВЫПОЛНЕНО | Нет |
+| main: true запросы ведут на mainServiceUrl | Строгое правило | НЕ РЕАЛИЗОВАНО | В текущей структуре SemanticEntry нет полей `main`, `mainServiceUrl`, `targetUrl` |
+
+---
+
+## Промпт 5: Перелинковка (внутренние связи)
+
+| Элемент | Требование | Статус |
+|---|---|---|
+| Компонент InternalLinks | Меню услуг, похожие услуги, блог-ссылки | ВЫПОЛНЕНО | `InternalLinks.tsx` генерирует 8-12 ссылок (вредители, районы, услуги, города МО) |
+| Hub & Spokes паттерн | Хаб-страница для каждого кластера, дочерние ссылаются на хаб | ЧАСТИЧНО | ServicePage -- хаб, NchPage/ServicePestPage -- spokes. Но нет явного механизма "хаб ссылается на 5-10 лучших дочерних" |
+| Блог: 2-3 контекстные ссылки на коммерческие посадочные | В начале и конце статьи | НЕ ВЫПОЛНЕНО | BlogPost.tsx использует RelatedArticles (ссылки на другие статьи), но НЕ ссылается на коммерческие посадочные (`/uslugi/...`) |
+| semanticMap для автоматического подбора | Компонент подбирает "релевантные услуги" | НЕ ВЫПОЛНЕНО | Нет `semanticMap`. RelatedArticles работает только по категории/тегам между статьями |
+| Гео-разделы: ссылки на 2-3 ключевые услуги | Каждая районная страница | ВЫПОЛНЕНО | InternalLinks добавляет ссылки на услуги из районных страниц |
+| Удалить "сертификация СЭС" из перелинковки | Из всех блоков | НЕ ВЫПОЛНЕНО | `sertifikaciya` всё ещё в `relatedServices` у legal-articles и в PricingByArea |
+| Районные страницы получают обратные ссылки | С соответствующих услуг | ВЫПОЛНЕНО | InternalLinks на NchPage генерирует ссылки на соседние районы |
+| Тест на битые ссылки и циклы | Unit/integration-тест | НЕ ВЫПОЛНЕНО | Нет тестов на битые ссылки |
+| Markdown-отчёт о схеме перелинковки | В репо | НЕ ВЫПОЛНЕНО | Нет документа |
+
+---
+
+## Промпт 6: Анти-каннибализация и 100 топ-позиций
+
+| Элемент | Требование | Статус |
+|---|---|---|
+| Функция-утилита проверки дублей | Нет повторяющихся query, у каждого 1 targetUrl | ВЫПОЛНЕНО | `validateNoDuplicates()` в `semanticCore.ts` |
+| main:true ведут на mainServiceUrl | Проверка | НЕ РЕАЛИЗОВАНО | Нет поля `main` в SemanticEntry |
+| Оценка потенциала ядра по группам | Подсчёт LF/MF запросов | ЧАСТИЧНО | `getSemanticStats()` считает по кластерам и приоритетам, но не по группам Новая Рига/Рублёвка |
+
+---
+
+## Сводная таблица невыполненных задач (критичные)
+
+| # | Задача | Приоритет |
+|---|---|---|
+| 1 | Добавить `kroty` в `pests.ts` как полноценного вредителя | ВЫСОКИЙ |
+| 2 | Добавить НЧ-записи для кротов в semanticCore (20+ запросов) | ВЫСОКИЙ |
+| 3 | Добавить `kroty` в SSG/Sitemap (seoRoutes + vite-plugin-ssg) | ВЫСОКИЙ |
+| 4 | Создать 15+ блог-статей для кротов (Новорижское, Рублёвское, Дмитровское шоссе) | ВЫСОКИЙ |
+| 5 | Удалить `sertifikaciya` из `legal-articles.ts` relatedServices и из `PricingByArea.tsx` | СРЕДНИЙ |
+| 6 | Добавить таблицу тарифов по площадям на ServicePage (однушка, двушка, дом) | СРЕДНИЙ |
+| 7 | Добавить блок контекстных ссылок на коммерческие посадочные в BlogPost | СРЕДНИЙ |
+| 8 | Добавить demerkurizaciya в объектные НЧ-страницы (квартиры, офисы, школы) | СРЕДНИЙ |
+| 9 | Добавить поля `main`, `mainServiceUrl` в SemanticEntry для анти-каннибализации | НИЗКИЙ |
+| 10 | Создать Markdown-отчёт о схеме перелинковки | НИЗКИЙ |
+| 11 | Добавить тест на битые ссылки | НИЗКИЙ |
+| 12 | Увеличить FAQ на ServicePage с 4 до 5-10 вопросов | НИЗКИЙ |
+
+---
+
+## Что уже сделано хорошо
+
+- Schema.org разметка (Service, LocalBusiness, FAQPage, BreadcrumbList) на всех коммерческих страницах
+- Семантическое ядро с валидацией дублей (~174 записи)
+- InternalLinks компонент с адаптивной логикой перелинковки
+- Демеркуризация как услуга полностью интегрирована (ServicePage, Header, Footer, цены)
+- SSG генерация 158 блог-статей
+- CTA на первом экране всех посадочных
+- Структурированные данные без ошибок
