@@ -167,9 +167,15 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
               return (
                 <AnimatedSection key={i} animation="fade-up" delay={i * 150}>
                   <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
-                    <div 
-                      className="absolute inset-0 bg-cover bg-center"
-                      style={{ backgroundImage: `url('${bg}')`, opacity: 0.96 }}
+                    <img 
+                      src={bg}
+                      alt={card.title}
+                      width={400}
+                      height={300}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      style={{ opacity: 0.96 }}
+                      loading={i === 0 ? 'eager' : 'lazy'}
+                      decoding="async"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-card/70 via-card/30 to-transparent" />
                     <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col items-center md:items-start justify-between md:justify-start">

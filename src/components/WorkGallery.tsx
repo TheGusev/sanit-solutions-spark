@@ -60,11 +60,12 @@ const WorkGallery = () => {
                 <video 
                   src={item.src}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  autoPlay
                   muted
                   loop
                   playsInline
                   preload="none"
+                  onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
+                  onMouseLeave={(e) => { e.currentTarget.pause(); e.currentTarget.currentTime = 0; }}
                 />
               ) : (
                 <img 

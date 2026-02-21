@@ -117,8 +117,8 @@ const BlogPost = () => {
         {/* Фоновое изображение по категории */}
         <HeroBackground 
           image={getBlogCategoryImage(post.category)}
-          blur={12}
-          opacity={0.30}
+          blur={6}
+          opacity={0.50}
           overlay="gradient"
           altText={`${post.category} - ${post.title}`}
         />
