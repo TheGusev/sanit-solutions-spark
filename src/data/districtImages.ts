@@ -4,16 +4,16 @@
  */
 
 export const districtImages: Record<string, string> = {
-  cao: '/images/neighborhoods/high-rise-buildings.png',
-  sao: '/images/neighborhoods/modern-cottage.png',
-  svao: '/images/neighborhoods/brick-cottage.png',
-  vao: '/images/neighborhoods/warehouse-industrial.png',
-  yuvao: '/images/neighborhoods/waterfront-residential.png',
-  yao: '/images/neighborhoods/interior-park.png',
-  yzao: '/images/neighborhoods/country-house.png',
-  zao: '/images/neighborhoods/luxury-mansion.png',
-  szao: '/images/neighborhoods/kindergarten.png',
-  default: '/images/neighborhoods/high-rise-buildings.png'
+  cao: '/images/backgrounds/novy-arbat-evening.png',
+  sao: '/images/backgrounds/aviapark-mall.png',
+  svao: '/images/front/ostankino-tower.png',
+  vao: '/images/front/xl-perovo-mall.png',
+  yuvao: '/images/front/waterfront-yacht-complex.png',
+  yao: '/images/front/sleeping-district-aerial.png',
+  yzao: '/images/backgrounds/rumyantsevo-business.png',
+  zao: '/images/front/luxury-mansion-cars.png',
+  szao: '/images/backgrounds/tushino-business-center.png',
+  default: '/images/backgrounds/moscow-panorama-sunset.jpg'
 };
 
 export const getDistrictImage = (districtId: string): string => {
@@ -22,14 +22,14 @@ export const getDistrictImage = (districtId: string): string => {
 
 // Маппинг категорий блога к изображениям
 export const blogCategoryImages: Record<string, string> = {
-  'Вредители': '/images/neighborhoods/interior-park.png',
-  'Дезинфекция': '/images/neighborhoods/interior-vdnh.png',
-  'Помещения': '/images/neighborhoods/high-rise-buildings.png',
-  'Законы': '/images/neighborhoods/warehouse-industrial.png',
-  'Подготовка': '/images/neighborhoods/modern-cottage.png',
-  'Кейсы': '/images/neighborhoods/waterfront-residential.png',
-  'Советы': '/images/neighborhoods/country-house.png',
-  'default': '/images/neighborhoods/brick-cottage.png'
+  'Вредители': '/images/front/farm-countryside.png',
+  'Дезинфекция': '/images/front/minimalist-kitchen.jpg',
+  'Помещения': '/images/front/soviet-panel-closeup.png',
+  'Законы': '/images/front/business-center-vdnh.png',
+  'Подготовка': '/images/front/apartment-park-view.png',
+  'Кейсы': '/images/front/restaurant-evening.png',
+  'Советы': '/images/front/suburban-house-garden.png',
+  'default': '/images/backgrounds/moscow-panorama-sunset.jpg'
 };
 
 export const getBlogCategoryImage = (category: string): string => {

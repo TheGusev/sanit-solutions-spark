@@ -177,8 +177,18 @@ const ServicePage = () => {
       <Header />
 
       <main className="pt-20">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-primary/10 via-background to-background py-12 md:py-20">
+        <section className="relative bg-gradient-to-br from-primary/10 via-background to-background py-12 md:py-20 overflow-hidden">
+          {/* Фоновое изображение для услуги */}
+          {service.heroImage && (
+            <>
+              <div 
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url('${service.heroImage}')`, opacity: 0.15 }}
+                aria-hidden="true"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/60 to-background/40" />
+            </>
+          )}
           <div className="container mx-auto px-4">
             <Breadcrumb className="mb-6">
               <BreadcrumbList>

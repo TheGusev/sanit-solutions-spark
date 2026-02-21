@@ -20,6 +20,11 @@ const mediaItems: MediaItem[] = [
   { type: "image", src: "/images/work/professional-chemicals.jpg", title: "Препараты", desc: "Сертифицированная химия" },
   { type: "image", src: "/images/work/specialist-documents.jpg", title: "Оформление документов", desc: "Договор и акт" },
   { type: "image", src: "/images/work/pipes-treatment.jpg", title: "Обработка труб", desc: "Работа с коммуникациями" },
+  { type: "image", src: "/images/work/corridor-treatment.jpg", title: "Обработка подъезда", desc: "Дезинфекция мест общего пользования" },
+  { type: "image", src: "/images/work/specialist-closeup.jpg", title: "Работа специалиста", desc: "Обработка стен и потолков" },
+  { type: "image", src: "/images/work/baseboard-treatment.jpg", title: "Обработка плинтусов", desc: "Точечная дезинсекция в квартире" },
+  { type: "image", src: "/images/work/kitchen-treatment.jpg", title: "Обработка кухни", desc: "Дезинсекция кухонной зоны" },
+  { type: "image", src: "/images/front/restaurant-evening.png", title: "Обработка ресторана", desc: "Дезинсекция общепита" },
 ];
 
 const WorkGallery = () => {
