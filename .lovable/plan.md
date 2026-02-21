@@ -1,50 +1,39 @@
 
 
-# Исправление build ошибок: мусорный текст "demercurizaciya" и пропущенная функция
+# Синхронизация vite-plugin-ssg.ts и продолжение плана
 
 ## Проблема
 
-При редактировании на Day 2 во все 7 изменённых файлов попал артефакт -- строка `demercurizaciya` была вставлена в начало файлов (перед `import`/`export`). Это невалидный TypeScript, вызывающий ошибку `TS1434: Unexpected keyword or identifier`.
+В `vite-plugin-ssg.ts` строки 238-247 генерируют 520 SSG-страниц "Услуга + Район" (4 услуги x 130 районов), которые уже удалены из sitemap на Day 3. Это рассинхрон, который может вызывать проблемы с индексацией (страницы существуют как статический HTML, но не в sitemap).
 
-Дополнительно в `src/lib/seoRoutes.ts` отсутствует объявление функции `export function getAllSSGRoutes()` -- строка 107 начинается сразу с `const routes = [...]` без обёртки функции.
+## Изменения
 
-## Исправления (7 файлов)
+### 1. `vite-plugin-ssg.ts` строки 238-247: Удалить блок Услуга+Район
 
-### Строка 1: Убрать "demercurizaciya" из начала файлов
-
-| Файл | Строка 1 сейчас | Строка 1 после |
-|------|----------------|----------------|
-| `src/components/Footer.tsx` | `demercurizaciyaimport { memo }...` | `import { memo }...` |
-| `src/components/Header.tsx` | `demercurizaciyaimport { useState...` | `import { useState...` |
-| `src/components/MiniPricing.tsx` | `demercurizaciyaimport { Microscope...` | `import { Microscope...` |
-| `src/data/servicePrices.ts` | `demercurizaciyademercurizaciyaexport interface...` | `export interface...` |
-| `src/data/services.ts` | `demercurizaciyaexport interface...` | `export interface...` |
-| `src/pages/DistrictsOverview.tsx` | `demercurizaciyaimport { Helmet }...` | `import { Helmet }...` |
-| `src/lib/seoRoutes.ts` | `demercurizaciya/**` | `/**` |
-
-### `src/lib/seoRoutes.ts` строка 107-108: Восстановить функцию
+Удалить весь блок генерации "Услуга + Район (520 страниц: 4 услуги x 130 районов)":
 
 ```typescript
-// БЫЛО (строки 107-108):
-// Генерация всех маршрутов для SSG
-  const routes = [...staticRoutes];
-
-// СТАЛО:
-export function getAllSSGRoutes() {
-  const routes = [...staticRoutes];
+// УДАЛИТЬ строки 238-247:
+servicesForObjects.forEach(serviceSlug => {
+  neighborhoodSlugs.forEach(districtSlug => {
+    routes.push({
+      path: `/uslugi/${serviceSlug}/${districtSlug}`,
+      outputPath: `uslugi/${serviceSlug}/${districtSlug}/index.html`,
+      priority: '0.75'
+    });
+  });
+});
 ```
 
-Закрывающая `}` на строке 343 уже присутствует -- она станет корректным закрытием этой функции.
+Эти страницы остаются доступными через SPA (React Router), но не будут генерироваться как статический HTML и не будут в sitemap -- стандартный подход к мягкой деиндексации.
 
-## Далее: продолжение плана SSG-синхронизации
+## Результат
 
-После исправления build-ошибок -- выполнить план синхронизации `vite-plugin-ssg.ts`:
-
-1. Заменить `'sertifikaciya'` на `'demerkurizaciya'` в массиве услуг
-2. Удалить генерацию Услуга+Объект+Район (~2,400 doorway-страниц)
-3. Ограничить NCH до `topNeighborhoods` (15 районов)
+- SSG полностью синхронизирован с sitemap и seoRoutes.ts
+- ~520 doorway-страниц удалены из SSG-генерации
+- Все остающиеся страницы (услуги, подстраницы, вредители, объекты, НЧ топ-15, блог, районы, МО) генерируются корректно
 
 ## Риски
 
-Нулевой. Это исправление синтаксических ошибок -- восстановление корректного кода.
+Нулевой. Старые URL по-прежнему работают через SPA. Удаляется только генерация статического HTML для doorway-страниц.
 
