@@ -16,16 +16,16 @@ interface HeroBackgroundProps {
 
 const HeroBackground = ({ 
   image, 
-  blur = 8, 
+  blur = 4, 
   blurMobile,
-  opacity = 0.30,
+  opacity = 0.55,
   opacityMobile,
   overlay = 'gradient',
   altText = 'Фоновое изображение',
   className = ''
 }: HeroBackgroundProps) => {
-  const mobileBlur = blurMobile ?? Math.max(blur - 2, 3);
-  const mobileOpacity = opacityMobile ?? Math.min(opacity + 0.15, 0.70);
+  const mobileBlur = blurMobile ?? Math.max(blur - 1, 2);
+  const mobileOpacity = opacityMobile ?? Math.min(opacity + 0.10, 0.75);
 
   // Unique ID for scoped CSS
   const styleId = `hero-bg-${blur}-${mobileBlur}`;
@@ -54,7 +54,6 @@ const HeroBackground = ({
         className={`absolute inset-0 bg-cover bg-center ${styleId}`}
         style={{ 
           backgroundImage: `url('${image}')`,
-          transform: 'scale(1.1)',
         }}
         role="img"
         aria-label={altText}
@@ -63,8 +62,8 @@ const HeroBackground = ({
       {/* Overlay варианты */}
       {overlay === 'gradient' && (
         <>
-          <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/40 to-background/30" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background/50" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-background/20 to-background/15" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-transparent to-background/30" />
         </>
       )}
       

@@ -83,8 +83,8 @@ const Blog = () => {
         {/* Фоновое изображение */}
         <HeroBackground 
           image="/images/neighborhoods/interior-park.png"
-          blur={10}
-          opacity={0.38}
+          blur={5}
+          opacity={0.55}
           overlay="gradient"
           altText="Блог о дезинфекции и борьбе с вредителями"
         />
