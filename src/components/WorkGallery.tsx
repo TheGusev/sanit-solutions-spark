@@ -1,4 +1,7 @@
+import { useState } from "react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react";
 
 type MediaItem = {
   type: "video" | "image";
@@ -27,7 +30,12 @@ const mediaItems: MediaItem[] = [
   { type: "image", src: "/images/front/restaurant-evening.png", title: "Обработка ресторана", desc: "Дезинсекция общепита" },
 ];
 
+const INITIAL_COUNT = 8;
+
 const WorkGallery = () => {
+  const [showAll, setShowAll] = useState(false);
+  const visibleItems = showAll ? mediaItems : mediaItems.slice(0, INITIAL_COUNT);
+
   return (
     <section className="py-10 md:py-16 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -41,7 +49,7 @@ const WorkGallery = () => {
         </AnimatedSection>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-          {mediaItems.map((item, index) => (
+          {visibleItems.map((item, index) => (
             <AnimatedSection 
               key={index} 
               animation="fade-up" 
@@ -56,7 +64,7 @@ const WorkGallery = () => {
                   muted
                   loop
                   playsInline
-                  preload="metadata"
+                  preload="none"
                 />
               ) : (
                 <img 
@@ -77,6 +85,19 @@ const WorkGallery = () => {
             </AnimatedSection>
           ))}
         </div>
+
+        {!showAll && mediaItems.length > INITIAL_COUNT && (
+          <div className="text-center mt-6">
+            <Button
+              variant="outline"
+              onClick={() => setShowAll(true)}
+              className="gap-2"
+            >
+              Показать все работы ({mediaItems.length})
+              <ChevronDown className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -5,7 +5,7 @@ import { useParallax } from "@/hooks/useParallax";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { getCopy } from "@/lib/copyUtils";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { trackGoal } from "@/lib/analytics";
 
 // Фоновые изображения для ротации
@@ -29,8 +29,6 @@ interface HeroProps {
 }
 
 // ⚠️ SEO: H1 фиксирован для стабильности индексации
-// Бот Яндекса/Google должен видеть одинаковый H1 при каждом визите
-// A/B тестирование работает только на subtitle и CTA (безопасно для SEO)
 const SEO_H1_TITLE = "Профессиональная СЭС служба";
 const SEO_H1_HIGHLIGHT = "в Москве и области";
 
@@ -39,29 +37,40 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
   const parallaxOffset = useParallax(0.3);
   const hasLoggedView = useRef(false);
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
+  const [nextBgIndex, setNextBgIndex] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   
-  // Смена фонового изображения каждые 5 секунд
+  // Prefetch следующего слайда через new Image()
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const img = new Image();
+    img.src = HERO_BACKGROUNDS[nextBgIndex];
+  }, [nextBgIndex]);
+  
+  // Ротация: каждые 5 секунд
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentBgIndex((prev) => (prev + 1) % HERO_BACKGROUNDS.length);
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentBgIndex(nextBgIndex);
+        setNextBgIndex((nextBgIndex + 1) % HERO_BACKGROUNDS.length);
+        setIsTransitioning(false);
+      }, 1000); // длительность crossfade
     }, 5000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [nextBgIndex]);
   
-  // Получаем текст из централизованного словаря с A/B вариантом
-  // ⚠️ Используется только для subtitle и CTA, НЕ для H1
+  // Получаем текст из централизованного словаря
   const copy = getCopy('hero', context?.intent, context?.variantId || 'A');
   
   // Логируем показ hero для A/B анализа (один раз)
   useEffect(() => {
-    // SSR-safe: проверяем наличие window
     if (typeof window === 'undefined') return;
     
     if (context && context.initialized && !hasLoggedView.current) {
       hasLoggedView.current = true;
       
-      // Fire and forget - не блокируем UI
       supabase.functions.invoke('log-traffic-event', {
         body: {
           session_id: context.sessionId,
@@ -79,43 +88,47 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
             variant: context.variantId
           }
         }
-      }).catch(() => {}); // Silent fail
+      }).catch(() => {});
     }
   }, [context?.initialized]);
   
-  const handleCalculatorClick = () => {
+  const handleCalculatorClick = useCallback(() => {
     if (onCalculatorClick) {
       onCalculatorClick();
     } else if (typeof document !== 'undefined') {
-      // SSR-safe: проверяем наличие document
       const element = document.getElementById("calculator");
       element?.scrollIntoView({ behavior: "smooth" });
     }
-  };
+  }, [onCalculatorClick]);
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
-      {/* Background images with crossfade transition */}
-      {HERO_BACKGROUNDS.map((bg, index) => (
+      {/* Only render current + next slide (not all 5) */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 opacity-100"
+        style={{ 
+          backgroundImage: `url('${HERO_BACKGROUNDS[currentBgIndex]}')`,
+          transform: `translateY(${parallaxOffset}px)`,
+          opacity: isTransitioning ? 0 : 1
+        }}
+        role="img"
+        aria-label="Профессиональная дезинфекция — специалист проводит санитарную обработку"
+      />
+      {isTransitioning && (
         <div 
-          key={bg}
-          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ${
-            index === currentBgIndex ? 'opacity-100' : 'opacity-0'
-          }`}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ 
-            backgroundImage: `url('${bg}')`,
+            backgroundImage: `url('${HERO_BACKGROUNDS[nextBgIndex]}')`,
             transform: `translateY(${parallaxOffset}px)` 
           }}
-          role={index === 0 ? "img" : undefined}
-          aria-label={index === 0 ? "Профессиональная дезинфекция — специалист проводит санитарную обработку" : undefined}
         />
-      ))}
-      {/* Lighter overlay for brighter background visibility */}
+      )}
+      
+      {/* Lighter overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-background/35 via-background/25 to-background/15 dark:from-background/65 dark:via-background/55 dark:to-background/45" />
 
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">
-          {/* H1 фиксирован для SEO - совпадает с metadata.h1 */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
             {SEO_H1_TITLE}{" "}
             <span className="text-primary">{SEO_H1_HIGHLIGHT}</span>
@@ -144,74 +157,38 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
           </div>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            <AnimatedSection animation="fade-up" delay={0}>
-              <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
-                <div 
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[0]}')`, opacity: 0.96 }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-card/70 via-card/30 to-transparent" />
-                <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col items-center md:items-start justify-between md:justify-start">
-                  <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
-                    <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-primary/10 md:flex md:items-center md:justify-center">
-                      <Zap className="w-5 h-5 md:w-6 md:h-6 text-primary flex-shrink-0" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-sm md:text-lg md:mb-2">
-                        Выезд за 15 минут <span className="font-normal md:hidden">— Самый быстрый в Москве</span>
-                      </h3>
-                      <p className="hidden md:block text-sm font-medium">Самый быстрый выезд в Москве</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-            
-            <AnimatedSection animation="fade-up" delay={150}>
-              <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
-                <div 
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[1]}')`, opacity: 0.96 }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-card/70 via-card/30 to-transparent" />
-                <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col items-center md:items-start justify-between md:justify-start">
-                  <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
-                    <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-success/10 md:flex md:items-center md:justify-center">
-                      <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-success flex-shrink-0" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-sm md:text-lg md:mb-2">
-                        Сертификаты <span className="font-normal md:hidden">— Все документы</span>
-                      </h3>
-                      <p className="hidden md:block text-sm font-medium">Все необходимые документы</p>
+            {HERO_CARD_BACKGROUNDS.map((bg, i) => {
+              const cards = [
+                { Icon: Zap, color: 'primary', title: 'Выезд за 15 минут', mobileDesc: 'Самый быстрый в Москве', desc: 'Самый быстрый выезд в Москве' },
+                { Icon: CheckCircle, color: 'success', title: 'Сертификаты', mobileDesc: 'Все документы', desc: 'Все необходимые документы' },
+                { Icon: Shield, color: 'accent', title: 'Гарантия', mobileDesc: 'На все работы', desc: 'На все виды работ' },
+              ];
+              const card = cards[i];
+              return (
+                <AnimatedSection key={i} animation="fade-up" delay={i * 150}>
+                  <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{ backgroundImage: `url('${bg}')`, opacity: 0.96 }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card/70 via-card/30 to-transparent" />
+                    <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col items-center md:items-start justify-between md:justify-start">
+                      <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
+                        <div className={`md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-${card.color}/10 md:flex md:items-center md:justify-center`}>
+                          <card.Icon className={`w-5 h-5 md:w-6 md:h-6 text-${card.color} flex-shrink-0`} />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-sm md:text-lg md:mb-2">
+                            {card.title} <span className="font-normal md:hidden">— {card.mobileDesc}</span>
+                          </h3>
+                          <p className="hidden md:block text-sm font-medium">{card.desc}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </AnimatedSection>
-            
-            <AnimatedSection animation="fade-up" delay={300}>
-              <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
-                <div 
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url('${HERO_CARD_BACKGROUNDS[2]}')`, opacity: 0.96 }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-card/70 via-card/30 to-transparent" />
-                <div className="relative p-3 md:p-6 lg:p-8 flex md:flex-col items-center md:items-start justify-between md:justify-start">
-                  <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-0">
-                    <div className="md:w-12 md:h-12 lg:w-14 lg:h-14 md:mb-3 md:rounded-xl md:bg-accent/10 md:flex md:items-center md:justify-center">
-                      <Shield className="w-5 h-5 md:w-6 md:h-6 text-accent flex-shrink-0" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-sm md:text-lg md:mb-2">
-                        Гарантия <span className="font-normal md:hidden">— На все работы</span>
-                      </h3>
-                      <p className="hidden md:block text-sm font-medium">На все виды работ</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
+                </AnimatedSection>
+              );
+            })}
           </div>
         </AnimatedSection>
       </div>
