@@ -60,7 +60,8 @@ const servicesSlugs = [
   'deratizaciya',
   'ozonirovanie',
   'dezodoraciya',
-  'demerkurizaciya'
+  'demerkurizaciya',
+  'borba-s-krotami'
 ];
 
 // Подстраницы услуг
@@ -77,7 +78,7 @@ const serviceSubpageRoutes = [
 const dezinsekciyaPestSlugs = ['tarakany', 'klopy', 'muravyi', 'blohi', 'mol'];
 
 // Вредители для дератизации
-const deratizaciyaPestSlugs = ['krysy', 'myshi'];
+const deratizaciyaPestSlugs = ['krysy', 'myshi', 'kroty'];
 
 // Округа Москвы
 const districtSlugs = [
@@ -121,7 +122,7 @@ const neighborhoodSlugs = [
   'solntsevo', 'troparyovo-nikulino', 'filyovsky-park', 'fili-davydkovo',
   // СЗАО (8)
   'kurkino', 'mitino', 'pokrovskoe-streshnevo', 'severnoe-tushino',
-  'strogino', 'khoroshyovo-mnyovniki', 'shchukino', 'yuzhnoe-tushino',
+  'strogino', 'khoroshevo-mnevniki', 'shchukino', 'yuzhnoe-tushino',
   // НАО (2) - ИСПРАВЛЕНО!
   'sosenskoe', 'vnukovskoe',
   // ТАО (3) - ИСПРАВЛЕНО!
@@ -141,12 +142,12 @@ const topNeighborhoods = [
 const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv'];
 
 // Услуги для объектов (4 основных)
-const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'];
+const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'demerkurizaciya'];
 
 
-// Статьи блога (158+ статей)
+// Статьи блога — синхронизировано с seoRoutes.ts blogArticleSlugs
 const blogSlugs = [
-  // Legacy статьи (50)
+  // ===== Legacy статьи (50) =====
   'kak-podgotovit-pomeshchenie', 'vidy-dezinfekcii', 'borba-s-tarakanami', 'ozonirovaniye-pomeshcheniy',
   'gryzuny-v-dome', 'sezonnost-vreditelej', 'dezinfekciya-ofisa', 'klopy-v-kvartire',
   'narodnye-sredstva-ot-tarakanov', 'otkuda-berutsya-klopy', 'priznaki-gryzunov-v-dome',
@@ -163,58 +164,45 @@ const blogSlugs = [
   'prava-zhilcov-ot-sosedey', 'licenzirovanie-dezinfekcii', 'otvetstvennost-arendodatelya',
   'sudebnaya-praktika-klopy', 'aerozoli-ot-tarakanov', 'lovushki-dlya-nasekomyh',
   'repellenty-kak-vybrat', 'kejs-ofis-posle-covid', 'kejs-deratizaciya-sklada',
-  // Pests articles (55+)
-  'kak-izbavitsya-ot-tarakanov', 'tarakany-v-kvartire', 'otkuda-berutsya-tarakany',
-  'narodnye-sredstva-tarakany', 'professionalnaya-obrabotka-tarakany', 'profilaktika-tarakanov',
-  'chem-opasny-tarakany', 'tarakany-posle-obrabotki', 'ceny-unichtozhenie-tarakanov',
-  'kak-izbavitsya-ot-klopov', 'klopy-v-kvartire-priznaki', 'otkuda-berutsya-klopy-article',
-  'narodnye-sredstva-klopy', 'professionalnaya-obrabotka-klopy', 'profilaktika-klopov',
-  'chem-opasny-klopy', 'klopy-posle-obrabotki', 'ceny-unichtozhenie-klopov',
-  'kak-izbavitsya-ot-muravyev-article', 'muravyi-v-kvartire', 'otkuda-berutsya-muravyi',
-  'narodnye-sredstva-muravyi', 'professionalnaya-obrabotka-muravyi', 'profilaktika-muravyev',
-  'chem-opasny-muravyi', 'muravyi-posle-obrabotki', 'ceny-unichtozhenie-muravyev',
-  'kak-izbavitsya-ot-bloh', 'blohi-v-kvartire-article', 'otkuda-berutsya-blohi',
-  'narodnye-sredstva-blohi', 'professionalnaya-obrabotka-blohi', 'profilaktika-bloh',
-  'chem-opasny-blohi', 'blohi-posle-obrabotki', 'ceny-unichtozhenie-bloh',
-  'kak-izbavitsya-ot-moli', 'mol-v-kvartire-article', 'otkuda-berutsya-mol',
-  'narodnye-sredstva-mol', 'professionalnaya-obrabotka-mol', 'profilaktika-moli',
-  'chem-opasna-mol', 'mol-posle-obrabotki', 'ceny-unichtozhenie-moli',
-  'kak-izbavitsya-ot-krys', 'krysy-v-dome', 'otkuda-berutsya-krysy',
-  'narodnye-sredstva-krysy', 'professionalnaya-obrabotka-krysy', 'profilaktika-krys',
-  'chem-opasny-krysy', 'krysy-posle-obrabotki', 'ceny-unichtozhenie-krys',
-  'kak-izbavitsya-ot-myshej', 'myshi-v-dome', 'otkuda-berutsya-myshi',
-  'narodnye-sredstva-myshi', 'professionalnaya-obrabotka-myshi', 'profilaktika-myshej',
-  'chem-opasny-myshi', 'myshi-posle-obrabotki', 'ceny-unichtozhenie-myshej',
-  // Premises articles (42)
-  'dezinsekciya-kvartiry-gid', 'deratizaciya-kvartiry', 'podgotovka-kvartiry-k-obrabotke',
-  'stoimost-obrabotki-kvartiry', 'posle-obrabotki-kvartiry', 'vrediteli-v-kvartire-vidy',
-  'profilaktika-vreditelej-kvartira',
-  'dezinsekciya-chastnogo-doma', 'deratizaciya-chastnogo-doma', 'podgotovka-doma-k-obrabotke',
-  'stoimost-obrabotki-doma', 'posle-obrabotki-doma', 'vrediteli-v-dome-vidy',
-  'profilaktika-vreditelej-dom',
-  'dezinsekciya-ofisa-gid', 'deratizaciya-ofisa', 'podgotovka-ofisa-k-obrabotke',
-  'stoimost-obrabotki-ofisa', 'posle-obrabotki-ofisa', 'vrediteli-v-ofise-vidy',
-  'profilaktika-vreditelej-ofis',
-  'dezinsekciya-restorana', 'deratizaciya-restorana', 'podgotovka-restorana-k-obrabotke',
-  'stoimost-obrabotki-restorana', 'posle-obrabotki-restorana', 'vrediteli-v-restorane-vidy',
-  'profilaktika-vreditelej-restoran',
-  'dezinsekciya-sklada', 'deratizaciya-sklada-article', 'podgotovka-sklada-k-obrabotke',
-  'stoimost-obrabotki-sklada', 'posle-obrabotki-sklada', 'vrediteli-na-sklade-vidy',
-  'profilaktika-vreditelej-sklad',
-  'dezinsekciya-proizvodstva', 'deratizaciya-proizvodstva', 'podgotovka-proizvodstva-k-obrabotke',
-  'stoimost-obrabotki-proizvodstva', 'posle-obrabotki-proizvodstva', 'vrediteli-na-proizvodstve-vidy',
-  'profilaktika-vreditelej-proizvodstvo',
-  // Legal articles (11)
-  'sanpin-2026-trebovaniya', 'rospotrebnadzor-proverki', 'dokumenty-dlya-obshchepita',
-  'shtraf-za-vrediteley', 'dogovor-na-dezinsekciyu', 'zhurnal-dezinsekcii',
-  'haccp-vrediteli', 'licenzirovanie-dezinfekcii-article', 'audit-vreditelej',
-  'otvetstvennost-rukovoditelya', 'sudebnaya-praktika-vrediteli'
+  // ===== Pest articles: insects (45 = 9 templates × 5 pests) =====
+  'kak-izbavitsya-ot-tarakany', 'kak-izbavitsya-ot-klopy', 'kak-izbavitsya-ot-muravyi', 'kak-izbavitsya-ot-blohi', 'kak-izbavitsya-ot-mol',
+  'v-kvartire-tarakany', 'v-kvartire-klopy', 'v-kvartire-muravyi', 'v-kvartire-blohi', 'v-kvartire-mol',
+  'otkuda-berutsya-tarakany', 'otkuda-berutsya-klopy', 'otkuda-berutsya-muravyi', 'otkuda-berutsya-blohi', 'otkuda-berutsya-mol',
+  'narodnye-sredstva-ot-tarakany', 'narodnye-sredstva-ot-klopy', 'narodnye-sredstva-ot-muravyi', 'narodnye-sredstva-ot-blohi', 'narodnye-sredstva-ot-mol',
+  'professionalnaya-obrabotka-ot-tarakany', 'professionalnaya-obrabotka-ot-klopy', 'professionalnaya-obrabotka-ot-muravyi', 'professionalnaya-obrabotka-ot-blohi', 'professionalnaya-obrabotka-ot-mol',
+  'profilaktika-tarakany', 'profilaktika-klopy', 'profilaktika-muravyi', 'profilaktika-blohi', 'profilaktika-mol',
+  'chem-opasny-tarakany', 'chem-opasny-klopy', 'chem-opasny-muravyi', 'chem-opasny-blohi', 'chem-opasny-mol',
+  'posle-obrabotki-tarakany', 'posle-obrabotki-klopy', 'posle-obrabotki-muravyi', 'posle-obrabotki-blohi', 'posle-obrabotki-mol',
+  'ceny-na-unichtozhenie-tarakany', 'ceny-na-unichtozhenie-klopy', 'ceny-na-unichtozhenie-muravyi', 'ceny-na-unichtozhenie-blohi', 'ceny-na-unichtozhenie-mol',
+  // ===== Pest articles: rodents (10 = 5 templates × 2 pests) =====
+  'kak-izbavitsya-ot-krysy', 'kak-izbavitsya-ot-myshi',
+  'v-kvartire-krysy', 'v-kvartire-myshi',
+  'otkuda-berutsya-krysy', 'otkuda-berutsya-myshi',
+  'narodnye-sredstva-ot-krysy', 'narodnye-sredstva-ot-myshi',
+  'professionalnaya-obrabotka-ot-krysy', 'professionalnaya-obrabotka-ot-myshi',
+  // ===== Premises articles (42 = 7 templates × 6 objects) =====
+  'dezinsekciya-kvartir', 'dezinsekciya-domov', 'dezinsekciya-ofisov', 'dezinsekciya-restoranov', 'dezinsekciya-skladov', 'dezinsekciya-proizvodstv',
+  'deratizaciya-kvartir', 'deratizaciya-domov', 'deratizaciya-ofisov', 'deratizaciya-restoranov', 'deratizaciya-skladov', 'deratizaciya-proizvodstv',
+  'podgotovka-k-obrabotke-kvartir', 'podgotovka-k-obrabotke-domov', 'podgotovka-k-obrabotke-ofisov', 'podgotovka-k-obrabotke-restoranov', 'podgotovka-k-obrabotke-skladov', 'podgotovka-k-obrabotke-proizvodstv',
+  'stoimost-obrabotki-kvartir', 'stoimost-obrabotki-domov', 'stoimost-obrabotki-ofisov', 'stoimost-obrabotki-restoranov', 'stoimost-obrabotki-skladov', 'stoimost-obrabotki-proizvodstv',
+  'posle-obrabotki-kvartir', 'posle-obrabotki-domov', 'posle-obrabotki-ofisov', 'posle-obrabotki-restoranov', 'posle-obrabotki-skladov', 'posle-obrabotki-proizvodstv',
+  'vrediteli-v-kvartir', 'vrediteli-v-domov', 'vrediteli-v-ofisov', 'vrediteli-v-restoranov', 'vrediteli-v-skladov', 'vrediteli-v-proizvodstv',
+  'profilaktika-vreditelej-v-kvartir', 'profilaktika-vreditelej-v-domov', 'profilaktika-vreditelej-v-ofisov', 'profilaktika-vreditelej-v-restoranov', 'profilaktika-vreditelej-v-skladov', 'profilaktika-vreditelej-v-proizvodstv',
+  // ===== Legal articles (11) =====
+  'sanpin-trebovaniya-2026', 'trebovaniya-rospotrebnadzora-2026', 'dokumenty-dlya-obshhepita',
+  'zhurnal-uchyota-dezinsekcii', 'licenziya-na-dezinfekciyu', 'shtrafy-za-vrediteley',
+  'haccp-i-dezinsekciya', 'dogovor-na-dezinsekciyu-obrazec', 'proverka-ses-kak-podgotovitsya',
+  'bezopasnost-preparatov', 'kak-vybrat-kompaniyu',
+  // ===== Mole geo articles (18) =====
+  'kroty-novorizhskoe-shosse', 'kroty-istra', 'kroty-krasnogorsk', 'kroty-nakhabino', 'kroty-dedovsk', 'kroty-snt-novaya-riga',
+  'kroty-rublevskoe-shosse', 'kroty-odintsovo', 'kroty-barvikha', 'kroty-usovo', 'kroty-zhukovka', 'kroty-snt-rublevka',
+  'kroty-dmitrovskoe-shosse', 'kroty-dolgoprudny', 'kroty-lobnya', 'kroty-dmitrov', 'kroty-yakhroma', 'kroty-snt-dmitrovka',
 ];
 
 // Города МО
 const moscowRegionCitySlugs = [
   'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 
-  'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny'
+  'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo'
 ];
 
 // Услуги МО

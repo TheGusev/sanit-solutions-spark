@@ -82,7 +82,7 @@ export const neighborhoodSlugs = [
 
 // Города Московской области
 export const moscowRegionCitySlugs = [
-  'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny'
+  'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo'
 ];
 
 // Услуги для городов МО

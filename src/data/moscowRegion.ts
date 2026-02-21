@@ -200,6 +200,26 @@ export const moscowRegionCities: MoscowRegionCity[] = [
       'Работаем с дачными участками'
     ],
     nearbyDistricts: ['svao', 'vao']
+  },
+  {
+    id: 'dolgoprudny',
+    slug: 'dolgoprudny',
+    name: 'Долгопрудный',
+    genitive: 'Долгопрудного',
+    accusative: 'Долгопрудный',
+    prepositional: 'в Долгопрудном',
+    population: 115000,
+    distance: 10,
+    surcharge: 700,
+    responseTime: '40-60 мин',
+    landmarks: ['МФТИ', 'Долгие пруды', 'Канал имени Москвы'],
+    description: 'Долгопрудный — наукоград на севере от Москвы, известный МФТИ. Сочетание старого фонда и новостроек создаёт разнообразные условия для вредителей.',
+    features: [
+      'Работаем со старым и новым фондом',
+      'Обслуживаем территорию МФТИ',
+      'Знаем специфику местных новостроек'
+    ],
+    nearbyDistricts: ['sao', 'svao']
   }
 ];
 
