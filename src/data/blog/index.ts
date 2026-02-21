@@ -7,6 +7,7 @@ import { blogPostsWithAuthors } from '@/data/blogPosts';
 import { allPestsArticles } from './pests-articles';
 import { premisesArticles } from './premises-articles';
 import { allLegalArticles } from './legal-articles';
+import { moleGeoArticles } from './mole-geo-articles';
 import type { BlogArticle } from './types';
 export { blogCategories, blogAuthors } from './types';
 export type { BlogArticle, Author } from './types';
@@ -23,6 +24,7 @@ export const allBlogArticles: BlogArticle[] = [
   ...allPestsArticles,
   ...premisesArticles,
   ...allLegalArticles,
+  ...moleGeoArticles,
 ];
 
 // Получить статью по slug

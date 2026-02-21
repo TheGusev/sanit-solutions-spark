@@ -45,14 +45,36 @@ const pestEntries: SemanticEntry[] = [
   { query: 'уничтожение кротов москва', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 2 },
   { query: 'борьба с кротами на участке москва', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 3 },
   { query: 'кроты на даче как избавиться', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 3 },
-  { query: 'уничтожение кротов новорижское шоссе', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 3 },
-  { query: 'уничтожение кротов рублёвское шоссе', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 3 },
-  { query: 'уничтожение кротов дмитровское шоссе', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 3 },
   { query: 'кроты на газоне как вывести', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 4 },
   { query: 'кроты в коттеджном посёлке', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 4 },
-  { query: 'кроты в снт борьба', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 4 },
   { query: 'кроты на огороде уничтожение', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 4 },
   { query: 'кроты на участке профессиональная обработка', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 4 },
+];
+
+// ===================== КЛАСТЕР: blog-geo-mole (18 записей) =====================
+
+const moleGeoBlogEntries: SemanticEntry[] = [
+  // Новорижское шоссе
+  { query: 'кроты новорижское шоссе', canonical: '/blog/kroty-novorizhskoe-shosse/', intent: 'informational', cluster: 'blog', priority: 3 },
+  { query: 'кроты истра участок', canonical: '/blog/kroty-istra/', intent: 'informational', cluster: 'blog', priority: 4 },
+  { query: 'кроты красногорск', canonical: '/blog/kroty-krasnogorsk/', intent: 'informational', cluster: 'blog', priority: 4 },
+  { query: 'кроты нахабино дача', canonical: '/blog/kroty-nakhabino/', intent: 'informational', cluster: 'blog', priority: 4 },
+  { query: 'кроты дедовск участок', canonical: '/blog/kroty-dedovsk/', intent: 'informational', cluster: 'blog', priority: 5 },
+  { query: 'кроты снт новая рига', canonical: '/blog/kroty-snt-novaya-riga/', intent: 'informational', cluster: 'blog', priority: 4 },
+  // Рублёвское шоссе
+  { query: 'кроты рублёвское шоссе', canonical: '/blog/kroty-rublevskoe-shosse/', intent: 'informational', cluster: 'blog', priority: 3 },
+  { query: 'кроты одинцово участок', canonical: '/blog/kroty-odintsovo/', intent: 'informational', cluster: 'blog', priority: 4 },
+  { query: 'кроты барвиха', canonical: '/blog/kroty-barvikha/', intent: 'informational', cluster: 'blog', priority: 4 },
+  { query: 'кроты усово участок', canonical: '/blog/kroty-usovo/', intent: 'informational', cluster: 'blog', priority: 5 },
+  { query: 'кроты жуковка', canonical: '/blog/kroty-zhukovka/', intent: 'informational', cluster: 'blog', priority: 5 },
+  { query: 'кроты снт рублёвка', canonical: '/blog/kroty-snt-rublevka/', intent: 'informational', cluster: 'blog', priority: 4 },
+  // Дмитровское шоссе
+  { query: 'кроты дмитровское шоссе', canonical: '/blog/kroty-dmitrovskoe-shosse/', intent: 'informational', cluster: 'blog', priority: 3 },
+  { query: 'кроты долгопрудный', canonical: '/blog/kroty-dolgoprudny/', intent: 'informational', cluster: 'blog', priority: 4 },
+  { query: 'кроты лобня участок', canonical: '/blog/kroty-lobnya/', intent: 'informational', cluster: 'blog', priority: 4 },
+  { query: 'кроты дмитров дача', canonical: '/blog/kroty-dmitrov/', intent: 'informational', cluster: 'blog', priority: 4 },
+  { query: 'кроты яхрома участок', canonical: '/blog/kroty-yakhroma/', intent: 'informational', cluster: 'blog', priority: 5 },
+  { query: 'кроты снт дмитровка', canonical: '/blog/kroty-snt-dmitrovka/', intent: 'informational', cluster: 'blog', priority: 4 },
 ];
 
 // ===================== КЛАСТЕР: object (24 записи = 4 услуги × 6 объектов) =====================
@@ -171,6 +193,7 @@ export const semanticCore: SemanticEntry[] = [
   ...districtEntries,
   ...nchEntries,
   ...blogEntries,
+  ...moleGeoBlogEntries,
 ];
 
 // ===================== ФУНКЦИИ =====================
