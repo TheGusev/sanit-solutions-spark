@@ -235,17 +235,6 @@ function getAllRoutes(): SSGRoute[] {
     });
   });
   
-  // Услуга + Район (520 страниц: 4 услуги × 130 районов)
-  servicesForObjects.forEach(serviceSlug => {
-    neighborhoodSlugs.forEach(districtSlug => {
-      routes.push({
-        path: `/uslugi/${serviceSlug}/${districtSlug}`,
-        outputPath: `uslugi/${serviceSlug}/${districtSlug}/index.html`,
-        priority: '0.75'
-      });
-    });
-  });
-  
   
   // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
   
