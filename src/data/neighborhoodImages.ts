@@ -19,110 +19,110 @@ export const neighborhoodImages: NeighborhoodImage[] = [
   {
     slug: 'arbat',
     name: 'Арбат',
-    heroImage: '/images/neighborhoods/country-house.png',
+    heroImage: '/images/front/cafe-terrace.png',
     galleryImages: [
-      { url: '/images/neighborhoods/country-house.png', title: 'Исторический жилой фонд Арбата', category: 'residential' },
-      { url: '/images/neighborhoods/interior-park.png', title: 'Современные интерьеры после ремонта', category: 'interior' },
-      { url: '/images/neighborhoods/brick-cottage.png', title: 'Частные дома района', category: 'residential' }
+      { url: '/images/front/cafe-terrace.png', title: 'Уличные кафе и рестораны Арбата', category: 'commercial' },
+      { url: '/images/front/panorama-restaurant.png', title: 'Панорамные рестораны района', category: 'commercial' },
+      { url: '/images/front/apartment-park-view.png', title: 'Квартиры с видом на парк', category: 'interior' }
     ],
     altText: 'Дезинфекция и дезинсекция жилых домов на Арбате - Москва'
   },
   {
     slug: 'tverskoy',
     name: 'Тверской',
-    heroImage: '/images/neighborhoods/high-rise-buildings.png',
+    heroImage: '/images/front/boulevard-pond.png',
     galleryImages: [
-      { url: '/images/neighborhoods/high-rise-buildings.png', title: 'Элитная недвижимость Тверского района', category: 'residential' },
-      { url: '/images/neighborhoods/warehouse-industrial.png', title: 'Бизнес-центры и офисы', category: 'commercial' },
-      { url: '/images/neighborhoods/interior-vdnh.png', title: 'Премиум интерьеры', category: 'interior' }
+      { url: '/images/front/boulevard-pond.png', title: 'Тверской бульвар и достопримечательности', category: 'landmark' },
+      { url: '/images/front/business-center-vdnh.png', title: 'Бизнес-центры Тверского района', category: 'commercial' },
+      { url: '/images/front/loft-bedroom.jpg', title: 'Современные интерьеры', category: 'interior' }
     ],
     altText: 'Обработка квартир и офисов в Тверском районе Москвы'
   },
   {
     slug: 'khamovniki',
     name: 'Хамовники',
-    heroImage: '/images/neighborhoods/luxury-mansion.png',
+    heroImage: '/images/backgrounds/elite-residential-columns.png',
     galleryImages: [
-      { url: '/images/neighborhoods/luxury-mansion.png', title: 'Элитные особняки Хамовников', category: 'residential' },
-      { url: '/images/neighborhoods/high-rise-buildings.png', title: 'Престижные жилые комплексы', category: 'residential' },
-      { url: '/images/neighborhoods/interior-park.png', title: 'Роскошные интерьеры с видом на парк', category: 'interior' }
+      { url: '/images/backgrounds/elite-residential-columns.png', title: 'Элитные ЖК Хамовников', category: 'residential' },
+      { url: '/images/front/luxury-house-interior.jpg', title: 'Роскошные интерьеры', category: 'interior' },
+      { url: '/images/front/classical-estate-pond.png', title: 'Усадьбы района', category: 'landmark' }
     ],
     altText: 'Дезинсекция элитной недвижимости в Хамовниках'
   },
   {
     slug: 'zamoskvorechye',
     name: 'Замоскворечье',
-    heroImage: '/images/neighborhoods/brick-cottage.png',
+    heroImage: '/images/front/apartment-park-view.png',
     galleryImages: [
-      { url: '/images/neighborhoods/brick-cottage.png', title: 'Исторический жилой фонд Замоскворечья', category: 'residential' },
-      { url: '/images/neighborhoods/waterfront-residential.png', title: 'Новостройки у Москвы-реки', category: 'residential' },
-      { url: '/images/neighborhoods/interior-park.png', title: 'Современные квартиры после ремонта', category: 'interior' }
+      { url: '/images/front/apartment-park-view.png', title: 'Квартиры с видом на парк', category: 'interior' },
+      { url: '/images/front/waterfront-yacht-complex.png', title: 'Новостройки у Москвы-реки', category: 'residential' },
+      { url: '/images/front/smart-bathroom.jpg', title: 'Современные квартиры после ремонта', category: 'interior' }
     ],
     altText: 'Уничтожение вредителей в Замоскворечье - жилые дома и квартиры'
   },
   {
     slug: 'presnensky',
     name: 'Пресненский',
-    heroImage: '/images/neighborhoods/high-rise-buildings.png',
+    heroImage: '/images/front/panorama-restaurant.png',
     galleryImages: [
-      { url: '/images/neighborhoods/high-rise-buildings.png', title: 'Небоскребы Москва-Сити', category: 'residential' },
-      { url: '/images/neighborhoods/warehouse-industrial.png', title: 'Бизнес-центры и офисные здания', category: 'commercial' },
-      { url: '/images/neighborhoods/interior-vdnh.png', title: 'Современные офисные пространства', category: 'interior' }
+      { url: '/images/front/panorama-restaurant.png', title: 'Москва-Сити и панорамные рестораны', category: 'commercial' },
+      { url: '/images/front/office-moscow-city-view.png', title: 'Офисы с видом на Москва-Сити', category: 'commercial' },
+      { url: '/images/front/night-towers.jpg', title: 'Ночные небоскрёбы', category: 'landmark' }
     ],
     altText: 'Дезинфекция высотных зданий и офисов в Пресненском районе'
   },
   {
     slug: 'basmanny',
     name: 'Басманный',
-    heroImage: '/images/neighborhoods/waterfront-residential.png',
+    heroImage: '/images/front/soviet-panel-courtyard.png',
     galleryImages: [
-      { url: '/images/neighborhoods/waterfront-residential.png', title: 'Современные ЖК Басманного района', category: 'residential' },
-      { url: '/images/neighborhoods/country-house.png', title: 'Старый жилой фонд', category: 'residential' },
-      { url: '/images/neighborhoods/warehouse-industrial.png', title: 'Коммерческая недвижимость', category: 'commercial' }
+      { url: '/images/front/soviet-panel-courtyard.png', title: 'Жилой фонд Басманного района', category: 'residential' },
+      { url: '/images/front/badaevsky-loft-quarter.png', title: 'Лофт-кварталы', category: 'commercial' },
+      { url: '/images/front/minimalist-kitchen.jpg', title: 'Современные интерьеры', category: 'interior' }
     ],
     altText: 'Обработка квартир и зданий в Басманном районе Москвы'
   },
   {
     slug: 'yakimanka',
     name: 'Якиманка',
-    heroImage: '/images/neighborhoods/interior-vdnh.png',
+    heroImage: '/images/backgrounds/riverside-towers.png',
     galleryImages: [
-      { url: '/images/neighborhoods/interior-vdnh.png', title: 'Элитная недвижимость у Москвы-реки', category: 'interior' },
-      { url: '/images/neighborhoods/luxury-mansion.png', title: 'Особняки и таунхаусы Якиманки', category: 'residential' },
-      { url: '/images/neighborhoods/interior-park.png', title: 'Премиум интерьеры с видом на реку', category: 'interior' }
+      { url: '/images/backgrounds/riverside-towers.png', title: 'Элитные башни на набережной', category: 'residential' },
+      { url: '/images/front/luxury-mansion-cars.png', title: 'Элитная недвижимость Якиманки', category: 'residential' },
+      { url: '/images/front/luxury-house-interior.jpg', title: 'Премиум интерьеры', category: 'interior' }
     ],
     altText: 'Дезинсекция элитного жилья на Якиманке'
   },
   {
     slug: 'meshchansky',
     name: 'Мещанский',
-    heroImage: '/images/neighborhoods/kindergarten.png',
+    heroImage: '/images/front/business-center-vdnh.png',
     galleryImages: [
-      { url: '/images/neighborhoods/kindergarten.png', title: 'Детские сады и школы', category: 'landmark' },
-      { url: '/images/neighborhoods/waterfront-residential.png', title: 'Современные жилые комплексы', category: 'residential' },
-      { url: '/images/neighborhoods/brick-cottage.png', title: 'Исторические здания района', category: 'residential' }
+      { url: '/images/front/business-center-vdnh.png', title: 'Бизнес-центры у ВДНХ', category: 'commercial' },
+      { url: '/images/front/apartment-vdnh-view.png', title: 'Квартиры с видом на ВДНХ', category: 'interior' },
+      { url: '/images/front/residential-park-sports.png', title: 'ЖК с парком', category: 'residential' }
     ],
-    altText: 'Санитарная обработка детских учреждений в Мещанском районе'
+    altText: 'Санитарная обработка в Мещанском районе'
   },
   {
     slug: 'dorogomilovo',
     name: 'Дорогомилово',
-    heroImage: '/images/neighborhoods/modern-cottage.png',
+    heroImage: '/images/backgrounds/riverside-office.png',
     galleryImages: [
-      { url: '/images/neighborhoods/modern-cottage.png', title: 'Новостройки Дорогомилово', category: 'residential' },
-      { url: '/images/neighborhoods/warehouse-industrial.png', title: 'Складские комплексы', category: 'commercial' },
-      { url: '/images/neighborhoods/high-rise-buildings.png', title: 'Высотные жилые башни', category: 'residential' }
+      { url: '/images/backgrounds/riverside-office.png', title: 'Офисные здания у реки', category: 'commercial' },
+      { url: '/images/front/badaevsky-loft-quarter.png', title: 'Лофт-квартал Бадаевский', category: 'residential' },
+      { url: '/images/front/modern-residential-forest.png', title: 'Новые ЖК', category: 'residential' }
     ],
-    altText: 'Дезинсекция новостроек и складов в Дорогомилово'
+    altText: 'Дезинсекция новостроек и офисов в Дорогомилово'
   },
   {
     slug: 'tagansky',
     name: 'Таганский',
-    heroImage: '/images/neighborhoods/warehouse-industrial.png',
+    heroImage: '/images/front/sleeping-district-aerial.png',
     galleryImages: [
-      { url: '/images/neighborhoods/warehouse-industrial.png', title: 'Промышленные объекты', category: 'commercial' },
-      { url: '/images/neighborhoods/high-rise-buildings.png', title: 'Жилые комплексы Таганского района', category: 'residential' },
-      { url: '/images/neighborhoods/waterfront-residential.png', title: 'Современное жилье', category: 'residential' }
+      { url: '/images/front/sleeping-district-aerial.png', title: 'Жилые кварталы Таганского', category: 'residential' },
+      { url: '/images/front/soviet-panel-closeup.png', title: 'Панельные дома района', category: 'residential' },
+      { url: '/images/front/warehouse-logistics.png', title: 'Промышленные объекты', category: 'commercial' }
     ],
     altText: 'Комплексная дезинсекция объектов в Таганском районе'
   }
@@ -133,60 +133,60 @@ export const additionalNeighborhoodImages: NeighborhoodImage[] = [
   {
     slug: 'begovoy',
     name: 'Беговой',
-    heroImage: '/images/neighborhoods/high-rise-buildings.png',
+    heroImage: '/images/backgrounds/aviapark-mall.png',
     galleryImages: [
-      { url: '/images/neighborhoods/high-rise-buildings.png', title: 'Жилые комплексы Бегового', category: 'residential' },
-      { url: '/images/neighborhoods/modern-cottage.png', title: 'Современные новостройки', category: 'residential' }
+      { url: '/images/backgrounds/aviapark-mall.png', title: 'ТЦ Авиапарк', category: 'commercial' },
+      { url: '/images/front/new-residential-park.png', title: 'Новые ЖК Бегового', category: 'residential' }
     ],
     altText: 'Дезинфекция и дезинсекция в районе Беговой - Москва'
   },
   {
     slug: 'sokol',
     name: 'Сокол',
-    heroImage: '/images/neighborhoods/luxury-mansion.png',
+    heroImage: '/images/front/academica-complex.png',
     galleryImages: [
-      { url: '/images/neighborhoods/luxury-mansion.png', title: 'Элитный жилой фонд Сокола', category: 'residential' },
-      { url: '/images/neighborhoods/country-house.png', title: 'Частные дома посёлка Сокол', category: 'residential' }
+      { url: '/images/front/academica-complex.png', title: 'ЖК Академика', category: 'residential' },
+      { url: '/images/front/elite-cottage-village.png', title: 'Частные дома посёлка Сокол', category: 'residential' }
     ],
     altText: 'Обработка элитной недвижимости в районе Сокол'
   },
   {
     slug: 'aeroport',
     name: 'Аэропорт',
-    heroImage: '/images/neighborhoods/modern-cottage.png',
+    heroImage: '/images/front/new-residential-park.png',
     galleryImages: [
-      { url: '/images/neighborhoods/modern-cottage.png', title: 'Современные ЖК района Аэропорт', category: 'residential' },
-      { url: '/images/neighborhoods/warehouse-industrial.png', title: 'Бизнес-центры', category: 'commercial' }
+      { url: '/images/front/new-residential-park.png', title: 'Современные ЖК района Аэропорт', category: 'residential' },
+      { url: '/images/front/business-center-vdnh.png', title: 'Бизнес-центры', category: 'commercial' }
     ],
     altText: 'Санитарная обработка в районе Аэропорт'
   },
   {
     slug: 'savelovskiy',
     name: 'Савёловский',
-    heroImage: '/images/neighborhoods/waterfront-residential.png',
+    heroImage: '/images/front/residential-park-sports.png',
     galleryImages: [
-      { url: '/images/neighborhoods/waterfront-residential.png', title: 'Новостройки Савёловского', category: 'residential' },
-      { url: '/images/neighborhoods/interior-vdnh.png', title: 'Современные интерьеры', category: 'interior' }
+      { url: '/images/front/residential-park-sports.png', title: 'ЖК с парком и спортплощадкой', category: 'residential' },
+      { url: '/images/front/smart-bathroom.jpg', title: 'Современные интерьеры', category: 'interior' }
     ],
     altText: 'Дезинсекция квартир в Савёловском районе'
   },
   {
     slug: 'timiryazevskiy',
     name: 'Тимирязевский',
-    heroImage: '/images/neighborhoods/interior-park.png',
+    heroImage: '/images/front/modern-residential-forest.png',
     galleryImages: [
-      { url: '/images/neighborhoods/interior-park.png', title: 'Зелёный район Москвы', category: 'residential' },
-      { url: '/images/neighborhoods/kindergarten.png', title: 'Образовательные учреждения', category: 'landmark' }
+      { url: '/images/front/modern-residential-forest.png', title: 'ЖК у парка и леса', category: 'residential' },
+      { url: '/images/front/suburban-house-garden.png', title: 'Загородные дома района', category: 'residential' }
     ],
     altText: 'Обработка жилых домов в Тимирязевском районе'
   },
   {
     slug: 'ostankino',
     name: 'Останкинский',
-    heroImage: '/images/neighborhoods/interior-vdnh.png',
+    heroImage: '/images/front/apartment-vdnh-view.png',
     galleryImages: [
-      { url: '/images/neighborhoods/interior-vdnh.png', title: 'ВДНХ и окрестности', category: 'landmark' },
-      { url: '/images/neighborhoods/high-rise-buildings.png', title: 'Высотные дома Останкино', category: 'residential' }
+      { url: '/images/front/apartment-vdnh-view.png', title: 'Квартиры с видом на ВДНХ', category: 'interior' },
+      { url: '/images/front/ostankino-tower.png', title: 'Останкинская телебашня', category: 'landmark' }
     ],
     altText: 'Дезинфекция в Останкинском районе'
   }
@@ -203,7 +203,7 @@ export const getNeighborhoodImages = (slug: string): NeighborhoodImage | undefin
 // Функция для получения hero-изображения с fallback
 export const getNeighborhoodHeroImage = (slug: string): string => {
   const images = getNeighborhoodImages(slug);
-  return images?.heroImage || '/images/neighborhoods/waterfront-residential.png';
+  return images?.heroImage || '/images/backgrounds/moscow-panorama-sunset.jpg';
 };
 
 // Вспомогательная функция для категорий

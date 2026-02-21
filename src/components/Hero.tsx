@@ -11,7 +11,10 @@ import { trackGoal } from "@/lib/analytics";
 // Фоновые изображения для ротации
 const HERO_BACKGROUNDS = [
   '/images/work/home-kitchen.png',
-  '/images/work/living-room-treatment.png'
+  '/images/work/living-room-treatment.png',
+  '/images/work/kitchen-treatment.jpg',
+  '/images/backgrounds/moscow-panorama-sunset.jpg',
+  '/images/work/corridor-treatment.jpg'
 ];
 
 // Фоновые изображения для карточек
