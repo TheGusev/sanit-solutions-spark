@@ -81,6 +81,11 @@ const Footer = memo(() => {
                   • Демеркуризация
                 </Link>
               </li>
+              <li>
+                <Link to="/uslugi/borba-s-krotami" className="hover:opacity-100">
+                  • Борьба с кротами
+                </Link>
+              </li>
             </ul>
           </div>
 

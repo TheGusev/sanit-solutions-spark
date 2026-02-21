@@ -18,7 +18,8 @@ export const servicesSlugs = [
   'deratizaciya',
   'ozonirovanie',
   'dezodoraciya',
-  'demerkurizaciya'
+  'demerkurizaciya',
+  'borba-s-krotami'
 ];
 
 // Подстраницы услуг (коммерческие страницы высокого приоритета)

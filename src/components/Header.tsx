@@ -107,6 +107,7 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
     { title: "Озонирование", href: "/uslugi/ozonirovanie", subItems: [] },
     { title: "Дезодорация", href: "/uslugi/dezodoraciya", subItems: [] },
     { title: "Демеркуризация", href: "/uslugi/demerkurizaciya", subItems: [] },
+    { title: "Борьба с кротами", href: "/uslugi/borba-s-krotami", subItems: [] },
   ];
 
   const infoLinks = [
