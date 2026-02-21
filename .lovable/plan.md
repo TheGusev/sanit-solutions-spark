@@ -1,76 +1,48 @@
 
 
-# Plan: 15+ Geo-Specific Blog Articles for Moles (Kroty)
+# Fix: Auto-deploy pipeline and React types
 
-## What exists now
-- `kroty` is in `pests.ts` with full data
-- 5 generic mole articles auto-generated via `rodentsArticles` in `pests-articles.ts` (e.g. `kak-izbavitsya-ot-kroty`)
-- These 5 are already in SSG/Sitemap
+## Root Cause
 
-## What's missing
-15+ geo-articles targeting specific Moscow highways and suburban areas where moles are a real problem.
+The GitHub Actions workflow (`docker-build.yml`) builds and pushes the Docker image to Docker Hub, but **has no step to trigger a redeploy on your Dokploy server**. The image sits on Docker Hub with new code, but your production server keeps running the old container.
 
-## Implementation
+## Changes
 
-### 1. New file: `src/data/blog/mole-geo-articles.ts`
+### 1. Add Dokploy redeploy step to GitHub Actions
 
-Create 18 geo-specific articles (6 per highway direction):
+Add a final step to `.github/workflows/docker-build.yml` that calls Dokploy's API to trigger a redeploy after the image is pushed:
 
-**Novorizhskoe highway (6):**
-- `kroty-novorizhskoe-shosse` -- General: moles along Novorizhskoe highway
-- `kroty-istra` -- Moles in Istra area
-- `kroty-krasnogorsk` -- Moles in Krasnogorsk
-- `kroty-nakhabino` -- Moles in Nakhabino
-- `kroty-dedovsk` -- Moles in Dedovsk
-- `kroty-snt-novaya-riga` -- Moles in SNTs along Novaya Riga
+```yaml
+- name: Trigger Dokploy Redeploy
+  run: |
+    curl -X POST "https://${{ secrets.DOKPLOY_DOMAIN }}/api/application.redeploy" \
+      -H "Authorization: Bearer ${{ secrets.DOKPLOY_API_TOKEN }}" \
+      -H "Content-Type: application/json" \
+      -d '{"appName": "${{ secrets.DOKPLOY_APP_ID }}"}'
+```
 
-**Rublevskoe highway (6):**
-- `kroty-rublevskoe-shosse` -- General: moles along Rublevskoe highway
-- `kroty-odintsovo` -- Moles in Odintsovo
-- `kroty-barvikha` -- Moles in Barvikha
-- `kroty-usovo` -- Moles in Usovo
-- `kroty-zhukovka` -- Moles in Zhukovka
-- `kroty-snt-rublevka` -- Moles in SNTs along Rublevka
+This requires 3 GitHub Secrets to be configured in the repository:
+- `DOKPLOY_DOMAIN` -- your Dokploy panel domain (e.g., `panel.yourdomain.com`)
+- `DOKPLOY_API_TOKEN` -- API token from Dokploy settings
+- `DOKPLOY_APP_ID` -- application ID in Dokploy (e.g., `service-goruslugimsk-6jrp9b` or the app name)
 
-**Dmitrovskoe highway (6):**
-- `kroty-dmitrovskoe-shosse` -- General: moles along Dmitrovskoe highway
-- `kroty-dolgoprudny` -- Moles in Dolgoprudny
-- `kroty-lobnya` -- Moles in Lobnya
-- `kroty-dmitrov` -- Moles in Dmitrov
-- `kroty-yakhroma` -- Moles in Yakhroma
-- `kroty-snt-dmitrovka` -- Moles in SNTs along Dmitrovka
+### 2. Fix React types mismatch
 
-Each article will have:
-- Unique geo-relevant content (1500-2000 words)
-- Local landmarks and specifics (soil types, terrain)
-- FAQ (3-4 questions with geo context)
-- Tags: `кроты`, `дератизация`, highway name, city name
-- Author: Aleksandr Afanasiev (rodent specialist)
-- `relatedServices: ['deratizaciya']`
-- Category: `Дератизация`
-- Pricing table for land plots (6 soток, 10 соток, 15 соток, 20+ соток)
+Update `@types/react` from `^18.3.23` to `^19.0.0` and `@types/react-dom` from `^18.3.7` to `^19.0.0` in `package.json` devDependencies to match the installed `react@^19.2.4`.
 
-### 2. Update `src/data/blog/index.ts`
+## What you need to do on your side
 
-Import `moleGeoArticles` from the new file and add to `allBlogArticles` array.
+Before publishing, make sure these 3 secrets exist in your GitHub repository (Settings > Secrets and variables > Actions):
+1. `DOKPLOY_DOMAIN`
+2. `DOKPLOY_API_TOKEN`
+3. `DOKPLOY_APP_ID`
 
-### 3. Update `vite-plugin-ssg.ts`
+If you don't have them yet, go to your Dokploy panel, find the API token in Settings, and note the application name/ID for the goruslugimsk app.
 
-Add all 18 new blog slugs to the `blogSlugs` array.
+## Technical Details
 
-### 4. Update `src/lib/seoRoutes.ts`
+- The Dokploy API endpoint for redeploying is typically `POST /api/application.redeploy`
+- The request body needs the `appName` field matching your Dokploy application identifier
+- The workflow will wait for the Docker push to complete before triggering the redeploy
+- React 19 types will prevent potential CI build failures from type mismatches
 
-Add all 18 slugs to `blogArticleSlugs` array.
-
-### 5. Update `src/data/semanticCore.ts`
-
-Add 18 semantic entries for geo-mole queries:
-- `уничтожение кротов новорижское шоссе` -> `/blog/kroty-novorizhskoe-shosse`
-- `кроты истра участок` -> `/blog/kroty-istra`
-- etc.
-
-### Result
-- 18 new geo-specific blog articles
-- Total blog articles: 168 + 18 = **186**
-- All new articles in SSG and Sitemap
-- Semantic core entries for geo targeting
