@@ -1,105 +1,84 @@
 
-# Оптимизация скорости загрузки изображений
+# Исправление видимости фонов и скорости загрузки
 
-## Проблемы сейчас
+## Проблема 1: Фон не виден
 
-1. **Hero: 5 фоновых изображений грузятся одновременно** -- все 5 рендерятся в DOM как background-image, даже если видно только одно. Браузер качает все сразу.
-2. **Нет preload для первого Hero-фона** -- LCP (Largest Contentful Paint) страдает, потому что браузер узнаёт о первом фоне только после загрузки JS-бандла.
-3. **WorkGallery: 17 изображений без IntersectionObserver** -- хотя стоит `loading="lazy"`, сама секция рендерится через lazy-компонент, но все 17 `<img>` появляются в DOM одновременно.
-4. **HeroBackground дублирует фон** -- два `<div>` с одной и той же `background-image` (мобильный + десктоп). Браузер может загрузить оба.
-5. **Нет `fetchPriority="high"` на критических изображениях** (Hero, hero-cards).
-6. **Hero crossfade: все 5 div всегда в DOM** -- даже невидимые изображения рендерятся.
+Сейчас `HeroBackground` использует:
+- `opacity: 0.30` по умолчанию (изображение видно лишь на 30%)
+- Поверх наложен тяжёлый градиент: `from-background/60 via-background/40 to-background/30`
+- В итоге фото практически невидимо
 
-## Решение
+На скриншотах блога и других страниц -- сплошной тёмный/светлый фон без изображения.
 
-### 1. Hero.tsx -- preload первого фона + ленивая загрузка остальных
+### Решение
 
-- Добавить `<link rel="preload">` в `<head>` через React Helmet для первого Hero-фона (home-kitchen.png)
-- Рендерить только текущий и следующий слайд (не все 5 сразу)
-- Предзагружать следующий слайд через `new Image()` за 1 секунду до перехода
+| Параметр | Было | Станет |
+|----------|------|--------|
+| `opacity` по умолчанию | 0.30 | 0.55 |
+| `opacityMobile` расчёт | `opacity + 0.15` | `opacity + 0.10` |
+| Gradient overlay | `from-background/60 via-background/40 to-background/30` | `from-background/40 via-background/20 to-background/15` |
+| Bottom gradient | `from-background/20 via-transparent to-background/50` | `from-background/10 via-transparent to-background/30` |
 
-```text
-Было: 5 div в DOM, все 5 фонов грузятся сразу
-Станет: 1-2 div в DOM, preload первого, prefetch следующего
-```
+Также повысить opacity в конкретных вызовах:
+- `BlogPost.tsx`: opacity 0.30 -> 0.50
+- `Blog.tsx`: opacity 0.38 -> 0.55
+- `DistrictHero.tsx`: opacity 0.52 -> 0.60
 
-### 2. Hero cards -- fetchPriority="high"
+## Проблема 2: Медленная загрузка изображений
 
-- Три карточки (fast-response, certificates, guarantee) видны above the fold
-- Добавить `fetchPriority="high"` через предзагрузку в index.html
+Большие PNG-файлы (часто 1-5MB каждый) загружаются медленно. Основные причины:
+- PNG-формат для фотографий -- неэффективен (нужен JPEG/WebP)
+- Нет ресайза -- полноразмерные фото отдаются как есть
+- `filter: blur()` на крупных изображениях -- нагрузка на GPU
+- Hero-карточки загружают 3 фоновых изображения через `background-image` (нет `loading="lazy"`)
 
-### 3. HeroBackground.tsx -- убрать дублирование
+### Решение
 
-- Использовать один `<div>` с CSS media query вместо двух div (md:hidden / hidden md:block)
-- Или использовать `<picture>` / CSS-only подход с одним элементом
+1. **Уменьшить blur** для снижения GPU-нагрузки: blur по умолчанию 8 -> 4px (на фоне с повышенной opacity blur не так нужен)
 
-### 4. WorkGallery.tsx -- прогрессивная загрузка
+2. **Hero карточки** -- убрать тяжёлые background-image из карточек, заменить на CSS-градиент или использовать `<img loading="lazy">` внутри карточек вместо `background-image`
 
-- Показывать первые 8 элементов, остальные -- по кнопке "Показать ещё" или при скролле
-- Видео с `preload="none"` вместо `preload="metadata"` (3 видео -- это тяжело)
+3. **WorkGallery видео** -- убедиться, что `autoPlay` не стоит на видео с `preload="none"` (конфликт: autoPlay заставляет браузер загружать видео несмотря на preload=none). Решение: убрать `autoPlay` и показывать превью-картинку, воспроизводить по наведению/клику
 
-### 5. index.html -- preload критических изображений
-
-Добавить в `<head>`:
-```html
-<link rel="preload" as="image" href="/images/work/home-kitchen.png" fetchpriority="high">
-<link rel="preload" as="image" href="/images/hero-cards/fast-response.jpg">
-```
-
-### 6. Nginx -- immutable cache уже настроен (OK)
-
-Кеширование изображений на 1 год с immutable уже работает. Это хорошо.
-
----
+4. **Оптимизировать размер `transform: scale(1.1)`** -- убрать из HeroBackground, это заставляет GPU рендерить на 21% больше пикселей
 
 ## Файлы для изменения
 
-| Файл | Что меняется |
-|------|-------------|
-| `index.html` | +2 строки preload для Hero-фона и первой hero-card |
-| `src/components/Hero.tsx` | Рендерить только текущий + следующий слайд; prefetch следующего через `new Image()` |
-| `src/components/HeroBackground.tsx` | Один div вместо двух дублирующих; CSS media query через стили |
-| `src/components/WorkGallery.tsx` | `preload="none"` для видео; показ первых 8 элементов + кнопка "ещё" |
-| `src/components/ImageGallery.tsx` | Добавить `width`, `height`, `decoding="async"` |
+| Файл | Изменения |
+|------|-----------|
+| `src/components/HeroBackground.tsx` | Повысить opacity по умолчанию до 0.55, уменьшить blur до 4, облегчить gradient overlay, убрать scale(1.1) |
+| `src/pages/BlogPost.tsx` | opacity 0.30 -> 0.50, blur 12 -> 6 |
+| `src/pages/Blog.tsx` | opacity 0.38 -> 0.55, blur 10 -> 5 |
+| `src/components/district/DistrictHero.tsx` | opacity 0.52 -> 0.60 |
+| `src/components/Hero.tsx` | Hero-карточки: заменить background-image на `<img>` с loading="lazy" для не-первой карточки |
+| `src/components/WorkGallery.tsx` | Убрать autoPlay с видео (конфликт с preload="none"), добавить воспроизведение по hover |
 
----
+## Техническая детализация
 
-## Технические детали
-
-### Hero.tsx -- новая логика ротации
+### HeroBackground.tsx -- новые значения
 
 ```text
-// Вместо рендера всех 5 div:
-// 1. Состояние: currentIndex, nextIndex
-// 2. useEffect prefetch: new Image().src = HERO_BACKGROUNDS[nextIndex]
-// 3. Рендер: только div[currentIndex] (opacity:1) + div[nextIndex] (opacity:0, готов к переходу)
-// 4. При смене: nextIndex становится currentIndex, новый nextIndex = (current+1) % length
+opacity: 0.30 -> 0.55
+blur: 8 -> 4
+mobileBlur: blur - 2 -> blur - 1  (чтобы мобильный blur не был слишком мал)
+mobileOpacity: opacity + 0.15 -> opacity + 0.10
+gradient overlay: значительно облегчить
+убрать transform: scale(1.1) -- экономия GPU
 ```
 
-### WorkGallery.tsx -- прогрессивная загрузка
+### WorkGallery.tsx -- видео по hover
 
 ```text
-// 1. const [showAll, setShowAll] = useState(false)
-// 2. const visibleItems = showAll ? mediaItems : mediaItems.slice(0, 8)
-// 3. Видео: preload="none" (загружаются только при воспроизведении)
-// 4. Кнопка "Показать все работы" внизу
-```
-
-### HeroBackground.tsx -- один элемент
-
-```text
-// Вместо двух div (mobile + desktop):
-// Один div с CSS custom properties:
-// --blur: blur(8px) на desktop, blur(6px) на mobile (через @media в className)
-// --opacity: 0.30 на desktop, 0.45 на mobile
-// Tailwind: blur-[var(--hero-blur)] -- не работает, используем inline style + matchMedia
-// Проще: оставить два div, но добавить loading="lazy" через IntersectionObserver
-// => Оптимальное решение: один div + CSS @media через style tag
+// Вместо autoPlay + preload="none" (конфликт):
+// - Показывать poster/thumbnail
+// - При hover: video.play()
+// - При mouseleave: video.pause()
+// Это предотвратит загрузку 3 видео при открытии страницы
 ```
 
 ## Ожидаемый результат
 
-- LCP улучшится на 300-500ms (preload первого Hero-фона)
-- Начальная загрузка страницы: вместо ~25 изображений одновременно -- 5-6 критических
-- Видео не грузятся до взаимодействия (экономия ~5-15MB трафика)
-- TTI (Time to Interactive) улучшится за счёт меньшей нагрузки на сеть
+- Фоновые изображения будут чётко видны на всех страницах (блог, районы, услуги)
+- Снижение GPU-нагрузки на ~30% (меньше blur, нет scale)
+- Видео не загружаются до взаимодействия (экономия 5-15MB)
+- Общее ускорение загрузки страниц
