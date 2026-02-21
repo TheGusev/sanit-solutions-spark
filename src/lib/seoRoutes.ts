@@ -162,19 +162,7 @@ export function getAllSSGRoutes() {
     });
   });
   
-  // Услуга + Район (520 страниц: 4 услуги × 130 районов)
-  servicesForObjects.forEach(serviceSlug => {
-    neighborhoodSlugs.forEach(districtSlug => {
-      routes.push({
-        path: `/uslugi/${serviceSlug}/${districtSlug}`,
-        outputPath: `uslugi/${serviceSlug}/${districtSlug}/index.html`,
-        priority: '0.75',
-        changefreq: 'monthly'
-      });
-    });
-  });
   
-
   
   // НЧ-страницы: Услуга + Вредитель + Топ-15 районов (~105 страниц)
   dezinsekciyaPestSlugs.forEach(pestSlug => {
