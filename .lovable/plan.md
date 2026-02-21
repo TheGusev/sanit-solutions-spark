@@ -1,63 +1,46 @@
 
 
-# SSG Doorway Fix + Day 5: Semantic Core
+# Plan: Add 118 Missing Blog Articles to SSG
 
-## 1. SSG Услуга+Район -- уже выполнено
+## Problem
+Currently `vite-plugin-ssg.ts` contains only 50 blog slugs (legacy articles). The remaining 118 articles from `pests-articles.ts` (63), `premises-articles.ts` (42), and `legal-articles.ts` (11) are rendered only via client-side SPA, making them invisible to search engines.
 
-Блок генерации 520 doorway-страниц (4 услуги x 130 районов) уже удалён из `vite-plugin-ssg.ts` и `seoRoutes.ts` в предыдущем коммите. Задача закрыта.
+## Solution
+Add all 118 missing blog slugs to both `vite-plugin-ssg.ts` and `seoRoutes.ts`.
 
-## 2. Day 5: Создать `src/data/semanticCore.ts`
+## Technical Details
 
-Семантическое ядро -- это таблица соответствий "1 поисковый запрос = 1 каноническая страница". Она нужна для:
-- Предотвращения каннибализации (когда 2+ страницы конкурируют за один и тот же запрос)
-- Генерации правильных `<title>`, `<h1>` и canonical тегов
-- Валидации: скрипт может проверить, что нет дублирующихся ключевых слов
+### 1. Update `vite-plugin-ssg.ts` (lines 130-186)
 
-### Структура файла
+Replace the `blogSlugs` array with the full list of 168 slugs:
 
-```text
-src/data/semanticCore.ts
+**Existing 50 legacy slugs** -- keep as-is
 
-SemanticEntry {
-  query        -- целевой поисковый запрос (lowercase)
-  canonical    -- каноническая страница (путь)
-  intent       -- тип интента: commercial | informational | navigational
-  cluster      -- группа: service | pest | object | district | nch | blog
-  priority     -- приоритет 1-5 (1 = самый важный)
-}
-```
+**Add 63 pest article slugs** (9 templates x 5 insect pests + 5 templates x 2 rodent pests):
+- Pattern: `{slugPrefix}-{pestSlug}` 
+- Insect slugs: `tarakany`, `klopy`, `muravyi`, `blohi`, `mol`
+- Templates (9): `kak-izbavitsya-ot`, `v-kvartire`, `otkuda-berutsya`, `narodnye-sredstva-ot`, `professionalnaya-obrabotka-ot`, `profilaktika`, `chem-opasny`, `posle-obrabotki`, `ceny-na-unichtozhenie`
+- Rodent slugs: `krysy`, `myshi`
+- Rodent templates (5): first 5 from above list
 
-### Группы записей (6 кластеров)
+**Add 42 premises article slugs** (7 templates x 6 object types):
+- Pattern: `{slugPrefix}-{objectSlug}`
+- Object slugs: `kvartir`, `domov`, `ofisov`, `restoranov`, `skladov`, `proizvodstv`
+- Templates (7): `dezinsekciya`, `deratizaciya`, `podgotovka-k-obrabotke`, `stoimost-obrabotki`, `posle-obrabotki`, `vrediteli-v`, `profilaktika-vreditelej-v`
 
-| Кластер | Пример запроса | Каноническая страница | Кол-во записей |
-|---------|---------------|----------------------|----------------|
-| service | "дезинфекция москва" | /uslugi/dezinfekciya/ | ~6 |
-| pest | "уничтожение тараканов" | /uslugi/dezinsekciya/tarakany/ | ~7 |
-| object | "дезинсекция квартиры" | /uslugi/dezinsekciya/kvartir/ | ~24 |
-| district | "дезинфекция цао" | /uslugi/dezinfekciya-cao/ | ~12 |
-| nch | "уничтожение тараканов арбат" | /uslugi/dezinsekciya/tarakany/arbat/ | ~105 |
-| blog | "как подготовить помещение к дезинфекции" | /blog/kak-podgotovit-pomeshchenie/ | ~20 ключевых |
+**Add 11 legal article slugs** (hardcoded):
+- `sanpin-trebovaniya-2026`, `trebovaniya-rospotrebnadzora-2026`, `dokumenty-dlya-obshhepita`, `zhurnal-uchyota-dezinsekcii`, `licenziya-na-dezinfekciyu`, `shtrafy-za-vrediteley`, `haccp-i-dezinsekciya`, `dogovor-na-dezinsekciyu-obrazec`, `proverka-ses-kak-podgotovitsya`, `bezopasnost-preparatov`, `kak-vybrat-kompaniyu`
 
-Всего: ~174 записи
+### 2. Update `src/lib/seoRoutes.ts` (lines ~168-233)
 
-### Техническая реализация
+Synchronize `blogArticleSlugs` array with the same full list of 168 slugs to keep the single source of truth consistent.
 
-Один файл `src/data/semanticCore.ts`:
-- Экспортирует массив `semanticCore: SemanticEntry[]`
-- Экспортирует функцию `getCanonicalForQuery(query: string)` для поиска
-- Экспортирует функцию `validateNoDuplicates()` для проверки каннибализации (один запрос не должен быть назначен 2+ страницам)
+### 3. Update `src/AppSSR.tsx`
 
-### Интеграция
+Verify `BlogPost` route `/blog/:slug` is already present (confirmed -- it is).
 
-На этом этапе файл создаётся как справочник. Интеграция с компонентами (SEOHead, StructuredData) будет на Day 6 при финальном аудите.
-
-## Файлы для изменения
-
-| Файл | Действие |
-|------|----------|
-| `src/data/semanticCore.ts` | Создать новый файл |
-
-## Риски
-
-Нулевой. Это новый data-файл без побочных эффектов.
-
+### Result
+- Total blog articles in SSG: 50 + 63 + 42 + 11 = **168 articles**
+- All articles will get static HTML at build time
+- Search engines will be able to crawl and index all 168 articles
+- Total sitemap URLs: ~468 --> ~586
