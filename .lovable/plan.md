@@ -1,38 +1,69 @@
 
-# SEO-аудит goruslugimsk.ru — Статус исправлений
 
-## ✅ Исправлено (все критические проблемы)
+# Перелинковка по географической близости
 
-### 1. Синхронизация sitemap с seoRoutes
-- ✅ `borba-s-krotami` добавлен в servicesSlugs (vite-plugin-sitemap.ts)
-- ✅ `kroty` добавлен в deratizaciyaPestSlugs → 15 НЧ-страниц теперь в sitemap
-- ✅ `demerkurizaciya` добавлен в servicesForObjects → 6 объектных страниц в sitemap
-- ✅ `shchyolkovo` добавлен в moscowRegionCitySlugs (был только в данных, не в sitemap)
-- ✅ `dolgoprudny` — добавлены полные данные города в moscowRegion.ts (был в sitemap без данных → 404)
-- ✅ `khoroshyovo-mnyovniki` → исправлен на `khoroshevo-mnevniki` (синхрон с neighborhoods.ts)
+## Текущая проблема
 
-### 2. Блоговые slug'и
-- ✅ Полная синхронизация: blogSlugs в sitemap = blogArticleSlugs в seoRoutes (181 статья)
+Сейчас "соседние районы" выбираются по позиции в массиве `neighborhoodSlugs`:
 
-### 3. Семантическое ядро
-- ✅ Добавлен `борьба с кротами москва` → `/uslugi/borba-s-krotami/`
-- ✅ Добавлен `уничтожение кротов на участке москва` → `/uslugi/borba-s-krotami/`
-- ✅ Добавлены 40 записей МО-городов (10 городов × 4 услуги)
+```text
+currentIndex - 2, currentIndex - 1, currentIndex + 1, currentIndex + 2
+```
 
-## Итого: страницы в sitemap после исправлений
+Это означает что "соседями" Арбата будут два предыдущих и два следующих элемента массива, которые могут быть в совершенно другом округе на другом конце Москвы.
 
-| Тип | Было | Стало | Δ |
-|-----|------|-------|---|
-| Услуги | 6 | 7 | +1 (borba-s-krotami) |
-| Услуга+Вредитель | 7 | 8 | +1 (kroty) |
-| Услуга+Объект | 24 | 30 | +6 (demerkurizaciya) |
-| НЧ-страницы | 105 | 120 | +15 (kroty × 15 районов) |
-| МО-города | 45 | 50 | +5 (shchyolkovo + услуги) |
-| Блог | 164 | 181 | +17 (синхронизация) |
-| **Итого** | **~494** | **~539** | **+45 страниц** |
+## Решение
 
-## Оставшиеся задачи (не критические)
+Использовать координаты `center: [lat, lng]` каждого района для вычисления реального расстояния и выбирать ближайшие районы.
 
-- [ ] Перелинковка по географии (выбор соседних районов по districtId)
-- [ ] WebP-конверсия PNG-изображений
-- [ ] Отдельный sitemap-mole-blog.xml
+### Алгоритм
+
+1. Найти текущий район в массиве `neighborhoods` по slug
+2. Вычислить расстояние до всех остальных районов из `topNeighborhoods` по формуле Haversine (или упрощённо -- евклидово расстояние по координатам, достаточно для масштаба Москвы)
+3. Отсортировать по расстоянию, взять 4 ближайших
+4. Дополнительно: приоритет районам из того же `districtId` (округа)
+
+### Изменения в файле
+
+**`src/components/InternalLinks.tsx`** -- единственный файл:
+
+Заменить блоки выбора соседних районов (строки 70-111) на новую логику:
+
+```text
+// Вспомогательная функция расчёта расстояния
+function getDistance(a: [number, number], b: [number, number]): number {
+  const dlat = a[0] - b[0];
+  const dlng = a[1] - b[1];
+  return Math.sqrt(dlat * dlat + dlng * dlng);
+}
+
+// Находим текущий район
+const currentNb = neighborhoods.find(n => n.slug === currentNeighborhood);
+
+// Находим ближайшие районы из topNeighborhoods
+const nearby = neighborhoods
+  .filter(n => n.slug !== currentNeighborhood && topNeighborhoods.includes(n.slug))
+  .map(n => ({
+    ...n,
+    distance: currentNb ? getDistance(currentNb.center, n.center) : Infinity,
+    sameDistrict: currentNb ? n.districtId === currentNb.districtId : false
+  }))
+  .sort((a, b) => {
+    // Сначала районы того же округа, потом по расстоянию
+    if (a.sameDistrict && !b.sameDistrict) return -1;
+    if (!a.sameDistrict && b.sameDistrict) return 1;
+    return a.distance - b.distance;
+  })
+  .slice(0, 4);
+```
+
+Это заменит оба блока (строки 71-90 для НЧ-страниц и 91-111 для страниц районов).
+
+### Результат
+
+| До | После |
+|---|---|
+| Арбат -> соседи по массиву (случайные районы) | Арбат -> Хамовники, Пресненский, Якиманка, Тверской |
+| Измайлово -> соседи по массиву | Измайлово -> Перово, Соколиная Гора, Богородское, Преображенское |
+| Не учитывает округ | Приоритет районам того же округа |
+
