@@ -1,4 +1,4 @@
-demercurizaciya/**
+/**
  * Единый источник истины для всех индексируемых маршрутов.
  * Используется в SSG (vite-plugin-ssg.ts) и Sitemap (vite-plugin-sitemap.ts).
  */
@@ -105,6 +105,7 @@ export const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya
 
 
 // Генерация всех маршрутов для SSG
+export function getAllSSGRoutes() {
   const routes = [...staticRoutes];
   
   // Услуги (6 страниц)

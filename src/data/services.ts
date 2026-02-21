@@ -1,4 +1,4 @@
-demercurizaciyaexport interface ServiceMethod {
+export interface ServiceMethod {
   title: string;
   description: string;
 }

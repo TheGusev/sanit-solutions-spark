@@ -1,4 +1,4 @@
-demercurizaciyaimport { Microscope, Bug, Rat, Sparkles, Wind, AlertTriangle, ChevronRight } from "lucide-react";
+import { Microscope, Bug, Rat, Sparkles, Wind, AlertTriangle, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
