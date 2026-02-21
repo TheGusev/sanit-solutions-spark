@@ -39,3 +39,10 @@ jobs:
 
       - name: Image digest
         run: echo "Image pushed with digest ${{ steps.build-and-push.outputs.digest }}"
+
+      - name: Trigger Dokploy Redeploy
+        run: |
+          curl -s -f -X POST "https://${{ secrets.DOKPLOY_DOMAIN }}/api/application.redeploy" \
+            -H "Authorization: Bearer ${{ secrets.DOKPLOY_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"appName": "${{ secrets.DOKPLOY_APP_ID }}"}'
