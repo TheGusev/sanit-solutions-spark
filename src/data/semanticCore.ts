@@ -30,6 +30,8 @@ const serviceEntries: SemanticEntry[] = [
   { query: 'озонирование помещений москва', canonical: '/uslugi/ozonirovanie/', intent: 'commercial', cluster: 'service', priority: 2 },
   { query: 'дезодорация помещений москва', canonical: '/uslugi/dezodoraciya/', intent: 'commercial', cluster: 'service', priority: 2 },
   { query: 'демеркуризация москва', canonical: '/uslugi/demerkurizaciya/', intent: 'commercial', cluster: 'service', priority: 3 },
+  { query: 'борьба с кротами москва', canonical: '/uslugi/borba-s-krotami/', intent: 'commercial', cluster: 'service', priority: 2 },
+  { query: 'уничтожение кротов на участке москва', canonical: '/uslugi/borba-s-krotami/', intent: 'commercial', cluster: 'service', priority: 2 },
 ];
 
 // ===================== КЛАСТЕР: pest (7 записей) =====================
@@ -184,6 +186,31 @@ const blogEntries: SemanticEntry[] = [
   { query: 'народные средства от тараканов эффективность', canonical: '/blog/narodnye-sredstva-tarakany/', intent: 'informational', cluster: 'blog', priority: 3 },
 ];
 
+// ===================== КЛАСТЕР: moscow-region (40 записей = 10 городов × 4 услуги) =====================
+
+const moServiceNames: Record<string, string> = {
+  dezinsekciya: 'дезинсекция', dezinfekciya: 'дезинфекция',
+  deratizaciya: 'дератизация', ozonirovanie: 'озонирование',
+};
+const moCities = [
+  { slug: 'khimki', name: 'химки' }, { slug: 'mytishchi', name: 'мытищи' },
+  { slug: 'balashikha', name: 'балашиха' }, { slug: 'krasnogorsk', name: 'красногорск' },
+  { slug: 'podolsk', name: 'подольск' }, { slug: 'korolyov', name: 'королёв' },
+  { slug: 'lyubertsy', name: 'люберцы' }, { slug: 'odintsovo', name: 'одинцово' },
+  { slug: 'dolgoprudny', name: 'долгопрудный' }, { slug: 'shchyolkovo', name: 'щёлково' },
+];
+const moServices = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'] as const;
+
+const moscowRegionEntries: SemanticEntry[] = moCities.flatMap(city =>
+  moServices.map(svc => ({
+    query: `${moServiceNames[svc]} ${city.name}`,
+    canonical: `/moscow-oblast/${city.slug}/${svc}/`,
+    intent: 'commercial' as const,
+    cluster: 'service' as const,
+    priority: 3 as 1 | 2 | 3 | 4 | 5,
+  }))
+);
+
 // ===================== ОБЪЕДИНЁННОЕ ЯДРО =====================
 
 export const semanticCore: SemanticEntry[] = [
@@ -194,6 +221,7 @@ export const semanticCore: SemanticEntry[] = [
   ...nchEntries,
   ...blogEntries,
   ...moleGeoBlogEntries,
+  ...moscowRegionEntries,
 ];
 
 // ===================== ФУНКЦИИ =====================
