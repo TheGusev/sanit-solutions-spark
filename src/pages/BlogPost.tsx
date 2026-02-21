@@ -212,28 +212,38 @@ const BlogPost = () => {
         maxItems={3}
       />
 
-      {/* Related Services based on tags */}
+      {/* Related Services based on relatedServices field or tags */}
       <section className="py-12 px-4 bg-muted/30">
         <div className="container mx-auto max-w-4xl">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
             Связанные услуги
           </h2>
           <div className="grid sm:grid-cols-3 gap-6">
-            {[
-              { title: 'Дезинфекция', href: '/uslugi/dezinfekciya', price: 'от 1000₽', tags: ['дезинфекция', 'вирусы', 'бактерии'] },
-              { title: 'Дезинсекция', href: '/uslugi/dezinsekciya', price: 'от 1200₽', tags: ['насекомые', 'тараканы', 'клопы', 'блохи'] },
-              { title: 'Дератизация', href: '/uslugi/deratizaciya', price: 'от 1400₽', tags: ['грызуны', 'крысы', 'мыши'] },
-              { title: 'Озонирование', href: '/uslugi/ozonirovanie', price: 'от 1500₽', tags: ['озон', 'запах', 'дезодорация'] },
-              { title: 'Дезодорация', href: '/uslugi/dezodoraciya', price: 'от 1000₽', tags: ['запах', 'дезодорация'] },
-            ]
-              .filter(service => 
-                post.tags?.some(tag => 
-                  service.tags.some(st => tag.toLowerCase().includes(st) || st.includes(tag.toLowerCase()))
-                )
-              )
-              .slice(0, 3)
-              .map((service) => (
-                <Link key={service.href} to={service.href}>
+            {(() => {
+              const allServices = [
+                { slug: 'dezinfekciya', title: 'Дезинфекция', price: 'от 1000₽', tags: ['дезинфекция', 'вирусы', 'бактерии'] },
+                { slug: 'dezinsekciya', title: 'Дезинсекция', price: 'от 1200₽', tags: ['насекомые', 'тараканы', 'клопы', 'блохи', 'дезинсекция'] },
+                { slug: 'deratizaciya', title: 'Дератизация', price: 'от 1400₽', tags: ['грызуны', 'крысы', 'мыши', 'кроты', 'дератизация'] },
+                { slug: 'ozonirovanie', title: 'Озонирование', price: 'от 1500₽', tags: ['озон', 'запах', 'дезодорация', 'озонирование'] },
+                { slug: 'dezodoraciya', title: 'Дезодорация', price: 'от 1000₽', tags: ['запах', 'дезодорация'] },
+                { slug: 'demerkurizaciya', title: 'Демеркуризация', price: 'от 3000₽', tags: ['ртуть', 'демеркуризация', 'градусник'] },
+              ];
+
+              // Приоритет: relatedServices из статьи, потом по тегам
+              let matched = post.relatedServices
+                ? allServices.filter(s => post.relatedServices!.includes(s.slug))
+                : [];
+
+              if (matched.length === 0) {
+                matched = allServices.filter(service =>
+                  post.tags?.some(tag =>
+                    service.tags.some(st => tag.toLowerCase().includes(st) || st.includes(tag.toLowerCase()))
+                  )
+                );
+              }
+
+              return matched.slice(0, 3).map((service) => (
+                <Link key={service.slug} to={`/uslugi/${service.slug}`}>
                   <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1">
                     <CardContent className="p-6 text-center">
                       <h3 className="font-bold text-lg mb-2">{service.title}</h3>
@@ -241,8 +251,8 @@ const BlogPost = () => {
                     </CardContent>
                   </Card>
                 </Link>
-              ))
-            }
+              ));
+            })()}
           </div>
         </div>
       </section>

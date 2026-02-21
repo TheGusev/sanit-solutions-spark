@@ -42,16 +42,28 @@ const pestEntries: SemanticEntry[] = [
   { query: 'уничтожение моли москва', canonical: '/uslugi/dezinsekciya/mol/', intent: 'commercial', cluster: 'pest', priority: 3 },
   { query: 'уничтожение крыс москва', canonical: '/uslugi/deratizaciya/krysy/', intent: 'commercial', cluster: 'pest', priority: 1 },
   { query: 'уничтожение мышей москва', canonical: '/uslugi/deratizaciya/myshi/', intent: 'commercial', cluster: 'pest', priority: 2 },
+  { query: 'уничтожение кротов москва', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 2 },
+  { query: 'борьба с кротами на участке москва', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 3 },
+  { query: 'кроты на даче как избавиться', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 3 },
+  { query: 'уничтожение кротов новорижское шоссе', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 3 },
+  { query: 'уничтожение кротов рублёвское шоссе', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 3 },
+  { query: 'уничтожение кротов дмитровское шоссе', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 3 },
+  { query: 'кроты на газоне как вывести', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 4 },
+  { query: 'кроты в коттеджном посёлке', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 4 },
+  { query: 'кроты в снт борьба', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 4 },
+  { query: 'кроты на огороде уничтожение', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 4 },
+  { query: 'кроты на участке профессиональная обработка', canonical: '/uslugi/deratizaciya/kroty/', intent: 'commercial', cluster: 'pest', priority: 4 },
 ];
 
 // ===================== КЛАСТЕР: object (24 записи = 4 услуги × 6 объектов) =====================
 
-const services4 = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'] as const;
+const services4 = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'demerkurizaciya'] as const;
 const serviceNamesGen: Record<string, string> = {
   dezinsekciya: 'дезинсекция',
   dezinfekciya: 'дезинфекция',
   deratizaciya: 'дератизация',
   ozonirovanie: 'озонирование',
+  demerkurizaciya: 'демеркуризация',
 };
 const objects = [
   { slug: 'kvartir', query: 'квартиры' },
@@ -92,11 +104,11 @@ const districtEntries: SemanticEntry[] = districtIds.map(id => ({
 
 const pestNamesGen: Record<string, string> = {
   tarakany: 'тараканов', klopy: 'клопов', muravyi: 'муравьёв',
-  blohi: 'блох', mol: 'моли', krysy: 'крыс', myshi: 'мышей',
+  blohi: 'блох', mol: 'моли', krysy: 'крыс', myshi: 'мышей', kroty: 'кротов',
 };
 const pestServiceMap: Record<string, string> = {
   tarakany: 'dezinsekciya', klopy: 'dezinsekciya', muravyi: 'dezinsekciya',
-  blohi: 'dezinsekciya', mol: 'dezinsekciya', krysy: 'deratizaciya', myshi: 'deratizaciya',
+  blohi: 'dezinsekciya', mol: 'dezinsekciya', krysy: 'deratizaciya', myshi: 'deratizaciya', kroty: 'deratizaciya',
 };
 const topNeighborhoods = [
   'arbat', 'tverskoy', 'khamovniki', 'zamoskvorechye', 'presnensky',

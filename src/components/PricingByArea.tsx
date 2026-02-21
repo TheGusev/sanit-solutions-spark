@@ -23,7 +23,6 @@ const servicePricesData = [
   { id: 12, service: "Озонирование", object: "Офис 50-100 м²", price: "от 2000 ₽" },
   { id: 13, service: "Дезодорация", object: "Квартира", price: "от 1200 ₽" },
   { id: 14, service: "Дезодорация", object: "После пожара/затопления", price: "от 2500 ₽" },
-  { id: 15, service: "Сертификация", object: "Документы для СЭС", price: "от 3000 ₽" },
 ];
 
 // Группировка услуг по типу для accordion
@@ -33,7 +32,6 @@ const groupedServices = {
   "Дератизация": servicePricesData.filter(s => s.service.startsWith("Дератизация")),
   "Озонирование": servicePricesData.filter(s => s.service.startsWith("Озонирование")),
   "Дезодорация": servicePricesData.filter(s => s.service.startsWith("Дезодорация")),
-  "Сертификация": servicePricesData.filter(s => s.service.startsWith("Сертификация")),
 };
 
 // Что входит в стоимость (для примечаний)

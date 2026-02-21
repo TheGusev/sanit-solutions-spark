@@ -54,7 +54,7 @@ const serviceSubpageRoutes = [
 
 // Вредители для услуга + вредитель страниц
 const dezinsekciyaPestSlugs = ['tarakany', 'klopy', 'muravyi', 'blohi', 'mol'];
-const deratizaciyaPestSlugs = ['krysy', 'myshi'];
+const deratizaciyaPestSlugs = ['krysy', 'myshi', 'kroty'];
 
 // Города МО
 const moscowRegionCitySlugs = ['khimki', 'mytishchi', 'balashikha', 'podolsk', 'korolev', 'lyubertsy', 'krasnogorsk', 'odintsovo', 'domodedovo'];
@@ -124,7 +124,7 @@ const neighborhoodSlugs = [
 const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv'];
 
 // Услуги для объектов (4 основных)
-const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'];
+const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'demerkurizaciya'];
 
 
 // Статьи блога (158 статей: 50 legacy + 45 insects + 10 rodents + 42 premises + 11 legal)
@@ -190,12 +190,12 @@ const blogSlugs = [
   'chem-opasny-tarakany', 'chem-opasny-klopy', 'chem-opasny-muravyi', 'chem-opasny-blohi', 'chem-opasny-mol',
   'posle-obrabotki-tarakany', 'posle-obrabotki-klopy', 'posle-obrabotki-muravyi', 'posle-obrabotki-blohi', 'posle-obrabotki-mol',
   'ceny-na-unichtozhenie-tarakany', 'ceny-na-unichtozhenie-klopy', 'ceny-na-unichtozhenie-muravyi', 'ceny-na-unichtozhenie-blohi', 'ceny-na-unichtozhenie-mol',
-  // ===== Pest articles: rodents (10 = 5 templates × 2 pests) =====
-  'kak-izbavitsya-ot-krysy', 'kak-izbavitsya-ot-myshi',
-  'v-kvartire-krysy', 'v-kvartire-myshi',
-  'otkuda-berutsya-krysy', 'otkuda-berutsya-myshi',
-  'narodnye-sredstva-ot-krysy', 'narodnye-sredstva-ot-myshi',
-  'professionalnaya-obrabotka-ot-krysy', 'professionalnaya-obrabotka-ot-myshi',
+  // ===== Pest articles: rodents (15 = 5 templates × 3 pests) =====
+  'kak-izbavitsya-ot-krysy', 'kak-izbavitsya-ot-myshi', 'kak-izbavitsya-ot-kroty',
+  'v-kvartire-krysy', 'v-kvartire-myshi', 'v-kvartire-kroty',
+  'otkuda-berutsya-krysy', 'otkuda-berutsya-myshi', 'otkuda-berutsya-kroty',
+  'narodnye-sredstva-ot-krysy', 'narodnye-sredstva-ot-myshi', 'narodnye-sredstva-ot-kroty',
+  'professionalnaya-obrabotka-ot-krysy', 'professionalnaya-obrabotka-ot-myshi', 'professionalnaya-obrabotka-ot-kroty',
   // ===== Premises articles (42 = 7 templates × 6 objects) =====
   'dezinsekciya-kvartir', 'dezinsekciya-domov', 'dezinsekciya-ofisov', 'dezinsekciya-restoranov', 'dezinsekciya-skladov', 'dezinsekciya-proizvodstv',
   'deratizaciya-kvartir', 'deratizaciya-domov', 'deratizaciya-ofisov', 'deratizaciya-restoranov', 'deratizaciya-skladov', 'deratizaciya-proizvodstv',
