@@ -28,7 +28,7 @@ export default function ServiceObjectPage() {
   
   useEffect(() => { window.scrollTo(0, 0); }, [serviceSlug, objectSlug]);
   
-  const validServices = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'];
+  const validServices = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'demerkurizaciya'];
   if (!serviceSlug || !validServices.includes(serviceSlug) || !objectSlug) {
     return <NotFound />;
   }
