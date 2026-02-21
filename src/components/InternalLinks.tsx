@@ -12,7 +12,7 @@
 import { Link } from 'react-router-dom';
 import { pests, getPestsByService } from '@/data/pests';
 import { moscowRegionCities } from '@/data/moscowRegion';
-import { neighborhoodSlugs, topNeighborhoods } from '@/lib/seoRoutes';
+import { topNeighborhoods } from '@/lib/seoRoutes';
 import { neighborhoods } from '@/data/neighborhoods';
 import { ArrowRight } from 'lucide-react';
 
@@ -30,6 +30,13 @@ interface InternalLink {
   url: string;
   text: string;
   type: 'service' | 'pest' | 'neighborhood' | 'city';
+}
+
+
+function getDistance(a: [number, number], b: [number, number]): number {
+  const dlat = a[0] - b[0];
+  const dlng = a[1] - b[1];
+  return Math.sqrt(dlat * dlat + dlng * dlng);
 }
 
 export function InternalLinks({
@@ -67,43 +74,35 @@ export function InternalLinks({
     });
   }
   
-  // 2. Соседние районы (3-4 ссылки)
-  if (currentNeighborhood && currentService && currentPest) {
-    const currentIndex = neighborhoodSlugs.indexOf(currentNeighborhood);
-    const nearbyIndices = [
-      currentIndex - 2,
-      currentIndex - 1,
-      currentIndex + 1,
-      currentIndex + 2
-    ].filter(i => i >= 0 && i < neighborhoodSlugs.length && i !== currentIndex && topNeighborhoods.includes(neighborhoodSlugs[i]));
+  // 2. Соседние районы по географической близости (3-4 ссылки)
+  if (currentNeighborhood) {
+    const currentNb = neighborhoods.find(n => n.slug === currentNeighborhood);
     
-    nearbyIndices.slice(0, 4).forEach(index => {
-      const neighborhoodSlug = neighborhoodSlugs[index];
-      const neighborhood = neighborhoods.find(n => n.slug === neighborhoodSlug);
-      if (neighborhood) {
+    const nearby = neighborhoods
+      .filter(n => n.slug !== currentNeighborhood && topNeighborhoods.includes(n.slug))
+      .map(n => ({
+        ...n,
+        distance: currentNb ? getDistance(currentNb.center, n.center) : Infinity,
+        sameDistrict: currentNb ? n.districtId === currentNb.districtId : false
+      }))
+      .sort((a, b) => {
+        if (a.sameDistrict && !b.sameDistrict) return -1;
+        if (!a.sameDistrict && b.sameDistrict) return 1;
+        return a.distance - b.distance;
+      })
+      .slice(0, 4);
+    
+    nearby.forEach(n => {
+      if (currentService && currentPest) {
         links.push({
-          url: `/uslugi/${currentService}/${currentPest}/${neighborhoodSlug}`,
-          text: `${currentService === 'dezinsekciya' ? 'Дезинсекция' : 'Дератизация'} в ${neighborhood.name}`,
+          url: `/uslugi/${currentService}/${currentPest}/${n.slug}`,
+          text: `${currentService === 'dezinsekciya' ? 'Дезинсекция' : 'Дератизация'} в ${n.name}`,
           type: 'neighborhood'
         });
-      }
-    });
-  } else if (currentNeighborhood) {
-    // Если нет конкретного вредителя — ссылки на районы
-    const currentIndex = neighborhoodSlugs.indexOf(currentNeighborhood);
-    const nearbyIndices = [
-      currentIndex - 1,
-      currentIndex + 1,
-      currentIndex + 2
-    ].filter(i => i >= 0 && i < neighborhoodSlugs.length && i !== currentIndex && topNeighborhoods.includes(neighborhoodSlugs[i]));
-    
-    nearbyIndices.slice(0, 3).forEach(index => {
-      const neighborhoodSlug = neighborhoodSlugs[index];
-      const neighborhood = neighborhoods.find(n => n.slug === neighborhoodSlug);
-      if (neighborhood) {
+      } else {
         links.push({
-          url: `/rajony/${neighborhoodSlug}`,
-          text: `Дезинсекция в ${neighborhood.name}`,
+          url: `/rajony/${n.slug}`,
+          text: `Дезинсекция в ${n.name}`,
           type: 'neighborhood'
         });
       }
