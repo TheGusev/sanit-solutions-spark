@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import NotFound from './NotFound';
 import { useEffect, Suspense, lazy } from "react";
-import { Check, Phone, ChevronRight, Shield, Clock, Award } from "lucide-react";
+import { Check, Phone, ChevronRight, Shield, Clock, Award, FileText, ShieldCheck, AlertTriangle, Beaker } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -18,6 +18,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WorkProcess from "@/components/WorkProcess";
@@ -38,17 +46,20 @@ const ServicePage = () => {
   const navigate = useNavigate();
   const { context } = useTraffic();
 
-  // Проверяем, является ли это страницей округа ДЕЗИНФЕКЦИИ
   const districtSlug = slug || "";
   const isDistrictPage = districtSlug.startsWith('dezinfekciya-');
-  
+  const service = getServiceBySlug(districtSlug);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
+
+  // Проверяем, является ли это страницей округа ДЕЗИНФЕКЦИИ
   if (isDistrictPage) {
-    // Извлекаем districtId из slug (удаляем префикс "dezinfekciya-")
     const districtId = districtSlug.replace('dezinfekciya-', '');
     const district = getDistrictById(districtId);
     
     if (district) {
-      // Рендерим DistrictPage через ленивую загрузку
       return (
         <Suspense fallback={<PageLoader />}>
           <DistrictPage districtId={districtId} />
@@ -56,13 +67,6 @@ const ServicePage = () => {
       );
     }
   }
-
-  // Если не округ, то проверяем как обычную услугу
-  const service = getServiceBySlug(districtSlug);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [slug]);
 
   if (!service) {
     return <NotFound />;
@@ -87,7 +91,6 @@ const ServicePage = () => {
 
   const otherServices = servicePages.filter(s => s.slug !== service.slug);
 
-  // Генерируем метаданные с валидацией
   const metadata = generateServiceMetadata({
     serviceName: service.title,
     serviceSlug: service.slug,
@@ -166,21 +169,17 @@ const ServicePage = () => {
     ]
   };
 
-  // Добавляем schema в metadata
   metadata.schema = [schemaMarkup, faqSchema, breadcrumbSchema];
 
   return (
     <>
-      {/* SEO Head с автоматической валидацией */}
       <SEOHead metadata={metadata} pagePath={`/uslugi/${service.slug}`} />
-
       <Header />
 
       <main className="pt-20">
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-primary/10 via-background to-background py-12 md:py-20">
           <div className="container mx-auto px-4">
-            {/* Breadcrumbs */}
             <Breadcrumb className="mb-6">
               <BreadcrumbList>
                 <BreadcrumbItem>
@@ -203,11 +202,9 @@ const ServicePage = () => {
 
             <div className="max-w-4xl">
               <AnimatedSection animation="fade-up">
-                {/* H1 из metadata для SEO */}
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
                   {service.heroTitle || metadata.h1}
                 </h1>
-                {/* Триколор-линия под H1 */}
                 <div className="tricolor-underline mb-4">
                   <span></span>
                   <span></span>
@@ -229,11 +226,10 @@ const ServicePage = () => {
                   </Button>
                 </div>
 
-                {/* Trust badges */}
                 <div className="flex flex-wrap gap-6 mt-8 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Shield className="w-5 h-5 text-primary" />
-                    <span>Гарантия до 1 года</span>
+                    <span>{service.slug === 'borba-s-krotami' ? 'Гарантия 6 месяцев' : 'Гарантия до 1 года'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-5 h-5 text-primary" />
@@ -266,8 +262,40 @@ const ServicePage = () => {
           </div>
         </section>
 
+        {/* When Needed (NEW) */}
+        {service.whenNeeded && (
+          <section className="py-12 md:py-20">
+            <div className="container mx-auto px-4">
+              <AnimatedSection animation="fade-up" className="text-center mb-12">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                  Когда нужна {service.title.toLowerCase()}
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                  {service.whenNeeded.intro}
+                </p>
+              </AnimatedSection>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                {service.whenNeeded.reasons.map((reason, idx) => (
+                  <AnimatedSection key={idx} animation="fade-up" delay={idx * 100}>
+                    <Card className="h-full hover:shadow-lg transition-shadow border-l-4 border-l-primary">
+                      <CardContent className="p-6">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                          <AlertTriangle className="w-5 h-5 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-bold mb-2">{reason.title}</h3>
+                        <p className="text-muted-foreground text-sm">{reason.description}</p>
+                      </CardContent>
+                    </Card>
+                  </AnimatedSection>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Description & Benefits */}
-        <section className="py-12 md:py-20">
+        <section className="py-12 md:py-20 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
               <AnimatedSection animation="fade-right">
@@ -299,7 +327,7 @@ const ServicePage = () => {
         </section>
 
         {/* Methods */}
-        <section className="py-12 md:py-20 bg-muted/30">
+        <section className="py-12 md:py-20">
           <div className="container mx-auto px-4">
             <AnimatedSection animation="fade-up" className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
@@ -328,6 +356,32 @@ const ServicePage = () => {
           </div>
         </section>
 
+        {/* Safety Info (NEW) */}
+        {service.safetyInfo && (
+          <section className="py-12 md:py-20 bg-muted/30">
+            <div className="container mx-auto px-4">
+              <AnimatedSection animation="fade-up" className="text-center mb-12">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                  Безопасность препаратов
+                </h2>
+              </AnimatedSection>
+
+              <div className="max-w-3xl mx-auto space-y-4">
+                {service.safetyInfo.map((info, idx) => (
+                  <AnimatedSection key={idx} animation="fade-up" delay={idx * 100}>
+                    <div className="flex items-start gap-4 bg-card rounded-xl p-5 border">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <ShieldCheck className="w-5 h-5 text-primary" />
+                      </div>
+                      <p className="text-base pt-2">{info}</p>
+                    </div>
+                  </AnimatedSection>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Target Pests (if applicable) */}
         {service.targetPests && (
           <section className="py-12 md:py-20">
@@ -351,8 +405,148 @@ const ServicePage = () => {
           </section>
         )}
 
-        {/* Work Process */}
-        <WorkProcess />
+        {/* Process / Work Process */}
+        {service.process ? (
+          <section className="py-12 md:py-20 bg-muted/30">
+            <div className="container mx-auto px-4">
+              <AnimatedSection animation="fade-up" className="text-center mb-12">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                  Этапы работы
+                </h2>
+              </AnimatedSection>
+
+              <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-6">
+                {service.process.map((step, idx) => (
+                  <AnimatedSection key={idx} animation="fade-up" delay={idx * 100}>
+                    <Card className="h-full">
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+                            {step.step}
+                          </div>
+                          <span className="text-xs px-3 py-1 rounded-full bg-muted text-muted-foreground font-medium">
+                            {step.duration}
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-bold mb-2">{step.title}</h3>
+                        <p className="text-muted-foreground text-sm">{step.description}</p>
+                      </CardContent>
+                    </Card>
+                  </AnimatedSection>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : (
+          <WorkProcess />
+        )}
+
+        {/* Pricing Table (NEW) */}
+        {service.pricing && (
+          <section id="pricing-by-area" className="py-12 md:py-20">
+            <div className="container mx-auto px-4">
+              <AnimatedSection animation="fade-up" className="text-center mb-12">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                  Стоимость {service.title.toLowerCase()} в Москве
+                </h2>
+              </AnimatedSection>
+
+              <div className="max-w-4xl mx-auto">
+                <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/50">
+                        <TableHead className="font-bold">Тип объекта</TableHead>
+                        {service.pricingType !== 'area' && <TableHead className="font-bold">Площадь</TableHead>}
+                        {service.pricingType === 'area' ? (
+                          <>
+                            <TableHead className="font-bold">Площадь</TableHead>
+                            <TableHead className="font-bold">Стоимость</TableHead>
+                          </>
+                        ) : (
+                          <>
+                            <TableHead className="font-bold">{service.pricing.some(p => p.hotFog && p.hotFog !== '—') ? 'Холодный туман' : 'Стоимость'}</TableHead>
+                            {service.pricing.some(p => p.hotFog && p.hotFog !== '—') && (
+                              <TableHead className="font-bold">Горячий туман</TableHead>
+                            )}
+                          </>
+                        )}
+                        <TableHead className="font-bold">Время</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {service.pricing.map((row, idx) => (
+                        <TableRow key={idx} className={row.highlighted ? 'bg-primary/5 font-medium' : ''}>
+                          <TableCell className="font-medium">{row.type}</TableCell>
+                          {service.pricingType === 'area' ? (
+                            <>
+                              <TableCell>{row.area}</TableCell>
+                              <TableCell className="font-bold text-primary">{row.price}</TableCell>
+                            </>
+                          ) : (
+                            <>
+                              <TableCell>{row.area}</TableCell>
+                              <TableCell className="font-bold text-primary">{row.coldFog}</TableCell>
+                              {service.pricing.some(p => p.hotFog && p.hotFog !== '—') && (
+                                <TableCell className="font-bold text-primary">{row.hotFog}</TableCell>
+                              )}
+                            </>
+                          )}
+                          <TableCell>{row.duration}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Included in price */}
+                {service.includedInPrice && (
+                  <AnimatedSection animation="fade-up" className="mt-8">
+                    <h3 className="text-xl font-bold mb-4 text-center">Что входит в стоимость</h3>
+                    <div className="grid sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
+                      {service.includedInPrice.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                          <span className="text-sm">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </AnimatedSection>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Guarantees (NEW) */}
+        {service.guarantees && (
+          <section className="py-12 md:py-20 bg-muted/30">
+            <div className="container mx-auto px-4">
+              <AnimatedSection animation="fade-up" className="text-center mb-12">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                  Гарантии и документы
+                </h2>
+              </AnimatedSection>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                {service.guarantees.map((guarantee, idx) => {
+                  const icons = [FileText, Shield, ShieldCheck, Beaker];
+                  const Icon = icons[idx % icons.length];
+                  return (
+                    <AnimatedSection key={idx} animation="fade-up" delay={idx * 100}>
+                      <div className="text-center p-6 bg-card rounded-xl border">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                          <Icon className="w-6 h-6 text-primary" />
+                        </div>
+                        <p className="text-sm font-medium">{guarantee}</p>
+                      </div>
+                    </AnimatedSection>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* FAQ */}
         <section className="py-12 md:py-20">
@@ -498,7 +692,7 @@ const ServicePage = () => {
               </h2>
             </AnimatedSection>
 
-            <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {otherServices.map((otherService, idx) => (
                 <AnimatedSection key={otherService.slug} animation="fade-up" delay={idx * 100}>
                   <Link to={`/uslugi/${otherService.slug}`}>
