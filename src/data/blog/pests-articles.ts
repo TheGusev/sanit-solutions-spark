@@ -493,7 +493,7 @@ export const pestsArticles: BlogArticle[] = insectPests.flatMap((pest, pestIndex
 );
 
 // Добавляем статьи для грызунов (deratizaciya)
-const rodentPests = pests.filter(p => p.serviceType === 'deratizaciya');
+const rodentPests = pests.filter(p => p.serviceType === 'deratizaciya' && p.id !== 'kroty');
 const rodentArticleTemplates = articleTemplates.slice(0, 5); // Берём первые 5 шаблонов
 
 // Статьи для грызунов с авторами и датами
