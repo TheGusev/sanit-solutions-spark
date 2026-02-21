@@ -1,6 +1,6 @@
 /**
  * Переиспользуемый компонент для фоновых изображений с blur-эффектом
- * Используется в Hero-секциях по всему сайту
+ * Оптимизирован: один div вместо дублированных mobile/desktop
  */
 
 interface HeroBackgroundProps {
@@ -24,36 +24,37 @@ const HeroBackground = ({
   altText = 'Фоновое изображение',
   className = ''
 }: HeroBackgroundProps) => {
-  // Мобильные значения: по умолчанию более яркие
   const mobileBlur = blurMobile ?? Math.max(blur - 2, 3);
   const mobileOpacity = opacityMobile ?? Math.min(opacity + 0.15, 0.70);
+
+  // Unique ID for scoped CSS
+  const styleId = `hero-bg-${blur}-${mobileBlur}`;
 
   return (
     <>
       {/* Базовая цветовая подложка */}
       <div className={`absolute inset-0 bg-primary/5 ${className}`} aria-hidden="true" />
       
-      {/* Мобильная версия: более яркий и менее размытый фон */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center md:hidden"
-        style={{ 
-          backgroundImage: `url('${image}')`,
-          filter: `blur(${mobileBlur}px)`,
-          transform: 'scale(1.1)',
-          opacity: mobileOpacity
-        }}
-        role="img"
-        aria-label={altText}
-      />
+      {/* Scoped responsive styles — single element, no duplication */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .${styleId} {
+          filter: blur(${mobileBlur}px);
+          opacity: ${mobileOpacity};
+        }
+        @media (min-width: 768px) {
+          .${styleId} {
+            filter: blur(${blur}px);
+            opacity: ${opacity};
+          }
+        }
+      `}} />
       
-      {/* Desktop версия */}
+      {/* Single background div — responsive via CSS */}
       <div 
-        className="absolute inset-0 bg-cover bg-center hidden md:block"
+        className={`absolute inset-0 bg-cover bg-center ${styleId}`}
         style={{ 
           backgroundImage: `url('${image}')`,
-          filter: `blur(${blur}px)`,
           transform: 'scale(1.1)',
-          opacity
         }}
         role="img"
         aria-label={altText}
