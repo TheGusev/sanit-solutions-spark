@@ -126,10 +126,10 @@ const ServiceAreaMap = () => {
                       <Button 
                         variant="outline" 
                         className="w-full text-sm whitespace-normal" 
-                        onClick={() => window.location.href = 'tel:+79069989888'}
+                        onClick={() => window.location.href = 'tel:84950181817'}
                       >
                         <Phone className="mr-2 h-4 w-4 flex-shrink-0" />
-                        +7 (906) 998-98-88
+                        8-495-018-18-17
                       </Button>
                     </div>
                   </div>
@@ -302,10 +302,10 @@ const ServiceAreaMap = () => {
                     <Button 
                       variant="outline" 
                       className="w-full whitespace-normal" 
-                      onClick={() => window.location.href = 'tel:+79069989888'}
+                      onClick={() => window.location.href = 'tel:84950181817'}
                     >
                       <Phone className="mr-2 h-4 w-4 flex-shrink-0" />
-                      +7 (906) 998-98-88
+                      8-495-018-18-17
                     </Button>
                   </div>
                 </div>

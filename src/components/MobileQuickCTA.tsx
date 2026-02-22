@@ -1,4 +1,4 @@
-import { Phone, MessageCircle, Calculator } from "lucide-react";
+import { Phone, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
@@ -16,19 +16,7 @@ const MobileQuickCTA = ({ onCalculatorClick }: MobileQuickCTAProps) => {
       variant: context?.variantId,
       source: 'mobile_quick_cta'
     });
-    window.location.href = "tel:+79069989888";
-  };
-
-  const handleWhatsApp = () => {
-    trackGoal('whatsapp_click', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      source: 'mobile_quick_cta'
-    });
-    window.open(
-      "https://wa.me/79069989888?text=Здравствуйте! Хочу заказать обработку.",
-      "_blank"
-    );
+    window.location.href = "tel:84950181817";
   };
 
   const handleCalculatorClick = () => {
@@ -51,16 +39,6 @@ const MobileQuickCTA = ({ onCalculatorClick }: MobileQuickCTAProps) => {
           >
             <Phone className="w-5 h-5 mr-2" />
             Позвонить
-          </Button>
-          
-          <Button 
-            onClick={handleWhatsApp}
-            variant="outline"
-            className="flex-1 h-12 font-bold text-[#25D366] border-[#25D366]/30 hover:bg-[#25D366]/10"
-            size="lg"
-          >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            WhatsApp
           </Button>
           
           <Button 

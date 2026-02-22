@@ -102,7 +102,7 @@ const ServiceCTA = ({ services }: ServiceCTAProps) => {
                 </Button>
               ))}
               <Button className="min-h-[48px]" asChild>
-                <a href="tel:+79069989888">
+                <a href="tel:84950181817">
                   <Phone className="w-4 h-4 mr-2" />
                   Позвонить
                 </a>

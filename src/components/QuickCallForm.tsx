@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Phone, CheckCircle2, Loader2, MessageCircle, Clock } from "lucide-react";
+import { Phone, CheckCircle2, Loader2, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { trackGoal } from "@/lib/analytics";
@@ -71,7 +71,6 @@ export function QuickCallForm({ calculatorData, onSuccess }: QuickCallFormProps)
     setError(null);
 
     try {
-      // Track CTA click
       trackGoal('quick_call_submit', {
         intent: context?.intent,
         variant: context?.variantId,
@@ -130,24 +129,10 @@ export function QuickCallForm({ calculatorData, onSuccess }: QuickCallFormProps)
       onSuccess?.();
     } catch (err) {
       console.error("Quick call error:", err);
-      setError("Ошибка. Позвоните: +7 (906) 998-98-88");
+      setError("Ошибка. Позвоните: 8-495-018-18-17");
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleWhatsApp = () => {
-    trackGoal('whatsapp_click', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      price: calculatorData.finalPrice
-    });
-
-    const message = `Здравствуйте! Хочу заказать обработку.
-📐 Площадь: ${calculatorData.area} м²
-💰 Цена: ${calculatorData.finalPrice}₽`;
-    
-    window.open(`https://wa.me/79069989888?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   if (isSuccess) {
@@ -189,17 +174,6 @@ export function QuickCallForm({ calculatorData, onSuccess }: QuickCallFormProps)
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
       </form>
-
-      {/* WhatsApp alternative */}
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full h-11 text-success border-success/30 hover:bg-success/10"
-        onClick={handleWhatsApp}
-      >
-        <MessageCircle className="w-5 h-5 mr-2" />
-        Написать в WhatsApp
-      </Button>
 
       {/* Social proof */}
       <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">

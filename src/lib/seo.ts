@@ -6,8 +6,8 @@
 export const SEO_CONFIG = {
   baseUrl: 'https://goruslugimsk.ru',
   companyName: 'Санитарные Решения',
-  phone: '+7 (906) 998-98-88',
-  phoneClean: '+79069989888',
+  phone: '8-495-018-18-17',
+  phoneClean: '84950181817',
   ogImage: 'https://goruslugimsk.ru/og-image.jpg',
   locale: 'ru_RU',
 };

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, Loader2, MessageCircle, Clock, Shield, Target } from "lucide-react";
+import { CheckCircle2, Loader2, Clock, Shield, Target } from "lucide-react";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 
@@ -33,9 +33,8 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
   const { context } = useTraffic();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("+7 ");
-  const [honeypot, setHoneypot] = useState(""); // Bot protection - hidden field
-  // Email removed - not needed for conversion
-  const [consent, setConsent] = useState(true); // Auto-selected for better conversion
+  const [honeypot, setHoneypot] = useState("");
+  const [consent, setConsent] = useState(true);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -90,7 +89,6 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Bot protection - if honeypot is filled, silently reject
     if (honeypot) {
       console.log('🤖 Bot detected via honeypot');
       toast({
@@ -176,28 +174,12 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
       console.error("Error submitting lead:", error);
       toast({
         title: "Не удалось отправить заявку",
-        description: "Позвоните нам: +7 (906) 998-98-88",
+        description: "Позвоните нам: 8-495-018-18-17",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleWhatsApp = () => {
-    trackGoal('whatsapp_click', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      price: calculatorData.finalPrice,
-      source: 'lead_modal'
-    });
-
-    const message = `Здравствуйте! Хочу заказать обработку.
-📐 Площадь: ${calculatorData.area} м²
-💰 Цена: ${calculatorData.finalPrice}₽`;
-    
-    window.open(`https://wa.me/79069989888?text=${encodeURIComponent(message)}`, '_blank');
-    onOpenChange(false);
   };
 
   const isNameValid = name.trim().length >= 2;
@@ -216,16 +198,16 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
               Перезвоним в течение 15 минут
             </span>
             <a 
-              href="tel:+79069989888" 
+              href="tel:84950181817" 
               className="text-primary font-bold hover:underline"
             >
-              или позвоните: +7 (906) 998-98-88
+              или позвоните: 8-495-018-18-17
             </a>
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          {/* Honeypot field - hidden from users, only bots fill it */}
+          {/* Honeypot field */}
           <input
             type="text"
             name="website"
@@ -282,7 +264,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
             {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
           </div>
 
-          {/* Calculator summary - compact */}
+          {/* Calculator summary */}
           <div className="bg-muted/50 p-3 rounded-xl flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground">Площадь: {calculatorData.area} м²</p>
@@ -295,7 +277,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
             </p>
           </div>
 
-          {/* Consent - auto-selected with link */}
+          {/* Consent */}
           <div className="flex items-start space-x-2">
             <Checkbox
               id="consent"
@@ -323,7 +305,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
           </div>
           {errors.consent && <p className="text-sm text-destructive">{errors.consent}</p>}
 
-          {/* Submit button - larger and more prominent */}
+          {/* Submit button */}
           <Button
             type="submit"
             className="w-full h-14 text-lg font-bold"
@@ -338,17 +320,6 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
             ) : (
               "Отправить заявку"
             )}
-          </Button>
-
-          {/* WhatsApp alternative */}
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full h-11 text-success border-success/30 hover:bg-success/10"
-            onClick={handleWhatsApp}
-          >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            Написать в WhatsApp
           </Button>
 
           {/* Trust badges */}

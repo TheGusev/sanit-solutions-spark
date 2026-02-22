@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Phone, MessageCircle, Percent, TrendingDown, Calculator, Check } from "lucide-react";
+import { Phone, Percent, TrendingDown, Calculator, Check } from "lucide-react";
 import { LeadFormModal } from "./LeadFormModal";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
@@ -56,25 +56,13 @@ const DesktopStickySidebar = ({
     setShowLeadForm(true);
   };
 
-  const handleWhatsApp = () => {
-    trackGoal('desktop_sticky_click', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      action: 'whatsapp',
-      finalPrice
-    });
-    
-    const message = `Здравствуйте! Хочу заказать ${getServiceLabel().toLowerCase()} для ${getPremiseLabel().toLowerCase()}, площадь ${area} м². Расчётная стоимость: ${finalPrice}₽ (скидка ${discount}%)`;
-    window.open(`https://wa.me/79069989888?text=${encodeURIComponent(message)}`, '_blank');
-  };
-
   const handlePhone = () => {
     trackGoal('desktop_sticky_click', {
       intent: context?.intent,
       variant: context?.variantId,
       action: 'phone'
     });
-    window.location.href = 'tel:+79069989888';
+    window.location.href = 'tel:84950181817';
   };
 
   return (
@@ -161,25 +149,14 @@ const DesktopStickySidebar = ({
                 Оформить заявку
               </Button>
               
-              <div className="grid grid-cols-2 gap-2">
-                <Button 
-                  onClick={handleWhatsApp}
-                  variant="outline"
-                  className="h-11 border-success text-success hover:bg-success hover:text-success-foreground"
-                >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  WhatsApp
-                </Button>
-                
-                <Button 
-                  onClick={handlePhone}
-                  variant="outline"
-                  className="h-11"
-                >
-                  <Phone className="w-4 h-4 mr-2" />
-                  Позвонить
-                </Button>
-              </div>
+              <Button 
+                onClick={handlePhone}
+                variant="outline"
+                className="w-full h-11"
+              >
+                <Phone className="w-4 h-4 mr-2" />
+                Позвонить
+              </Button>
             </div>
             
             {/* Trust indicators */}

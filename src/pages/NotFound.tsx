@@ -103,10 +103,10 @@ const NotFound = () => {
               ООО «Санитарные Решения»
             </p>
             <a
-              href="tel:+79069989888"
+              href="tel:84950181817"
               className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
             >
-              📞 8 (906) 998-98-88
+              📞 8-495-018-18-17
             </a>
           </div>
         </div>
