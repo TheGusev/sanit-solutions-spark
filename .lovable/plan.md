@@ -1,72 +1,65 @@
 
 
-# Обновление файлов контента: телефон + WhatsApp
+# Hero Background Fix: Service + Pest Pages
 
-Остались файлы данных, шаблонов и статических HTML, которые ещё содержат старый номер и/или WhatsApp.
+## Problem
 
-## 1. Calculator.tsx -- убрать WhatsApp
+1. **ServicePage.tsx**: background image opacity is 0.15 (nearly invisible); no `min-height` on hero; 4 of 7 services have no `heroImage` at all
+2. **ServicePestPage.tsx**: pest image only shown as foreground card (`hidden md:block`) -- invisible on mobile; background blur too heavy
 
-Заменить `wa.me/79069989888` на `tel:84950181817` (вместо отправки в WhatsApp -- звонок). Убрать переменную `whatsappUrl`.
+## Solution
 
-## 2. src/data/services.ts (~15 замен)
+### Part 1: Add missing `heroImage` to services.ts
 
-Все вхождения `+7 (906) 998-98-88` и `+7-906-998-98-88` заменить на `8-495-018-18-17`:
-- metaDescription для 7 услуг (dezinfekciya, dezinsekciya, deratizaciya, ozonirovanie, dezodoraciya, demerkurizaciya, sertifikaciya)
-- FAQ-ответы (~3 штуки)
+| Service slug | heroImage (existing file) |
+|---|---|
+| deratizaciya | `/images/work/basement-work.png` |
+| ozonirovanie | `/images/work/fog-generator.jpg` |
+| dezodoraciya | `/images/work/living-room-treatment.png` |
+| demerkurizaciya | `/images/work/professional-chemicals.jpg` |
 
-## 3. src/data/serviceSubpages.ts (~8 замен)
+### Part 2: Rework ServicePage.tsx Hero Background
 
-Все `+7 (906) 998-98-88` в metaDescription заменить на `8-495-018-18-17`:
-- Дезинфекция квартир, офисов
-- Уничтожение клопов, тараканов, крыс, мышей
-- И другие подстраницы
+Current (line 189-200): `opacity: 0.15` with weak gradient overlay.
 
-## 4. src/data/newBlogPosts.ts (~20 замен)
+New approach:
+- Add `min-h-[60vh]` to the hero section
+- Set background `opacity` to `0.55` on desktop, `0.45` on mobile
+- Use darker gradient overlay for text contrast: `from-background/85 via-background/65 to-background/40`
+- Use `HeroBackground` component (already exists in project) instead of inline styles for consistent responsive behavior
 
-Все `+7 (906) 998-98-88` в MD-контенте статей блога заменить на `8-495-018-18-17`.
+### Part 3: Rework ServicePestPage.tsx Hero Background
 
-## 5. src/lib/contentGenerator.ts (4 замены)
+Current (line 149-166): Two separate divs for mobile/desktop with heavy blur (5px/8px) that hides the pest.
 
-Шаблоны description для генерируемых страниц.
+New approach:
+- Reduce blur to `2px` on mobile, `4px` on desktop
+- Increase opacity to `0.80` on mobile, `0.60` on desktop
+- Add `min-h-[60vh]` to hero section
+- Keep the foreground pest card on desktop as-is
+- Use `HeroBackground` component for consistent responsive handling
 
-## 6. src/lib/metadata.ts (5 замен)
+### Part 4: Ensure text contrast
 
-Шаблоны description для метаданных страниц.
+Both pages will get a stronger gradient overlay:
+```
+bg-gradient-to-r from-background/80 via-background/55 to-background/30
+bg-gradient-to-b from-background/20 via-transparent to-background/40
+```
 
-## 7. Статические HTML файлы (27 файлов)
+This ensures text remains readable while the background image is clearly visible as atmospheric backdrop.
 
-Заменить во всех файлах `public/`:
-- `+7-906-998-98-88` -> `8-495-018-18-17` (JSON-LD telephone)
-- `+7 (906) 998-98-88` -> `8-495-018-18-17` (текст)
-- `tel:+79069989888` -> `tel:84950181817` (ссылки)
-- Удалить строки с WhatsApp в `dezinfekciya-cao` и `po-okrugam-moskvy`
+## Files to modify
 
-### Список HTML-файлов:
+| File | Changes |
+|---|---|
+| `src/data/services.ts` | Add `heroImage` to 4 services (deratizaciya, ozonirovanie, dezodoraciya, demerkurizaciya) |
+| `src/pages/ServicePage.tsx` | Increase bg opacity from 0.15 to 0.55, add `min-h-[60vh]`, stronger overlay gradient |
+| `src/pages/ServicePestPage.tsx` | Reduce blur (2px/4px), increase opacity (0.80/0.60), add `min-h-[60vh]` |
 
-| Директория | Файл |
-|------------|------|
-| public/contacts/ | index.html |
-| public/blog/ | index.html + 8 подпапок |
-| public/uslugi/ | 14 подпапок (dezinfekciya, dezinsekciya, deratizaciya, ozonirovanie, dezodoraciya, sertifikaciya, po-okrugam-moskvy, dezinfekciya-cao/sao/svao/szao/vao/yao/yuvao/yzao/zao) |
-| public/ | terms/, privacy/ (нет номера -- уже проверено) |
+## Expected Result
 
-## 8. Проверка через browser
-
-После всех правок:
-1. `/` -- проверить шапку и подвал
-2. `/uslugi/dezinsekciya` -- новый номер в meta и CTA
-3. `/contacts` -- нет WhatsApp, новый номер
-4. `/blog/borba-s-tarakanami` -- новый номер в тексте
-
-## Сводка файлов
-
-| Файл | Замен | Тип |
-|------|-------|-----|
-| src/components/Calculator.tsx | 1 WhatsApp + номер | Компонент |
-| src/data/services.ts | ~15 | Данные |
-| src/data/serviceSubpages.ts | ~8 | Данные |
-| src/data/newBlogPosts.ts | ~20 | Контент блога |
-| src/lib/contentGenerator.ts | 4 | Шаблоны |
-| src/lib/metadata.ts | 5 | Шаблоны |
-| 27 HTML-файлов в public/ | ~60 | Статика |
-
+- Opening any service page (dezinfekciya, ozonirovanie, demerkurizaciya, etc.) shows a visible atmospheric background image behind the hero text
+- Opening any pest page (blohi, tarakany, krysy, kroty) shows the pest image as a visible background on both mobile and desktop
+- Text remains fully readable with gradient overlays
+- Mobile: image visible as background atmosphere, not hidden or cropped away
