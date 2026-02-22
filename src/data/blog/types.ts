@@ -106,6 +106,27 @@ export interface BlogArticle {
   intent?: BlogArticleIntent;
   /** Уровень промо-контента: 0=нет, 1=компактный CTA, 2=полный */
   promoLevel?: 0 | 1 | 2;
+  /** LLM-оптимизированный блок ключевых фактов */
+  llmSummary?: {
+    bottomLine: string;
+    price?: string;
+    guarantee?: string;
+    legalBasis?: string;
+  };
+  /** Таблицы сравнений для структурированного контента */
+  comparisonTables?: Array<{
+    headers: string[];
+    rows: Record<string, string>[];
+    caption: string;
+  }>;
+  /** Цитаты из нормативных документов */
+  citations?: Array<{
+    source: string;
+    quote: string;
+    url?: string;
+  }>;
+  /** ID автора из blogAuthors */
+  authorId?: string;
 }
 
 export interface BlogCategory {
