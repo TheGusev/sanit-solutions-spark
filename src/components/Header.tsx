@@ -287,6 +287,16 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
             >
               Контакты
             </Link>
+            <Link 
+              to="/team" 
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/team'
+                  ? 'text-russia-red border-b-2 border-russia-red pb-0.5'
+                  : 'hover:text-primary'
+              }`}
+            >
+              Команда
+            </Link>
             {isScrolled && (
               <a 
                 href="tel:+79069989888"
@@ -442,6 +452,18 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                         }`}
                       >
                         Контакты
+                      </Link>
+                    </SheetClose>
+                    
+                    <SheetClose asChild>
+                      <Link 
+                        to="/team" 
+                        onClick={handleMenuItemClick}
+                        className={`block py-3 px-4 rounded-lg transition-colors font-medium focus:outline-none ${
+                          getActiveMenuClass(location.pathname === '/team')
+                        }`}
+                      >
+                        Команда
                       </Link>
                     </SheetClose>
                   </nav>
