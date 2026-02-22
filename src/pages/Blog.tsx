@@ -68,13 +68,20 @@ const Blog = () => {
 
   const popularSlugs = allBlogArticles.slice(0, 5).map(a => a.slug);
 
-  const itemListData = allBlogArticles.slice(0, 50).map((post, index) => ({
+  const itemListSource = selectedCategory === "Все" ? allBlogArticles : filteredPosts;
+  const itemListData = itemListSource.slice(0, 50).map((post, index) => ({
     name: post.title,
     url: `${BASE_URL}/blog/${post.slug}`,
     position: index + 1,
     description: post.excerpt,
     datePublished: post.date
   }));
+  const itemListName = selectedCategory === "Все" 
+    ? "Блог о дезинфекции и борьбе с вредителями" 
+    : `Статьи блога: ${selectedCategory}`;
+  const itemListDesc = selectedCategory === "Все"
+    ? "Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды от экспертов ООО Санитарные Решения"
+    : `Экспертные статьи в категории «${selectedCategory}» от специалистов ООО Санитарные Решения`;
 
   return (
     <div className="min-h-screen">
@@ -100,8 +107,8 @@ const Blog = () => {
 
       <StructuredData 
         type="ItemList"
-        name="Блог о дезинфекции и борьбе с вредителями"
-        description="Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды от экспертов ООО Санитарные Решения"
+        name={itemListName}
+        description={itemListDesc}
         items={itemListData}
       />
       
