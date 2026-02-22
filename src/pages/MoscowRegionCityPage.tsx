@@ -20,6 +20,8 @@ import { Phone, Clock, Shield, MapPin, Car, Building2 } from 'lucide-react';
 import { getCityBySlug, moscowRegionCities, moscowRegionServices } from '@/data/moscowRegion';
 import { servicePages } from '@/data/services';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
+import { getCityImage } from '@/data/districtImages';
+import HeroBackground from '@/components/HeroBackground';
 
 export default function MoscowRegionCityPage() {
   const { citySlug } = useParams<{ citySlug: string }>();
@@ -112,16 +114,28 @@ export default function MoscowRegionCityPage() {
       
       <main className="min-h-screen pt-16">
         {/* Hero */}
-        <section className="bg-gradient-to-b from-primary/5 to-background py-12 md:py-16">
-          <div className="container mx-auto px-4">
+        <section className="relative min-h-[50vh] overflow-hidden">
+          <HeroBackground 
+            image={getCityImage(city.slug)}
+            blur={1}
+            opacity={0.60}
+            overlay="none"
+            altText={`Санитарная обработка ${city.prepositional}`}
+          />
+          
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/70 to-green-600/75" />
+          
+          {/* Content */}
+          <div className="relative container mx-auto px-4 py-16 md:py-20 text-white">
             <Breadcrumbs items={breadcrumbItems} />
             
             <div className="mt-6 max-w-4xl">
               <div className="flex flex-wrap items-center gap-3 mb-4">
-                <span className="px-3 py-1 bg-primary/10 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium text-white">
                   Московская область
                 </span>
-                <span className="px-3 py-1 bg-success/10 text-success rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium text-white">
                   {city.distance} км от МКАД
                 </span>
               </div>
@@ -130,37 +144,37 @@ export default function MoscowRegionCityPage() {
                 Дезинсекция и дератизация {city.prepositional}
               </h1>
               
-              <p className="text-lg md:text-xl text-muted-foreground mb-6">
+              <p className="text-lg md:text-xl text-white/90 mb-6">
                 {city.description}
               </p>
               
               <div className="flex flex-wrap gap-4 mb-8">
-                <div className="flex items-center gap-2 text-sm">
-                  <Clock className="w-5 h-5 text-primary" />
+                <div className="flex items-center gap-2 text-sm text-white/90">
+                  <Clock className="w-5 h-5" />
                   <span>Выезд {city.responseTime}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Car className="w-5 h-5 text-primary" />
+                <div className="flex items-center gap-2 text-sm text-white/90">
+                  <Car className="w-5 h-5" />
                   <span>+{city.surcharge}₽ за выезд</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Shield className="w-5 h-5 text-primary" />
+                <div className="flex items-center gap-2 text-sm text-white/90">
+                  <Shield className="w-5 h-5" />
                   <span>Гарантия 1 год</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Building2 className="w-5 h-5 text-primary" />
+                <div className="flex items-center gap-2 text-sm text-white/90">
+                  <Building2 className="w-5 h-5" />
                   <span>{(city.population / 1000).toFixed(0)}k жителей</span>
                 </div>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" asChild className="whitespace-normal">
+                <Button size="lg" className="bg-green-500 hover:bg-green-600 text-white" asChild>
                   <a href={`tel:${SEO_CONFIG.phoneClean}`}>
                     <Phone className="w-5 h-5 mr-2" />
                     {SEO_CONFIG.phone}
                   </a>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="whitespace-normal">
+                <Button size="lg" variant="outline" className="bg-white/10 border-white text-white hover:bg-white hover:text-primary" asChild>
                   <Link to="/#calculator">Рассчитать стоимость</Link>
                 </Button>
               </div>

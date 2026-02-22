@@ -1,13 +1,13 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { MapPin, Clock, Car, Shield, Phone } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { districtPages } from "@/data/districtPages";
+import { getDistrictImage } from "@/data/districtImages";
 
 const DistrictsOverview = () => {
   const breadcrumbItems = [
@@ -68,42 +68,42 @@ const DistrictsOverview = () => {
           <section className="mb-16">
             <h2 className="text-2xl font-bold mb-6 text-center">Выберите ваш округ</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {districtPages.map((district) => (
-                <Link key={district.id} to={`/uslugi/${district.slug}`}>
-                  <Card className="h-full hover:shadow-lg hover:shadow-russia-red/15 transition-shadow cursor-pointer border-2 hover:border-russia-red">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <h3 className="text-xl font-bold text-primary">{district.name}</h3>
-                          <p className="text-sm text-muted-foreground">{district.fullName}</p>
-                        </div>
-                        <MapPin className="w-6 h-6 text-primary flex-shrink-0" />
-                      </div>
+              {districtPages.map((district) => {
+                const bgImage = getDistrictImage(district.id);
+                return (
+                  <Link key={district.id} to={`/uslugi/${district.slug}`}>
+                    <div 
+                      className="relative h-56 rounded-xl overflow-hidden group cursor-pointer"
+                      style={{ backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                    >
+                      {/* Dark gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/10 group-hover:from-black/85 transition-all duration-300" />
                       
-                      <div className="space-y-2 mb-4">
-                        <div className="flex items-center gap-2 text-sm">
-                          <Car className="w-4 h-4 text-muted-foreground" />
-                          <span>Выезд: {district.responseTime}</span>
+                      {/* Content */}
+                      <div className="relative h-full flex flex-col justify-end p-5 text-white">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-xl font-bold">{district.name}</h3>
+                          <MapPin className="w-5 h-5 opacity-80" />
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
+                        <p className="text-sm text-white/80 mb-2">{district.fullName}</p>
+                        <div className="flex items-center gap-4 text-sm text-white/90">
+                          <span className="flex items-center gap-1">
+                            <Car className="w-4 h-4" />
+                            {district.responseTime}
+                          </span>
                           <span className="font-medium">
-                            {district.surcharge === 0 ? "Бесплатный выезд" : `Доплата: ${district.surcharge}₽`}
+                            {district.surcharge === 0 ? "Бесплатный выезд" : `+${district.surcharge}₽`}
                           </span>
                         </div>
+                        <div className="text-xs text-white/70 mt-2 line-clamp-1">
+                          {district.neighborhoods.slice(0, 4).join(", ")}
+                          {district.neighborhoods.length > 4 && ` и ещё ${district.neighborhoods.length - 4}`}
+                        </div>
                       </div>
-
-                      <div className="text-sm text-muted-foreground mb-4">
-                        Районы: {district.neighborhoods.slice(0, 4).join(", ")}
-                        {district.neighborhoods.length > 4 && ` и ещё ${district.neighborhoods.length - 4}`}
-                      </div>
-
-                      <Button variant="outline" className="w-full">
-                        Подробнее о {district.name}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </section>
 
@@ -113,12 +113,10 @@ const DistrictsOverview = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {services.map((service) => (
                 <Link key={service.href} to={service.href}>
-                  <Card className="h-full hover:shadow-md transition-shadow text-center">
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold mb-1">{service.title}</h3>
-                      <p className="text-sm text-primary font-medium">{service.price}</p>
-                    </CardContent>
-                  </Card>
+                  <div className="h-full rounded-lg border bg-card p-4 text-center hover:shadow-md transition-shadow">
+                    <h3 className="font-semibold mb-1">{service.title}</h3>
+                    <p className="text-sm text-primary font-medium">{service.price}</p>
+                  </div>
                 </Link>
               ))}
             </div>

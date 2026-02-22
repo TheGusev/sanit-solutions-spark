@@ -20,6 +20,25 @@ export const getDistrictImage = (districtId: string): string => {
   return districtImages[districtId.toLowerCase()] || districtImages.default;
 };
 
+// Маппинг городов МО к изображениям
+export const cityImages: Record<string, string> = {
+  mytishchi: '/images/front/new-residential-park.png',
+  khimki: '/images/front/academica-complex.png',
+  lyubertsy: '/images/front/residential-park-sports.png',
+  balashikha: '/images/front/soviet-panel-courtyard.png',
+  korolev: '/images/front/ostankino-tower.png',
+  odintsovo: '/images/front/elite-cottage-village.png',
+  krasnogorsk: '/images/front/modern-residential-forest.png',
+  podolsk: '/images/front/warehouse-logistics.png',
+  shchyolkovo: '/images/front/wooden-houses-forest.png',
+  dolgoprudny: '/images/front/apartment-vdnh-view.png',
+  default: '/images/backgrounds/moscow-panorama-sunset.jpg'
+};
+
+export const getCityImage = (citySlug: string): string => {
+  return cityImages[citySlug.toLowerCase()] || cityImages.default;
+};
+
 // Маппинг категорий блога к изображениям
 export const blogCategoryImages: Record<string, string> = {
   'Вредители': '/images/front/farm-countryside.png',
