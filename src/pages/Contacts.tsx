@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { Phone, Mail, MapPin, Clock, MessageCircle, Send, ArrowRight } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Send, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -38,11 +38,7 @@ const popularNeighborhoods = [
 ];
 const Contacts = () => {
   const handlePhoneClick = () => {
-    window.location.href = "tel:+79069989888";
-  };
-
-  const handleWhatsAppClick = () => {
-    window.open("https://wa.me/79069989888", "_blank");
+    window.location.href = "tel:84950181817";
   };
 
   const handleTelegramClick = () => {
@@ -65,7 +61,7 @@ const Contacts = () => {
       "name": "ООО Санитарные Решения",
       "description": "Профессиональные услуги дезинфекции, дезинсекции и дератизации для бизнеса и частных лиц в Москве и Московской области",
       "url": "https://goruslugimsk.ru",
-      "telephone": "+7 (906) 998-98-88",
+      "telephone": "8-495-018-18-17",
       "email": "west-centro@mail.ru",
       "address": {
         "@type": "PostalAddress",
@@ -101,7 +97,6 @@ const Contacts = () => {
       "priceRange": "₽₽",
       "image": "https://goruslugimsk.ru/og-image.jpg",
       "sameAs": [
-        "https://wa.me/79069989888",
         "https://t.me/one_help"
       ]
     }
@@ -113,7 +108,7 @@ const Contacts = () => {
         <title>Контакты — ООО Санитарные Решения | Дезинфекция в Москве</title>
         <meta 
           name="description" 
-          content="Контакты компании ООО Санитарные Решения. Профессиональная дезинфекция, дезинсекция, дератизация в Москве и Московской области. Звоните: +7 (906) 998-98-88"
+          content="Контакты компании ООО Санитарные Решения. Профессиональная дезинфекция, дезинсекция, дератизация в Москве и Московской области. Звоните: 8-495-018-18-17"
         />
         <link rel="canonical" href="https://goruslugimsk.ru/contacts/" />
         <meta name="robots" content="index, follow" />
@@ -169,20 +164,7 @@ const Contacts = () => {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Телефон</p>
-                    <p className="text-lg font-medium text-foreground">+7 (906) 998-98-88</p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={handleWhatsAppClick}
-                  className="flex items-center gap-4 w-full p-3 rounded-lg hover:bg-muted transition-colors text-left"
-                >
-                  <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
-                    <MessageCircle className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">WhatsApp</p>
-                    <p className="text-lg font-medium text-foreground">+7 (906) 998-98-88</p>
+                    <p className="text-lg font-medium text-foreground">8-495-018-18-17</p>
                   </div>
                 </button>
 

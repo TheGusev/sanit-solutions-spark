@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { MessageSquare } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -57,7 +56,6 @@ export const CompactRequestModal = ({
 
     setIsSubmitting(true);
     
-    // Трекинг цели
     trackGoal('compact_form_submit', {
       intent: context?.intent,
       variant: context?.variantId,
@@ -67,7 +65,6 @@ export const CompactRequestModal = ({
     });
     
     try {
-      // Отправка через Edge Function handle-lead
       const { data, error } = await supabase.functions.invoke("handle-lead", {
         body: {
           name: name.trim() || "Не указано",
@@ -103,46 +100,18 @@ export const CompactRequestModal = ({
       toast.success("✅ Заявка отправлена! Мы перезвоним вам в течение 15 минут");
       onOpenChange(false);
       
-      // Очистка формы
       setName("");
       setPhone("+7");
       setAgreed(false);
       
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("❌ Ошибка при отправке заявки. Попробуйте еще раз или позвоните нам: +7 (906) 998-98-88");
+      toast.error("❌ Ошибка при отправке заявки. Попробуйте еще раз или позвоните нам: 8-495-018-18-17");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleWhatsApp = () => {
-    const message = `📝 Заявка с калькулятора
-
-👤 Имя: ${name || 'Не указано'}
-📞 Телефон: ${phone}
-📐 Площадь: ${calculatorData.area} м²
-💰 Итоговая цена: ${calculatorData.finalPrice}₽
-📉 Скидка: ${calculatorData.discount}%
-
---- Данные калькулятора ---
-🏢 Помещение: ${calculatorData.premiseType}
-🔧 Услуга: ${calculatorData.serviceType}
-⚙️ Метод: ${calculatorData.treatmentType}
-📅 Периодичность: ${calculatorData.period}
-👥 Клиент: ${calculatorData.clientType}`;
-
-    const whatsappUrl = `https://wa.me/79069989888?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-    
-    // Трекинг WhatsApp клика
-    trackGoal('whatsapp_click', {
-      intent: context?.intent,
-      source: 'compact_form'
-    });
-  };
-
-  // Форматирование телефона
   const formatPhone = (value: string) => {
     let phone = value.replace(/\D/g, '');
     if (!phone.startsWith('7')) phone = '7' + phone;
@@ -166,7 +135,7 @@ export const CompactRequestModal = ({
           <p className="text-center text-muted-foreground mt-2 text-sm">
             Перезвоним в течение 15 минут
             <br />
-            или позвоните: +7 (906) 998-98-88
+            или позвоните: 8-495-018-18-17
           </p>
         </DialogHeader>
 
@@ -244,16 +213,6 @@ export const CompactRequestModal = ({
               className="w-full h-12 text-base font-semibold"
             >
               {isSubmitting ? "Отправка..." : "Отправить заявку"}
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleWhatsApp}
-              className="w-full h-12 text-base"
-            >
-              <MessageSquare className="w-5 h-5 mr-2" />
-              Написать в WhatsApp
             </Button>
           </div>
         </form>

@@ -58,7 +58,7 @@ const ServiceSubpage = () => {
     "provider": {
       "@type": "LocalBusiness",
       "name": "ООО Санитарные Решения",
-      "telephone": "+7-906-998-98-88",
+      "telephone": "8-495-018-18-17",
       "address": { "@type": "PostalAddress", "addressLocality": "Москва", "addressCountry": "RU" }
     },
     "areaServed": { "@type": "City", "name": "Москва" },
@@ -129,7 +129,7 @@ const ServiceSubpage = () => {
                 Рассчитать стоимость
               </Button>
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary" asChild>
-                <a href="tel:+79069989888" onClick={handlePhoneClick}>
+                <a href="tel:84950181817" onClick={handlePhoneClick}>
                   <Phone className="w-5 h-5 mr-2" /> Позвонить
                 </a>
               </Button>
@@ -310,8 +310,8 @@ const ServiceSubpage = () => {
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" variant="secondary" onClick={handleCalculatorClick}>Рассчитать стоимость</Button>
               <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" asChild>
-                <a href="tel:+79069989888" onClick={handlePhoneClick}>
-                  <Phone className="w-5 h-5 mr-2" /> +7 (906) 998-98-88
+                <a href="tel:84950181817" onClick={handlePhoneClick}>
+                  <Phone className="w-5 h-5 mr-2" /> 8-495-018-18-17
                 </a>
               </Button>
             </div>

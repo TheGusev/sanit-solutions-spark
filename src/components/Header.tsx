@@ -299,12 +299,12 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
             </Link>
             {isScrolled && (
               <a 
-                href="tel:+79069989888"
+                href="tel:84950181817"
                 onClick={handlePhoneClick}
                 className="whitespace-nowrap flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary font-semibold text-sm hover:bg-primary/20 transition-colors animate-fade-in"
               >
                 <Phone className="w-4 h-4 flex-shrink-0" />
-                <span className="hidden lg:inline">+7 (906) 998-98-88</span>
+                <span className="hidden lg:inline">8-495-018-18-17</span>
                 <span className="lg:hidden">Позвонить</span>
               </a>
             )}
@@ -471,12 +471,12 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                   {/* Mobile Menu Footer */}
                   <div className="p-4 border-t space-y-3">
                     <a 
-                      href="tel:+79069989888"
+                      href="tel:84950181817"
                       onClick={handlePhoneClick}
                       className="flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-primary/10 text-primary font-semibold hover:bg-primary/20 transition-colors"
                     >
                       <Phone className="w-5 h-5" />
-                      +7 (906) 998-98-88
+                      8-495-018-18-17
                     </a>
                     <Button
                       onClick={handleCalculatorClick}

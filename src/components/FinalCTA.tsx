@@ -1,4 +1,4 @@
-import { Phone, Calculator, MessageCircle } from "lucide-react";
+import { Phone, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface FinalCTAProps {
@@ -7,14 +7,7 @@ interface FinalCTAProps {
 
 const FinalCTA = ({ onOpenCalculator }: FinalCTAProps) => {
   const handleCall = () => {
-    window.location.href = "tel:+79069989888";
-  };
-
-  const handleWhatsApp = () => {
-    window.open(
-      "https://wa.me/79069989888?text=Здравствуйте! Хочу заказать обработку.",
-      "_blank"
-    );
+    window.location.href = "tel:84950181817";
   };
 
   return (
@@ -56,16 +49,6 @@ const FinalCTA = ({ onOpenCalculator }: FinalCTAProps) => {
           >
             <Calculator className="w-5 h-5 mr-2" />
             Рассчитать стоимость
-          </Button>
-
-          <Button
-            onClick={handleWhatsApp}
-            size="lg"
-            variant="outline"
-            className="font-bold text-lg px-8 py-6 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
-          >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            WhatsApp
           </Button>
         </div>
 

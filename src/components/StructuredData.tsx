@@ -217,7 +217,7 @@ export const generateLocalBusiness = (
   '@type': 'LocalBusiness',
   name: `Санитарные Решения — ${serviceName} в ${locationName}`,
   description: `Профессиональная ${serviceName.toLowerCase()} в районе ${locationName}, Москва. Лицензированные специалисты, гарантия качества, выезд в течение часа.`,
-  telephone: '+7 (906) 998-98-88',
+  telephone: '8-495-018-18-17',
   email: 'west-centro@mail.ru',
   priceRange: 'от 1000₽',
   areaServed: {

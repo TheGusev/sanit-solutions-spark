@@ -1,4 +1,4 @@
-import { Mail, Phone, MessageCircle, Send } from 'lucide-react';
+import { Mail, Phone, Send } from 'lucide-react';
 
 const PrivacyPolicyContent = () => {
   return (
@@ -18,7 +18,7 @@ const PrivacyPolicyContent = () => {
             <li><strong>ОГРН:</strong> 1255400030555</li>
             <li><strong>Адрес:</strong> Москва, Центральный округ</li>
             <li><strong>Email:</strong> west-centro@mail.ru</li>
-            <li><strong>Телефон:</strong> +7 (906) 998-98-88</li>
+            <li><strong>Телефон:</strong> 8-495-018-18-17</li>
           </ul>
         </div>
       </section>
@@ -123,7 +123,7 @@ const PrivacyPolicyContent = () => {
           <p className="font-medium">Для реализации своих прав обратитесь к Оператору:</p>
           <ul className="list-none space-y-1 mt-2">
             <li className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Email: <a href="mailto:west-centro@mail.ru" className="text-primary hover:underline">west-centro@mail.ru</a></li>
-            <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> Телефон: <a href="tel:+79069989888" className="text-primary hover:underline">+7 (906) 998-98-88</a></li>
+            <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> Телефон: <a href="tel:84950181817" className="text-primary hover:underline">8-495-018-18-17</a></li>
           </ul>
         </div>
       </section>
@@ -193,14 +193,8 @@ const PrivacyPolicyContent = () => {
             </li>
             <li className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-primary" />
-              <a href="tel:+79069989888" className="text-primary hover:underline">
-                +7 (906) 998-98-88
-              </a>
-            </li>
-            <li className="flex items-center gap-2">
-              <MessageCircle className="w-4 h-4 text-primary" />
-              <a href="https://wa.me/79069989888" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                WhatsApp
+              <a href="tel:84950181817" className="text-primary hover:underline">
+                8-495-018-18-17
               </a>
             </li>
             <li className="flex items-center gap-2">

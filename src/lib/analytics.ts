@@ -136,7 +136,6 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
         'popup_submit': 'lead',
         'calc_open': 'view_content',
         'phone_click': 'contact',
-        'whatsapp_click': 'contact',
         'telegram_click': 'contact'
       };
       
@@ -158,7 +157,7 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
         'popup_submit': 'lead',
         'calc_open': 'view_content',
         'phone_click': 'contact',
-        'whatsapp_click': 'contact',
+        
         'telegram_click': 'contact'
       };
       
