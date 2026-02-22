@@ -1,8 +1,10 @@
 name: Проверка производительности Lighthouse
 
 on:
-  push:
-    branches: [ main ]
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types: [completed]
+    branches: [main]
   schedule:
     - cron: '0 9 * * *'
   workflow_dispatch:
@@ -10,14 +12,22 @@ on:
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
-    
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+
     steps:
+      - name: Подождать деплой (30 сек)
+        if: github.event_name == 'workflow_run'
+        run: sleep 30
+
       - name: Запустить Lighthouse CI
         uses: treosh/lighthouse-ci-action@v11
         with:
           urls: |
             https://goruslugimsk.ru
-            https://goruslugimsk.ru/uslugi/dezinfekciya
-            https://goruslugimsk.ru/blog
-            https://goruslugimsk.ru/rajony
+            https://goruslugimsk.ru/uslugi/dezinfekciya/
+            https://goruslugimsk.ru/blog/
+            https://goruslugimsk.ru/contacts/
+          runs: 3
           uploadArtifacts: true
