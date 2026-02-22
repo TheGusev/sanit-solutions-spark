@@ -8,6 +8,7 @@ import { newBlogPosts } from '@/data/newBlogPosts';
 import { allPestsArticles } from './pests-articles';
 import { premisesArticles } from './premises-articles';
 import { allLegalArticles } from './legal-articles';
+import { allB2BArticles } from './b2b-articles';
 import { moleGeoArticles } from './mole-geo-articles';
 import type { BlogArticle } from './types';
 export { blogCategories, blogAuthors } from './types';
@@ -76,11 +77,12 @@ const newArticles: BlogArticle[] = newBlogPosts.map(post => ({
 // Собираем все статьи с приоритетом (первое вхождение slug побеждает)
 const allArticlesRaw: BlogArticle[] = [
   ...allLegalArticles,    // Приоритет 1: legal с sources/intent
-  ...allPestsArticles,    // Приоритет 2: generated с tldr/intent
-  ...premisesArticles,    // Приоритет 3: generated с tldr/intent
-  ...moleGeoArticles,     // Приоритет 4: geo
-  ...newArticles,         // Приоритет 5: newBlogPosts (конвертированные)
-  ...legacyArticles,      // Приоритет 6: legacy (самый низкий)
+  ...allB2BArticles,      // Приоритет 2: B2B с sources/intent/tldr
+  ...allPestsArticles,    // Приоритет 3: generated с tldr/intent
+  ...premisesArticles,    // Приоритет 4: generated с tldr/intent
+  ...moleGeoArticles,     // Приоритет 5: geo
+  ...newArticles,         // Приоритет 6: newBlogPosts (конвертированные)
+  ...legacyArticles,      // Приоритет 7: legacy (самый низкий)
 ];
 
 // Дедупликация по slug (первое вхождение побеждает)
@@ -131,8 +133,9 @@ export const blogStats = {
   pests: allPestsArticles.length,
   premises: premisesArticles.length,
   legal: allLegalArticles.length,
+  b2b: allB2BArticles.length,
   moleGeo: moleGeoArticles.length,
 };
 
 // Экспорт по категориям
-export { allPestsArticles, premisesArticles, allLegalArticles };
+export { allPestsArticles, premisesArticles, allLegalArticles, allB2BArticles };
