@@ -19,7 +19,8 @@ import AuthorBadge from "@/components/blog/AuthorBadge";
 import FAQSection from "@/components/blog/FAQSection";
 import ComparisonTable from "@/components/blog/ComparisonTable";
 import CitationBlock from "@/components/blog/CitationBlock";
-import { getArticleBySlug } from "@/data/blog";
+import RelatedQueries from "@/components/blog/RelatedQueries";
+import { getArticleBySlug, allBlogArticles } from "@/data/blog";
 import { blogAuthors } from "@/data/blog/types";
 import { Button } from "@/components/ui/button";
 import { SEO_CONFIG } from "@/lib/seo";
@@ -90,6 +91,17 @@ const BlogPost = () => {
         <meta name="twitter:description" content={post.excerpt} />
         <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
       </Helmet>
+
+      {/* BreadcrumbList JSON-LD for Yandex */}
+      <StructuredData
+        type="BreadcrumbList"
+        items={[
+          { name: "Главная", url: "/" },
+          { name: "Блог", url: "/blog" },
+          { name: post.title }
+        ]}
+        baseUrl={SEO_CONFIG.baseUrl}
+      />
 
       {/* BlogPosting Schema.org with dateModified */}
       <StructuredData 
@@ -261,6 +273,24 @@ const BlogPost = () => {
       {/* FAQ: use native FAQSection for LLM-optimized, VisibleFAQ for legacy */}
       {hasFaq && isLLMOptimized && <FAQSection items={post.faq!} />}
       {hasFaq && !isLLMOptimized && <VisibleFAQ faq={post.faq!} />}
+
+      {/* Related Queries — compact text links for Yandex crawling */}
+      <RelatedQueries
+        articles={(() => {
+          // Use relatedArticles slugs if available
+          if (post.relatedArticles?.length) {
+            return post.relatedArticles
+              .map(s => allBlogArticles.find(a => a.slug === s))
+              .filter((a): a is NonNullable<typeof a> => !!a)
+              .slice(0, 4);
+          }
+          // Fallback: same category + shared tags, prefer LLM articles
+          return allBlogArticles
+            .filter(a => a.slug !== post.slug && (a.category === post.category || a.tags.some(t => post.tags.includes(t))))
+            .sort((a, b) => (b.llmSummary ? 1 : 0) - (a.llmSummary ? 1 : 0))
+            .slice(0, 4);
+        })()}
+      />
 
       {/* Author badge (bottom) for LLM-optimized articles */}
       {author && (

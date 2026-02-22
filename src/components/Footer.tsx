@@ -132,6 +132,11 @@ const Footer = memo(() => {
                   • Контакты и реквизиты
                 </Link>
               </li>
+              <li>
+                <Link to="/team" className="hover:opacity-100">
+                  • Наша команда
+                </Link>
+              </li>
             </ul>
           </div>
 

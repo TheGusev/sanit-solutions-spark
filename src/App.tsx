@@ -26,6 +26,7 @@ const ThreeSegmentRouteResolver = lazy(
 );
 const NchPage = lazy(() => import("./pages/NchPage"));
 const Contacts = lazy(() => import("./pages/Contacts"));
+const Team = lazy(() => import("./pages/Team"));
 const DistrictsOverview = lazy(() => import("./pages/DistrictsOverview"));
 const DistrictPage = lazy(() => import("./pages/DistrictPage"));
 const NeighborhoodPage = lazy(() => import("./pages/NeighborhoodPage"));
@@ -76,6 +77,7 @@ const App = () => (
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/contacts" element={<Contacts />} />
+                  <Route path="/team" element={<Team />} />
 
                   {/* Округа Москвы */}
                   <Route path="/uslugi/po-okrugam-moskvy" element={<DistrictsOverview />} />
