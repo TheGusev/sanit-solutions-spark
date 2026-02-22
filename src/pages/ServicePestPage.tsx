@@ -25,6 +25,8 @@ import { servicePages } from '@/data/services';
 import { topNeighborhoods } from '@/data/nchSeeds';
 import { neighborhoods } from '@/data/neighborhoods';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
+import ServiceStickyBar from '@/components/ServiceStickyBar';
+import HeroCallbackForm from '@/components/HeroCallbackForm';
 
 export default function ServicePestPage() {
   // Поддержка обоих форматов params: старый {service, pest} и новый {parentSlug, subSlug}
@@ -139,7 +141,7 @@ export default function ServicePestPage() {
       
       <Header />
       
-      <main className="min-h-screen pt-16">
+      <main className="min-h-screen pt-16 pb-16 md:pb-0">
         {/* Hero Section с фоновым изображением вредителя */}
         <section className="relative py-12 md:py-16 min-h-[50vh] overflow-hidden">
           {/* Фоновое изображение вредителя с blur */}
@@ -233,6 +235,8 @@ export default function ServicePestPage() {
                     <Link to="/#calculator">Рассчитать стоимость</Link>
                   </Button>
                 </div>
+
+                <HeroCallbackForm serviceSlug={`${service}/${pestSlug}`} />
               </div>
               
               {/* Изображение вредителя в карточке */}
@@ -414,6 +418,7 @@ export default function ServicePestPage() {
           currentPest={pestSlug}
           title="Другие услуги"
         />
+        <ServiceStickyBar />
       </main>
       
       <Footer />
