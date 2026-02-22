@@ -1096,6 +1096,18 @@ export const getServiceBySlug = (slug: string): ServicePage | undefined => {
   return servicePages.find(service => service.slug === slug);
 };
 
+// Маппинг вредителей к статьям блога
+const pestToArticles: Record<string, string[]> = {
+  tarakany: ["borba-s-tarakanami", "sezonnost-vreditelej", "kak-podgotovit-pomeshchenie"],
+  klopy: ["klopy-v-kvartire", "sezonnost-vreditelej", "kak-podgotovit-pomeshchenie"],
+  muravyi: ["borba-s-tarakanami", "sezonnost-vreditelej"],
+  blohi: ["sezonnost-vreditelej", "kak-podgotovit-pomeshchenie"],
+  mol: ["sezonnost-vreditelej", "kak-podgotovit-pomeshchenie"],
+  krysy: ["gryzuny-v-dome", "sezonnost-vreditelej"],
+  myshi: ["gryzuny-v-dome", "sezonnost-vreditelej"],
+  kroty: ["gryzuny-v-dome", "sezonnost-vreditelej"],
+};
+
 // Маппинг услуг к статьям блога
 const serviceToArticles: Record<string, string[]> = {
   dezinsekciya: ["borba-s-tarakanami", "klopy-v-kvartire", "sezonnost-vreditelej"],
@@ -1115,70 +1127,76 @@ export interface RelatedArticle {
   readTime: string;
 }
 
-export const getRelatedArticlesForService = (serviceSlug: string): RelatedArticle[] => {
-  const articleSlugs = serviceToArticles[serviceSlug] || [];
-  
-  const articlesData: Record<string, RelatedArticle> = {
-    "borba-s-tarakanami": {
-      slug: "borba-s-tarakanami",
-      title: "Борьба с тараканами: мифы и реальность",
-      excerpt: "Разбираем популярные заблуждения о тараканах и рассказываем, что действительно работает в борьбе с этими насекомыми.",
-      category: "Дезинсекция",
-      readTime: "7 мин"
-    },
-    "klopy-v-kvartire": {
-      slug: "klopy-v-kvartire",
-      title: "Клопы в квартире: как обнаружить и уничтожить",
-      excerpt: "Постельные клопы — одни из самых неприятных паразитов. Узнайте, как обнаружить их и избавиться навсегда.",
-      category: "Дезинсекция",
-      readTime: "6 мин"
-    },
-    "sezonnost-vreditelej": {
-      slug: "sezonnost-vreditelej",
-      title: "Сезонность вредителей: когда ждать проблем",
-      excerpt: "Узнайте, в какое время года активизируются различные вредители и как подготовиться к их появлению заранее.",
-      category: "Советы",
-      readTime: "5 мин"
-    },
-    "vidy-dezinfekcii": {
-      slug: "vidy-dezinfekcii",
-      title: "Виды дезинфекции: холодный и горячий туман",
-      excerpt: "Разбираемся в методах профессиональной дезинфекции. Чем отличается холодный туман от горячего.",
-      category: "Дезинфекция",
-      readTime: "6 мин"
-    },
-    "dezinfekciya-ofisa": {
-      slug: "dezinfekciya-ofisa",
-      title: "Дезинфекция офиса: что нужно знать",
-      excerpt: "Как правильно организовать дезинфекцию офисного пространства для защиты сотрудников и клиентов.",
-      category: "Дезинфекция",
-      readTime: "5 мин"
-    },
-    "kak-podgotovit-pomeshchenie": {
-      slug: "kak-podgotovit-pomeshchenie",
-      title: "Как подготовить помещение к дезинфекции",
-      excerpt: "Пошаговая инструкция по подготовке квартиры или офиса перед визитом специалистов.",
-      category: "Советы",
-      readTime: "5 мин"
-    },
-    "gryzuny-v-dome": {
-      slug: "gryzuny-v-dome",
-      title: "Грызуны в доме: признаки и методы борьбы",
-      excerpt: "Как понять, что в доме завелись мыши или крысы? Разбираем признаки и эффективные методы борьбы.",
-      category: "Дератизация",
-      readTime: "6 мин"
-    },
-    "ozonirovaniye-pomeshcheniy": {
-      slug: "ozonirovaniye-pomeshcheniy",
-      title: "Озонирование: что это и когда нужно",
-      excerpt: "Все об озонировании помещений: как работает технология и в каких случаях она эффективна.",
-      category: "Дезинфекция",
-      readTime: "5 мин"
-    }
-  };
-  
-  return articleSlugs
+const articlesData: Record<string, RelatedArticle> = {
+  "borba-s-tarakanami": {
+    slug: "borba-s-tarakanami",
+    title: "Борьба с тараканами: мифы и реальность",
+    excerpt: "Разбираем популярные заблуждения о тараканах и рассказываем, что действительно работает в борьбе с этими насекомыми.",
+    category: "Дезинсекция",
+    readTime: "7 мин"
+  },
+  "klopy-v-kvartire": {
+    slug: "klopy-v-kvartire",
+    title: "Клопы в квартире: как обнаружить и уничтожить",
+    excerpt: "Постельные клопы — одни из самых неприятных паразитов. Узнайте, как обнаружить их и избавиться навсегда.",
+    category: "Дезинсекция",
+    readTime: "6 мин"
+  },
+  "sezonnost-vreditelej": {
+    slug: "sezonnost-vreditelej",
+    title: "Сезонность вредителей: когда ждать проблем",
+    excerpt: "Узнайте, в какое время года активизируются различные вредители и как подготовиться к их появлению заранее.",
+    category: "Советы",
+    readTime: "5 мин"
+  },
+  "vidy-dezinfekcii": {
+    slug: "vidy-dezinfekcii",
+    title: "Виды дезинфекции: холодный и горячий туман",
+    excerpt: "Разбираемся в методах профессиональной дезинфекции. Чем отличается холодный туман от горячего.",
+    category: "Дезинфекция",
+    readTime: "6 мин"
+  },
+  "dezinfekciya-ofisa": {
+    slug: "dezinfekciya-ofisa",
+    title: "Дезинфекция офиса: что нужно знать",
+    excerpt: "Как правильно организовать дезинфекцию офисного пространства для защиты сотрудников и клиентов.",
+    category: "Дезинфекция",
+    readTime: "5 мин"
+  },
+  "kak-podgotovit-pomeshchenie": {
+    slug: "kak-podgotovit-pomeshchenie",
+    title: "Как подготовить помещение к дезинфекции",
+    excerpt: "Пошаговая инструкция по подготовке квартиры или офиса перед визитом специалистов.",
+    category: "Советы",
+    readTime: "5 мин"
+  },
+  "gryzuny-v-dome": {
+    slug: "gryzuny-v-dome",
+    title: "Грызуны в доме: признаки и методы борьбы",
+    excerpt: "Как понять, что в доме завелись мыши или крысы? Разбираем признаки и эффективные методы борьбы.",
+    category: "Дератизация",
+    readTime: "6 мин"
+  },
+  "ozonirovaniye-pomeshcheniy": {
+    slug: "ozonirovaniye-pomeshcheniy",
+    title: "Озонирование: что это и когда нужно",
+    excerpt: "Все об озонировании помещений: как работает технология и в каких случаях она эффективна.",
+    category: "Дезинфекция",
+    readTime: "5 мин"
+  }
+};
+
+function resolveArticles(slugs: string[]): RelatedArticle[] {
+  return slugs
     .map(slug => articlesData[slug])
-    .filter((article): article is RelatedArticle => article !== undefined)
+    .filter((a): a is RelatedArticle => a !== undefined)
     .slice(0, 3);
+}
+
+export const getRelatedArticlesForService = (serviceSlug: string): RelatedArticle[] => {
+  return resolveArticles(serviceToArticles[serviceSlug] || []);
+};
+
+export const getRelatedArticlesForPest = (pestSlug: string): RelatedArticle[] => {
+  return resolveArticles(pestToArticles[pestSlug] || []);
 };
