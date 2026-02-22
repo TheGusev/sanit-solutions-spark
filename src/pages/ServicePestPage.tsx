@@ -1,8 +1,6 @@
 /**
  * Шаблон страницы: Услуга + Вредитель
  * URL: /uslugi/dezinsekciya/tarakany, /uslugi/deratizaciya/krysy
- * 
- * SEO: Уничтожение [вредитель] в Москве от [цена]₽ — Гарантия 1 год
  */
 
 import { useParams, Link } from 'react-router-dom';
@@ -14,10 +12,13 @@ import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import AnimatedSection from '@/components/AnimatedSection';
 import InternalLinks from '@/components/InternalLinks';
+import ServiceQuiz from '@/components/ServiceQuiz';
+import ServiceTariffs from '@/components/ServiceTariffs';
+import WhyProblemReturns from '@/components/WhyProblemReturns';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Phone, Clock, Shield, CheckCircle, AlertTriangle, MapPin, Bug, Mouse } from 'lucide-react';
+import { Phone, Clock, Shield, CheckCircle, AlertTriangle, MapPin } from 'lucide-react';
 import { getPestBySlug, pests } from '@/data/pests';
 import { IconFromKey, getIconKeyFromEmoji } from '@/lib/iconMap';
 import { getPestImage } from '@/data/pestImages';
@@ -29,7 +30,6 @@ import ServiceStickyBar from '@/components/ServiceStickyBar';
 import HeroCallbackForm from '@/components/HeroCallbackForm';
 
 export default function ServicePestPage() {
-  // Поддержка обоих форматов params: старый {service, pest} и новый {parentSlug, subSlug}
   const params = useParams<{ service?: string; pest?: string; parentSlug?: string; subSlug?: string }>();
   const service = params.service || params.parentSlug;
   const pestSlug = params.pest || params.subSlug;
@@ -38,7 +38,6 @@ export default function ServicePestPage() {
     window.scrollTo(0, 0);
   }, [service, pestSlug]);
   
-  // Валидация параметров
   const validServices = ['dezinsekciya', 'deratizaciya'];
   if (!service || !validServices.includes(service) || !pestSlug) {
     return <NotFound />;
@@ -52,21 +51,21 @@ export default function ServicePestPage() {
     return <NotFound />;
   }
   
+  const guaranteeText = pest.guaranteeYears || 'до 1 года';
+  
   // SEO
   const serviceName = service === 'dezinsekciya' ? 'Дезинсекция' : 'Дератизация';
   const pageTitle = `Уничтожение ${pest.genitive} в Москве от ${pest.priceFrom}₽ — ${SEO_CONFIG.companyName}`;
-  const pageDescription = `${serviceName} ${pest.genitive} в Москве и МО от ${pest.priceFrom}₽ • Выезд за 1 час • Гарантия до 1 года • ${pest.shortDescription} • ${SEO_CONFIG.phone}`;
+  const pageDescription = `${serviceName} ${pest.genitive} в Москве и МО от ${pest.priceFrom}₽ • Выезд за 1 час • Гарантия ${guaranteeText} • ${pest.shortDescription} • ${SEO_CONFIG.phone}`;
   const canonicalPath = `/uslugi/${service}/${pestSlug}`;
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);
   
-  // Breadcrumbs
   const breadcrumbItems = [
     { label: 'Услуги', href: '/uslugi/dezinsekciya' },
     { label: serviceName, href: `/uslugi/${service}` },
     { label: pest.name }
   ];
   
-  // Schema.org
   const schemaMarkup = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -78,10 +77,7 @@ export default function ServicePestPage() {
       telephone: SEO_CONFIG.phone,
       url: SEO_CONFIG.baseUrl
     },
-    areaServed: {
-      '@type': 'City',
-      name: 'Москва'
-    },
+    areaServed: { '@type': 'City', name: 'Москва' },
     offers: {
       '@type': 'Offer',
       priceSpecification: {
@@ -116,7 +112,6 @@ export default function ServicePestPage() {
     ]
   };
   
-  // Топ-районы для перелинковки
   const topNeighborhoodData = topNeighborhoods.slice(0, 8).map(slug => 
     neighborhoods.find(n => n.slug === slug)
   ).filter(Boolean);
@@ -142,41 +137,25 @@ export default function ServicePestPage() {
       <Header />
       
       <main className="min-h-screen pt-16 pb-16 md:pb-0">
-        {/* Hero Section с фоновым изображением вредителя */}
+        {/* Hero Section */}
         <section className="relative py-12 md:py-16 min-h-[50vh] overflow-hidden">
-          {/* Фоновое изображение вредителя с blur */}
           {pestImage && (
             <>
-              {/* Цветовая подложка для контраста */}
               <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
-              {/* Мобильная версия: более яркий фон, так как карточка справа скрыта */}
               <div 
                 className="absolute inset-0 bg-cover bg-center md:hidden"
-                style={{ 
-                  backgroundImage: `url('${pestImage.image}')`,
-                  filter: 'blur(5px)',
-                  transform: 'scale(1.1)',
-                  opacity: 0.75
-                }}
+                style={{ backgroundImage: `url('${pestImage.image}')`, filter: 'blur(5px)', transform: 'scale(1.1)', opacity: 0.75 }}
                 aria-hidden="true"
               />
-              {/* Desktop версия: слабее, так как есть карточка справа */}
               <div 
                 className="absolute inset-0 bg-cover bg-center hidden md:block"
-                style={{ 
-                  backgroundImage: `url('${pestImage.image}')`,
-                  filter: 'blur(8px)',
-                  transform: 'scale(1.1)',
-                  opacity: 0.52
-                }}
+                style={{ backgroundImage: `url('${pestImage.image}')`, filter: 'blur(8px)', transform: 'scale(1.1)', opacity: 0.52 }}
                 aria-hidden="true"
               />
-              {/* Градиентный overlay для читаемости текста */}
               <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/50 to-background/40" />
               <div className="absolute inset-0 bg-gradient-to-b from-background/15 via-transparent to-background/35" />
             </>
           )}
-          {/* Fallback если нет изображения */}
           {!pestImage && (
             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background" />
           )}
@@ -185,7 +164,6 @@ export default function ServicePestPage() {
             <Breadcrumbs items={breadcrumbItems} />
             
             <div className="mt-6 grid md:grid-cols-2 gap-8 items-center">
-              {/* Текстовый блок */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -205,9 +183,21 @@ export default function ServicePestPage() {
                   Уничтожение {pest.genitive} в Москве
                 </h1>
                 
-                <p className="text-lg md:text-xl text-muted-foreground mb-6">
+                <p className="text-lg md:text-xl text-muted-foreground mb-4">
                   {pest.description}
                 </p>
+
+                {/* Hero Bullets */}
+                {pest.heroBullets && pest.heroBullets.length > 0 && (
+                  <ul className="space-y-2 mb-6">
+                    {pest.heroBullets.map((bullet, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm md:text-base">
+                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 
                 <div className="flex flex-wrap gap-4 mb-8">
                   <div className="flex items-center gap-2 text-sm">
@@ -216,7 +206,7 @@ export default function ServicePestPage() {
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Shield className="w-5 h-5 text-primary" />
-                    <span>Гарантия до 1 года</span>
+                    <span>Гарантия {guaranteeText}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <MapPin className="w-5 h-5 text-primary" />
@@ -239,7 +229,6 @@ export default function ServicePestPage() {
                 <HeroCallbackForm serviceSlug={`${service}/${pestSlug}`} />
               </div>
               
-              {/* Изображение вредителя в карточке */}
               {pestImage && (
                 <div className="hidden md:block">
                   <div className="relative rounded-2xl overflow-hidden shadow-xl bg-background/80 backdrop-blur-sm">
@@ -263,6 +252,23 @@ export default function ServicePestPage() {
             </div>
           </div>
         </section>
+
+        {/* Quiz */}
+        {pest.quizSteps && pest.quizSteps.length > 0 && (
+          <ServiceQuiz
+            steps={pest.quizSteps}
+            serviceSlug={`${service}/${pestSlug}`}
+            serviceTitle={`Уничтожение ${pest.genitive}`}
+          />
+        )}
+
+        {/* Tariffs */}
+        {pest.tariffs && pest.tariffs.length > 0 && (
+          <ServiceTariffs
+            tariffs={pest.tariffs}
+            serviceTitle={`Уничтожение ${pest.genitive}`}
+          />
+        )}
         
         {/* Price Block */}
         <AnimatedSection className="py-12 bg-muted/30">
@@ -288,7 +294,7 @@ export default function ServicePestPage() {
           </div>
         </AnimatedSection>
         
-        {/* Signs Section */}
+        {/* Signs */}
         <AnimatedSection className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6 text-center">
@@ -306,8 +312,16 @@ export default function ServicePestPage() {
             </div>
           </div>
         </AnimatedSection>
+
+        {/* WhyProblemReturns */}
+        {pest.returnReasons && pest.returnReasons.length > 0 && (
+          <WhyProblemReturns
+            returnReasons={pest.returnReasons}
+            serviceTitle={`Уничтожение ${pest.genitive}`}
+          />
+        )}
         
-        {/* Prevention Section */}
+        {/* Prevention */}
         <AnimatedSection className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6 text-center">
@@ -326,33 +340,8 @@ export default function ServicePestPage() {
           </div>
         </AnimatedSection>
         
-        {/* Districts Links */}
-        <AnimatedSection className="py-12">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6 text-center">
-              Уничтожение {pest.genitive} по районам Москвы
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
-              {topNeighborhoodData.map((neighborhood) => neighborhood && (
-                <Link
-                  key={neighborhood.slug}
-                  to={`/uslugi/${service}/${pestSlug}/${neighborhood.slug}`}
-                  className="p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors text-center text-sm font-medium"
-                >
-                  {neighborhood.name}
-                </Link>
-              ))}
-            </div>
-            <div className="text-center mt-6">
-              <Button variant="outline" asChild>
-                <Link to="/rajony">Все районы Москвы →</Link>
-              </Button>
-            </div>
-          </div>
-        </AnimatedSection>
-        
         {/* FAQ */}
-        <AnimatedSection className="py-12 bg-muted/30">
+        <AnimatedSection className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6 text-center">Частые вопросы</h2>
             <div className="max-w-2xl mx-auto">
@@ -386,10 +375,59 @@ export default function ServicePestPage() {
                     Даёте ли гарантию?
                   </AccordionTrigger>
                   <AccordionContent>
-                    Да, мы предоставляем гарантию до 1 года. При повторном появлении вредителей в гарантийный период проводим повторную обработку бесплатно.
+                    Да, мы предоставляем гарантию {guaranteeText}. При повторном появлении вредителей в гарантийный период проводим повторную обработку бесплатно.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
+            </div>
+          </div>
+        </AnimatedSection>
+
+        {/* SEO Accordion */}
+        {pest.seoText && (
+          <AnimatedSection className="py-12 bg-muted/30">
+            <div className="container mx-auto px-4">
+              <div className="max-w-3xl mx-auto">
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="seo">
+                    <AccordionTrigger className="text-xl font-bold">
+                      Подробнее об уничтожении {pest.genitive}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="prose prose-sm max-w-none text-muted-foreground space-y-4">
+                        {pest.seoText.split('\n').map((paragraph, i) => (
+                          <p key={i}>{paragraph}</p>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
+            </div>
+          </AnimatedSection>
+        )}
+        
+        {/* Districts Links */}
+        <AnimatedSection className="py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold mb-6 text-center">
+              Уничтожение {pest.genitive} по районам Москвы
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
+              {topNeighborhoodData.map((neighborhood) => neighborhood && (
+                <Link
+                  key={neighborhood.slug}
+                  to={`/uslugi/${service}/${pestSlug}/${neighborhood.slug}`}
+                  className="p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors text-center text-sm font-medium"
+                >
+                  {neighborhood.name}
+                </Link>
+              ))}
+            </div>
+            <div className="text-center mt-6">
+              <Button variant="outline" asChild>
+                <Link to="/rajony">Все районы Москвы →</Link>
+              </Button>
             </div>
           </div>
         </AnimatedSection>
