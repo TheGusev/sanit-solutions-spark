@@ -12,7 +12,7 @@ import { allB2BArticles } from './b2b-articles';
 import { moleGeoArticles } from './mole-geo-articles';
 import { safetyArticles } from './safety-articles';
 import { diyFailureArticles } from './diy-failures-articles';
-import { llmOptimizedArticles } from './llm-optimized-articles';
+import { llmOptimizedArticles } from './llm';
 import type { BlogArticle } from './types';
 export { blogCategories, blogAuthors } from './types';
 export type { BlogArticle, Author } from './types';
