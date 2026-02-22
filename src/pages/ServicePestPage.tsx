@@ -146,22 +146,32 @@ export default function ServicePestPage() {
       
       <main className="min-h-screen pt-16 pb-16 md:pb-0">
         {/* Hero Section */}
-        <section className="relative py-12 md:py-16 min-h-[50vh] overflow-hidden">
+        <section className="relative py-12 md:py-16 min-h-[60vh] overflow-hidden">
           {pestImage && (
             <>
               <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
+              <style dangerouslySetInnerHTML={{ __html: `
+                .pest-hero-bg {
+                  filter: blur(2px);
+                  opacity: 0.80;
+                  transform: scale(1.05);
+                }
+                @media (min-width: 768px) {
+                  .pest-hero-bg {
+                    filter: blur(4px);
+                    opacity: 0.60;
+                    transform: scale(1.05);
+                  }
+                }
+              `}} />
               <div 
-                className="absolute inset-0 bg-cover bg-center md:hidden"
-                style={{ backgroundImage: `url('${pestImage.image}')`, filter: 'blur(5px)', transform: 'scale(1.1)', opacity: 0.75 }}
-                aria-hidden="true"
+                className="absolute inset-0 bg-cover bg-center pest-hero-bg"
+                style={{ backgroundImage: `url('${pestImage.image}')` }}
+                role="img"
+                aria-label={pestImage.altText}
               />
-              <div 
-                className="absolute inset-0 bg-cover bg-center hidden md:block"
-                style={{ backgroundImage: `url('${pestImage.image}')`, filter: 'blur(8px)', transform: 'scale(1.1)', opacity: 0.52 }}
-                aria-hidden="true"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/50 to-background/40" />
-              <div className="absolute inset-0 bg-gradient-to-b from-background/15 via-transparent to-background/35" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/55 to-background/30" />
+              <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background/40" />
             </>
           )}
           {!pestImage && (

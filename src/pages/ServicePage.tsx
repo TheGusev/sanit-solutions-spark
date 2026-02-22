@@ -186,16 +186,29 @@ const ServicePage = () => {
       <Header />
 
       <main className="pt-20 pb-16 md:pb-0">
-        <section className="relative bg-gradient-to-br from-primary/10 via-background to-background py-12 md:py-20 overflow-hidden">
+        <section className="relative bg-gradient-to-br from-primary/10 via-background to-background py-12 md:py-20 min-h-[60vh] overflow-hidden">
           {/* Фоновое изображение для услуги */}
           {service.heroImage && (
             <>
+              <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
+              <style dangerouslySetInnerHTML={{ __html: `
+                .service-hero-bg {
+                  opacity: 0.45;
+                }
+                @media (min-width: 768px) {
+                  .service-hero-bg {
+                    opacity: 0.55;
+                  }
+                }
+              `}} />
               <div 
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url('${service.heroImage}')`, opacity: 0.15 }}
-                aria-hidden="true"
+                className="absolute inset-0 bg-cover bg-center service-hero-bg"
+                style={{ backgroundImage: `url('${service.heroImage}')` }}
+                role="img"
+                aria-label={service.title}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/60 to-background/40" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/65 to-background/40" />
+              <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background/40" />
             </>
           )}
           <div className="container mx-auto px-4">
