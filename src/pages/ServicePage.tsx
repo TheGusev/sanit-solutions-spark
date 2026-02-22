@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import NotFound from './NotFound';
 import { useEffect, Suspense, lazy } from "react";
-import { Check, Phone, ChevronRight, Shield, Clock, Award, FileText, ShieldCheck, AlertTriangle, Beaker } from "lucide-react";
+import { Check, Phone, ChevronRight, Shield, Clock, Award, FileText, ShieldCheck, AlertTriangle, Beaker, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -40,6 +40,8 @@ import PageLoader from "@/components/PageLoader";
 import ServiceStickyBar from "@/components/ServiceStickyBar";
 import HeroCallbackForm from "@/components/HeroCallbackForm";
 import ServiceQuiz from "@/components/ServiceQuiz";
+import ServiceTariffs from "@/components/ServiceTariffs";
+import WhyProblemReturns from "@/components/WhyProblemReturns";
 
 // Ленивая загрузка DistrictPage для избежания циклических зависимостей
 const DistrictPage = lazy(() => import("./DistrictPage"));
@@ -92,6 +94,9 @@ const ServicePage = () => {
     navigate('/#calculator');
   };
 
+  const displayServices = service.relatedServices
+    ? servicePages.filter(s => service.relatedServices!.includes(s.slug))
+    : servicePages.filter(s => s.slug !== service.slug);
   const otherServices = servicePages.filter(s => s.slug !== service.slug);
 
   const metadata = generateServiceMetadata({
@@ -223,9 +228,21 @@ const ServicePage = () => {
                   <span></span>
                   <span></span>
                 </div>
-                <p className="text-lg md:text-xl text-muted-foreground mb-8">
+                <p className="text-lg md:text-xl text-muted-foreground mb-4">
                   {service.heroSubtitle}
                 </p>
+
+                {/* Hero Bullets */}
+                {service.heroBullets && service.heroBullets.length > 0 && (
+                  <ul className="space-y-2 mb-6">
+                    {service.heroBullets.map((bullet, idx) => (
+                      <li key={idx} className="flex items-center gap-2 text-base">
+                        <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button size="lg" onClick={handleCalculatorClick} className="text-lg">
@@ -244,7 +261,7 @@ const ServicePage = () => {
                 <div className="flex flex-wrap gap-6 mt-8 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Shield className="w-5 h-5 text-primary" />
-                    <span>{service.slug === 'borba-s-krotami' ? 'Гарантия 6 месяцев' : 'Гарантия до 1 года'}</span>
+                    <span>Гарантия {service.guaranteeYears || (service.slug === 'borba-s-krotami' ? '6 месяцев' : 'до 1 года')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-5 h-5 text-primary" />
@@ -267,6 +284,16 @@ const ServicePage = () => {
             serviceSlug={service.slug}
             serviceTitle={service.title}
           />
+        )}
+
+        {/* Service Tariffs */}
+        {service.tariffs && service.tariffs.length > 0 && (
+          <ServiceTariffs tariffs={service.tariffs} serviceTitle={service.title} />
+        )}
+
+        {/* Why Problem Returns */}
+        {service.returnReasons && service.returnReasons.length > 0 && (
+          <WhyProblemReturns returnReasons={service.returnReasons} serviceTitle={service.title} />
         )}
 
         {/* Price highlight */}
@@ -707,17 +734,37 @@ const ServicePage = () => {
           </div>
         </section>
 
-        {/* Other Services */}
+        {/* SEO Accordion */}
+        {service.seoText && (
+          <section className="py-8 md:py-12">
+            <div className="container mx-auto px-4 max-w-4xl">
+              <Accordion type="single" collapsible>
+                <AccordionItem value="seo" className="bg-card rounded-xl px-6 border">
+                  <AccordionTrigger className="text-left text-lg font-bold hover:no-underline min-h-[48px]">
+                    Подробно об услуге
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground text-base leading-relaxed">
+                    {service.seoText.split('\n').map((p, i) => (
+                      <p key={i} className="mb-3">{p.trim()}</p>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+          </section>
+        )}
+
+        {/* Related / Other Services */}
         <section className="py-12 md:py-20 bg-muted/30">
           <div className="container mx-auto px-4">
             <AnimatedSection animation="fade-up" className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                Другие услуги
+                {service.relatedServices ? 'Может быть полезно' : 'Другие услуги'}
               </h2>
             </AnimatedSection>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              {otherServices.map((otherService, idx) => (
+              {displayServices.map((otherService, idx) => (
                 <AnimatedSection key={otherService.slug} animation="fade-up" delay={idx * 100}>
                   <Link to={`/uslugi/${otherService.slug}`}>
                     <Card className="hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer">

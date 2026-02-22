@@ -20,6 +20,7 @@ import FAQSection from "@/components/blog/FAQSection";
 import ComparisonTable from "@/components/blog/ComparisonTable";
 import CitationBlock from "@/components/blog/CitationBlock";
 import RelatedQueries from "@/components/blog/RelatedQueries";
+import ServiceCTA, { getServicesForTags } from "@/components/blog/ServiceCTA";
 import { getArticleBySlug, allBlogArticles } from "@/data/blog";
 import { blogAuthors } from "@/data/blog/types";
 import { Button } from "@/components/ui/button";
@@ -306,6 +307,9 @@ const BlogPost = () => {
       {post.sources && post.sources.length > 0 && (
         <SourcesList sources={post.sources} />
       )}
+
+      {/* Service CTA - link blog to services */}
+      <ServiceCTA services={getServicesForTags(post.tags || [])} />
 
       {/* Related Articles */}
       <RelatedArticles
