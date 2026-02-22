@@ -1,62 +1,63 @@
 
+# Оборачивание тяжёлых секций в LazySection + проверка клика по статье
 
-# Добавление блока "Полезные статьи по теме" на страницы услуг
+## Задача 1: LazySection на ServicePage.tsx и ServicePestPage.tsx
 
-## Текущее состояние
+Компонент `LazySection` уже создан (`src/components/LazySection.tsx`) -- использует IntersectionObserver с rootMargin 200px для упреждающего рендера.
 
-- **ServicePage.tsx** -- блок "Полезные статьи" уже есть (строки 656-701), использует `getRelatedArticlesForService(service.slug)` для подбора 2-3 карточек статей.
-- **ServicePestPage.tsx** -- блока со статьями нет. Нужно добавить.
-- Маппинг услуга-статьи определён в `src/data/services.ts` (строки 1100-1184) через `serviceToArticles` и функцию `getRelatedArticlesForService`.
+### ServicePage.tsx -- 5 секций для обёртки
 
-## Что нужно сделать
+| Секция | Строки | minHeight |
+|--------|--------|-----------|
+| ServiceQuiz | 281-287 | 400px |
+| ServiceTariffs | 290-292 | 300px |
+| WhyProblemReturns | 295-297 | 250px |
+| FAQ (Accordion) | 602-628 | 300px |
+| SEO Accordion | 738-755 | 80px |
 
-### 1. Расширить маппинг статей для вредителей
+### ServicePestPage.tsx -- 5 секций для обёртки
 
-**Файл: `src/data/services.ts`**
+| Секция | Строки | minHeight |
+|--------|--------|-----------|
+| ServiceQuiz | 264-270 | 400px |
+| ServiceTariffs | 273-278 | 300px |
+| WhyProblemReturns | 324-329 | 250px |
+| FAQ (Accordion) | 350-391 | 300px |
+| SEO Accordion | 393-415 | 80px |
 
-Добавить маппинг `pestToArticles` для каждого вредителя (slug вредителя -> slug-и релевантных статей):
+### Изменения в каждом файле
 
-| Вредитель | Статьи |
-|-----------|--------|
-| tarakany | borba-s-tarakanami, sezonnost-vreditelej, kak-podgotovit-pomeshchenie |
-| klopy | klopy-v-kvartire, sezonnost-vreditelej, kak-podgotovit-pomeshchenie |
-| muravyi | borba-s-tarakanami, sezonnost-vreditelej |
-| blohi | sezonnost-vreditelej, kak-podgotovit-pomeshchenie |
-| mol | sezonnost-vreditelej, kak-podgotovit-pomeshchenie |
-| krysy | gryzuny-v-dome, sezonnost-vreditelej |
-| myshi | gryzuny-v-dome, sezonnost-vreditelej |
-| kroty | gryzuny-v-dome, sezonnost-vreditelej |
+1. Добавить `import LazySection from '@/components/LazySection'`
+2. Обернуть каждую из 5 секций в `<LazySection minHeight="...">...</LazySection>`
 
-Экспортировать функцию `getRelatedArticlesForPest(pestSlug: string)` по аналогии с `getRelatedArticlesForService`.
+Пример:
+```tsx
+// Было:
+{service.quizSteps && service.quizSteps.length > 0 && (
+  <ServiceQuiz ... />
+)}
 
-### 2. Добавить блок статей в ServicePestPage
-
-**Файл: `src/pages/ServicePestPage.tsx`**
-
-- Импортировать `getRelatedArticlesForPest` из `@/data/services`.
-- Импортировать `ChevronRight` из `lucide-react`.
-- Вставить блок "Полезные статьи по теме" между SEO-аккордеоном и Districts Links (между строками 415 и 417).
-- Использовать ту же разметку карточек, что и в ServicePage (категория, заголовок, сниппет, "Читать").
-
-### Визуальная структура блока
-
-```text
-+-------------------------------------------+
-| Полезные статьи по теме                   |
-| Читайте материалы для понимания вопроса   |
-+-------------------------------------------+
-| [Карточка 1]  [Карточка 2]  [Карточка 3]  |
-|  Категория     Категория     Категория     |
-|  Заголовок     Заголовок     Заголовок     |
-|  Сниппет...    Сниппет...    Сниппет...    |
-|  5 мин Читать  6 мин Читать  7 мин Читать |
-+-------------------------------------------+
+// Стало:
+<LazySection minHeight="400px">
+  {service.quizSteps && service.quizSteps.length > 0 && (
+    <ServiceQuiz ... />
+  )}
+</LazySection>
 ```
 
-## Сводная таблица файлов
+## Задача 2: Проверка клика по статье 'Борьба с тараканами'
+
+После внесения изменений -- открыть `/uslugi/dezinsekciya/tarakany` через browser tool и кликнуть на карточку статьи "Борьба с тараканами", убедиться что переход на `/blog/borba-s-tarakanami` работает корректно.
+
+## Файлы
 
 | Файл | Действие |
 |------|----------|
-| `src/data/services.ts` | + `pestToArticles` маппинг + `getRelatedArticlesForPest()` |
-| `src/pages/ServicePestPage.tsx` | + импорт + блок "Полезные статьи" (2-3 карточки) |
+| `src/pages/ServicePage.tsx` | + import LazySection, обернуть 5 секций |
+| `src/pages/ServicePestPage.tsx` | + import LazySection, обернуть 5 секций |
 
+## Ожидаемый результат
+
+- DOM-узлы снизятся на 500-800 штук при первом рендере (секции ниже viewport не создают DOM)
+- Итоговый DOM при загрузке страницы должен быть менее 3500 узлов
+- Пользовательский опыт не меняется -- секции появляются до того, как пользователь до них доскроллит (rootMargin 200px)
