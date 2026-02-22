@@ -19,11 +19,11 @@ import WhyProblemReturns from '@/components/WhyProblemReturns';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Phone, Clock, Shield, CheckCircle, AlertTriangle, MapPin } from 'lucide-react';
+import { Phone, Clock, Shield, CheckCircle, AlertTriangle, MapPin, ChevronRight } from 'lucide-react';
 import { getPestBySlug, pests } from '@/data/pests';
 import { IconFromKey, getIconKeyFromEmoji } from '@/lib/iconMap';
 import { getPestImage } from '@/data/pestImages';
-import { servicePages } from '@/data/services';
+import { servicePages, getRelatedArticlesForPest } from '@/data/services';
 import { topNeighborhoods } from '@/data/nchSeeds';
 import { neighborhoods } from '@/data/neighborhoods';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
@@ -413,6 +413,53 @@ export default function ServicePestPage() {
             </div>
           </AnimatedSection>
         )}
+
+        {/* Полезные статьи по теме */}
+        {(() => {
+          const relatedArticles = getRelatedArticlesForPest(pestSlug);
+          if (!relatedArticles.length) return null;
+          return (
+            <AnimatedSection className="py-12 bg-muted/30">
+              <div className="container mx-auto px-4">
+                <h2 className="text-2xl md:text-3xl font-bold text-center mb-3">
+                  Полезные статьи по теме
+                </h2>
+                <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
+                  Читайте материалы для более глубокого понимания вопроса
+                </p>
+                <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                  {relatedArticles.map((article) => (
+                    <Link
+                      key={article.slug}
+                      to={`/blog/${article.slug}`}
+                      className="group"
+                    >
+                      <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50 bg-card">
+                        <CardContent className="p-5">
+                          <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
+                            {article.category}
+                          </span>
+                          <h3 className="text-lg font-bold mt-3 mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                            {article.title}
+                          </h3>
+                          <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+                            {article.excerpt}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted-foreground">{article.readTime}</span>
+                            <span className="text-sm font-medium text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
+                              Читать <ChevronRight className="w-4 h-4" />
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </AnimatedSection>
+          );
+        })()}
         
         {/* Districts Links */}
         <AnimatedSection className="py-12">
