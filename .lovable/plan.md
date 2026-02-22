@@ -1,75 +1,89 @@
 
-# Устранение всех замечаний + полный тест
 
-## Замечание 1: Старый номер телефона (5 файлов, ~20 замен)
+# Исправление Lighthouse CI workflow
 
-### src/data/blogPosts.ts (~16 вхождений)
-Заменить все `+7 (906) 998-98-88` на `8-495-018-18-17` в content-строках блог-постов (строки 68, 265, 358, 446, 540, 674, 760, 860, 956, 1038, 1132, 1228, 1327, 1423, 1513 и далее).
+## Проблема
 
-### src/components/ExitIntentPopup.tsx (2 замены)
-- Строка 296: `tel:+79069989888` -> `tel:84950181817`
-- Строка 299: `+7 (906) 998-98-88` -> `8-495-018-18-17`
+Lighthouse CI (#313) падает с ошибкой `LHCI 'collect' возникла проблема`. Две причины:
 
-### src/components/ServiceQuiz.tsx (1 замена)
-- Строка 128: `+7 (906) 998-98-88` -> `8-495-018-18-17`
+1. **Гонка**: Lighthouse запускается одновременно с Docker Build. Продакшен ещё не обновился новым кодом, и Lighthouse тестирует старую/недоступную версию.
 
-### src/components/ServiceTariffs.tsx (1 замена)
-- Строка 77: `tel:+79069989888` -> `tel:84950181817`
+2. **URL `/rajony`**: Nginx на продакшене настроен так, что SPA fallback работает только для `/admin/*`. Все остальные пути без статического файла возвращают 404. URL `/rajony` не имеет статического файла `public/rajony/index.html`, поэтому Nginx отдаёт 404, и LHCI падает при попытке собрать метрики.
 
-### public/404.html (2 замены)
-- Строка 291: `tel:+79069989888` -> `tel:84950181817`
-- Строка 295: `8 (906) 998-98-88` -> `8-495-018-18-17`
+## Решение
 
-### public/410.html (2 замены)
-- Строка 128: `tel:+79069989888` -> `tel:84950181817`
-- Строка 132: `8 (906) 998-98-88` -> `8-495-018-18-17`
+### 1. Добавить зависимость от Docker Build
 
-### public/contacts/index.html (3 замены в meta)
-- Строка 7: description `+7 (906) 998-98-88` -> `8-495-018-18-17`
-- Строка 11: og:description `+7 (906) 998-98-88` -> `8-495-018-18-17`
-- Строка 18: twitter:description `+7 (906) 998-98-88` -> `8-495-018-18-17`
+Lighthouse должен запускаться **после** успешного деплоя, а не параллельно с ним. Нужно:
+- Убрать триггер `push` (он запускает Lighthouse сразу при пуше)
+- Оставить только `schedule` и `workflow_dispatch` (ручной запуск)
+- Либо использовать `workflow_run` чтобы Lighthouse запускался после завершения Docker Build
 
----
+### 2. Исправить список URL
 
-## Замечание 2: Фон ServicePage слишком бледный
+Заменить `/rajony` на URL, который точно доступен как статический файл или обрабатывается Nginx:
+- `/uslugi/dezinfekciya/` (есть `public/uslugi/dezinfekciya/index.html`)
+- `/blog/borba-s-tarakanami/` (есть `public/blog/borba-s-tarakanami/index.html`)
+- `/contacts/` (есть `public/contacts/index.html`)
 
-### src/pages/ServicePage.tsx
-Увеличить видимость фона аналогично pest-страницам:
-- Mobile: opacity `0.45` -> `0.95`, добавить `blur(1px)`
-- Desktop: opacity `0.55` -> `0.65`, добавить `blur(3px)`
-- Облегчить оверлей: `from-background/85 via-background/65` -> `from-background/60 via-background/35`
-- Вертикальный: `from-background/20 ... to-background/40` -> `from-background/10 ... to-background/30`
+Убрать `/blog` — тоже нет статического файла `public/blog/index.html`... хотя, подождите, он есть (`public/blog/index.html`). Значит `/blog` должен работать.
 
----
+### 3. Добавить таймаут и retry
 
-## Замечание 3: Preload warning
+Lighthouse может упасть из-за сетевых проблем. Стоит добавить `runs` для надёжности.
 
-Предупреждение `fast-response.jpg` генерируется только компонентом `Hero.tsx`, который загружается на главной странице. На подстраницах `Hero.tsx` не используется -- preload не вставляется из кода. Предупреждение может быть кэшем браузера. Не требует изменений.
+## Файл: `.github/workflows/lighthouse.yml`
 
----
+```yaml
+name: Проверка производительности Lighthouse
 
-## Замечание 4: Проверка внутренних ссылок блога
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
 
-После правок будет проведён полный тест через browser tool:
-1. Главная `/` -- проверка номера в шапке/подвале
-2. `/uslugi/dezinsekciya` -- фон, номер в meta
-3. `/uslugi/dezinsekciya/blohi` -- фон вредителя на мобильном
-4. `/uslugi/deratizaciya` -- фон
-5. `/blog/borba-s-tarakanami` -- номер в тексте
-6. `/contacts` -- номер в meta
-7. Проверка нескольких внутренних ссылок из блога
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    # Запускать только если Docker Build успешен (или по расписанию/вручную)
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
 
----
+    steps:
+      - name: Подождать деплой (30 сек)
+        if: github.event_name == 'workflow_run'
+        run: sleep 30
 
-## Сводка файлов
+      - name: Запустить Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            https://goruslugimsk.ru
+            https://goruslugimsk.ru/uslugi/dezinfekciya/
+            https://goruslugimsk.ru/blog/
+            https://goruslugimsk.ru/contacts/
+          runs: 3
+          uploadArtifacts: true
+```
 
-| Файл | Замен | Тип |
-|------|-------|-----|
-| src/data/blogPosts.ts | ~16 | Контент |
-| src/components/ExitIntentPopup.tsx | 2 | Компонент |
-| src/components/ServiceQuiz.tsx | 1 | Компонент |
-| src/components/ServiceTariffs.tsx | 1 | Компонент |
-| src/pages/ServicePage.tsx | 4 строки CSS + 2 оверлея | Страница |
-| public/404.html | 2 | Статика |
-| public/410.html | 2 | Статика |
-| public/contacts/index.html | 3 | Статика |
+## Ключевые изменения
+
+| Что | Было | Стало |
+|-----|------|-------|
+| Триггер при пуше | `push: branches: [main]` | `workflow_run` (после Docker Build) |
+| URL `/rajony` | Нет статического файла, 404 | Заменён на `/contacts/` (есть index.html) |
+| URL trailing slash | Без `/` | С `/` (соответствует canonical) |
+| Надёжность | Один запуск | `runs: 3` (медиана из 3 запусков) |
+| Задержка после деплоя | Нет | 30 секунд ожидания |
+
+## Результат
+
+- Lighthouse будет запускаться только после успешной сборки Docker-образа
+- Все проверяемые URL гарантированно отдают 200 (имеют статические index.html)
+- Медиана из 3 запусков даёт более стабильные результаты
+
