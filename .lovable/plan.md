@@ -1,143 +1,148 @@
 
 
-# Расширение семантики блога + Аналитика AI-трафика
+# Редизайн блога: Mobile-First Editorial UI
 
 ## Обзор
 
-Создание 3 новых файлов с 15 статьями, расширение b2b-articles.ts на 5 статей, обновление семантического ядра и добавление трекинга AI-трафика.
+Преобразование блога из "серого полотна текста" в журнальную верстку с фокусом на мобильных пользователях (80% трафика). Подключение Tailwind Typography, чистый заголовок без фонового изображения, TOC-аккордеон на мобилке, улучшенные AI-компоненты и визуальная навигация по категориям.
 
 ---
 
-## Часть 1: Новые кластеры контента
+## Этап 1: Подключение Tailwind Typography
 
-### 1.1 Создать `src/data/blog/diy-failures-articles.ts`
+**Файл: `tailwind.config.ts`**
 
-5 статей (ID 6001-6005), кластер "Почему не работает?":
+Плагин `@tailwindcss/typography` уже установлен (`^0.5.16` в devDependencies), но НЕ подключен в конфиге. Нужно добавить его в массив `plugins`:
 
-| ID | Slug | Intent |
-|----|------|--------|
-| 6001 | pochemu-dihlofos-ne-beret-klopov | guide |
-| 6002 | rezistentnost-tarakanov-k-bornoj-kislote | guide |
-| 6003 | oshibki-samodeyatelnoj-obrabotki | guide |
-| 6004 | pochemu-tarakany-vozvrashchayutsya-posle-obrabotki | symptoms |
-| 6005 | aerozoli-ot-klopov-ne-rabotayut | guide |
-
-- Автор: Максим Гусев (gusev-m)
-- Category: `'Советы'` или `'Препараты'`
-- `promoLevel: 1`, `tldr` 3-5 буллетов, `faq` 2-3 вопроса
-- H2 в формате вопросов, прямые ответы, без промо
-- sources: ссылки на rospotrebnadzor.ru, docs.cntd.ru (паспорта безопасности)
-
-### 1.2 Расширить `src/data/blog/b2b-articles.ts`
-
-Добавить 5 статей (ID 5006-5010) в существующий массив `allB2BArticles`:
-
-| ID | Slug | Intent |
-|----|------|--------|
-| 5006 | pest-kontrol-pvz-marketplejs | docs |
-| 5007 | sanpin-dezinfekciya-kliniki | laws |
-| 5008 | haccp-audit-pekarnaya | docs |
-| 5009 | obyazannosti-uk-deratizaciya-podvalov | laws |
-| 5010 | kuda-zhalovatsya-na-krys-v-podezde | howto |
-
-- `promoLevel: 0`, sources >= 3, tldr 3-5 буллетов
-- Автор: vasiliev для laws/docs, uchaev для howto
-
-### 1.3 Создать `src/data/blog/safety-articles.ts`
-
-5 статей (ID 7001-7005), кластер "Безопасность":
-
-| ID | Slug | Intent |
-|----|------|--------|
-| 7001 | cherez-skolko-puskat-koshku-posle-tumana | health-risk |
-| 7002 | goryachij-tuman-i-akvarium | health-risk |
-| 7003 | dezinsekciya-s-grudnym-rebenkom | health-risk |
-| 7004 | bezopasnost-obrabotki-dlya-beremennyh | health-risk |
-| 7005 | allergiya-na-preparaty-dezinsekcii | health-risk |
-
-- Автор: Владимир Гусев (gusev-v)
-- Category: `'Советы'`
-- `promoLevel: 1`, sources >= 3 (паспорта безопасности, СанПиН)
-
-### 1.4 Интеграция в `src/data/blog/index.ts`
-
-- Импортировать `diyFailureArticles` и `safetyArticles`
-- Добавить в `allArticlesRaw` после b2b, до pests:
-
-```text
-allLegalArticles -> allB2BArticles -> safetyArticles -> diyFailureArticles -> allPestsArticles -> ...
+```typescript
+plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 ```
 
-- Обновить `blogStats` с полями `diyFailures` и `safety`
-- Экспортировать новые массивы
-
-### 1.5 Обновить `src/data/semanticCore.ts`
-
-Добавить 15 записей в `blogEntries` (intent: informational, cluster: blog):
-
-- 5 записей для DIY-провалов (priority: 2-3)
-- 5 записей для микро-B2B (priority: 3)
-- 5 записей для безопасности (priority: 2)
+Классы `prose` в BlogPost.tsx уже используются (строки 192-200), но без плагина они не работают. После подключения типографика заработает автоматически.
 
 ---
 
-## Часть 2: Аналитика AI-трафика
+## Этап 2: Редизайн BlogPost.tsx
 
-### 2.1 Обновить `src/lib/analytics.ts`
+### 2.1 Убрать фоновое изображение, чистый заголовок
 
-Добавить функцию `trackAIReferral()`:
-- Проверяет `document.referrer` на домены: perplexity.ai, chatgpt.com, poe.com, claude.ai, you.com
-- Проверяет UTM-параметры на ai-источники
-- Отправляет цель `ai_referral` в Яндекс.Метрику (ID 105828040 -- уже определен в файле)
+Заменить секцию "Article Header with Background" (строки 122-163) на чистый журнальный заголовок:
+- Убрать компонент `HeroBackground` и импорт `getBlogCategoryImage`
+- Белый/светлый фон, компактный бейдж категории, дата, время чтения, автор
+- Триколор-акцент под заголовком
+- Уменьшить вертикальные отступы на мобилке (`py-8 md:py-12` вместо `py-12`)
 
-Добавить функцию `detectDarkAITraffic()`:
-- Эвристика: Direct-трафик на глубокие /blog/ статьи без реферера
-- Помечает `suspected_ai: true` в Метрике
+### 2.2 TOC как аккордеон на мобилке
 
-### 2.2 Обновить `src/pages/BlogPost.tsx`
+Текущая мобильная версия TOC (строки 185-188) -- просто блок с ограничением высоты. Заменить на Accordion:
+- На десктопе: оставить sticky sidebar (без изменений)
+- На мобилке: обернуть в `Accordion` с `AccordionTrigger` "Содержание" -- сразу под TL;DR блоком
+- По умолчанию свернут, чтобы не занимать место
 
-- Импортировать `trackAIReferral` из `@/lib/analytics`
-- Вызвать в существующем `useEffect` при маунте
+### 2.3 Улучшить prose-стили
 
-### 2.3 Создать `scripts/ai-crawler-monitor.py`
+Добавить в prose-контейнер (строки 192-200):
+- `prose-p:leading-[1.75]` -- увеличить интерлиньяж до 1.75
+- `prose-p:mb-5` -- увеличить отступы между абзацами
+- `prose-table:overflow-x-auto` -- горизонтальный скролл таблиц
+- Обертка таблиц уже имеет `overflow-x-auto` в `processTable()` (TableOfContents.tsx:127)
 
-Python-скрипт для парсинга access.log Nginx:
-- User-Agent фильтры: PerplexityBot, ChatGPT-User, OAI-SearchBot, ClaudeBot, anthropic-ai, GoogleOther, Google-Extended, Applebot-Extended
-- Группировка по боту и URL, фильтр по /blog/
-- Отчет: топ-10 URL по частоте обхода
-- Опциональная отправка в Telegram
+### 2.4 Перенести TL;DR внутрь основного контейнера
+
+Сейчас TL;DR рендерится между hero и контентом (строки 166-170). Переместить его внутрь основного контейнера статьи, перед мобильным TOC-аккордеоном. Порядок на мобилке:
+1. Заголовок (H1, мета)
+2. TL;DR блок
+3. TOC (аккордеон)
+4. Контент
 
 ---
 
-## Порядок реализации
+## Этап 3: Редизайн AI-компонентов
 
-1. Создать `diy-failures-articles.ts` (5 статей)
-2. Расширить `b2b-articles.ts` (+5 статей)
-3. Создать `safety-articles.ts` (5 статей)
-4. Обновить `index.ts` -- импорт, интеграция, stats, экспорт
-5. Обновить `semanticCore.ts` -- 15 новых записей
-6. Обновить `analytics.ts` -- trackAIReferral + detectDarkAITraffic
-7. Обновить `BlogPost.tsx` -- вызов trackAIReferral
-8. Создать `ai-crawler-monitor.py`
+### 3.1 TLDRBlock.tsx
+
+Текущий дизайн уже близок к нужному (border-l-4, bg-muted/50, иконка Lightbulb). Улучшения:
+- Увеличить padding на мобилке (`p-5 md:p-6`)
+- Добавить легкую тень (`shadow-sm`)
+- Увеличить размер шрифта элементов списка для мобилки
+- Иконка Zap (молния) вместо Lightbulb для большей заметности
+
+### 3.2 VisibleFAQ.tsx
+
+Увеличить touch target для мобилки:
+- `AccordionTrigger`: добавить `min-h-[48px] py-4 text-base md:text-lg`
+- `AccordionContent`: увеличить `leading-relaxed` до `leading-[1.75]`
+- Добавить `text-base` для ответов (не `text-sm` как сейчас из accordion)
+
+### 3.3 SourcesList.tsx
+
+Сделать более строгим, академическим:
+- Уменьшить фон: `bg-muted/20` вместо `bg-muted/30`
+- Серая верхняя граница-разделитель `border-t`
+- Текст `text-xs md:text-sm` и `text-muted-foreground/70`
+- Нумерация в квадратных скобках `[1]`, `[2]` вместо обычного списка
+
+---
+
+## Этап 4: Редизайн навигации Blog.tsx
+
+### 4.1 Свайп-карусель категорий с иконками
+
+Заменить текущую сетку кнопок (строки 111-132) на горизонтально скроллящуюся полосу с иконками:
+
+Маппинг категорий на иконки (emoji + lucide fallback):
+- Все: `LayoutGrid`
+- Дезинфекция: `Spray` (или "🧪")
+- Дезинсекция: `Bug` (или "🪳")
+- Дератизация: `Rat` (или "🐀")
+- Советы: `Lightbulb` (или "💡")
+- Законы: `Scale` (или "📜")
+- Препараты: `FlaskConical` (или "🧴")
+- Кейсы: `FileText` (или "📋")
+
+На мобилке: `overflow-x-auto flex gap-2 pb-2 scrollbar-hide` -- горизонтальный свайп.
+На десктопе: `flex flex-wrap justify-center gap-3`.
+
+### 4.2 Улучшение карточек статей
+
+Текущие карточки уже неплохие. Минимальные улучшения:
+- Увеличить заголовок на мобилке: `text-lg md:text-xl`
+- Ограничить excerpt до 2 строк: `line-clamp-2`
+- Заменить текстовую ссылку "Читать ->" на мини-кнопку `Button variant="outline" size="sm"`
+- Добавить иконку автора если есть
+
+---
 
 ## Технические детали
 
-### Совместимость с линтером
+### Файлы для изменения
 
-Все 15 новых статей пройдут `validate-ai-ready.ts`:
-- `id >= 500` -- значит `isGenerator = true`, проверки как error
-- tldr: 3-5 пунктов
-- sources >= 3 для laws/docs (обязательно из whitelist)
-- Нет промо в первых 5 абзацах
-- FAQ без CTA
-- updatedAt заполнен
-- legal-markers в H2/H3 для laws/docs статей
+| Файл | Изменение |
+|------|-----------|
+| `tailwind.config.ts` | Добавить `require("@tailwindcss/typography")` в plugins |
+| `src/pages/BlogPost.tsx` | Убрать HeroBackground, чистый заголовок, TOC-аккордеон на мобилке, перенести TL;DR |
+| `src/components/blog/TLDRBlock.tsx` | Увеличить padding, shadow, иконка Zap |
+| `src/components/blog/VisibleFAQ.tsx` | Увеличить touch target до 48px+, размер шрифта |
+| `src/components/blog/SourcesList.tsx` | Академический стиль, нумерация [1][2] |
+| `src/pages/Blog.tsx` | Свайп-карусель категорий с иконками, улучшенные карточки |
+| `src/index.css` | Добавить `scrollbar-hide` утилиту и стили для prose в dark mode |
 
-### Типы
+### Зависимости
 
-`BlogArticleIntent` уже включает `'health-risk'` (types.ts строка 78) -- доп. изменений не нужно.
+- `@tailwindcss/typography` -- уже установлен, только подключить в конфиг
+- Новых пакетов не требуется
 
-### trackAIReferral логика
+### Сохранение SEO/AI структуры
 
-Использует существующий `YANDEX_COUNTER_ID = 105828040` и `window.ym` из analytics.ts. Функция `trackGoal` уже есть -- trackAIReferral будет её вызывать.
+- Все Schema.org разметки остаются без изменений
+- HTML-структура контента (H2 с id, таблицы, списки) не меняется
+- TL;DR, FAQ, Sources компоненты сохраняют свою семантику
+- Breadcrumbs остаются на месте
+
+### Mobile-first подход
+
+- Все padding/margin используют паттерн `py-6 md:py-12`
+- TOC: аккордеон на `<lg`, sticky sidebar на `lg+`
+- Категории: горизонтальный скролл на мобилке, flex-wrap на десктопе
+- Touch targets: минимум 48px для интерактивных элементов
 
