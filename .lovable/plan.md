@@ -1,127 +1,62 @@
 
-# Полный регресс-тест и исправления: Фазы A-F
 
-## Фаза A: Мёртвый код
+# Добавление блока "Полезные статьи по теме" на страницы услуг
 
-**Файл: `src/pages/ServicePage.tsx` (строка 100)**
-- Удалить `const otherServices = servicePages.filter(s => s.slug !== service.slug);` -- переменная не используется, полностью заменена `displayServices`.
+## Текущее состояние
 
----
+- **ServicePage.tsx** -- блок "Полезные статьи" уже есть (строки 656-701), использует `getRelatedArticlesForService(service.slug)` для подбора 2-3 карточек статей.
+- **ServicePestPage.tsx** -- блока со статьями нет. Нужно добавить.
+- Маппинг услуга-статьи определён в `src/data/services.ts` (строки 1100-1184) через `serviceToArticles` и функцию `getRelatedArticlesForService`.
 
-## Фаза B: SEO-исправления
+## Что нужно сделать
 
-### 1. `src/pages/ServicePestPage.tsx`
-- Заменить прямое использование `<Helmet>` на `<SEOHead>` компонент (как в ServicePage).
-- Добавить BreadcrumbList JSON-LD schema в метаданные.
-- Перейти на `generateServiceMetadata` или аналогичную функцию из `@/lib/metadata` для единообразия, либо вручную сформировать `PageMetadata` и передать schema массивом (Service + FAQPage + BreadcrumbList).
+### 1. Расширить маппинг статей для вредителей
 
-**Конкретные изменения:**
-- Импортировать `SEOHead` вместо `Helmet`.
-- Создать объект `breadcrumbSchema` по аналогии с ServicePage.
-- Собрать `metadata: PageMetadata` с title, description, canonical, schema: [schemaMarkup, faqSchema, breadcrumbSchema].
-- Заменить блок `<Helmet>...</Helmet>` на `<SEOHead metadata={metadata} pagePath={canonicalPath} />`.
+**Файл: `src/data/services.ts`**
 
-### 2. `src/components/ServiceQuiz.tsx`
-- Добавить функцию `pluralizeQuestion(n: number)` для правильного склонения:
-  - 1 -> "вопрос"
-  - 2-4 -> "вопроса"
-  - 5+ -> "вопросов"
-- Заменить `{steps.length} вопроса` на `{steps.length} {pluralizeQuestion(steps.length)}`.
+Добавить маппинг `pestToArticles` для каждого вредителя (slug вредителя -> slug-и релевантных статей):
 
----
+| Вредитель | Статьи |
+|-----------|--------|
+| tarakany | borba-s-tarakanami, sezonnost-vreditelej, kak-podgotovit-pomeshchenie |
+| klopy | klopy-v-kvartire, sezonnost-vreditelej, kak-podgotovit-pomeshchenie |
+| muravyi | borba-s-tarakanami, sezonnost-vreditelej |
+| blohi | sezonnost-vreditelej, kak-podgotovit-pomeshchenie |
+| mol | sezonnost-vreditelej, kak-podgotovit-pomeshchenie |
+| krysy | gryzuny-v-dome, sezonnost-vreditelej |
+| myshi | gryzuny-v-dome, sezonnost-vreditelej |
+| kroty | gryzuny-v-dome, sezonnost-vreditelej |
 
-## Фаза C: Производительность
+Экспортировать функцию `getRelatedArticlesForPest(pestSlug: string)` по аналогии с `getRelatedArticlesForService`.
 
-### 1. Preload `home-kitchen.png` в `index.html` (строка 27)
-- Изображение `home-kitchen.png` используется только на главной, но preload глобальный в `index.html` -- загружается на ВСЕХ страницах.
-- **Решение**: удалить preload из `index.html` (строка 27) и перенести в компонент главной страницы (`src/pages/Index.tsx`) через `<Helmet>` / `<SEOHead>` с `<link rel="preload">`.
+### 2. Добавить блок статей в ServicePestPage
 
-### 2. Оптимизация DOM (3720 узлов)
-- Тяжёлые секции (ServiceTariffs, ServiceQuiz, WhyProblemReturns, SEO-аккордеон) уже рендерятся условно (при наличии данных).
-- Дополнительная оптимизация: обернуть тяжёлые секции в lazy-рендер через Intersection Observer. Создать утилитный компонент `LazySection` который рендерит children только когда секция близко к viewport.
+**Файл: `src/pages/ServicePestPage.tsx`**
 
-### 3. Code splitting для services.ts
-- Файл services.ts (57КБ) содержит данные всех 7 услуг и загружается целиком.
-- **Решение**: разбить на отдельные файлы по услугам (`src/data/services/dezinfekciya.ts`, `src/data/services/dezinsekciya.ts` и т.д.) с основным индексом `src/data/services/index.ts`, который экспортирует `servicePages` массив с базовыми данными (slug, title, priceFrom) и функцию `getServiceBySlug` которая делает динамический import.
-- **ВНИМАНИЕ**: это масштабный рефакторинг с высоким риском регрессии. Более безопасный подход -- использовать `React.lazy` на уровне страниц (что уже частично сделано) и оставить services.ts как есть, поскольку 57КБ текстовых данных после gzip сжимается до ~8-10КБ. Предлагаю отложить и сосредоточиться на более безопасных оптимизациях.
+- Импортировать `getRelatedArticlesForPest` из `@/data/services`.
+- Импортировать `ChevronRight` из `lucide-react`.
+- Вставить блок "Полезные статьи по теме" между SEO-аккордеоном и Districts Links (между строками 415 и 417).
+- Использовать ту же разметку карточек, что и в ServicePage (категория, заголовок, сниппет, "Читать").
 
----
+### Визуальная структура блока
 
-## Фаза D: UX-исправления
-
-**Файл: `src/components/HeroCallbackForm.tsx`**
-- Убрать `!agreed` из `disabled` prop кнопки (оставить только `isSubmitting`).
-- В `handleSubmit` уже есть проверка `if (!agreed)` с toast -- это и будет работать.
-- Кнопка визуально активна, но при нажатии без чекбокса покажет toast "Согласитесь с политикой конфиденциальности".
-
----
-
-## Фаза E: Автотесты
-
-### Инфраструктура
-- Создать `vitest.config.ts` с jsdom, setup файлом, path alias.
-- Создать `src/test/setup.ts` с `@testing-library/jest-dom` и `matchMedia` mock.
-- Обновить `tsconfig.app.json`: добавить `"vitest/globals"` в types.
-
-### Тест-файлы
-
-**`src/components/__tests__/ServiceQuiz.test.tsx`**
-- Рендер с тестовыми steps (mock TrafficContext, supabase)
-- Клик по опции -- переход на следующий шаг
-- На финальном шаге: чекбокс обязателен для отправки
-
-**`src/components/__tests__/ServiceTariffs.test.tsx`**
-- 3 карточки рендерятся
-- Популярный тариф имеет текст "Популярный"
-- Кнопки "Заказать" присутствуют
-
-**`src/components/__tests__/WhyProblemReturns.test.tsx`**
-- Рендер с данными
-- null при пустом массиве
-
-**`src/components/__tests__/HeroCallbackForm.test.tsx`**
-- Toast при нажатии без чекбокса
-- Валидация телефона
-
-**`src/pages/__tests__/ServicePage.test.tsx`**
-- Рендер с MemoryRouter slug "dezinsekciya"
-- Один H1
-- Секция quiz и tariffs
-
-**`src/pages/__tests__/ServicePestPage.test.tsx`**
-- Рендер slug "tarakany" 
-- heroBullets присутствуют
-- Quiz и tariffs секции
-
----
-
-## Фаза F: E2E-проверка
-
-После реализации фаз A-E -- проверка через browser tool:
-- `/` -- нет ошибок консоли
-- `/uslugi/dezinsekciya` -- квиз, тарифы, SEO-аккордеон
-- `/uslugi/dezinsekciya/tarakany` -- heroBullets, квиз, тарифы
-- `/blog/borba-s-tarakanami` -- ServiceCTA
-- Проверка на 375px и 1024px
-
----
+```text
++-------------------------------------------+
+| Полезные статьи по теме                   |
+| Читайте материалы для понимания вопроса   |
++-------------------------------------------+
+| [Карточка 1]  [Карточка 2]  [Карточка 3]  |
+|  Категория     Категория     Категория     |
+|  Заголовок     Заголовок     Заголовок     |
+|  Сниппет...    Сниппет...    Сниппет...    |
+|  5 мин Читать  6 мин Читать  7 мин Читать |
++-------------------------------------------+
+```
 
 ## Сводная таблица файлов
 
-| Фаза | Файл | Действие |
-|------|------|----------|
-| A | `src/pages/ServicePage.tsx` | Удалить строку 100 (otherServices) |
-| B | `src/pages/ServicePestPage.tsx` | Заменить Helmet на SEOHead + BreadcrumbList JSON-LD |
-| B | `src/components/ServiceQuiz.tsx` | Функция склонения "вопрос/вопроса/вопросов" |
-| C | `index.html` | Удалить preload home-kitchen.png |
-| C | `src/pages/Index.tsx` | Добавить preload home-kitchen.png через Helmet |
-| C | `src/components/LazySection.tsx` | Создать компонент lazy-рендера через IntersectionObserver |
-| D | `src/components/HeroCallbackForm.tsx` | Убрать !agreed из disabled кнопки |
-| E | `vitest.config.ts` | Создать |
-| E | `src/test/setup.ts` | Создать |
-| E | `tsconfig.app.json` | Добавить vitest/globals |
-| E | 6 тест-файлов | Создать |
+| Файл | Действие |
+|------|----------|
+| `src/data/services.ts` | + `pestToArticles` маппинг + `getRelatedArticlesForPest()` |
+| `src/pages/ServicePestPage.tsx` | + импорт + блок "Полезные статьи" (2-3 карточки) |
 
-## Порядок реализации
-
-A -> B -> C -> D -> E -> F (E2E через browser)
