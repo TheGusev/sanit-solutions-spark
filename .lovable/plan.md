@@ -1,99 +1,72 @@
 
-# Глобальные правки: убрать WhatsApp + заменить телефон
 
-## Задача 1: Убрать WhatsApp (14 файлов)
+# Обновление файлов контента: телефон + WhatsApp
 
-### Компоненты -- удалить кнопку WhatsApp целиком
+Остались файлы данных, шаблонов и статических HTML, которые ещё содержат старый номер и/или WhatsApp.
 
-| Файл | Что удалить |
-|------|-------------|
-| `src/components/FloatingButtons.tsx` | `handleWhatsAppClick` + WhatsApp кнопка (SVG, div) |
-| `src/components/MobileQuickCTA.tsx` | `handleWhatsApp` + кнопка WhatsApp, убрать импорт `MessageCircle` |
-| `src/components/FinalCTA.tsx` | `handleWhatsApp` + кнопка WhatsApp, убрать импорт `MessageCircle` |
-| `src/components/DesktopStickySidebar.tsx` | `handleWhatsApp` + кнопка WhatsApp в сетке (оставить только Telegram) |
-| `src/components/LeadFormModal.tsx` | `handleWhatsApp` + кнопка "Написать в WhatsApp" |
-| `src/components/CompactRequestModal.tsx` | `handleWhatsApp` + кнопка "Написать в WhatsApp", убрать `MessageSquare` |
-| `src/components/QuickCallForm.tsx` | `handleWhatsApp` + кнопка "Написать в WhatsApp" |
-| `src/components/Calculator.tsx` | WhatsApp URL/логика в `handleWhatsApp` |
-| `src/components/Footer.tsx` | Ссылка WhatsApp (wa.me), убрать `MessageCircle` если больше не нужна |
-| `src/components/TermsContent.tsx` | Строка с WhatsApp-ссылкой в контактах |
-| `src/components/PrivacyPolicyContent.tsx` | Строка с WhatsApp-ссылкой |
-| `src/components/district/DistrictCTA.tsx` | Кнопка "Написать в WhatsApp" (wa.me) |
-| `src/pages/Contacts.tsx` | `handleWhatsAppClick` + кнопка WhatsApp + WhatsApp из sameAs JSON-LD + текст |
-| `src/lib/analytics.ts` | Строку `'whatsapp_click': 'contact'` из маппингов (2 места) |
+## 1. Calculator.tsx -- убрать WhatsApp
 
----
+Заменить `wa.me/79069989888` на `tel:84950181817` (вместо отправки в WhatsApp -- звонок). Убрать переменную `whatsappUrl`.
 
-## Задача 2: Заменить телефон (30+ файлов)
+## 2. src/data/services.ts (~15 замен)
 
-### Новый номер
-- Отображение: `8-495-018-18-17`
-- Ссылка: `tel:84950181817`
+Все вхождения `+7 (906) 998-98-88` и `+7-906-998-98-88` заменить на `8-495-018-18-17`:
+- metaDescription для 7 услуг (dezinfekciya, dezinsekciya, deratizaciya, ozonirovanie, dezodoraciya, demerkurizaciya, sertifikaciya)
+- FAQ-ответы (~3 штуки)
 
-### Центральный конфиг -- одно изменение покроет ~15 файлов
+## 3. src/data/serviceSubpages.ts (~8 замен)
 
-**`src/lib/seo.ts`** (строки 9-10):
-```
-phone: '8-495-018-18-17',
-phoneClean: '84950181817',
-```
-Все файлы, использующие `SEO_CONFIG.phone` / `SEO_CONFIG.phoneClean`, обновятся автоматически.
+Все `+7 (906) 998-98-88` в metaDescription заменить на `8-495-018-18-17`:
+- Дезинфекция квартир, офисов
+- Уничтожение клопов, тараканов, крыс, мышей
+- И другие подстраницы
 
-### Файлы с хардкодом номера (нужна ручная замена)
+## 4. src/data/newBlogPosts.ts (~20 замен)
 
-| Файл | Замена |
-|------|--------|
-| `src/components/FloatingButtons.tsx` | `tel:+79069989888` -> `tel:84950181817` |
-| `src/components/Header.tsx` | `tel:+79069989888` -> `tel:84950181817`, текст `+7 (906) 998-98-88` -> `8-495-018-18-17` |
-| `src/components/Footer.tsx` | `tel:+79069989888` -> `tel:84950181817` |
-| `src/components/HeroCallbackForm.tsx` | `+7 (906) 998-98-88` -> `8-495-018-18-17` |
-| `src/components/LeadFormModal.tsx` | `tel:+79069989888`, текст `+7 (906) 998-98-88` -> новые |
-| `src/components/PrivacyPolicyContent.tsx` | `tel:+79069989888`, текст -> новые |
-| `src/components/TermsContent.tsx` | `tel:+79069989888`, текст -> новые |
-| `src/components/StickyCTA.tsx` | `tel:+79069989888` -> `tel:84950181817` |
-| `src/components/ServiceAreaMap.tsx` | `tel:+79069989888` -> `tel:84950181817` |
-| `src/components/blog/ServiceCTA.tsx` | `tel:+79069989888` -> `tel:84950181817` |
-| `src/components/StructuredData.tsx` | `+7 (906) 998-98-88` -> `8-495-018-18-17` |
-| `src/components/district/DistrictHero.tsx` | `tel:+79069989888` -> `tel:84950181817` |
-| `src/components/district/DistrictCTA.tsx` | `tel:+79069989888` -> `tel:84950181817` |
-| `src/pages/ServicePage.tsx` | `tel:+79069989888`, `+7-906-998-98-88`, текст -> новые |
-| `src/pages/ServiceSubpage.tsx` | `tel:+79069989888`, `+7-906-998-98-88`, текст -> новые |
-| `src/pages/Contacts.tsx` | `tel:+79069989888`, текст, JSON-LD telephone -> новые |
-| `src/pages/NotFound.tsx` | `tel:+79069989888`, текст `8 (906) 998-98-88` -> новые |
-| `src/pages/DistrictsOverview.tsx` | `tel:+79069989888`, текст -> новые |
+Все `+7 (906) 998-98-88` в MD-контенте статей блога заменить на `8-495-018-18-17`.
 
-### Данные и метаописания
+## 5. src/lib/contentGenerator.ts (4 замены)
 
-| Файл | Кол-во замен |
-|------|--------------|
-| `src/data/services.ts` | ~15 (metaDescription + FAQ-ответы) |
-| `src/data/serviceSubpages.ts` | ~8 (metaDescription) |
-| `src/lib/contentGenerator.ts` | 4 (description шаблоны) |
-| `src/lib/metadata.ts` | 5 (description шаблоны) |
+Шаблоны description для генерируемых страниц.
 
-### Статические HTML файлы (public/)
+## 6. src/lib/metadata.ts (5 замен)
 
-27 HTML-файлов в `public/` содержат старый номер в JSON-LD и `<noscript>`. Все `+7 (906) 998-98-88`, `+7-906-998-98-88`, `tel:+79069989888` заменить на новые.
+Шаблоны description для метаданных страниц.
 
----
+## 7. Статические HTML файлы (27 файлов)
 
-## Задача 3: Проверка
+Заменить во всех файлах `public/`:
+- `+7-906-998-98-88` -> `8-495-018-18-17` (JSON-LD telephone)
+- `+7 (906) 998-98-88` -> `8-495-018-18-17` (текст)
+- `tel:+79069989888` -> `tel:84950181817` (ссылки)
+- Удалить строки с WhatsApp в `dezinfekciya-cao` и `po-okrugam-moskvy`
 
-После всех правок -- пройти browser-проверку:
-1. `/` -- шапка, подвал, floating buttons, нет WhatsApp
-2. `/uslugi/dezinsekciya` -- CTA, тарифы, нет WhatsApp, новый номер
-3. `/uslugi/dezinsekciya/tarakany` -- аналогично
-4. `/contacts` -- только Telegram + телефон, нет WhatsApp
-5. `/blog/borba-s-tarakanami` -- ServiceCTA с новым номером
+### Список HTML-файлов:
 
----
+| Директория | Файл |
+|------------|------|
+| public/contacts/ | index.html |
+| public/blog/ | index.html + 8 подпапок |
+| public/uslugi/ | 14 подпапок (dezinfekciya, dezinsekciya, deratizaciya, ozonirovanie, dezodoraciya, sertifikaciya, po-okrugam-moskvy, dezinfekciya-cao/sao/svao/szao/vao/yao/yuvao/yzao/zao) |
+| public/ | terms/, privacy/ (нет номера -- уже проверено) |
 
-## Порядок реализации
+## 8. Проверка через browser
 
-1. `src/lib/seo.ts` -- центральный конфиг (покрывает 15+ файлов автоматически)
-2. Компоненты с WhatsApp (удалить) + заменить хардкод номера -- параллельно
-3. Данные (`services.ts`, `serviceSubpages.ts`, `contentGenerator.ts`, `metadata.ts`)
-4. Страницы (`Contacts.tsx`, `ServicePage.tsx`, `ServiceSubpage.tsx` и др.)
-5. Статические HTML (`public/`)
-6. `analytics.ts` -- убрать whatsapp_click
-7. E2E проверка через browser
+После всех правок:
+1. `/` -- проверить шапку и подвал
+2. `/uslugi/dezinsekciya` -- новый номер в meta и CTA
+3. `/contacts` -- нет WhatsApp, новый номер
+4. `/blog/borba-s-tarakanami` -- новый номер в тексте
+
+## Сводка файлов
+
+| Файл | Замен | Тип |
+|------|-------|-----|
+| src/components/Calculator.tsx | 1 WhatsApp + номер | Компонент |
+| src/data/services.ts | ~15 | Данные |
+| src/data/serviceSubpages.ts | ~8 | Данные |
+| src/data/newBlogPosts.ts | ~20 | Контент блога |
+| src/lib/contentGenerator.ts | 4 | Шаблоны |
+| src/lib/metadata.ts | 5 | Шаблоны |
+| 27 HTML-файлов в public/ | ~60 | Статика |
+
