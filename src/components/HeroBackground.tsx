@@ -18,7 +18,7 @@ const HeroBackground = ({
   image, 
   blur = 0, 
   blurMobile,
-  opacity = 0.55,
+  opacity = 0.85,
   opacityMobile,
   overlay = 'gradient',
   altText = 'Фоновое изображение',
