@@ -5,11 +5,14 @@ import { useParallax } from "@/hooks/useParallax";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { getCopy } from "@/lib/copyUtils";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { trackGoal } from "@/lib/analytics";
 
-// Единственный фон главной страницы
-const HERO_BACKGROUND = '/images/backgrounds/moscow-panorama-sunset.jpg';
+// Два фона с ротацией
+const HERO_BACKGROUNDS = [
+  '/images/backgrounds/moscow-panorama-sunset.jpg',
+  '/images/backgrounds/moscow-park-fountains.jpg'
+];
 
 // Фоновые изображения для карточек
 const HERO_CARD_BACKGROUNDS = [
@@ -30,6 +33,16 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
   const { context } = useTraffic();
   const parallaxOffset = useParallax(0.3);
   const hasLoggedView = useRef(false);
+  const [bgIndex, setBgIndex] = useState(0);
+
+  // Ротация фонов каждые 6 секунд
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const timer = setInterval(() => {
+      setBgIndex(prev => (prev + 1) % HERO_BACKGROUNDS.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
   
   // Получаем текст из централизованного словаря
   const copy = getCopy('hero', context?.intent, context?.variantId || 'A');
@@ -73,15 +86,19 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ 
-          backgroundImage: `url('${HERO_BACKGROUND}')`,
-          transform: `translateY(${parallaxOffset}px)`
-        }}
-        role="img"
-        aria-label="Панорама Москвы — зона обслуживания СЭС"
-      />
+      {HERO_BACKGROUNDS.map((bg, i) => (
+        <div
+          key={bg}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000"
+          style={{ 
+            backgroundImage: `url('${bg}')`,
+            transform: `translateY(${parallaxOffset}px)`,
+            opacity: i === bgIndex ? 1 : 0,
+          }}
+          role="img"
+          aria-label="Панорама Москвы — зона обслуживания СЭС"
+        />
+      ))}
       
       {/* Lighter overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-background/50 to-background/30 dark:from-background/80 dark:via-background/65 dark:to-background/50" />
