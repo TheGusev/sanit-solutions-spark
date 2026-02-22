@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { SEO_CONFIG } from "@/lib/seo";
 
@@ -7,10 +8,11 @@ interface AuthorBadgeProps {
   role: string;
   experience: string;
   avatarUrl?: string;
+  authorId?: string;
   className?: string;
 }
 
-const AuthorBadge = ({ name, role, experience, avatarUrl, className }: AuthorBadgeProps) => {
+const AuthorBadge = ({ name, role, experience, avatarUrl, authorId, className }: AuthorBadgeProps) => {
   const initials = name
     .split(" ")
     .map((w) => w[0])
@@ -49,7 +51,13 @@ const AuthorBadge = ({ name, role, experience, avatarUrl, className }: AuthorBad
       )}
 
       <div className="min-w-0">
-        <p className="text-sm font-semibold text-foreground leading-tight">{name}</p>
+        {authorId ? (
+          <Link to={`/team#author-${authorId}`} className="text-sm font-semibold text-foreground leading-tight hover:text-primary transition-colors">
+            {name}
+          </Link>
+        ) : (
+          <p className="text-sm font-semibold text-foreground leading-tight">{name}</p>
+        )}
         <p className="text-xs text-muted-foreground">{role} · {experience}</p>
       </div>
     </div>

@@ -92,7 +92,8 @@ const Team = () => (
             return (
               <article
                 key={author.id}
-                className="rounded-xl border bg-card p-6 flex flex-col gap-4 hover:shadow-md transition-shadow"
+                id={`author-${author.id}`}
+                className="rounded-xl border bg-card p-6 flex flex-col gap-4 hover:shadow-md transition-shadow scroll-mt-28"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-lg shrink-0">
