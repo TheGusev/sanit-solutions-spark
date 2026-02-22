@@ -1,74 +1,38 @@
 
+# Исправление: передать authorId в AuthorBadge
 
-# Phase 9.1: E-E-A-T аудит + ItemList JSON-LD для кластеров
+## Проблема
 
-Батч 10 полностью выполнен. Переходим к двум оставшимся задачам из вашего сообщения.
+В `BlogPost.tsx` компонент `AuthorBadge` вызывается в двух местах без пропа `authorId`, из-за чего имя автора отображается как обычный текст, а не как ссылка на `/team#author-{id}`.
 
----
+## Что нужно исправить
 
-## Задача 1: E-E-A-T аудит и улучшения
+### Файл: `src/pages/BlogPost.tsx`
 
-Три доработки для усиления сигналов авторства:
+**Место 1 (строка ~188)** -- AuthorBadge в шапке статьи:
+```jsx
+// Было:
+<AuthorBadge name={author.name} role={author.role} experience={author.experience} />
 
-### 1a. Ссылка с AuthorBadge на /team
-
-Сейчас `AuthorBadge` показывает имя автора как простой текст. Нужно превратить его в ссылку на `/team#author-{authorId}`, чтобы поисковые боты связали автора статьи с его профилем на странице команды.
-
-- Файл: `src/components/blog/AuthorBadge.tsx`
-- Добавить проп `authorId?: string`
-- Обернуть имя в `<Link to="/team#author-{authorId}">`
-- Добавить `id` якоря на карточки в `Team.tsx`
-
-### 1b. Author в Article JSON-LD уже на месте
-
-В `StructuredData.tsx` генератор `generateArticle` уже включает `author: { @type: Person, name, jobTitle, worksFor }`. Это корректно.
-
-### 1c. CitationBlock -- без изменений
-
-Компонент `CitationBlock` уже рендерит `<cite>` с названиями законов (СанПиН, ФЗ). Дополнительных правок не требуется.
-
----
-
-## Задача 2: ItemList JSON-LD на страницах блога
-
-Добавить `ItemList` разметку на главную страницу блога (`/blog`) и при фильтрации по категориям, чтобы Яндекс видел кластерную структуру.
-
-### Что делаем
-
-- Файл: `src/pages/Blog.tsx`
-- Добавить `<StructuredData type="ItemList" />` с динамическим списком статей текущей страницы/категории
-- Компонент `StructuredData` уже поддерживает тип `ItemList` (генератор `generateItemList` есть в коде)
-
-### Пример JSON-LD
-
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  "name": "Статьи блога: Вредители",
-  "description": "Экспертные статьи о борьбе с вредителями",
-  "numberOfItems": 14,
-  "itemListElement": [
-    { "@type": "ListItem", "position": 1, "url": "https://goruslugimsk.ru/blog/klopy-v-kvartire", "name": "Клопы в квартире" }
-  ]
-}
+// Станет:
+<AuthorBadge name={author.name} role={author.role} experience={author.experience} authorId={author.id} />
 ```
 
----
+**Место 2 (строка ~299)** -- AuthorBadge внизу статьи:
+```jsx
+// Было:
+<AuthorBadge name={author.name} role={author.role} experience={author.experience} />
 
-## Технические детали
+// Станет:
+<AuthorBadge name={author.name} role={author.role} experience={author.experience} authorId={author.id} />
+```
 
-### Изменяемые файлы
+## Результаты проверки (остальное работает)
 
-| Файл | Действие |
-|------|----------|
-| `src/components/blog/AuthorBadge.tsx` | Добавить ссылку на /team#authorId |
-| `src/pages/Team.tsx` | Добавить id-якоря на карточки авторов |
-| `src/pages/Blog.tsx` | Добавить ItemList JSON-LD |
-
-### Порядок выполнения
-
-1. Обновить `AuthorBadge` -- ссылка на /team
-2. Добавить якоря в `Team.tsx`
-3. Добавить `ItemList` JSON-LD в `Blog.tsx`
-
+- Хлебные крошки (визуальные) -- отображаются корректно
+- BreadcrumbList JSON-LD -- присутствует в коде BlogPost.tsx
+- LLMSummary -- рендерится в начале статьи
+- FAQSection -- аккордеоны открываются/закрываются
+- RelatedQueries ("Похожие вопросы") -- 4 тематические ссылки, все из смежного кластера
+- Ссылка "Команда" в Header -- присутствует
+- Страница /team -- рендерится корректно с якорями `author-{id}`
