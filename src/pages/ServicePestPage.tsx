@@ -152,14 +152,14 @@ export default function ServicePestPage() {
               <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
               <style dangerouslySetInnerHTML={{ __html: `
                 .pest-hero-bg {
-                  filter: blur(2px);
-                  opacity: 0.80;
+                  filter: blur(1px);
+                  opacity: 0.95;
                   transform: scale(1.05);
                 }
                 @media (min-width: 768px) {
                   .pest-hero-bg {
-                    filter: blur(4px);
-                    opacity: 0.60;
+                    filter: blur(3px);
+                    opacity: 0.65;
                     transform: scale(1.05);
                   }
                 }
@@ -170,8 +170,8 @@ export default function ServicePestPage() {
                 role="img"
                 aria-label={pestImage.altText}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/55 to-background/30" />
-              <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background/40" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/35 to-background/30" />
+              <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-transparent to-background/30" />
             </>
           )}
           {!pestImage && (
