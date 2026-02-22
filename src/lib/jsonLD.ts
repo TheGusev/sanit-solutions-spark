@@ -5,27 +5,35 @@ export function generateOrganizationLD() {
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "name": SEO_CONFIG.companyName,
-    "description": "Профессиональная дезинфекция, дезинсекция и дератизация в Москве и МО",
+    "name": "ГорУслуги — Санитарные Решения",
+    "alternateName": SEO_CONFIG.companyName,
+    "description": "Профессиональная дезинфекция, дезинсекция и дератизация в Москве и Московской области. Лицензированные специалисты, гарантия до 12 месяцев.",
     "url": SEO_CONFIG.baseUrl,
     "telephone": SEO_CONFIG.phone,
-    "email": "info@sanit-solutions.ru",
+    "email": "west-centro@mail.ru",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Москва",
+      "addressRegion": "Московская область",
       "addressCountry": "RU"
     },
-    "areaServed": {
-      "@type": "GeoCircle",
-      "geoMidpoint": {
-        "@type": "GeoCoordinates",
-        "latitude": 55.751244,
-        "longitude": 37.618423
-      },
-      "geoRadius": "50000"
-    },
-    "priceRange": "от 1000₽",
+    "areaServed": [
+      { "@type": "City", "name": "Москва" },
+      { "@type": "AdministrativeArea", "name": "Московская область" }
+    ],
+    "priceRange": "₽₽",
     "openingHours": "Mo-Su 00:00-23:59",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Санитарные услуги",
+      "itemListElement": [
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Дезинсекция" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Дератизация" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Дезинфекция" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Дезодорация" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Озонирование" } }
+      ]
+    },
     "sameAs": [
       "https://vk.com/yourpage",
       "https://t.me/yourpage"
