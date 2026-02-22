@@ -1,21 +1,69 @@
 
+# Добавление недостающих статей блога в Sitemap и SSG
 
-# Ротация фонов Hero: оставить только 2 и 3
+## Проблема
 
-## Изменение
+В `vite-plugin-sitemap.ts` и `src/lib/seoRoutes.ts` массив blog slugs содержит 176 записей, но пропущены ~22 уникальных slug из категорий B2B (5), Safety (5), DIY-провалы (5) и LLM-уникальные (~7+). Эти статьи отображаются в SPA-роутере, но:
+- Не генерируются как статические HTML (SSG)
+- Не попадают в sitemap-blog.xml
+- Nginx отдаёт 404 на эти URL (нет index.html)
 
-В файле `src/components/Hero.tsx` массив `HERO_BACKGROUNDS` содержит 4 изображения:
+## Решение
 
-1. `/images/work/hero-fog-living.png` -- удалить
-2. `/images/work/hero-bed-spray.png` -- оставить
-3. `/images/work/hero-bathroom.png` -- оставить
-4. `/images/work/hero-kitchen.png` -- удалить
+Добавить все недостающие slug в оба файла:
 
-После изменения останется только 2 фото, которые будут чередоваться каждые 6 секунд.
+### Файл 1: `src/lib/seoRoutes.ts`
 
-## Файл
+В массив `blogArticleSlugs` (внутри `getAllSSGRoutes()`) добавить секции:
 
-| Файл | Изменение |
-|---|---|
-| `src/components/Hero.tsx` | Убрать строки 1 и 4 из массива `HERO_BACKGROUNDS` |
+```
+// ===== B2B articles (5) =====
+'shtrafy-za-dezinfekciyu-bez-licenzii-2026',
+'haccp-pest-kontrol-restoran',
+'zhurnal-ucheta-dezinsekcii-obshhepit',
+'sanpin-deratizaciya-skladov',
+'dogovor-na-dezinsekciyu-hostela',
 
+// ===== Safety articles (5) =====
+'cherez-skolko-puskat-koshku-posle-tumana',
+'goryachij-tuman-i-akvarium',
+'dezinsekciya-s-grudnym-rebenkom',
+'bezopasnost-obrabotki-dlya-beremennyh',
+'allergiya-na-preparaty-dezinsekcii',
+
+// ===== DIY-failure articles (5) =====
+'pochemu-dihlofos-ne-beret-klopov',
+'rezistentnost-tarakanov-k-bornoj-kislote',
+'oshibki-samodeyatelnoj-obrabotki',
+'pochemu-tarakany-vozvrashchayutsya-posle-obrabotki',
+'aerozoli-ot-klopov-ne-rabotayut',
+
+// ===== LLM-unique articles =====
+'bezopasnost-detej-i-zhivotnyh',
+'vrediteli-v-kvartire-vidy',
+'postelnye-klopy-polnyj-gajd',
+'ryzhie-tarakany-unichtozhenie',
+'domashnie-muravi-pochemu-ne-pomogaet',
+'podgotovka-kvartiry-chek-list',
+'dezinfekciya-posle-bolezni',
+'profilaktika-tarakanov',
+'kak-vybrat-sluzhbu-dezinfekcii',
+'kejs-restoran-tarakany',
+'kejs-gostinica-klopy',
+'dezinfekciya-ofisa-bez-pomeh',
+```
+
+### Файл 2: `vite-plugin-sitemap.ts`
+
+Добавить те же slug в массив `blogSlugs` (строки 148-200).
+
+### Файл 3: `public/robots.txt`
+
+Обновить дату `Last updated` на `2026-02-23`.
+
+## Результат
+
+- Итого blog slugs: 176 + 22 = **~198 уникальных статей** в sitemap и SSG
+- Все статьи получат статические HTML-файлы при билде
+- Nginx будет отдавать 200 вместо 404
+- После деплоя можно отправить URL на переобход
