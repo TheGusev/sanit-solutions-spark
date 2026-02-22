@@ -10,6 +10,14 @@ import { trackGoal } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
 
+function pluralizeQuestion(n: number): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'вопрос';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'вопроса';
+  return 'вопросов';
+}
+
 interface QuizStep {
   question: string;
   options: string[];
@@ -131,7 +139,7 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle }: Servic
             Рассчитать стоимость
           </h2>
           <p className="text-muted-foreground text-lg">
-            Ответьте на {steps.length} вопроса и получите расчёт
+            Ответьте на {steps.length} {pluralizeQuestion(steps.length)} и получите расчёт
           </p>
         </AnimatedSection>
 

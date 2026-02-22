@@ -5,7 +5,8 @@
 
 import { useParams, Link } from 'react-router-dom';
 import NotFound from './NotFound';
-import { Helmet } from 'react-helmet-async';
+import SEOHead from '@/components/SEOHead';
+import type { PageMetadata } from '@/lib/metadata';
 import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -111,6 +112,26 @@ export default function ServicePestPage() {
       }
     ]
   };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://goruslugimsk.ru' },
+      { '@type': 'ListItem', position: 2, name: serviceName, item: `https://goruslugimsk.ru/uslugi/${service}` },
+      { '@type': 'ListItem', position: 3, name: pest.name, item: `https://goruslugimsk.ru${canonicalPath}` }
+    ]
+  };
+
+  const metadata: PageMetadata = {
+    title: seoMeta.title,
+    description: seoMeta.description,
+    canonical: seoMeta.canonical,
+    ogTitle: seoMeta.ogTitle,
+    ogDescription: seoMeta.ogDescription,
+    ogImage: seoMeta.ogImage,
+    schema: [schemaMarkup, faqSchema, breadcrumbSchema],
+  };
   
   const topNeighborhoodData = topNeighborhoods.slice(0, 8).map(slug => 
     neighborhoods.find(n => n.slug === slug)
@@ -118,21 +139,7 @@ export default function ServicePestPage() {
   
   return (
     <>
-      <Helmet>
-        <title>{seoMeta.title}</title>
-        <meta name="description" content={seoMeta.description} />
-        <meta name="robots" content={seoMeta.robots} />
-        <link rel="canonical" href={seoMeta.canonical} />
-        <link rel="alternate" hrefLang="ru" href={seoMeta.hreflangRu} />
-        <link rel="alternate" hrefLang="x-default" href={seoMeta.hreflangDefault} />
-        <meta property="og:title" content={seoMeta.ogTitle} />
-        <meta property="og:description" content={seoMeta.ogDescription} />
-        <meta property="og:url" content={seoMeta.canonical} />
-        <meta property="og:image" content={seoMeta.ogImage} />
-        <meta property="og:type" content={seoMeta.ogType} />
-        <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
+      <SEOHead metadata={metadata} pagePath={canonicalPath} />
       
       <Header />
       

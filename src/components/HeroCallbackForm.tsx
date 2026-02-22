@@ -102,7 +102,7 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
         />
         <Button
           type="submit"
-          disabled={isSubmitting || !agreed}
+          disabled={isSubmitting}
           className="h-12 text-base font-semibold whitespace-nowrap px-6"
         >
           <Phone className="w-4 h-4 mr-2" />
