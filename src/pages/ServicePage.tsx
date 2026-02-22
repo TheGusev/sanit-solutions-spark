@@ -97,7 +97,7 @@ const ServicePage = () => {
   const displayServices = service.relatedServices
     ? servicePages.filter(s => service.relatedServices!.includes(s.slug))
     : servicePages.filter(s => s.slug !== service.slug);
-  const otherServices = servicePages.filter(s => s.slug !== service.slug);
+  
 
   const metadata = generateServiceMetadata({
     serviceName: service.title,
