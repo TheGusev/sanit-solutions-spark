@@ -10,6 +10,8 @@ import { premisesArticles } from './premises-articles';
 import { allLegalArticles } from './legal-articles';
 import { allB2BArticles } from './b2b-articles';
 import { moleGeoArticles } from './mole-geo-articles';
+import { safetyArticles } from './safety-articles';
+import { diyFailureArticles } from './diy-failures-articles';
 import type { BlogArticle } from './types';
 export { blogCategories, blogAuthors } from './types';
 export type { BlogArticle, Author } from './types';
@@ -78,11 +80,13 @@ const newArticles: BlogArticle[] = newBlogPosts.map(post => ({
 const allArticlesRaw: BlogArticle[] = [
   ...allLegalArticles,    // Приоритет 1: legal с sources/intent
   ...allB2BArticles,      // Приоритет 2: B2B с sources/intent/tldr
-  ...allPestsArticles,    // Приоритет 3: generated с tldr/intent
-  ...premisesArticles,    // Приоритет 4: generated с tldr/intent
-  ...moleGeoArticles,     // Приоритет 5: geo
-  ...newArticles,         // Приоритет 6: newBlogPosts (конвертированные)
-  ...legacyArticles,      // Приоритет 7: legacy (самый низкий)
+  ...safetyArticles,      // Приоритет 3: безопасность (health-risk)
+  ...diyFailureArticles,  // Приоритет 4: DIY-провалы (guide/symptoms)
+  ...allPestsArticles,    // Приоритет 5: generated с tldr/intent
+  ...premisesArticles,    // Приоритет 6: generated с tldr/intent
+  ...moleGeoArticles,     // Приоритет 7: geo
+  ...newArticles,         // Приоритет 8: newBlogPosts (конвертированные)
+  ...legacyArticles,      // Приоритет 9: legacy (самый низкий)
 ];
 
 // Дедупликация по slug (первое вхождение побеждает)
@@ -135,7 +139,9 @@ export const blogStats = {
   legal: allLegalArticles.length,
   b2b: allB2BArticles.length,
   moleGeo: moleGeoArticles.length,
+  safety: safetyArticles.length,
+  diyFailures: diyFailureArticles.length,
 };
 
 // Экспорт по категориям
-export { allPestsArticles, premisesArticles, allLegalArticles, allB2BArticles };
+export { allPestsArticles, premisesArticles, allLegalArticles, allB2BArticles, safetyArticles, diyFailureArticles };

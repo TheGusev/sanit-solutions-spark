@@ -4,12 +4,13 @@
  * Все статьи проходят validate-ai-ready.ts без ошибок.
  */
 
-import { Scale, FileText, ClipboardCheck, Shield, Briefcase } from "lucide-react";
+import { Scale, FileText, ClipboardCheck, Shield, Briefcase, Warehouse, Stethoscope, CookingPot, Building, HelpCircle } from "lucide-react";
 import type { BlogArticle } from "./types";
 import { blogAuthors } from "./types";
 import { generateArticleDate } from "@/lib/blogContentGenerator";
 
 const legalAuthor = blogAuthors.find(a => a.id === 'vasiliev')!;
+const howtoAuthor = blogAuthors.find(a => a.id === 'uchaev')!;
 
 export const allB2BArticles: BlogArticle[] = [
   // ─────────────────────────────────────────────────────────────
