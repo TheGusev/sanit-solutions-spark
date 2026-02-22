@@ -189,6 +189,7 @@ const BlogPost = () => {
               name={author.name}
               role={author.role}
               experience={author.experience}
+              authorId={author.id}
             />
           )}
 
@@ -296,7 +297,7 @@ const BlogPost = () => {
       {author && (
         <section className="px-4 pb-8">
           <div className="container mx-auto max-w-4xl">
-            <AuthorBadge name={author.name} role={author.role} experience={author.experience} />
+            <AuthorBadge name={author.name} role={author.role} experience={author.experience} authorId={author.id} />
           </div>
         </section>
       )}
