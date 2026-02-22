@@ -5,17 +5,11 @@ import { useParallax } from "@/hooks/useParallax";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { getCopy } from "@/lib/copyUtils";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { trackGoal } from "@/lib/analytics";
 
-// Фоновые изображения для ротации
-const HERO_BACKGROUNDS = [
-  '/images/work/home-kitchen.png',
-  '/images/work/living-room-treatment.png',
-  '/images/work/kitchen-treatment.jpg',
-  '/images/backgrounds/moscow-panorama-sunset.jpg',
-  '/images/work/corridor-treatment.jpg'
-];
+// Единственный фон главной страницы
+const HERO_BACKGROUND = '/images/backgrounds/moscow-panorama-sunset.jpg';
 
 // Фоновые изображения для карточек
 const HERO_CARD_BACKGROUNDS = [
@@ -36,30 +30,6 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
   const { context } = useTraffic();
   const parallaxOffset = useParallax(0.3);
   const hasLoggedView = useRef(false);
-  const [currentBgIndex, setCurrentBgIndex] = useState(0);
-  const [nextBgIndex, setNextBgIndex] = useState(1);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  
-  // Prefetch следующего слайда через new Image()
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const img = new Image();
-    img.src = HERO_BACKGROUNDS[nextBgIndex];
-  }, [nextBgIndex]);
-  
-  // Ротация: каждые 5 секунд
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentBgIndex(nextBgIndex);
-        setNextBgIndex((nextBgIndex + 1) % HERO_BACKGROUNDS.length);
-        setIsTransitioning(false);
-      }, 1000); // длительность crossfade
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, [nextBgIndex]);
   
   // Получаем текст из централизованного словаря
   const copy = getCopy('hero', context?.intent, context?.variantId || 'A');
@@ -103,26 +73,15 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
-      {/* Only render current + next slide (not all 5) */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 opacity-100"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ 
-          backgroundImage: `url('${HERO_BACKGROUNDS[currentBgIndex]}')`,
-          transform: `translateY(${parallaxOffset}px)`,
-          opacity: isTransitioning ? 0 : 1
+          backgroundImage: `url('${HERO_BACKGROUND}')`,
+          transform: `translateY(${parallaxOffset}px)`
         }}
         role="img"
-        aria-label="Профессиональная дезинфекция — специалист проводит санитарную обработку"
+        aria-label="Панорама Москвы — зона обслуживания СЭС"
       />
-      {isTransitioning && (
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ 
-            backgroundImage: `url('${HERO_BACKGROUNDS[nextBgIndex]}')`,
-            transform: `translateY(${parallaxOffset}px)` 
-          }}
-        />
-      )}
       
       {/* Lighter overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-background/35 via-background/25 to-background/15 dark:from-background/65 dark:via-background/55 dark:to-background/45" />
