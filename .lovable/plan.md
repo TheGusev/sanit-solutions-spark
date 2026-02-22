@@ -1,115 +1,29 @@
 
 
-# Фаза E-E-A-T и Яндекс-оптимизация (Phase 9)
+# Добавление ссылки "Наша команда" в Header
 
-Три задачи для повышения доверия поисковых систем: страница команды, улучшенная перелинковка и BreadcrumbList JSON-LD.
+## Результаты проверки
 
----
+- `/team` -- страница отображается корректно: заголовок, сетка экспертов, хлебные крошки
+- `/blog/borba-s-tarakanami` -- AuthorBadge, LLMSummary, ComparisonTable рендерятся; блок "Похожие вопросы" показывает 4 связанные статьи
+- Ошибок в консоли нет
+- Ссылка "Наша команда" присутствует в Footer, но отсутствует в Header
 
-## Задача 1: Страница "Наша команда" (`/team`)
+## Что нужно сделать
 
-Создаём новую страницу с карточками всех 6 авторов блога (из `blogAuthors` в `types.ts`).
+Добавить ссылку "Команда" (`/team`) в Header рядом с "Контакты" -- в двух местах:
 
-**Что делаем:**
-- Файл `src/pages/Team.tsx` -- профессиональная сетка экспертов
-- Данные берём из `blogAuthors` (types.ts), чтобы experience/role совпадали с блогом
-- 6 авторов: Гусев М. (8 лет), Афанасьев (5 лет), Гусев В. (7 лет), Иванов (10 лет), Васильев (12 лет), Учаев (7 лет)
-- Аватар-заглушки с инициалами (как в AuthorBadge)
-- Специализации каждого автора из массива `specialization`
-- JSON-LD: `AboutPage` + `Organization` с массивом `employee`
-- Ссылка на `/team` в Footer и в Header (секция "О нас")
+### 1. Desktop-навигация (строки ~280-289)
 
-**Роут:** Добавить в `App.tsx`:
-```
-<Route path="/team" element={<Team />} />
-```
+После ссылки "Контакты" добавить аналогичную ссылку "Команда" с таким же стилем (активное состояние при `location.pathname === '/team'`).
 
----
+### 2. Мобильное меню (строки ~436-446)
 
-## Задача 2: Компонент `<RelatedQueries />`
+После `SheetClose` с "Контакты" добавить ещё один `SheetClose` с ссылкой на `/team` и тем же паттерном `getActiveMenuClass`.
 
-Добавляем блок "Читайте также" с текстовыми ссылками внизу каждой статьи. Отличается от существующего `RelatedArticles` (карточки) -- это компактные текстовые ссылки, оптимизированные для ботов.
-
-**Что делаем:**
-- Файл `src/components/blog/RelatedQueries.tsx`
-- Принимает массив `BlogArticle[]` (3-4 статьи)
-- Дизайн: минималистичный список со стрелками, заголовок "Похожие вопросы"
-- Размещение в `BlogPost.tsx`: между `FAQSection` и нижним `AuthorBadge`
-
-**Логика подбора в BlogPost.tsx:**
-- Если у статьи есть `relatedArticles` (массив slug) -- берём их
-- Иначе -- фильтруем `allBlogArticles` по той же категории + общим тегам (top 3-4)
-- Приоритет LLM-статьям (у которых есть `llmSummary`)
-
----
-
-## Задача 3: BreadcrumbList JSON-LD на всех статьях блога
-
-Яндекс активно использует BreadcrumbList для сниппетов и понимания структуры.
-
-**Что делаем:**
-- В `BlogPost.tsx` добавляем `<StructuredData type="BreadcrumbList" />` с тремя уровнями:
-  1. Главная -- `https://goruslugimsk.ru/`
-  2. Блог -- `https://goruslugimsk.ru/blog`  
-  3. Название статьи -- `https://goruslugimsk.ru/blog/{slug}/`
-
-Компонент `StructuredData` уже поддерживает тип `BreadcrumbList` -- нужно просто добавить вызов в `BlogPost.tsx`.
-
-**Текущее состояние:** Визуальные хлебные крошки уже есть (компонент `Breadcrumbs`), но JSON-LD `BreadcrumbList` НЕ инжектится. Нужно добавить 1 блок в `BlogPost.tsx`.
-
----
-
-## Технические детали
-
-### Изменяемые файлы
+## Изменяемый файл
 
 | Файл | Действие |
 |------|----------|
-| `src/pages/Team.tsx` | Новый -- страница команды |
-| `src/App.tsx` | Добавить роут `/team` |
-| `src/components/blog/RelatedQueries.tsx` | Новый -- компактные ссылки |
-| `src/pages/BlogPost.tsx` | Добавить RelatedQueries + BreadcrumbList JSON-LD |
-| `src/components/Footer.tsx` | Добавить ссылку на `/team` |
-
-### JSON-LD на странице Team.tsx
-
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "AboutPage",
-  "mainEntity": {
-    "@type": "Organization",
-    "name": "Санитарные Решения",
-    "url": "https://goruslugimsk.ru",
-    "employee": [
-      {
-        "@type": "Person",
-        "name": "Эдуард Васильев",
-        "jobTitle": "Эксперт по санитарии",
-        "description": "12 лет опыта"
-      }
-    ]
-  }
-}
-```
-
-### BreadcrumbList JSON-LD (добавляется в BlogPost.tsx)
-
-```jsx
-<StructuredData
-  type="BreadcrumbList"
-  items={[
-    { name: "Главная", url: "/" },
-    { name: "Блог", url: "/blog" },
-    { name: post.title }
-  ]}
-  baseUrl={SEO_CONFIG.baseUrl}
-/>
-```
-
-### Порядок выполнения
-
-1. Создать `Team.tsx` + роут + ссылка в Footer
-2. Создать `RelatedQueries.tsx` + интегрировать в `BlogPost.tsx`
-3. Добавить `BreadcrumbList` JSON-LD в `BlogPost.tsx`
+| `src/components/Header.tsx` | 2 вставки: desktop (после "Контакты") и mobile (после "Контакты") |
 
