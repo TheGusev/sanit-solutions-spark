@@ -125,7 +125,7 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle }: Servic
       setComment('');
       setAgreed(false);
     } catch {
-      toast.error('Ошибка отправки. Позвоните: +7 (906) 998-98-88');
+      toast.error('Ошибка отправки. Позвоните: 8-495-018-18-17');
     } finally {
       setIsSubmitting(false);
     }

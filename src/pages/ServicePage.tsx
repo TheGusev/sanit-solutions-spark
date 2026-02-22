@@ -193,11 +193,13 @@ const ServicePage = () => {
               <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
               <style dangerouslySetInnerHTML={{ __html: `
                 .service-hero-bg {
-                  opacity: 0.45;
+                  filter: blur(1px);
+                  opacity: 0.95;
                 }
                 @media (min-width: 768px) {
                   .service-hero-bg {
-                    opacity: 0.55;
+                    filter: blur(3px);
+                    opacity: 0.65;
                   }
                 }
               `}} />
@@ -207,8 +209,8 @@ const ServicePage = () => {
                 role="img"
                 aria-label={service.title}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/65 to-background/40" />
-              <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background/40" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/35 to-background/30" />
+              <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-transparent to-background/30" />
             </>
           )}
           <div className="container mx-auto px-4">

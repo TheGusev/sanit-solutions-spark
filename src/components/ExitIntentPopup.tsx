@@ -293,10 +293,10 @@ const ExitIntentPopup = () => {
             <div className="bg-muted p-4 rounded-lg flex items-center justify-center gap-2">
               <Phone className="h-4 w-4 text-primary" />
               <a
-                href="tel:+79069989888"
+                href="tel:84950181817"
                 className="font-bold text-primary hover:underline"
               >
-                +7 (906) 998-98-88
+                8-495-018-18-17
               </a>
             </div>
 

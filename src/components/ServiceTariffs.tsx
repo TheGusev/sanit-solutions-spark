@@ -74,7 +74,7 @@ const ServiceTariffs = ({ tariffs, serviceTitle }: ServiceTariffsProps) => {
                     className="w-full min-h-[48px] text-base"
                     asChild
                   >
-                    <a href="tel:+79069989888">
+                    <a href="tel:84950181817">
                       <Phone className="w-4 h-4 mr-2" />
                       Заказать
                     </a>
