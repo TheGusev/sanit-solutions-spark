@@ -16,7 +16,7 @@ interface HeroBackgroundProps {
 
 const HeroBackground = ({ 
   image, 
-  blur = 4, 
+  blur = 1, 
   blurMobile,
   opacity = 0.55,
   opacityMobile,
@@ -24,7 +24,7 @@ const HeroBackground = ({
   altText = 'Фоновое изображение',
   className = ''
 }: HeroBackgroundProps) => {
-  const mobileBlur = blurMobile ?? Math.max(blur - 1, 2);
+  const mobileBlur = blurMobile ?? Math.max(blur - 1, 0);
   const mobileOpacity = opacityMobile ?? Math.min(opacity + 0.10, 0.75);
 
   // Unique ID for scoped CSS
