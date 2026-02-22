@@ -184,6 +184,24 @@ const blogEntries: SemanticEntry[] = [
   { query: 'штраф за вредителей в кафе', canonical: '/blog/shtraf-za-vrediteley/', intent: 'informational', cluster: 'blog', priority: 3 },
   { query: 'дезинсекция квартиры подробный гид', canonical: '/blog/dezinsekciya-kvartiry-gid/', intent: 'informational', cluster: 'blog', priority: 3 },
   { query: 'народные средства от тараканов эффективность', canonical: '/blog/narodnye-sredstva-tarakany/', intent: 'informational', cluster: 'blog', priority: 3 },
+  // DIY-провалы
+  { query: 'почему дихлофос не берет клопов', canonical: '/blog/pochemu-dihlofos-ne-beret-klopov/', intent: 'informational', cluster: 'blog', priority: 2 },
+  { query: 'резистентность тараканов к борной кислоте', canonical: '/blog/rezistentnost-tarakanov-k-bornoj-kislote/', intent: 'informational', cluster: 'blog', priority: 3 },
+  { query: 'ошибки самостоятельной обработки от тараканов', canonical: '/blog/oshibki-samodeyatelnoj-obrabotki/', intent: 'informational', cluster: 'blog', priority: 2 },
+  { query: 'почему тараканы возвращаются после обработки', canonical: '/blog/pochemu-tarakany-vozvrashchayutsya-posle-obrabotki/', intent: 'informational', cluster: 'blog', priority: 2 },
+  { query: 'аэрозоли от клопов не работают', canonical: '/blog/aerozoli-ot-klopov-ne-rabotayut/', intent: 'informational', cluster: 'blog', priority: 3 },
+  // Микро-B2B
+  { query: 'пест контроль пвз вайлдберриз', canonical: '/blog/pest-kontrol-pvz-marketplejs/', intent: 'informational', cluster: 'blog', priority: 3 },
+  { query: 'санпин дезинфекция медицинских учреждений', canonical: '/blog/sanpin-dezinfekciya-kliniki/', intent: 'informational', cluster: 'blog', priority: 3 },
+  { query: 'хассп аудит пекарня пест контроль', canonical: '/blog/haccp-audit-pekarnaya/', intent: 'informational', cluster: 'blog', priority: 3 },
+  { query: 'обязанности ук дератизация подвалов', canonical: '/blog/obyazannosti-uk-deratizaciya-podvalov/', intent: 'informational', cluster: 'blog', priority: 3 },
+  { query: 'куда жаловаться на крыс в подъезде', canonical: '/blog/kuda-zhalovatsya-na-krys-v-podezde/', intent: 'informational', cluster: 'blog', priority: 2 },
+  // Безопасность
+  { query: 'через сколько пускать кошку после тумана', canonical: '/blog/cherez-skolko-puskat-koshku-posle-tumana/', intent: 'informational', cluster: 'blog', priority: 2 },
+  { query: 'горячий туман опасен для аквариума', canonical: '/blog/goryachij-tuman-i-akvarium/', intent: 'informational', cluster: 'blog', priority: 2 },
+  { query: 'дезинсекция с грудным ребенком', canonical: '/blog/dezinsekciya-s-grudnym-rebenkom/', intent: 'informational', cluster: 'blog', priority: 2 },
+  { query: 'обработка от вредителей при беременности', canonical: '/blog/bezopasnost-obrabotki-dlya-beremennyh/', intent: 'informational', cluster: 'blog', priority: 2 },
+  { query: 'аллергия на препараты дезинсекции', canonical: '/blog/allergiya-na-preparaty-dezinsekcii/', intent: 'informational', cluster: 'blog', priority: 3 },
 ];
 
 // ===================== КЛАСТЕР: moscow-region (40 записей = 10 городов × 4 услуги) =====================

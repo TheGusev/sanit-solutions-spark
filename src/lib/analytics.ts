@@ -184,6 +184,57 @@ export function trackPageView(url: string, params?: Record<string, any>): void {
   }
 }
 
+// ─── AI Traffic Tracking ───────────────────────────────────────
+
+const AI_DOMAINS = ['perplexity.ai', 'chatgpt.com', 'poe.com', 'claude.ai', 'you.com'];
+const AI_UTM_KEYS = ['perplexity', 'chatgpt', 'poe', 'claude', 'you'];
+
+/** Трекинг переходов из AI-ассистентов (referrer + UTM) */
+export function trackAIReferral(): void {
+  if (typeof window === 'undefined') return;
+
+  const ref = document.referrer.toLowerCase();
+  const urlParams = new URLSearchParams(window.location.search);
+  const utmSource = (urlParams.get('utm_source') || '').toLowerCase();
+
+  const isAIReferrer = AI_DOMAINS.some(d => ref.includes(d));
+  const isAIUtm = AI_UTM_KEYS.some(k => utmSource.includes(k));
+
+  if (isAIReferrer || isAIUtm) {
+    const source = isAIReferrer ? ref : utmSource;
+    trackGoal('ai_referral', {
+      source,
+      landing_page: window.location.pathname,
+    });
+  }
+}
+
+/** Эвристика: Direct-трафик на глубокие /blog/ статьи = потенциальный AI-переход */
+export function detectDarkAITraffic(): void {
+  if (typeof window === 'undefined') return;
+
+  const path = window.location.pathname;
+  const ref = document.referrer;
+
+  // Direct (без реферера) на глубокую статью блога (slug > 30 символов)
+  const slugMatch = path.match(/^\/blog\/([^/]+)\/?$/);
+  if (!slugMatch) return;
+
+  const slug = slugMatch[1];
+  if (ref || slug.length < 30) return;
+
+  // Помечаем в Метрике
+  if (window.ym && typeof window.ym === 'function') {
+    try {
+      window.ym(YANDEX_COUNTER_ID, 'params', {
+        suspected_ai: true,
+        landing_page: path,
+      });
+    } catch (err) {
+      console.debug('Dark AI traffic detection error:', err);
+    }
+  }
+}
 
 // Lazy loading Hotjar (безопасный метод без innerHTML)
 function loadHotjar(siteId: string): void {
