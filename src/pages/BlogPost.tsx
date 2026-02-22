@@ -10,11 +10,13 @@ import HeroBackground from "@/components/HeroBackground";
 import TableOfContents, { generateContentWithIds, extractHeadings } from "@/components/TableOfContents";
 import RelatedArticles from "@/components/RelatedArticles";
 import InternalLinks from "@/components/InternalLinks";
+import TLDRBlock from "@/components/blog/TLDRBlock";
+import VisibleFAQ from "@/components/blog/VisibleFAQ";
+import SourcesList from "@/components/blog/SourcesList";
+import CompactCTA from "@/components/blog/CompactCTA";
 import { getArticleBySlug } from "@/data/blog";
 import { getBlogCategoryImage } from "@/data/districtImages";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
 import { SEO_CONFIG } from "@/lib/seo";
 import { User } from "lucide-react";
 
@@ -50,6 +52,7 @@ const BlogPost = () => {
 
   const headings = extractHeadings(post.content);
   const showToc = headings.length >= 3;
+  const hasFaq = post.faq && post.faq.length > 0;
 
   return (
     <div className="min-h-screen">
@@ -73,7 +76,7 @@ const BlogPost = () => {
         <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
       </Helmet>
 
-      {/* Article Schema.org with enhanced metadata */}
+      {/* BlogPosting Schema.org with dateModified */}
       <StructuredData 
         type="Article"
         post={{
@@ -83,6 +86,7 @@ const BlogPost = () => {
           slug: post.slug,
           author: post.author,
           authorRole: post.authorRole,
+          dateModified: post.updatedAt,
           category: post.category,
           keywords: post.tags,
           wordCount: post.wordCount || post.content?.split(/\s+/).length
@@ -90,11 +94,11 @@ const BlogPost = () => {
         baseUrl={SEO_CONFIG.baseUrl}
       />
       
-      {/* FAQPage Schema if article has FAQ */}
-      {post.faq && post.faq.length > 0 && (
+      {/* FAQPage Schema — only when VisibleFAQ is rendered */}
+      {hasFaq && (
         <StructuredData 
           type="FAQPage"
-          questions={post.faq}
+          questions={post.faq!}
         />
       )}
       
@@ -114,7 +118,6 @@ const BlogPost = () => {
 
       {/* Article Header with Background */}
       <section className="relative py-12 px-4 overflow-hidden">
-        {/* Фоновое изображение по категории */}
         <HeroBackground 
           image={getBlogCategoryImage(post.category)}
           blur={6}
@@ -141,7 +144,6 @@ const BlogPost = () => {
               {post.title}
             </h1>
             
-            {/* Автор статьи */}
             {post.author && (
               <div className="flex items-center justify-center gap-3 mt-6">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -157,11 +159,17 @@ const BlogPost = () => {
         </div>
       </section>
 
+      {/* TL;DR Block */}
+      {post.tldr && post.tldr.length > 0 && (
+        <div className="container mx-auto max-w-4xl px-4">
+          <TLDRBlock items={post.tldr} />
+        </div>
+      )}
+
       {/* Article Content with TOC */}
       <section className="pb-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className={showToc ? "flex flex-col lg:grid lg:grid-cols-[250px_1fr] gap-8" : ""}>
-            {/* Table of Contents - Desktop Sidebar */}
             {showToc && (
               <aside className="hidden lg:block">
                 <div className="sticky top-28">
@@ -170,9 +178,7 @@ const BlogPost = () => {
               </aside>
             )}
 
-            {/* Main Content */}
             <div className="w-full max-w-full lg:max-w-3xl mx-auto lg:mx-0 overflow-x-auto">
-              {/* Mobile TOC */}
               {showToc && (
                 <div className="lg:hidden mb-8">
                   <TableOfContents content={post.content} className="max-h-[40vh] overflow-y-auto" />
@@ -204,6 +210,14 @@ const BlogPost = () => {
         </div>
       </section>
 
+      {/* Visible FAQ */}
+      {hasFaq && <VisibleFAQ faq={post.faq!} />}
+
+      {/* Sources */}
+      {post.sources && post.sources.length > 0 && (
+        <SourcesList sources={post.sources} />
+      )}
+
       {/* Related Articles */}
       <RelatedArticles
         currentPostId={post.id}
@@ -212,50 +226,8 @@ const BlogPost = () => {
         maxItems={3}
       />
 
-      {/* Related Services based on relatedServices field or tags */}
-      <section className="py-12 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-4xl">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
-            Связанные услуги
-          </h2>
-          <div className="grid sm:grid-cols-3 gap-6">
-            {(() => {
-              const allServices = [
-                { slug: 'dezinfekciya', title: 'Дезинфекция', price: 'от 1000₽', tags: ['дезинфекция', 'вирусы', 'бактерии'] },
-                { slug: 'dezinsekciya', title: 'Дезинсекция', price: 'от 1200₽', tags: ['насекомые', 'тараканы', 'клопы', 'блохи', 'дезинсекция'] },
-                { slug: 'deratizaciya', title: 'Дератизация', price: 'от 1400₽', tags: ['грызуны', 'крысы', 'мыши', 'кроты', 'дератизация'] },
-                { slug: 'ozonirovanie', title: 'Озонирование', price: 'от 1500₽', tags: ['озон', 'запах', 'дезодорация', 'озонирование'] },
-                { slug: 'dezodoraciya', title: 'Дезодорация', price: 'от 1000₽', tags: ['запах', 'дезодорация'] },
-                { slug: 'demerkurizaciya', title: 'Демеркуризация', price: 'от 3000₽', tags: ['ртуть', 'демеркуризация', 'градусник'] },
-              ];
-
-              // Приоритет: relatedServices из статьи, потом по тегам
-              let matched = post.relatedServices
-                ? allServices.filter(s => post.relatedServices!.includes(s.slug))
-                : [];
-
-              if (matched.length === 0) {
-                matched = allServices.filter(service =>
-                  post.tags?.some(tag =>
-                    service.tags.some(st => tag.toLowerCase().includes(st) || st.includes(tag.toLowerCase()))
-                  )
-                );
-              }
-
-              return matched.slice(0, 3).map((service) => (
-                <Link key={service.slug} to={`/uslugi/${service.slug}`}>
-                  <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1">
-                    <CardContent className="p-6 text-center">
-                      <h3 className="font-bold text-lg mb-2">{service.title}</h3>
-                      <p className="text-primary font-medium">{service.price}</p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ));
-            })()}
-          </div>
-        </div>
-      </section>
+      {/* Compact CTA */}
+      <CompactCTA />
 
       {/* Internal Links for SEO */}
       <InternalLinks
@@ -269,27 +241,6 @@ const BlogPost = () => {
         title="Полезные ссылки"
         maxLinks={8}
       />
-
-      {/* CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-primary-foreground">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Остались вопросы?
-          </h2>
-          <p className="text-lg mb-8 opacity-90">
-            Закажите бесплатную консультацию — наши специалисты помогут решить вашу проблему
-          </p>
-          <Button 
-            size="lg" 
-            variant="secondary"
-            onClick={() => {
-              window.location.href = '/#contact';
-            }}
-          >
-            Заказать консультацию
-          </Button>
-        </div>
-      </section>
 
       <Footer />
     </div>

@@ -67,6 +67,17 @@ export const blogAuthors: Author[] = [
   }
 ];
 
+export interface BlogArticleSource {
+  title: string;
+  url: string;
+  publisher?: string;
+}
+
+export type BlogArticleIntent =
+  | 'guide' | 'howto' | 'price' | 'checklist'
+  | 'symptoms' | 'prevention' | 'health-risk'
+  | 'laws' | 'docs' | 'geo';
+
 export interface BlogArticle {
   id: number;
   slug: string;
@@ -80,13 +91,21 @@ export interface BlogArticle {
   wordCount?: number;
   image?: LucideIcon;
   tags: string[];
-  pest?: string;           // ID вредителя (для связи с pests.ts)
-  objectType?: string;     // ID объекта (для связи с objects.ts)
+  pest?: string;
+  objectType?: string;
   faq?: Array<{ question: string; answer: string }>;
-  relatedArticles?: string[]; // slugs связанных статей
-  relatedServices?: string[]; // slugs связанных услуг
-  author?: string;         // Имя автора
-  authorRole?: string;     // Должность автора
+  relatedArticles?: string[];
+  relatedServices?: string[];
+  author?: string;
+  authorRole?: string;
+  /** 3-6 буллетов для блока "Кратко" */
+  tldr?: string[];
+  /** Источники и нормативные документы */
+  sources?: BlogArticleSource[];
+  /** Тип интента статьи для AI-цитируемости */
+  intent?: BlogArticleIntent;
+  /** Уровень промо-контента: 0=нет, 1=компактный CTA, 2=полный */
+  promoLevel?: 0 | 1 | 2;
 }
 
 export interface BlogCategory {

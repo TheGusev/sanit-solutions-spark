@@ -12,10 +12,17 @@ import type { BlogArticle } from './types';
 export { blogCategories, blogAuthors } from './types';
 export type { BlogArticle, Author } from './types';
 
+// Авто-генерация tldr из excerpt для legacy статей
+function generateTldrFromExcerpt(excerpt: string): string[] {
+  const sentences = excerpt.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
+  return sentences.slice(0, 3);
+}
+
 // Конвертируем старые статьи в новый формат (теперь с авторами)
 const legacyArticles: BlogArticle[] = blogPostsWithAuthors.map(post => ({
   ...post,
   wordCount: post.content.split(/\s+/).length,
+  tldr: generateTldrFromExcerpt(post.excerpt),
 }));
 
 // Объединяем все статьи

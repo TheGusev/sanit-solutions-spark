@@ -394,7 +394,13 @@ export const premisesArticles: BlogArticle[] = objectTypes.flatMap((obj, objInde
       ],
       relatedServices: ['dezinsekciya', 'deratizaciya'],
       author: author.name,
-      authorRole: author.role
+      authorRole: author.role,
+      tldr: (template as any).tldrGenerator ? (template as any).tldrGenerator(obj) : [
+        `Обработка ${obj.genitive}: от ${Math.round(1200 * obj.priceMultiplier)}₽`,
+        `Время: ${obj.averageTime}`,
+        `Методы: холодный/горячий туман, барьерная защита`,
+      ],
+      intent: ((template as any).intentType || 'guide') as any,
     };
   })
 );
