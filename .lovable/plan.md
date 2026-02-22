@@ -1,48 +1,39 @@
 
 
-# Mobile-First доработки блога (Editorial UI)
+# Замена фонов главной на 4 новых фото
 
-## Что уже сделано (не требует изменений)
-- Typography plugin подключен и работает
-- BlogPost: чистый текстовый заголовок без фонового изображения
-- BlogPost: sticky TOC на десктопе, аккордеон на мобилках
-- BlogPost: TLDRBlock с иконкой молнии
-- Blog: свайп-пилюли категорий с иконками
-- Blog: карточки с тенями
+## Что будет сделано
 
-## Что нужно доработать
+1. Скопировать 4 загруженных фото в `public/images/work/`:
+   - `hero-fog-living.png` (обработка гостиной туманом)
+   - `hero-bed-spray.png` (обработка кровати)
+   - `hero-bathroom.png` (обработка ванной)
+   - `hero-kitchen.png` (обработка кухни)
 
-### 1. BlogPost.tsx -- улучшить prose-стили контента
-Текущие prose-классы задают стили вручную. Нужно:
-- Добавить `prose-slate` для приятного цвета текста (slate-800 вместо черного)
-- Убедиться что `leading-relaxed` и межабзацные отступы работают корректно
-- Строка ~217: заменить длинный набор `prose-*` классов на более чистый `prose prose-lg prose-slate max-w-none prose-headings:scroll-mt-28`
-
-### 2. TLDRBlock.tsx -- обновить дизайн по ТЗ
-Текущий: `border-primary bg-muted/50`
-Нужно по ТЗ: `bg-blue-50 border-blue-500 dark:bg-blue-950/30 dark:border-blue-400`
-- Убрать буллет-поинты, заменить на абзацы
-- Файл: `src/components/blog/TLDRBlock.tsx`
-
-### 3. Blog.tsx -- сортировка топ-статей выше
-Добавить массив `topFeaturedSlugs` с самыми важными статьями (гайды, законы) и выводить их первыми в отфильтрованном списке.
-- Файл: `src/pages/Blog.tsx`
-- Логика: featured статьи сортируются в начало массива `filteredPosts`
-
-### 4. Blog.tsx -- убрать лишние рамки с карточек
-Текущий: `hover:shadow-lg hover:shadow-russia-red/10`
-Нужно: убрать border у Card, оставить `shadow-sm hover:shadow-md` для чистоты
+2. Обновить массив `HERO_BACKGROUNDS` в `src/components/Hero.tsx` — заменить 3 старых фото на 4 новых. Ротация каждые 6 секунд останется.
 
 ## Технические детали
 
-### Файлы для изменения
-1. `src/pages/BlogPost.tsx` -- prose-классы (строка ~217)
-2. `src/components/blog/TLDRBlock.tsx` -- дизайн карточки
-3. `src/pages/Blog.tsx` -- сортировка + стили карточек
+**Файл: `src/components/Hero.tsx`**
 
-### Что НЕ меняется
-- `tailwind.config.ts` (typography уже подключен)
-- `src/components/Hero.tsx` (не относится к блогу)
-- `src/components/TableOfContents.tsx` (sticky уже работает)
-- Структура данных статей
+Заменить:
+```typescript
+const HERO_BACKGROUNDS = [
+  '/images/work/specialist-closeup.jpg',
+  '/images/work/fog-generator.jpg',
+  '/images/work/clean-room.jpg'
+];
+```
+
+На:
+```typescript
+const HERO_BACKGROUNDS = [
+  '/images/work/hero-fog-living.png',
+  '/images/work/hero-bed-spray.png',
+  '/images/work/hero-bathroom.png',
+  '/images/work/hero-kitchen.png'
+];
+```
+
+Остальной код Hero (ротация, параллакс, оверлей, CTA) не меняется.
 
