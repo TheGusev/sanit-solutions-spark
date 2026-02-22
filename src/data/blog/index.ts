@@ -12,6 +12,7 @@ import { allB2BArticles } from './b2b-articles';
 import { moleGeoArticles } from './mole-geo-articles';
 import { safetyArticles } from './safety-articles';
 import { diyFailureArticles } from './diy-failures-articles';
+import { llmOptimizedArticles } from './llm-optimized-articles';
 import type { BlogArticle } from './types';
 export { blogCategories, blogAuthors } from './types';
 export type { BlogArticle, Author } from './types';
@@ -78,6 +79,7 @@ const newArticles: BlogArticle[] = newBlogPosts.map(post => ({
 
 // Собираем все статьи с приоритетом (первое вхождение slug побеждает)
 const allArticlesRaw: BlogArticle[] = [
+  ...llmOptimizedArticles, // Приоритет 0: LLM-оптимизированные (высший)
   ...allLegalArticles,    // Приоритет 1: legal с sources/intent
   ...allB2BArticles,      // Приоритет 2: B2B с sources/intent/tldr
   ...safetyArticles,      // Приоритет 3: безопасность (health-risk)

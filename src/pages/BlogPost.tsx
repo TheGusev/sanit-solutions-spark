@@ -14,7 +14,13 @@ import TLDRBlock from "@/components/blog/TLDRBlock";
 import VisibleFAQ from "@/components/blog/VisibleFAQ";
 import SourcesList from "@/components/blog/SourcesList";
 import CompactCTA from "@/components/blog/CompactCTA";
+import LLMSummary from "@/components/blog/LLMSummary";
+import AuthorBadge from "@/components/blog/AuthorBadge";
+import FAQSection from "@/components/blog/FAQSection";
+import ComparisonTable from "@/components/blog/ComparisonTable";
+import CitationBlock from "@/components/blog/CitationBlock";
 import { getArticleBySlug } from "@/data/blog";
+import { blogAuthors } from "@/data/blog/types";
 import { Button } from "@/components/ui/button";
 import { SEO_CONFIG } from "@/lib/seo";
 import { User, Clock, Calendar, List } from "lucide-react";
@@ -30,6 +36,8 @@ const BlogPost = () => {
   const navigate = useNavigate();
   
   const post = slug ? getArticleBySlug(slug) : undefined;
+  const author = post?.authorId ? blogAuthors.find(a => a.id === post.authorId) : undefined;
+  const isLLMOptimized = !!(post?.llmSummary || post?.authorId);
   
   useEffect(() => {
     if (post) {
@@ -150,7 +158,8 @@ const BlogPost = () => {
             {post.title}
           </h1>
 
-          {post.author && (
+          {/* Author badge (legacy inline) - only when no authorId */}
+          {post.author && !author && (
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
                 <User className="w-4 h-4 text-primary" />
@@ -160,6 +169,15 @@ const BlogPost = () => {
                 <p className="text-xs text-muted-foreground">{post.authorRole}</p>
               </div>
             </div>
+          )}
+
+          {/* AuthorBadge for LLM-optimized articles */}
+          {author && (
+            <AuthorBadge
+              name={author.name}
+              role={author.role}
+              experience={author.experience}
+            />
           )}
 
           {/* Триколор-акцент */}
@@ -184,6 +202,11 @@ const BlogPost = () => {
             )}
 
             <div className="w-full max-w-full lg:max-w-3xl mx-auto lg:mx-0">
+              {/* LLM Summary for optimized articles */}
+              {post.llmSummary && (
+                <LLMSummary {...post.llmSummary} />
+              )}
+
               {/* TL;DR inside content container */}
               {post.tldr && post.tldr.length > 0 && (
                 <TLDRBlock items={post.tldr} />
@@ -220,13 +243,33 @@ const BlogPost = () => {
                   )
                 }}
               />
+
+              {/* Comparison Tables (after prose content) */}
+              {post.comparisonTables?.map((table, i) => (
+                <ComparisonTable key={i} {...table} />
+              ))}
+
+              {/* Citations (after tables) */}
+              {post.citations?.map((cite, i) => (
+                <CitationBlock key={i} {...cite} />
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Visible FAQ */}
-      {hasFaq && <VisibleFAQ faq={post.faq!} />}
+      {/* FAQ: use native FAQSection for LLM-optimized, VisibleFAQ for legacy */}
+      {hasFaq && isLLMOptimized && <FAQSection items={post.faq!} />}
+      {hasFaq && !isLLMOptimized && <VisibleFAQ faq={post.faq!} />}
+
+      {/* Author badge (bottom) for LLM-optimized articles */}
+      {author && (
+        <section className="px-4 pb-8">
+          <div className="container mx-auto max-w-4xl">
+            <AuthorBadge name={author.name} role={author.role} experience={author.experience} />
+          </div>
+        </section>
+      )}
 
       {/* Sources */}
       {post.sources && post.sources.length > 0 && (
