@@ -18,7 +18,7 @@ const DistrictHero = ({ district, onCalculatorOpen }: DistrictHeroProps) => {
       {/* Фоновое изображение с blur */}
       <HeroBackground 
         image={heroImage}
-        blur={4}
+        blur={1}
         opacity={0.60}
         overlay="none"
         altText={`Санитарная обработка помещений в ${district.fullName}`}

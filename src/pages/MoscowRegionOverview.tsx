@@ -1,8 +1,6 @@
 /**
  * Обзорная страница городов Московской области
  * URL: /moscow-oblast
- * 
- * SEO: Дезинсекция и дератизация в Московской области — от 1200₽
  */
 
 import { Link } from 'react-router-dom';
@@ -13,9 +11,9 @@ import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import AnimatedSection from '@/components/AnimatedSection';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, MapPin, Clock, Car } from 'lucide-react';
 import { moscowRegionCities } from '@/data/moscowRegion';
+import { getCityImage } from '@/data/districtImages';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 
 export default function MoscowRegionOverview() {
@@ -23,18 +21,15 @@ export default function MoscowRegionOverview() {
     window.scrollTo(0, 0);
   }, []);
   
-  // SEO
   const pageTitle = `Дезинсекция и дератизация в Московской области — от 1200₽ | ${SEO_CONFIG.companyName}`;
   const pageDescription = `Профессиональная дезинсекция, дератизация и дезинфекция в городах Московской области от 1200₽ • Выезд от 30 мин • Гарантия 1 год • ${SEO_CONFIG.phone}`;
   const canonicalPath = '/moscow-oblast';
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);
   
-  // Breadcrumbs
   const breadcrumbItems = [
     { label: 'Московская область' }
   ];
   
-  // Schema.org
   const schemaMarkup = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -114,34 +109,40 @@ export default function MoscowRegionOverview() {
               Города, в которых мы работаем
             </h2>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
-              {moscowRegionCities.map((city) => (
-                <Link key={city.slug} to={`/moscow-oblast/${city.slug}`}>
-                  <Card className="h-full hover:shadow-md transition-shadow">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg flex items-center justify-between">
-                        {city.name}
-                        <span className="text-sm font-normal text-muted-foreground">
-                          {city.distance} км
-                        </span>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          {city.responseTime}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Car className="w-4 h-4" />
-                          +{city.surcharge}₽
-                        </span>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {moscowRegionCities.map((city) => {
+                const bgImage = getCityImage(city.slug);
+                return (
+                  <Link key={city.slug} to={`/moscow-oblast/${city.slug}`}>
+                    <div 
+                      className="relative h-52 rounded-xl overflow-hidden group cursor-pointer"
+                      style={{ backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                    >
+                      {/* Dark gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/10 group-hover:from-black/85 transition-all duration-300" />
+                      
+                      {/* Content */}
+                      <div className="relative h-full flex flex-col justify-end p-5 text-white">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="text-xl font-bold">{city.name}</h3>
+                          <span className="text-sm text-white/80">{city.distance} км</span>
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-white/90 mb-1">
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            {city.responseTime}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Car className="w-4 h-4" />
+                            +{city.surcharge}₽
+                          </span>
+                        </div>
+                        <p className="text-xs text-white/70 line-clamp-2">{city.description}</p>
                       </div>
-                      <p className="text-sm line-clamp-2">{city.description}</p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </AnimatedSection>
