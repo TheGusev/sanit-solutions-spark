@@ -337,10 +337,9 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
 💰 Расчётная стоимость: ${finalPrice}₽
 📉 Скидка: ${discount}%`;
 
-      const whatsappUrl = `https://wa.me/79069989888?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
+      window.location.href = `tel:84950181817`;
       
-      toast.success("Коммерческое предложение будет отправлено на ваш email в течение часа.");
+      toast.success("Позвоните нам для получения коммерческого предложения на ваш email.");
     }
   };
 
