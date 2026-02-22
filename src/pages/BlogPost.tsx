@@ -7,7 +7,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
-import HeroBackground from "@/components/HeroBackground";
 import TableOfContents, { generateContentWithIds, extractHeadings } from "@/components/TableOfContents";
 import RelatedArticles from "@/components/RelatedArticles";
 import InternalLinks from "@/components/InternalLinks";
@@ -16,10 +15,15 @@ import VisibleFAQ from "@/components/blog/VisibleFAQ";
 import SourcesList from "@/components/blog/SourcesList";
 import CompactCTA from "@/components/blog/CompactCTA";
 import { getArticleBySlug } from "@/data/blog";
-import { getBlogCategoryImage } from "@/data/districtImages";
 import { Button } from "@/components/ui/button";
 import { SEO_CONFIG } from "@/lib/seo";
-import { User } from "lucide-react";
+import { User, Clock, Calendar, List } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -119,58 +123,56 @@ const BlogPost = () => {
         </div>
       </section>
 
-      {/* Article Header with Background */}
-      <section className="relative py-12 px-4 overflow-hidden">
-        <HeroBackground 
-          image={getBlogCategoryImage(post.category)}
-          blur={6}
-          opacity={0.50}
-          overlay="gradient"
-          altText={`${post.category} - ${post.title}`}
-        />
-        
-        <div className="container mx-auto max-w-4xl relative z-10">
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <span className="text-sm px-4 py-1.5 rounded-full bg-primary/10 text-primary font-medium backdrop-blur-sm">
-                {post.category}
+      {/* Clean Editorial Header — no background image */}
+      <section className="py-8 md:py-12 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-xs md:text-sm px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
+              {post.category}
+            </span>
+            <span className="flex items-center gap-1 text-xs md:text-sm text-muted-foreground">
+              <Calendar className="w-3.5 h-3.5" />
+              {new Date(post.date).toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+              })}
+            </span>
+            {post.readTime && (
+              <span className="flex items-center gap-1 text-xs md:text-sm text-muted-foreground">
+                <Clock className="w-3.5 h-3.5" />
+                {post.readTime}
               </span>
-              <span className="text-sm text-muted-foreground">
-                {new Date(post.date).toLocaleDateString('ru-RU', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric'
-                })}
-              </span>
-            </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-foreground">
-              {post.title}
-            </h1>
-            
-            {post.author && (
-              <div className="flex items-center justify-center gap-3 mt-6">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <User className="w-5 h-5 text-primary" />
-                </div>
-                <div className="text-left">
-                  <p className="font-medium text-foreground">{post.author}</p>
-                  <p className="text-sm text-muted-foreground">{post.authorRole}</p>
-                </div>
-              </div>
             )}
+          </div>
+
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-4">
+            {post.title}
+          </h1>
+
+          {post.author && (
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+                <User className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground">{post.author}</p>
+                <p className="text-xs text-muted-foreground">{post.authorRole}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Триколор-акцент */}
+          <div className="h-1 w-32 flex rounded-full overflow-hidden">
+            <div className="flex-1 bg-white border-y border-l border-border dark:border-transparent"></div>
+            <div className="flex-1 bg-primary"></div>
+            <div className="flex-1 bg-russia-red"></div>
           </div>
         </div>
       </section>
 
-      {/* TL;DR Block */}
-      {post.tldr && post.tldr.length > 0 && (
-        <div className="container mx-auto max-w-4xl px-4">
-          <TLDRBlock items={post.tldr} />
-        </div>
-      )}
-
       {/* Article Content with TOC */}
-      <section className="pb-16 px-4">
+      <section className="pb-12 md:pb-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className={showToc ? "flex flex-col lg:grid lg:grid-cols-[250px_1fr] gap-8" : ""}>
             {showToc && (
@@ -181,10 +183,28 @@ const BlogPost = () => {
               </aside>
             )}
 
-            <div className="w-full max-w-full lg:max-w-3xl mx-auto lg:mx-0 overflow-x-auto">
+            <div className="w-full max-w-full lg:max-w-3xl mx-auto lg:mx-0">
+              {/* TL;DR inside content container */}
+              {post.tldr && post.tldr.length > 0 && (
+                <TLDRBlock items={post.tldr} />
+              )}
+
+              {/* Mobile TOC Accordion */}
               {showToc && (
-                <div className="lg:hidden mb-8">
-                  <TableOfContents content={post.content} className="max-h-[40vh] overflow-y-auto" />
+                <div className="lg:hidden mb-6">
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value="toc" className="border rounded-lg bg-muted/30">
+                      <AccordionTrigger className="px-4 py-3 text-sm font-medium min-h-[48px]">
+                        <span className="flex items-center gap-2">
+                          <List className="w-4 h-4 text-primary" />
+                          Содержание
+                        </span>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4 pb-3">
+                        <TableOfContents content={post.content} />
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
                 </div>
               )}
 
@@ -193,10 +213,11 @@ const BlogPost = () => {
                   prose-headings:text-foreground prose-headings:font-bold prose-headings:scroll-mt-28
                   prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
                   prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-                  prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
+                  prose-p:text-muted-foreground prose-p:leading-[1.75] prose-p:mb-5
                   prose-strong:text-foreground prose-strong:font-semibold
                   prose-ul:text-muted-foreground prose-ul:my-4
                   prose-li:my-2
+                  prose-table:overflow-x-auto
                 "
                 dangerouslySetInnerHTML={{ 
                   __html: DOMPurify.sanitize(
