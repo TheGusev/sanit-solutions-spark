@@ -39,6 +39,7 @@ import { generateServiceMetadata } from "@/lib/metadata";
 import PageLoader from "@/components/PageLoader";
 import ServiceStickyBar from "@/components/ServiceStickyBar";
 import HeroCallbackForm from "@/components/HeroCallbackForm";
+import ServiceQuiz from "@/components/ServiceQuiz";
 
 // Ленивая загрузка DistrictPage для избежания циклических зависимостей
 const DistrictPage = lazy(() => import("./DistrictPage"));
@@ -258,6 +259,15 @@ const ServicePage = () => {
             </div>
           </div>
         </section>
+
+        {/* Service Quiz */}
+        {service.quizSteps && service.quizSteps.length > 0 && (
+          <ServiceQuiz
+            steps={service.quizSteps}
+            serviceSlug={service.slug}
+            serviceTitle={service.title}
+          />
+        )}
 
         {/* Price highlight */}
         <section className="py-6 bg-primary text-primary-foreground">
