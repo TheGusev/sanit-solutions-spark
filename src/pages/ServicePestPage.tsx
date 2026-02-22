@@ -29,6 +29,7 @@ import { neighborhoods } from '@/data/neighborhoods';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 import ServiceStickyBar from '@/components/ServiceStickyBar';
 import HeroCallbackForm from '@/components/HeroCallbackForm';
+import LazySection from '@/components/LazySection';
 
 export default function ServicePestPage() {
   const params = useParams<{ service?: string; pest?: string; parentSlug?: string; subSlug?: string }>();
@@ -261,21 +262,25 @@ export default function ServicePestPage() {
         </section>
 
         {/* Quiz */}
-        {pest.quizSteps && pest.quizSteps.length > 0 && (
-          <ServiceQuiz
-            steps={pest.quizSteps}
-            serviceSlug={`${service}/${pestSlug}`}
-            serviceTitle={`Уничтожение ${pest.genitive}`}
-          />
-        )}
+        <LazySection minHeight="400px">
+          {pest.quizSteps && pest.quizSteps.length > 0 && (
+            <ServiceQuiz
+              steps={pest.quizSteps}
+              serviceSlug={`${service}/${pestSlug}`}
+              serviceTitle={`Уничтожение ${pest.genitive}`}
+            />
+          )}
+        </LazySection>
 
         {/* Tariffs */}
-        {pest.tariffs && pest.tariffs.length > 0 && (
-          <ServiceTariffs
-            tariffs={pest.tariffs}
-            serviceTitle={`Уничтожение ${pest.genitive}`}
-          />
-        )}
+        <LazySection minHeight="300px">
+          {pest.tariffs && pest.tariffs.length > 0 && (
+            <ServiceTariffs
+              tariffs={pest.tariffs}
+              serviceTitle={`Уничтожение ${pest.genitive}`}
+            />
+          )}
+        </LazySection>
         
         {/* Price Block */}
         <AnimatedSection className="py-12 bg-muted/30">
@@ -321,12 +326,14 @@ export default function ServicePestPage() {
         </AnimatedSection>
 
         {/* WhyProblemReturns */}
-        {pest.returnReasons && pest.returnReasons.length > 0 && (
-          <WhyProblemReturns
-            returnReasons={pest.returnReasons}
-            serviceTitle={`Уничтожение ${pest.genitive}`}
-          />
-        )}
+        <LazySection minHeight="250px">
+          {pest.returnReasons && pest.returnReasons.length > 0 && (
+            <WhyProblemReturns
+              returnReasons={pest.returnReasons}
+              serviceTitle={`Уничтожение ${pest.genitive}`}
+            />
+          )}
+        </LazySection>
         
         {/* Prevention */}
         <AnimatedSection className="py-12 bg-muted/30">
@@ -348,71 +355,75 @@ export default function ServicePestPage() {
         </AnimatedSection>
         
         {/* FAQ */}
-        <AnimatedSection className="py-12">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6 text-center">Частые вопросы</h2>
-            <div className="max-w-2xl mx-auto">
-              <Accordion type="single" collapsible>
-                <AccordionItem value="q1">
-                  <AccordionTrigger>
-                    Сколько стоит уничтожение {pest.genitive}?
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    Стоимость начинается от {pest.priceFrom}₽. Итоговая цена зависит от площади помещения, степени заражения и выбранного метода обработки.
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="q2">
-                  <AccordionTrigger>
-                    Как быстро исчезнут {pest.namePlural.toLowerCase()}?
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    {pest.namePlural} начинают погибать в первые сутки после обработки. Полное уничтожение популяции занимает {pest.timeToResult}.
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="q3">
-                  <AccordionTrigger>
-                    Безопасна ли обработка для детей и животных?
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    Да, мы используем сертифицированные препараты IV класса опасности (малоопасные). После проветривания помещение полностью безопасно.
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="q4">
-                  <AccordionTrigger>
-                    Даёте ли гарантию?
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    Да, мы предоставляем гарантию {guaranteeText}. При повторном появлении вредителей в гарантийный период проводим повторную обработку бесплатно.
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </div>
-          </div>
-        </AnimatedSection>
-
-        {/* SEO Accordion */}
-        {pest.seoText && (
-          <AnimatedSection className="py-12 bg-muted/30">
+        <LazySection minHeight="300px">
+          <AnimatedSection className="py-12">
             <div className="container mx-auto px-4">
-              <div className="max-w-3xl mx-auto">
+              <h2 className="text-2xl font-bold mb-6 text-center">Частые вопросы</h2>
+              <div className="max-w-2xl mx-auto">
                 <Accordion type="single" collapsible>
-                  <AccordionItem value="seo">
-                    <AccordionTrigger className="text-xl font-bold">
-                      Подробнее об уничтожении {pest.genitive}
+                  <AccordionItem value="q1">
+                    <AccordionTrigger>
+                      Сколько стоит уничтожение {pest.genitive}?
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="prose prose-sm max-w-none text-muted-foreground space-y-4">
-                        {pest.seoText.split('\n').map((paragraph, i) => (
-                          <p key={i}>{paragraph}</p>
-                        ))}
-                      </div>
+                      Стоимость начинается от {pest.priceFrom}₽. Итоговая цена зависит от площади помещения, степени заражения и выбранного метода обработки.
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="q2">
+                    <AccordionTrigger>
+                      Как быстро исчезнут {pest.namePlural.toLowerCase()}?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      {pest.namePlural} начинают погибать в первые сутки после обработки. Полное уничтожение популяции занимает {pest.timeToResult}.
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="q3">
+                    <AccordionTrigger>
+                      Безопасна ли обработка для детей и животных?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      Да, мы используем сертифицированные препараты IV класса опасности (малоопасные). После проветривания помещение полностью безопасно.
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="q4">
+                    <AccordionTrigger>
+                      Даёте ли гарантию?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      Да, мы предоставляем гарантию {guaranteeText}. При повторном появлении вредителей в гарантийный период проводим повторную обработку бесплатно.
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
               </div>
             </div>
           </AnimatedSection>
-        )}
+        </LazySection>
+
+        {/* SEO Accordion */}
+        <LazySection minHeight="80px">
+          {pest.seoText && (
+            <AnimatedSection className="py-12 bg-muted/30">
+              <div className="container mx-auto px-4">
+                <div className="max-w-3xl mx-auto">
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value="seo">
+                      <AccordionTrigger className="text-xl font-bold">
+                        Подробнее об уничтожении {pest.genitive}
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="prose prose-sm max-w-none text-muted-foreground space-y-4">
+                          {pest.seoText.split('\n').map((paragraph, i) => (
+                            <p key={i}>{paragraph}</p>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              </div>
+            </AnimatedSection>
+          )}
+        </LazySection>
 
         {/* Полезные статьи по теме */}
         {(() => {
