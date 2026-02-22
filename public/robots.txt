@@ -1,5 +1,5 @@
 # robots.txt for goruslugimsk.ru
-# Last updated: 2026-01-23
+# Last updated: 2026-02-23
 
 # Yandex (основной поисковик для RU)
 User-agent: Yandex
