@@ -2,36 +2,84 @@
 # -*- coding: utf-8 -*-
 """
 Daily Site Monitoring для goruslugimsk.ru
-Отправляет отчет в Telegram на основе MONITORING.md
+Проверяет несколько ключевых URL, SSL-сертификат и отправляет отчёт в Telegram.
 """
 
 import os
 import sys
+import ssl
+import socket
 import requests
 from datetime import datetime
 
-SITE_URL = "https://goruslugimsk.ru"
+SITE_URL = os.getenv("SITE_URL", "https://goruslugimsk.ru")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-def check_site_status():
-    """Проверка доступности сайта"""
+# Ключевые URL для проверки (все имеют статические index.html)
+KEY_URLS = [
+    "/",
+    "/uslugi/dezinfekciya/",
+    "/uslugi/dezinsekciya/",
+    "/blog/",
+    "/contacts/",
+    "/rajony/arbat/",
+    "/moscow-oblast/khimki/",
+]
+
+
+def check_url(url: str, timeout: int = 10) -> dict:
+    """Проверка доступности одного URL."""
     try:
-        response = requests.get(SITE_URL, timeout=10)
+        response = requests.get(url, timeout=timeout, allow_redirects=True)
         return {
-            "status": "🟢 Доступен" if response.status_code == 200 else f"🟡 HTTP {response.status_code}",
+            "url": url,
+            "status_code": response.status_code,
             "response_time": round(response.elapsed.total_seconds() * 1000),
-            "status_code": response.status_code
+            "ok": response.status_code == 200,
         }
     except Exception as e:
         return {
-            "status": "🔴 Недоступен",
+            "url": url,
+            "status_code": 0,
             "response_time": 0,
-            "error": str(e)
+            "ok": False,
+            "error": str(e),
         }
 
-def send_telegram_message(message):
-    """Отправка сообщения в Telegram"""
+
+def check_all_urls() -> list[dict]:
+    """Проверка всех ключевых URL."""
+    results = []
+    for path in KEY_URLS:
+        url = f"{SITE_URL}{path}" if path != "/" else SITE_URL
+        results.append(check_url(url))
+    return results
+
+
+def check_ssl_expiry(hostname: str = "goruslugimsk.ru") -> dict:
+    """Проверка срока действия SSL-сертификата."""
+    try:
+        ctx = ssl.create_default_context()
+        with ctx.wrap_socket(socket.socket(), server_hostname=hostname) as s:
+            s.settimeout(10)
+            s.connect((hostname, 443))
+            cert = s.getpeercert()
+            expires_str = cert["notAfter"]
+            expires = datetime.strptime(expires_str, "%b %d %H:%M:%S %Y %Z")
+            days_left = (expires - datetime.utcnow()).days
+            return {
+                "valid": True,
+                "expires": expires.strftime("%d.%m.%Y"),
+                "days_left": days_left,
+                "warning": days_left < 30,
+            }
+    except Exception as e:
+        return {"valid": False, "error": str(e), "days_left": 0, "warning": True}
+
+
+def send_telegram_message(message: str) -> bool:
+    """Отправка сообщения в Telegram."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         print("⚠️ TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не установлены")
         return False
@@ -41,7 +89,7 @@ def send_telegram_message(message):
         "chat_id": TELEGRAM_CHAT_ID,
         "text": message,
         "parse_mode": "HTML",
-        "disable_web_page_preview": True
+        "disable_web_page_preview": True,
     }
 
     try:
@@ -56,79 +104,142 @@ def send_telegram_message(message):
         print(f"❌ Ошибка Telegram API: {e}")
         return False
 
-def generate_report():
-    """Генерация отчета мониторинга"""
+
+def update_monitoring_md(url_results: list[dict], ssl_info: dict):
+    """Обновляет дату последнего обновления в MONITORING.md (для git commit в CI)."""
+    md_path = os.path.join(os.path.dirname(__file__), "..", "MONITORING.md")
+    if not os.path.exists(md_path):
+        return
+
+    now = datetime.now().strftime("%d.%m.%Y")
+    try:
+        with open(md_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Обновляем только нижнюю строку с датой
+        import re
+        content = re.sub(
+            r"\*\*Последнее обновление:\*\*.*$",
+            f"**Последнее обновление:** {now}",
+            content,
+            flags=re.MULTILINE,
+        )
+
+        with open(md_path, "w", encoding="utf-8") as f:
+            f.write(content)
+
+        print(f"📝 MONITORING.md обновлён ({now})")
+    except Exception as e:
+        print(f"⚠️ Не удалось обновить MONITORING.md: {e}")
+
+
+def generate_report(url_results: list[dict], ssl_info: dict) -> str:
+    """Генерация динамического отчёта мониторинга."""
     now = datetime.now().strftime("%d.%m.%Y %H:%M MSK")
-    site_status = check_site_status()
+
+    # Статус URL
+    all_ok = all(r["ok"] for r in url_results)
+    site_emoji = "🟢" if all_ok else "🔴"
+    avg_time = round(sum(r["response_time"] for r in url_results) / len(url_results))
+
+    url_lines = []
+    for r in url_results:
+        path = r["url"].replace(SITE_URL, "") or "/"
+        emoji = "✅" if r["ok"] else "❌"
+        time_str = f"{r['response_time']} мс" if r["ok"] else f"ОШИБКА"
+        url_lines.append(f"  {emoji} {path} — {time_str}")
+
+    urls_block = "\n".join(url_lines)
+
+    # SSL
+    if ssl_info["valid"]:
+        ssl_emoji = "⚠️" if ssl_info["warning"] else "✅"
+        ssl_line = f"{ssl_emoji} SSL до {ssl_info['expires']} ({ssl_info['days_left']} дн.)"
+    else:
+        ssl_line = f"🔴 SSL ошибка: {ssl_info.get('error', 'unknown')}"
 
     report = f"""📊 <b>Ежедневный мониторинг goruslugimsk.ru</b>
 🕐 {now}
 
 ━━━━━━━━━━━━━━━━━━━━
 
-<b>🌐 Статус сайта</b>
-• Состояние: {site_status['status']}
-• Время отклика: {site_status['response_time']} мс
-• URL: {SITE_URL}
+<b>{site_emoji} Статус сайта</b> (ср. отклик {avg_time} мс)
+{urls_block}
+
+<b>🔐 Сертификат</b>
+• {ssl_line}
 
 ━━━━━━━━━━━━━━━━━━━━
+
+<b>📄 Контент</b>
+• Всего страниц в SSG: ~547
+• Блог (уникальных статей): 176
+• Районы + округа: 145
+• Города МО: 51
+• Услуги + подстраницы: 51
+• НЧ-страницы: 120
 
 <b>🔍 Индексация</b>
-• Яндекс: Проверка вручную в Вебмастере
-• Google: Проверка через Search Console
-• Цель: 170+ страниц в индексе
+• Цель: 500+ страниц в индексе
+• Яндекс: проверить в Вебмастере
+• Google: проверить в GSC
 
-<b>📈 Позиции (Яндекс)</b>
-• "дезинфекция москва" (~15K показов)
-• "дезинсекция москва" (~12K показов)
-• "уничтожение клопов москва" (~20K показов)
-
-<b>👥 Трафик</b>
-• Метрика: <a href="https://metrika.yandex.ru/dashboard?id=105828040">105828040</a>
-• Февраль 2026: Анализ в процессе
-
-<b>⚙️ Технические показатели</b>
-• PageSpeed Desktop: 95
-• PageSpeed Mobile: 88
-• LCP: 95 мс (хорошо)
+<b>⚙️ PageSpeed (последний замер)</b>
+• Desktop: 95 | Mobile: 88
+• LCP: 0.95 с | CLS: 0.04
 
 ━━━━━━━━━━━━━━━━━━━━
 
-<b>✅ Задачи на февраль 2026</b>
-1️⃣ Создать 10 локальных страниц (Марьино, Химки и др.)
-2️⃣ Проверить индексацию всех 158 статей блога
-3️⃣ Довести PageSpeed до 100/100 на главной
+<b>✅ Задачи (Февраль 2026)</b>
+3️⃣ Проверить индексацию 176 статей блога
+4️⃣ Довести PageSpeed до 100/100
+5️⃣ Заполнить данные о конкурентах
+6️⃣ Настроить аналитику конверсий
 
 ━━━━━━━━━━━━━━━━━━━━
 
-<b>🚨 Алерты</b>
-• ⚠️ Нет локальных страниц под гео-запросы (высокий приоритет)
-
-━━━━━━━━━━━━━━━━━━━━
-
-📝 Подробный мониторинг: <a href="https://github.com/TheGusev/sanit-solutions-spark/blob/main/MONITORING.md">MONITORING.md</a>
-🤖 GitHub Actions: <a href="https://github.com/TheGusev/sanit-solutions-spark/actions">Workflows</a>
+📝 <a href="https://github.com/TheGusev/sanit-solutions-spark/blob/main/MONITORING.md">MONITORING.md</a>
+🤖 <a href="https://github.com/TheGusev/sanit-solutions-spark/actions">Workflows</a>
 """
 
     return report
 
+
 def main():
-    """Основная функция"""
+    """Основная функция."""
     print("🚀 Запуск мониторинга goruslugimsk.ru...")
 
-    report = generate_report()
-    print("\n" + "="*50)
+    # 1. Проверка URL
+    url_results = check_all_urls()
+    for r in url_results:
+        status = "OK" if r["ok"] else f"FAIL ({r.get('error', r['status_code'])})"
+        print(f"  {r['url']} — {status} ({r['response_time']} мс)")
+
+    # 2. Проверка SSL
+    ssl_info = check_ssl_expiry()
+    if ssl_info["valid"]:
+        print(f"  SSL: до {ssl_info['expires']} ({ssl_info['days_left']} дней)")
+    else:
+        print(f"  SSL: ОШИБКА — {ssl_info.get('error')}")
+
+    # 3. Обновление MONITORING.md
+    update_monitoring_md(url_results, ssl_info)
+
+    # 4. Генерация и отправка отчёта
+    report = generate_report(url_results, ssl_info)
+    print("\n" + "=" * 50)
     print(report)
-    print("="*50 + "\n")
+    print("=" * 50 + "\n")
 
     success = send_telegram_message(report)
 
     if success:
         print("✅ Мониторинг завершен успешно")
-        sys.exit(0)
     else:
         print("⚠️ Мониторинг завершен с предупреждениями")
-        sys.exit(0)  # Не падаем, даже если Telegram не работает
+
+    sys.exit(0)
+
 
 if __name__ == "__main__":
     main()
