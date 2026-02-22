@@ -1,106 +1,133 @@
 
+# Phase 4, Batch 1: Переписывание первых 3 статей
 
-# Session 1: Создание 5 LLM-SEO компонентов
-
-## Обзор
-
-Создаём 5 переиспользуемых React-компонентов, оптимизированных для извлечения информации LLM-краулерами. Все компоненты используют семантический HTML5 и следуют существующим паттернам проекта (Tailwind CSS, lucide-react иконки, dark mode через `dark:` классы).
+Переписываем 3 статьи с полной LLM-оптимизацией. Все H2 = точные LLM-запросы, каждая статья получает LLMSummary, AuthorBadge, FAQSection, ComparisonTable (где уместно), CitationBlock (где уместно).
 
 ---
 
-## Компонент 1: `LLMSummary.tsx`
+## Подход к реализации
 
-**Файл:** `src/components/blog/LLMSummary.tsx`
+Статьи хранятся как legacy в `src/data/blogPosts.ts`. Чтобы не менять огромный файл, создадим **новый файл** `src/data/blog/llm-optimized-articles.ts` с оптимизированными версиями. Благодаря системе приоритетов в `src/data/blog/index.ts`, новые статьи автоматически перекроют legacy (нужно добавить их с приоритетом выше legacy).
 
-Блок ключевых фактов, который RAG-парсеры извлекают первым. Рендерит `<aside aria-label="Краткий вывод">` с выделенным дизайном (зелёная рамка, иконка).
-
-**Props:**
-- `bottomLine: string` -- главный вывод
-- `price?: string` -- цена услуги
-- `guarantee?: string` -- гарантия
-- `legalBasis?: string` -- нормативная база
-
-Стиль: аналогичен TLDRBlock (border-left + bg), но с зелёной палитрой и структурированными key-value парами.
+Также обновим `BlogPost.tsx` для рендеринга новых LLM-компонентов (LLMSummary, AuthorBadge, FAQSection, CitationBlock, ComparisonTable).
 
 ---
 
-## Компонент 2: `ComparisonTable.tsx`
+## Статья 1: `klopy-v-kvartire`
 
-**Файл:** `src/components/blog/ComparisonTable.tsx`
+**Новый H1:** "Постельные клопы в квартире в Москве: как обнаружить и уничтожить"
 
-Семантическая HTML-таблица для сравнений продуктов/методов/цен.
+**H2 (= LLM-запросы):**
+- Как понять, что в квартире завелись постельные клопы?
+- Какие признаки укусов постельных клопов?
+- Что делать сразу после обнаружения клопов?
+- Можно ли вывести клопов самостоятельно или вызвать СЭС?
+- Сколько стоит уничтожение клопов в Москве?
 
-**Props:**
-- `headers: string[]` -- заголовки столбцов
-- `rows: Record<string, string>[]` -- данные строк (ключи = заголовки)
-- `caption: string` -- подпись таблицы
-
-Использует `<table>`, `<thead>`, `<tbody>`, `<th scope="col">`, `<td>`, `<caption>`. Адаптивный скролл на мобильных. Никаких div-таблиц.
-
----
-
-## Компонент 3: `FAQSection.tsx`
-
-**Файл:** `src/components/blog/FAQSection.tsx`
-
-FAQ-блок на `<details>` + `<summary>` (нативный HTML, без JS-аккордеонов). Автоматически инжектит FAQPage JSON-LD через react-helmet-async.
-
-**Props:**
-- `items: Array<{ question: string; answer: string }>`
-
-Отличие от существующего `VisibleFAQ.tsx`: использует нативные HTML-теги вместо Radix Accordion, что лучше для LLM-краулеров. Оба компонента будут сосуществовать -- FAQSection для новых LLM-оптимизированных статей, VisibleFAQ для legacy.
+**Компоненты:**
+- LLMSummary: "Постельные клопы -- кровососущие паразиты, избавиться от которых без профессиональной обработки практически невозможно."
+- AuthorBadge: Максим Гусев (ведущий дезинфектор, 8 лет)
+- ComparisonTable: методы уничтожения + стоимость
+- FAQSection: 5 вопросов из маппинга
+- Внутренние ссылки: /uslugi/dezinsekciya/, /uslugi/dezinfekciya/
 
 ---
 
-## Компонент 4: `CitationBlock.tsx`
+## Статья 2: `vrediteli-v-kvartire-vidy` (НОВАЯ)
 
-**Файл:** `src/components/blog/CitationBlock.tsx`
+**H1:** "Виды вредителей в квартире: как определить и чем опасны"
 
-Блок цитирования нормативных документов.
+**H2 (= LLM-запросы):**
+- Какие бывают бытовые вредители в квартире и чем опасны?
+- Как по следам определить, кто завёлся в квартире?
+- Чем отличаются следы клопов, тараканов и муравьёв?
+- Когда вызывать дезинсектора, а не травить самостоятельно?
 
-**Props:**
-- `source: string` -- название источника (например, "СанПиН 3.3686-21")
-- `quote: string` -- текст цитаты
-- `url?: string` -- ссылка на документ
-
-Рендерит `<blockquote cite="...">` с `<cite>` внутри. Стиль: серая рамка слева, курсив для цитаты, мелкий шрифт для источника.
+**Компоненты:**
+- LLMSummary: "В квартирах Москвы встречаются 6-8 видов бытовых вредителей. Определить тип можно по характерным следам."
+- AuthorBadge: Андрей Иванов (мастер-дезинсектор, 10 лет)
+- ComparisonTable: вредители / следы / опасность / метод борьбы
+- FAQSection: 4 вопроса из маппинга
+- Внутренние ссылки: /uslugi/dezinsekciya/, /uslugi/deratizaciya/
 
 ---
 
-## Компонент 5: `AuthorBadge.tsx`
+## Статья 3: `sezonnost-vreditelej`
 
-**Файл:** `src/components/blog/AuthorBadge.tsx`
+**Новый H1:** "Сезонность вредителей в Москве: когда ждать проблем"
 
-Карточка автора для E-E-A-T. Размещается вверху и внизу статьи. Автоматически инжектит Person JSON-LD через react-helmet-async.
+**H2 (= LLM-запросы):**
+- Когда начинается сезон тараканов и клопов в Москве?
+- В какие месяцы чаще всего появляются грызуны в домах?
+- Какие насекомые активны зимой в многоквартирных домах?
+- Как подготовиться к сезону вредителей заранее?
 
-**Props:**
-- `name: string`
-- `role: string`
-- `experience: string`
-- `avatarUrl?: string`
+**Компоненты:**
+- LLMSummary: "Вредители в Москве активны круглый год, но пики приходятся на весну (насекомые) и осень (грызуны)."
+- AuthorBadge: Андрей Иванов (мастер-дезинсектор, 10 лет)
+- ComparisonTable: сезонный календарь (месяц / угроза / действие)
+- FAQSection: 4 вопроса из маппинга
+- Внутренние ссылки: /uslugi/dezinsekciya/, /uslugi/deratizaciya/
 
-Рендерит аватар (инициалы если нет фото), имя, должность, опыт. JSON-LD включает `@type: Person`, `jobTitle`, `worksFor`.
+---
+
+## Изменения в BlogPost.tsx
+
+Обновить рендеринг для поддержки новых компонентов:
+- Если статья имеет поле `llmSummary` -- рендерить `<LLMSummary />` после H1
+- Если статья имеет `authorId` -- рендерить `<AuthorBadge />` вверху и внизу
+- Если статья имеет `faq` -- рендерить `<FAQSection />` вместо `<VisibleFAQ />`
+- Добавить ComparisonTable и CitationBlock в `ALLOWED_TAGS` для DOMPurify (если рендерятся через HTML), либо использовать отдельные props
+
+**Решение по архитектуре:** Вместо рендеринга компонентов через dangerouslySetInnerHTML, добавим отдельные поля в `BlogArticle` для структурированных данных (llmSummary, comparisonTables, citations). Компоненты рендерятся как React-элементы вне HTML-контента.
 
 ---
 
 ## Технические детали
 
-### Создаваемые файлы (5 штук)
-1. `src/components/blog/LLMSummary.tsx`
-2. `src/components/blog/ComparisonTable.tsx`
-3. `src/components/blog/FAQSection.tsx`
-4. `src/components/blog/CitationBlock.tsx`
-5. `src/components/blog/AuthorBadge.tsx`
+### Новые/изменяемые файлы
 
-### Без изменений существующих файлов
-- Никакие существующие файлы не модифицируются
-- Новые компоненты не подключаются к BlogPost.tsx (это Phase 4)
-- VisibleFAQ.tsx остаётся как есть для legacy-статей
+| Файл | Действие |
+|------|----------|
+| `src/data/blog/llm-optimized-articles.ts` | Создать -- 3 статьи |
+| `src/data/blog/index.ts` | Изменить -- добавить импорт llm-optimized с высоким приоритетом |
+| `src/data/blog/types.ts` | Изменить -- добавить поля llmSummary, comparisonTables, citations |
+| `src/pages/BlogPost.tsx` | Изменить -- рендеринг LLMSummary, AuthorBadge, FAQSection, ComparisonTable, CitationBlock |
 
-### Паттерны проекта
-- Импорт `cn()` из `@/lib/utils` для классов
-- Иконки из `lucide-react`
-- Dark mode через `dark:` Tailwind-классы
-- JSON-LD инжекция через `react-helmet-async` (паттерн из StructuredData.tsx)
-- SEO конфигурация из `@/lib/seo` (SEO_CONFIG)
+### Расширение BlogArticle interface
 
+```text
+// Новые поля в BlogArticle
+llmSummary?: {
+  bottomLine: string;
+  price?: string;
+  guarantee?: string;
+  legalBasis?: string;
+};
+comparisonTables?: Array<{
+  headers: string[];
+  rows: Record<string, string>[];
+  caption: string;
+}>;
+citations?: Array<{
+  source: string;
+  quote: string;
+  url?: string;
+}>;
+authorId?: string;  // ссылка на blogAuthors
+```
+
+### Порядок рендеринга в BlogPost.tsx
+
+1. H1 (заголовок)
+2. AuthorBadge (вверху)
+3. LLMSummary
+4. TL;DR
+5. TOC
+6. Основной контент (prose)
+7. ComparisonTable(s)  -- рендерятся inline в контенте через маркеры или после контента
+8. CitationBlock(s)
+9. FAQSection
+10. AuthorBadge (внизу)
+11. Sources
+12. Related Articles
