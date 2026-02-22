@@ -42,6 +42,7 @@ import HeroCallbackForm from "@/components/HeroCallbackForm";
 import ServiceQuiz from "@/components/ServiceQuiz";
 import ServiceTariffs from "@/components/ServiceTariffs";
 import WhyProblemReturns from "@/components/WhyProblemReturns";
+import LazySection from "@/components/LazySection";
 
 // Ленивая загрузка DistrictPage для избежания циклических зависимостей
 const DistrictPage = lazy(() => import("./DistrictPage"));
@@ -278,23 +279,29 @@ const ServicePage = () => {
         </section>
 
         {/* Service Quiz */}
-        {service.quizSteps && service.quizSteps.length > 0 && (
-          <ServiceQuiz
-            steps={service.quizSteps}
-            serviceSlug={service.slug}
-            serviceTitle={service.title}
-          />
-        )}
+        <LazySection minHeight="400px">
+          {service.quizSteps && service.quizSteps.length > 0 && (
+            <ServiceQuiz
+              steps={service.quizSteps}
+              serviceSlug={service.slug}
+              serviceTitle={service.title}
+            />
+          )}
+        </LazySection>
 
         {/* Service Tariffs */}
-        {service.tariffs && service.tariffs.length > 0 && (
-          <ServiceTariffs tariffs={service.tariffs} serviceTitle={service.title} />
-        )}
+        <LazySection minHeight="300px">
+          {service.tariffs && service.tariffs.length > 0 && (
+            <ServiceTariffs tariffs={service.tariffs} serviceTitle={service.title} />
+          )}
+        </LazySection>
 
         {/* Why Problem Returns */}
-        {service.returnReasons && service.returnReasons.length > 0 && (
-          <WhyProblemReturns returnReasons={service.returnReasons} serviceTitle={service.title} />
-        )}
+        <LazySection minHeight="250px">
+          {service.returnReasons && service.returnReasons.length > 0 && (
+            <WhyProblemReturns returnReasons={service.returnReasons} serviceTitle={service.title} />
+          )}
+        </LazySection>
 
         {/* Price highlight */}
         <section className="py-6 bg-primary text-primary-foreground">
@@ -600,32 +607,34 @@ const ServicePage = () => {
         )}
 
         {/* FAQ */}
-        <section className="py-12 md:py-20">
-          <div className="container mx-auto px-4">
-            <AnimatedSection animation="fade-up" className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                Часто задаваемые вопросы
-              </h2>
-            </AnimatedSection>
+        <LazySection minHeight="300px">
+          <section className="py-12 md:py-20">
+            <div className="container mx-auto px-4">
+              <AnimatedSection animation="fade-up" className="text-center mb-12">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                  Часто задаваемые вопросы
+                </h2>
+              </AnimatedSection>
 
-            <div className="max-w-3xl mx-auto">
-              <Accordion type="single" collapsible className="space-y-4">
-                {service.faq.map((item, idx) => (
-                  <AnimatedSection key={idx} animation="fade-up" delay={idx * 100}>
-                    <AccordionItem value={`item-${idx}`} className="bg-card rounded-xl px-6 border">
-                      <AccordionTrigger className="text-left text-lg hover:no-underline">
-                        {item.question}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground text-base">
-                        {item.answer}
-                      </AccordionContent>
-                    </AccordionItem>
-                  </AnimatedSection>
-                ))}
-              </Accordion>
+              <div className="max-w-3xl mx-auto">
+                <Accordion type="single" collapsible className="space-y-4">
+                  {service.faq.map((item, idx) => (
+                    <AnimatedSection key={idx} animation="fade-up" delay={idx * 100}>
+                      <AccordionItem value={`item-${idx}`} className="bg-card rounded-xl px-6 border">
+                        <AccordionTrigger className="text-left text-lg hover:no-underline">
+                          {item.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground text-base">
+                          {item.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </AnimatedSection>
+                  ))}
+                </Accordion>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </LazySection>
 
         {/* CTA */}
         <section className="py-12 md:py-20 bg-primary text-primary-foreground">
@@ -735,24 +744,26 @@ const ServicePage = () => {
         </section>
 
         {/* SEO Accordion */}
-        {service.seoText && (
-          <section className="py-8 md:py-12">
-            <div className="container mx-auto px-4 max-w-4xl">
-              <Accordion type="single" collapsible>
-                <AccordionItem value="seo" className="bg-card rounded-xl px-6 border">
-                  <AccordionTrigger className="text-left text-lg font-bold hover:no-underline min-h-[48px]">
-                    Подробно об услуге
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground text-base leading-relaxed">
-                    {service.seoText.split('\n').map((p, i) => (
-                      <p key={i} className="mb-3">{p.trim()}</p>
-                    ))}
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </div>
-          </section>
-        )}
+        <LazySection minHeight="80px">
+          {service.seoText && (
+            <section className="py-8 md:py-12">
+              <div className="container mx-auto px-4 max-w-4xl">
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="seo" className="bg-card rounded-xl px-6 border">
+                    <AccordionTrigger className="text-left text-lg font-bold hover:no-underline min-h-[48px]">
+                      Подробно об услуге
+                    </AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground text-base leading-relaxed">
+                      {service.seoText.split('\n').map((p, i) => (
+                        <p key={i} className="mb-3">{p.trim()}</p>
+                      ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </div>
+            </section>
+          )}
+        </LazySection>
 
         {/* Related / Other Services */}
         <section className="py-12 md:py-20 bg-muted/30">
