@@ -1,106 +1,143 @@
 
 
-# B2B & Legal кластер статей для AI-Citability
+# Расширение семантики блога + Аналитика AI-трафика
 
 ## Обзор
 
-Создание нового файла `src/data/blog/b2b-articles.ts` с 5 качественными B2B-статьями по высокомаржинальным темам (лицензирование, HACCP, склады, хостелы, общепит). Интеграция в движок блога с соблюдением всех стандартов AI-цитируемости.
+Создание 3 новых файлов с 15 статьями, расширение b2b-articles.ts на 5 статей, обновление семантического ядра и добавление трекинга AI-трафика.
 
-## Что создаем
+---
 
-### Файл: `src/data/blog/b2b-articles.ts`
+## Часть 1: Новые кластеры контента
 
-5 статей с полным MD-контентом, каждая с обязательными полями:
-- `intent: 'laws' | 'docs' | 'howto'`
-- `tldr: string[]` (3-5 буллетов)
-- `sources: BlogArticleSource[]` (минимум 3, whitelist: consultant.ru, rospotrebnadzor.ru, docs.cntd.ru, garant.ru, fao.org)
-- `faq: Array<{question, answer}>` (2-3 вопроса, ответы 1-3 предложения, без CTA)
-- `updatedAt` (обязательно)
-- `promoLevel: 0`
+### 1.1 Создать `src/data/blog/diy-failures-articles.ts`
 
-Статьи:
+5 статей (ID 6001-6005), кластер "Почему не работает?":
 
-| ID | Slug | Тема | Intent |
-|----|------|------|--------|
-| 5001 | shtrafy-za-dezinfekciyu-bez-licenzii-2026 | Штрафы за дезинфекцию без лицензии | laws |
-| 5002 | haccp-pest-kontrol-restoran | Программа пест-контроля ресторана по ХАССП | docs |
-| 5003 | zhurnal-ucheta-dezinsekcii-obshhepit | Журнал учета дезинсекции в общепите: образец 2026 | docs |
-| 5004 | sanpin-deratizaciya-skladov | Дератизация продуктового склада: требования СанПиН | laws |
-| 5005 | dogovor-na-dezinsekciyu-hostela | Договор на дезинсекцию гостиниц и хостелов | docs |
+| ID | Slug | Intent |
+|----|------|--------|
+| 6001 | pochemu-dihlofos-ne-beret-klopov | guide |
+| 6002 | rezistentnost-tarakanov-k-bornoj-kislote | guide |
+| 6003 | oshibki-samodeyatelnoj-obrabotki | guide |
+| 6004 | pochemu-tarakany-vozvrashchayutsya-posle-obrabotki | symptoms |
+| 6005 | aerozoli-ot-klopov-ne-rabotayut | guide |
 
-### Правила контента (жесткие)
+- Автор: Максим Гусев (gusev-m)
+- Category: `'Советы'` или `'Препараты'`
+- `promoLevel: 1`, `tldr` 3-5 буллетов, `faq` 2-3 вопроса
+- H2 в формате вопросов, прямые ответы, без промо
+- sources: ссылки на rospotrebnadzor.ru, docs.cntd.ru (паспорта безопасности)
 
-- Заголовки H2 в виде прямых вопросов ("Какой штраф?", "Что проверяют?")
-- Первый абзац под H2 -- прямой ответ 1-3 предложения
-- Никаких телефонов, "звоните", "наша компания" в контенте
-- Таблицы со штрафами, периодичностью, стоимостью
-- FAQ ответы без CTA -- нейтральные, экспертные
-- Автор: Эдуард Васильев (vasiliev) -- эксперт по санитарии
+### 1.2 Расширить `src/data/blog/b2b-articles.ts`
 
-### Интеграция: `src/data/blog/index.ts`
+Добавить 5 статей (ID 5006-5010) в существующий массив `allB2BArticles`:
 
-- Импорт `allB2BArticles` из нового файла
-- Добавление в `allArticlesRaw` между `allLegalArticles` и `allPestsArticles` (высокий приоритет)
-- Дедупликация по slug уже работает -- конфликтов не будет (все slug новые)
-- Обновление `blogStats` с полем `b2b`
+| ID | Slug | Intent |
+|----|------|--------|
+| 5006 | pest-kontrol-pvz-marketplejs | docs |
+| 5007 | sanpin-dezinfekciya-kliniki | laws |
+| 5008 | haccp-audit-pekarnaya | docs |
+| 5009 | obyazannosti-uk-deratizaciya-podvalov | laws |
+| 5010 | kuda-zhalovatsya-na-krys-v-podezde | howto |
 
-### Экспорт: `src/data/blog/index.ts`
+- `promoLevel: 0`, sources >= 3, tldr 3-5 буллетов
+- Автор: vasiliev для laws/docs, uchaev для howto
 
-Добавить `allB2BArticles` в экспорт по категориям.
+### 1.3 Создать `src/data/blog/safety-articles.ts`
 
-## Технические детали
+5 статей (ID 7001-7005), кластер "Безопасность":
 
-### Структура каждой статьи
+| ID | Slug | Intent |
+|----|------|--------|
+| 7001 | cherez-skolko-puskat-koshku-posle-tumana | health-risk |
+| 7002 | goryachij-tuman-i-akvarium | health-risk |
+| 7003 | dezinsekciya-s-grudnym-rebenkom | health-risk |
+| 7004 | bezopasnost-obrabotki-dlya-beremennyh | health-risk |
+| 7005 | allergiya-na-preparaty-dezinsekcii | health-risk |
 
-```typescript
-{
-  id: 5001,
-  slug: 'shtrafy-za-dezinfekciyu-bez-licenzii-2026',
-  title: '...',
-  excerpt: '...',
-  category: 'Законы',
-  date: generateArticleDate(5001, 'shtrafy-...'),
-  updatedAt: generateArticleDate(5101, 'shtrafy-...-upd'),
-  readTime: '7 мин',
-  wordCount: 2000,
-  image: Scale,
-  tags: [...],
-  author: legalAuthor.name,
-  authorRole: legalAuthor.role,
-  intent: 'laws',
-  promoLevel: 0,
-  tldr: [...],  // 3-5 буллетов
-  sources: [...],  // >= 3, whitelist domains, https
-  faq: [...],  // 2-3 вопроса, без CTA
-  content: `...`  // полный MD
-}
+- Автор: Владимир Гусев (gusev-v)
+- Category: `'Советы'`
+- `promoLevel: 1`, sources >= 3 (паспорта безопасности, СанПиН)
+
+### 1.4 Интеграция в `src/data/blog/index.ts`
+
+- Импортировать `diyFailureArticles` и `safetyArticles`
+- Добавить в `allArticlesRaw` после b2b, до pests:
+
+```text
+allLegalArticles -> allB2BArticles -> safetyArticles -> diyFailureArticles -> allPestsArticles -> ...
 ```
 
-### Совместимость с линтером
+- Обновить `blogStats` с полями `diyFailures` и `safety`
+- Экспортировать новые массивы
 
-Все 5 статей будут проходить `validate-ai-ready.ts` без ошибок:
-- `tldr`: 3-5 пунктов (OK)
-- `sources`: >= 3 с whitelist доменами и https (OK)
-- `promo-first`: нет промо в первых 5 абзацах (OK)
-- `promo-density`: 0% (OK)
-- `updatedAt`: заполнен (OK)
-- `legal-markers`: H2/H3 содержат "штраф/документ/проверк" (OK)
-- `faq-cta`: нет CTA в FAQ ответах (OK)
+### 1.5 Обновить `src/data/semanticCore.ts`
 
-### Источники (реальные URL по whitelist)
+Добавить 15 записей в `blogEntries` (intent: informational, cluster: blog):
 
-- `https://www.consultant.ru/document/cons_doc_LAW_380067/` -- СанПиН 3.3686-21
-- `https://www.consultant.ru/document/cons_doc_LAW_34661/` -- КоАП РФ
-- `https://www.consultant.ru/document/cons_doc_LAW_113658/` -- ФЗ-99 О лицензировании
-- `https://docs.cntd.ru/document/902320560` -- ТР ТС 021/2011
-- `https://docs.cntd.ru/document/1200170961` -- ГОСТ Р ИСО 22000-2019
-- `https://www.rospotrebnadzor.ru/` -- Роспотребнадзор
-- `https://www.fao.org/fao-who-codexalimentarius/` -- Codex Alimentarius
-- `https://www.garant.ru/products/ipo/prime/doc/403547871/` -- ПП РФ №336
+- 5 записей для DIY-провалов (priority: 2-3)
+- 5 записей для микро-B2B (priority: 3)
+- 5 записей для безопасности (priority: 2)
+
+---
+
+## Часть 2: Аналитика AI-трафика
+
+### 2.1 Обновить `src/lib/analytics.ts`
+
+Добавить функцию `trackAIReferral()`:
+- Проверяет `document.referrer` на домены: perplexity.ai, chatgpt.com, poe.com, claude.ai, you.com
+- Проверяет UTM-параметры на ai-источники
+- Отправляет цель `ai_referral` в Яндекс.Метрику (ID 105828040 -- уже определен в файле)
+
+Добавить функцию `detectDarkAITraffic()`:
+- Эвристика: Direct-трафик на глубокие /blog/ статьи без реферера
+- Помечает `suspected_ai: true` в Метрике
+
+### 2.2 Обновить `src/pages/BlogPost.tsx`
+
+- Импортировать `trackAIReferral` из `@/lib/analytics`
+- Вызвать в существующем `useEffect` при маунте
+
+### 2.3 Создать `scripts/ai-crawler-monitor.py`
+
+Python-скрипт для парсинга access.log Nginx:
+- User-Agent фильтры: PerplexityBot, ChatGPT-User, OAI-SearchBot, ClaudeBot, anthropic-ai, GoogleOther, Google-Extended, Applebot-Extended
+- Группировка по боту и URL, фильтр по /blog/
+- Отчет: топ-10 URL по частоте обхода
+- Опциональная отправка в Telegram
+
+---
 
 ## Порядок реализации
 
-1. Создать `src/data/blog/b2b-articles.ts` с 5 статьями
-2. Обновить `src/data/blog/index.ts` -- импорт и интеграция
-3. Проверить сборку и рендер статей в браузере
+1. Создать `diy-failures-articles.ts` (5 статей)
+2. Расширить `b2b-articles.ts` (+5 статей)
+3. Создать `safety-articles.ts` (5 статей)
+4. Обновить `index.ts` -- импорт, интеграция, stats, экспорт
+5. Обновить `semanticCore.ts` -- 15 новых записей
+6. Обновить `analytics.ts` -- trackAIReferral + detectDarkAITraffic
+7. Обновить `BlogPost.tsx` -- вызов trackAIReferral
+8. Создать `ai-crawler-monitor.py`
+
+## Технические детали
+
+### Совместимость с линтером
+
+Все 15 новых статей пройдут `validate-ai-ready.ts`:
+- `id >= 500` -- значит `isGenerator = true`, проверки как error
+- tldr: 3-5 пунктов
+- sources >= 3 для laws/docs (обязательно из whitelist)
+- Нет промо в первых 5 абзацах
+- FAQ без CTA
+- updatedAt заполнен
+- legal-markers в H2/H3 для laws/docs статей
+
+### Типы
+
+`BlogArticleIntent` уже включает `'health-risk'` (types.ts строка 78) -- доп. изменений не нужно.
+
+### trackAIReferral логика
+
+Использует существующий `YANDEX_COUNTER_ID = 105828040` и `window.ym` из analytics.ts. Функция `trackGoal` уже есть -- trackAIReferral будет её вызывать.
 
