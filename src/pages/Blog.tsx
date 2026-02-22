@@ -31,12 +31,33 @@ const categoryIcons: Record<string, { icon: LucideIcon; emoji: string }> = {
   "Безопасность": { icon: Shield, emoji: "🛡️" },
 };
 
+// Top featured slugs — guides & legal articles shown first
+const topFeaturedSlugs = [
+  'vidy-dezinfekcii',
+  'borba-s-tarakanami',
+  'klopy-v-kvartire',
+  'gryzuny-v-dome',
+  'kak-podgotovit-pomeshchenie',
+  'dezinfekciya-ofisa',
+  'ozonirovaniye-pomeshcheniy',
+  'sezonnost-vreditelej',
+];
+
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
 
-  const filteredPosts = selectedCategory === "Все" 
+  const baseList = selectedCategory === "Все" 
     ? allBlogArticles 
     : allBlogArticles.filter(post => post.category === selectedCategory);
+
+  const filteredPosts = [...baseList].sort((a, b) => {
+    const aIdx = topFeaturedSlugs.indexOf(a.slug);
+    const bIdx = topFeaturedSlugs.indexOf(b.slug);
+    if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+    if (aIdx !== -1) return -1;
+    if (bIdx !== -1) return 1;
+    return 0;
+  });
 
   const isNewArticle = (dateString: string) => {
     const articleDate = new Date(dateString);
@@ -166,7 +187,7 @@ const Blog = () => {
                   to={`/blog/${post.slug}`}
                   className="group"
                 >
-                  <Card className="h-full relative hover:shadow-lg hover:shadow-russia-red/10 transition-all duration-300 hover:-translate-y-1">
+                  <Card className="h-full relative border-0 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                     {isNew && (
                       <span className="absolute top-3 right-3 bg-gradient-to-r from-russia-red to-secondary text-white text-[10px] px-2.5 py-1 rounded-full font-medium shadow-md z-10 flex items-center gap-1">
                         <Sparkles className="w-3 h-3" /> Новое

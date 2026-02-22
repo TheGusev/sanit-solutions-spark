@@ -209,16 +209,7 @@ const BlogPost = () => {
               )}
 
               <div 
-                className="prose prose-lg max-w-none
-                  prose-headings:text-foreground prose-headings:font-bold prose-headings:scroll-mt-28
-                  prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-                  prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-                  prose-p:text-muted-foreground prose-p:leading-[1.75] prose-p:mb-5
-                  prose-strong:text-foreground prose-strong:font-semibold
-                  prose-ul:text-muted-foreground prose-ul:my-4
-                  prose-li:my-2
-                  prose-table:overflow-x-auto
-                "
+                className="prose prose-lg prose-slate dark:prose-invert max-w-none prose-headings:scroll-mt-28"
                 dangerouslySetInnerHTML={{ 
                   __html: DOMPurify.sanitize(
                     generateContentWithIds(post.content),

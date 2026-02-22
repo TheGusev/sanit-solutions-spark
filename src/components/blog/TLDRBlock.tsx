@@ -9,19 +9,18 @@ const TLDRBlock = ({ items }: TLDRBlockProps) => {
 
   return (
     <section className="my-6 md:my-8 mx-auto max-w-3xl">
-      <div className="border-l-4 border-primary bg-muted/50 rounded-r-lg p-5 md:p-6 shadow-sm">
+      <div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950/30 dark:border-blue-400 rounded-r-lg p-5 md:p-6 shadow-sm">
         <div className="flex items-center gap-2 mb-3">
-          <Zap className="w-5 h-5 text-primary" />
+          <Zap className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           <h2 className="text-lg font-bold text-foreground">Кратко</h2>
         </div>
-        <ul className="space-y-2">
+        <div className="space-y-2">
           {items.map((item, i) => (
-            <li key={i} className="flex items-start gap-2 text-muted-foreground text-base leading-relaxed">
-              <span className="text-primary mt-1.5 text-xs">●</span>
-              <span>{item}</span>
-            </li>
+            <p key={i} className="text-muted-foreground text-base leading-relaxed">
+              {item}
+            </p>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );
