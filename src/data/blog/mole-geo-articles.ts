@@ -404,6 +404,14 @@ export const moleGeoArticles: BlogArticle[] = allGeoData.map((data, index) => {
     faq: data.faq,
     relatedServices: ['deratizaciya'],
     relatedArticles: [],
+    intent: 'geo',
+    tldr: [
+      `Кроты ${data.locationName}: ${data.soilType} — идеальные условия`,
+      `Признаки: кротовины, подземные ходы, гибель растений`,
+      `Методы: газация тоннелей, кротоловки, репелленты, отпугиватели`,
+      `Стоимость: от 4 500 ₽ за 6 соток, гарантия 6 месяцев`,
+      `Оптимальное время: март-апрель и сентябрь-октябрь`,
+    ],
   };
 
   const authored = assignAuthor(article);

@@ -133,7 +133,7 @@ const generateService = (service: ServiceData) => ({
 
 const generateArticle = (post: BlogPostData, baseUrl: string) => ({
   "@context": "https://schema.org",
-  "@type": "Article",
+  "@type": "BlogPosting",
   "headline": post.title,
   "description": post.excerpt,
   "datePublished": post.date,
