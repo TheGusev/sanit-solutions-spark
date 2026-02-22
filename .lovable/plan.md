@@ -1,79 +1,75 @@
 
+# Устранение всех замечаний + полный тест
 
-# Fix: Pest Page Hero Background Visibility on Mobile
+## Замечание 1: Старый номер телефона (5 файлов, ~20 замен)
 
-## Problem
+### src/data/blogPosts.ts (~16 вхождений)
+Заменить все `+7 (906) 998-98-88` на `8-495-018-18-17` в content-строках блог-постов (строки 68, 265, 358, 446, 540, 674, 760, 860, 956, 1038, 1132, 1228, 1327, 1423, 1513 и далее).
 
-On mobile, pest images in the Hero section are nearly invisible. The current CSS applies `opacity: 0.80` to the background image, but then layers TWO gradient overlays on top:
-- `from-background/80 via-background/55 to-background/30` (horizontal)
-- `from-background/20 via-transparent to-background/40` (vertical)
+### src/components/ExitIntentPopup.tsx (2 замены)
+- Строка 296: `tel:+79069989888` -> `tel:84950181817`
+- Строка 299: `+7 (906) 998-98-88` -> `8-495-018-18-17`
 
-The combined effect makes the image almost completely hidden behind white overlays on mobile.
+### src/components/ServiceQuiz.tsx (1 замена)
+- Строка 128: `+7 (906) 998-98-88` -> `8-495-018-18-17`
 
-On desktop the image is visible because the foreground card shows it separately, and the background has lower opacity (0.60) which paradoxically looks better because of the overlay math.
+### src/components/ServiceTariffs.tsx (1 замена)
+- Строка 77: `tel:+79069989888` -> `tel:84950181817`
 
-## Solution
+### public/404.html (2 замены)
+- Строка 291: `tel:+79069989888` -> `tel:84950181817`
+- Строка 295: `8 (906) 998-98-88` -> `8-495-018-18-17`
 
-Adjust the mobile-specific values to make the background image clearly visible:
+### public/410.html (2 замены)
+- Строка 128: `tel:+79069989888` -> `tel:84950181817`
+- Строка 132: `8 (906) 998-98-88` -> `8-495-018-18-17`
 
-### File: `src/pages/ServicePestPage.tsx`
+### public/contacts/index.html (3 замены в meta)
+- Строка 7: description `+7 (906) 998-98-88` -> `8-495-018-18-17`
+- Строка 11: og:description `+7 (906) 998-98-88` -> `8-495-018-18-17`
+- Строка 18: twitter:description `+7 (906) 998-98-88` -> `8-495-018-18-17`
 
-**Current mobile CSS:**
-```css
-.pest-hero-bg {
-  filter: blur(2px);
-  opacity: 0.80;
-}
-```
+---
 
-**New mobile CSS:**
-```css
-.pest-hero-bg {
-  filter: blur(1px);
-  opacity: 0.95;
-}
-```
+## Замечание 2: Фон ServicePage слишком бледный
 
-**Current desktop CSS (keep as-is but reduce blur slightly):**
-```css
-@media (min-width: 768px) {
-  .pest-hero-bg {
-    filter: blur(4px);
-    opacity: 0.60;
-  }
-}
-```
+### src/pages/ServicePage.tsx
+Увеличить видимость фона аналогично pest-страницам:
+- Mobile: opacity `0.45` -> `0.95`, добавить `blur(1px)`
+- Desktop: opacity `0.55` -> `0.65`, добавить `blur(3px)`
+- Облегчить оверлей: `from-background/85 via-background/65` -> `from-background/60 via-background/35`
+- Вертикальный: `from-background/20 ... to-background/40` -> `from-background/10 ... to-background/30`
 
-**New desktop CSS:**
-```css
-@media (min-width: 768px) {
-  .pest-hero-bg {
-    filter: blur(3px);
-    opacity: 0.65;
-  }
-}
-```
+---
 
-**Reduce overlay strength** (line 173-174):
-- Change `from-background/80` to `from-background/60`
-- Change `via-background/55` to `via-background/35`
-- Change vertical `from-background/20` to `from-background/10`
+## Замечание 3: Preload warning
 
-This results in:
-```
-bg-gradient-to-r from-background/60 via-background/35 to-background/30
-bg-gradient-to-b from-background/10 via-transparent to-background/30
-```
+Предупреждение `fast-response.jpg` генерируется только компонентом `Hero.tsx`, который загружается на главной странице. На подстраницах `Hero.tsx` не используется -- preload не вставляется из кода. Предупреждение может быть кэшем браузера. Не требует изменений.
 
-## Expected Result
+---
 
-- Mobile: pest image clearly visible as atmospheric background, text still readable over lighter gradient
-- Desktop: pest image visible as background atmosphere with foreground card intact
-- Text contrast maintained through gradient overlay (just less heavy)
+## Замечание 4: Проверка внутренних ссылок блога
 
-## Files to modify
+После правок будет проведён полный тест через browser tool:
+1. Главная `/` -- проверка номера в шапке/подвале
+2. `/uslugi/dezinsekciya` -- фон, номер в meta
+3. `/uslugi/dezinsekciya/blohi` -- фон вредителя на мобильном
+4. `/uslugi/deratizaciya` -- фон
+5. `/blog/borba-s-tarakanami` -- номер в тексте
+6. `/contacts` -- номер в meta
+7. Проверка нескольких внутренних ссылок из блога
 
-| File | Change |
-|---|---|
-| `src/pages/ServicePestPage.tsx` | Increase mobile opacity to 0.95, reduce blur to 1px, lighten overlay gradients |
+---
 
+## Сводка файлов
+
+| Файл | Замен | Тип |
+|------|-------|-----|
+| src/data/blogPosts.ts | ~16 | Контент |
+| src/components/ExitIntentPopup.tsx | 2 | Компонент |
+| src/components/ServiceQuiz.tsx | 1 | Компонент |
+| src/components/ServiceTariffs.tsx | 1 | Компонент |
+| src/pages/ServicePage.tsx | 4 строки CSS + 2 оверлея | Страница |
+| public/404.html | 2 | Статика |
+| public/410.html | 2 | Статика |
+| public/contacts/index.html | 3 | Статика |
