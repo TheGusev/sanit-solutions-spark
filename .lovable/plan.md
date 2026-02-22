@@ -1,31 +1,23 @@
 
+# Вернуть правильные фоновые фото на главной
 
-# Вернуть ротацию 2 фоновых изображений на главной
-
-## Что было сломано
-
-Ранее Hero на главной странице чередовал 2 фоновых изображения с плавным переходом:
-- `moscow-panorama-sunset.jpg`
-- `moscow-park-fountains.jpg`
-
-Это было заменено на одно статическое изображение (строка 12: `const HERO_BACKGROUND`). Нужно вернуть ротацию.
+## Проблема
+На главной стоят фото панорам Москвы (moscow-panorama-sunset.jpg, moscow-park-fountains.jpg), а должны быть фото работы специалистов из папки `work`.
 
 ## Что будет сделано
 
 **Файл: `src/components/Hero.tsx`**
 
-1. Заменить `HERO_BACKGROUND` (одно фото) на массив из 2 фото:
-   ```
-   const HERO_BACKGROUNDS = [
-     '/images/backgrounds/moscow-panorama-sunset.jpg',
-     '/images/backgrounds/moscow-park-fountains.jpg'
-   ];
-   ```
+Заменить массив `HERO_BACKGROUNDS` на 3 фото из папки work:
 
-2. Добавить `useState` для текущего индекса фона и `useEffect` с `setInterval` (каждые 6 секунд) для автоматической смены.
+```typescript
+const HERO_BACKGROUNDS = [
+  '/images/work/specialist-closeup.jpg',
+  '/images/work/fog-generator.jpg',
+  '/images/work/clean-room.jpg'
+];
+```
 
-3. Рендерить оба изображения одновременно с абсолютным позиционированием, переключая `opacity` (0 или 1) с CSS transition (`transition-opacity duration-1000`) для плавного перехода.
+Ротация каждые 6 секунд и плавный переход останутся без изменений.
 
-4. Оверлей и параллакс остаются без изменений.
-
-## Никакие другие файлы не затрагиваются
+Больше ничего не меняется.
