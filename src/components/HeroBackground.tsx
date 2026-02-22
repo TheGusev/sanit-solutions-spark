@@ -16,7 +16,7 @@ interface HeroBackgroundProps {
 
 const HeroBackground = ({ 
   image, 
-  blur = 1, 
+  blur = 0, 
   blurMobile,
   opacity = 0.55,
   opacityMobile,
