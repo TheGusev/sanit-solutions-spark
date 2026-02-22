@@ -37,6 +37,8 @@ import { useTraffic } from "@/contexts/TrafficContext";
 import SEOHead from "@/components/SEOHead";
 import { generateServiceMetadata } from "@/lib/metadata";
 import PageLoader from "@/components/PageLoader";
+import ServiceStickyBar from "@/components/ServiceStickyBar";
+import HeroCallbackForm from "@/components/HeroCallbackForm";
 
 // Ленивая загрузка DistrictPage для избежания циклических зависимостей
 const DistrictPage = lazy(() => import("./DistrictPage"));
@@ -176,7 +178,7 @@ const ServicePage = () => {
       <SEOHead metadata={metadata} pagePath={`/uslugi/${service.slug}`} />
       <Header />
 
-      <main className="pt-20">
+      <main className="pt-20 pb-16 md:pb-0">
         <section className="relative bg-gradient-to-br from-primary/10 via-background to-background py-12 md:py-20 overflow-hidden">
           {/* Фоновое изображение для услуги */}
           {service.heroImage && (
@@ -235,6 +237,8 @@ const ServicePage = () => {
                     </a>
                   </Button>
                 </div>
+
+                <HeroCallbackForm serviceSlug={service.slug} />
 
                 <div className="flex flex-wrap gap-6 mt-8 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
@@ -721,6 +725,7 @@ const ServicePage = () => {
             </div>
           </div>
         </section>
+        <ServiceStickyBar />
       </main>
 
       <Footer />
