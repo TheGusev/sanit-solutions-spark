@@ -10,8 +10,8 @@ import { trackGoal } from "@/lib/analytics";
 
 // Два фона с ротацией
 const HERO_BACKGROUNDS = [
-  '/images/work/hero-bed-spray.png',
-  '/images/work/hero-bathroom.png'
+  '/images/work/hero-bed-spray.jpg',
+  '/images/work/hero-outdoor-treatment.jpg'
 ];
 
 // Фоновые изображения для карточек
