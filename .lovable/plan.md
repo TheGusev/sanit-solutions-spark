@@ -1,41 +1,24 @@
 
 
-# Замена Telegram на MAX по всему сайту
+# Добавление юридической оговорки в подвал сайта
 
-## Что меняется
+## Что добавляется
 
-Все ссылки на Telegram (`t.me/one_help`) заменяются на MAX (`https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo`). Текст "Telegram" заменяется на "MAX". Иконка Telegram (SVG) заменяется на иконку MAX (MessageCircle из lucide-react). Цвет кнопки обновляется.
+Текст: "Данный сайт носит исключительно информационный характер и ни при каких условиях не является публичной офертой, определяемой положениями Статьи 437 (2) ГК РФ."
 
-## Файлы для изменения
+## Где размещается
 
-| Файл | Что меняется |
+В файле `src/components/Footer.tsx`, в самом низу блока `border-t`, после строки с ИНН/ОГРН -- добавить новый `<p>` с этим текстом.
+
+## Стиль
+
+- `text-xs opacity-50` -- мелкий шрифт, чуть приглушённее остального текста в подвале, но читаемый
+- `mt-2` -- небольшой отступ сверху, как у соседних строк
+- Текст по центру, как и остальные строки в этом блоке
+
+## Файл
+
+| Файл | Изменение |
 |---|---|
-| `src/components/FloatingButtons.tsx` | Плавающая кнопка: ссылка, иконка SVG на MessageCircle, текст тултипа, цвет кнопки, aria-label, trackGoal |
-| `src/components/Footer.tsx` | Ссылка в контактах: href, текст "Telegram: @one_help" на "MAX Мессенджер", иконка Send на MessageCircle, handleMessengerClick параметр |
-| `src/pages/Contacts.tsx` | Блок контактов: ссылка, текст, иконка, handleTelegramClick переименовать |
-| `src/components/PrivacyPolicyContent.tsx` | Ссылка в политике конфиденциальности: href, текст |
-
-## Детали по каждому файлу
-
-### FloatingButtons.tsx
-- `handleTelegramClick` --> `handleMaxClick`, trackGoal `'max_click'`
-- URL: `https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo`
-- SVG иконка Telegram --> `MessageCircle` из lucide-react
-- Цвет: `bg-[#0088cc]` --> `bg-[#168DE2]` (фирменный MAX)
-- Тултип: "Написать в MAX"
-
-### Footer.tsx
-- Иконка `Send` --> `MessageCircle`
-- href на MAX ссылку
-- Текст: "MAX Мессенджер"
-- `handleMessengerClick('telegram')` --> `handleMessengerClick('max')`
-
-### Contacts.tsx
-- `handleTelegramClick` --> `handleMaxClick` с MAX ссылкой
-- Иконка `Send` --> `MessageCircle`
-- Текст: "Telegram" --> "MAX", "@one_help" --> "Написать"
-
-### PrivacyPolicyContent.tsx
-- href на MAX ссылку
-- Текст: "Telegram: @one_help" --> "MAX Мессенджер"
+| `src/components/Footer.tsx` | Добавить `<p className="mt-2">` с текстом оговорки после строки с ИНН/ОГРН |
 
