@@ -1,30 +1,41 @@
 
-# Замена фоновых фото на главной странице
+
+# Замена Telegram на MAX по всему сайту
 
 ## Что меняется
 
-В `src/components/Hero.tsx` массив `HERO_BACKGROUNDS` содержит два фото для ротации:
-- `/images/work/hero-bed-spray.png` -- заменить на фото специалиста с распылителем у кровати
-- `/images/work/hero-bathroom.png` -- заменить на фото специалиста с обработкой на участке
+Все ссылки на Telegram (`t.me/one_help`) заменяются на MAX (`https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo`). Текст "Telegram" заменяется на "MAX". Иконка Telegram (SVG) заменяется на иконку MAX (MessageCircle из lucide-react). Цвет кнопки обновляется.
 
-## Шаги
+## Файлы для изменения
 
-1. Скопировать загруженные фото в `public/images/work/`:
-   - `photo_2026-02-23_23-06-38.jpg` --> `public/images/work/hero-bed-spray.jpg`
-   - `photo_2026-02-23_23-06-44.jpg` --> `public/images/work/hero-outdoor-treatment.jpg`
-
-2. Обновить массив `HERO_BACKGROUNDS` в `src/components/Hero.tsx`:
-   ```
-   const HERO_BACKGROUNDS = [
-     '/images/work/hero-bed-spray.jpg',
-     '/images/work/hero-outdoor-treatment.jpg'
-   ];
-   ```
-
-## Файлы
-
-| Файл | Изменение |
+| Файл | Что меняется |
 |---|---|
-| `public/images/work/hero-bed-spray.jpg` | Новое фото (копия загруженного) |
-| `public/images/work/hero-outdoor-treatment.jpg` | Новое фото (копия загруженного) |
-| `src/components/Hero.tsx` | Обновить пути в массиве `HERO_BACKGROUNDS` |
+| `src/components/FloatingButtons.tsx` | Плавающая кнопка: ссылка, иконка SVG на MessageCircle, текст тултипа, цвет кнопки, aria-label, trackGoal |
+| `src/components/Footer.tsx` | Ссылка в контактах: href, текст "Telegram: @one_help" на "MAX Мессенджер", иконка Send на MessageCircle, handleMessengerClick параметр |
+| `src/pages/Contacts.tsx` | Блок контактов: ссылка, текст, иконка, handleTelegramClick переименовать |
+| `src/components/PrivacyPolicyContent.tsx` | Ссылка в политике конфиденциальности: href, текст |
+
+## Детали по каждому файлу
+
+### FloatingButtons.tsx
+- `handleTelegramClick` --> `handleMaxClick`, trackGoal `'max_click'`
+- URL: `https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo`
+- SVG иконка Telegram --> `MessageCircle` из lucide-react
+- Цвет: `bg-[#0088cc]` --> `bg-[#168DE2]` (фирменный MAX)
+- Тултип: "Написать в MAX"
+
+### Footer.tsx
+- Иконка `Send` --> `MessageCircle`
+- href на MAX ссылку
+- Текст: "MAX Мессенджер"
+- `handleMessengerClick('telegram')` --> `handleMessengerClick('max')`
+
+### Contacts.tsx
+- `handleTelegramClick` --> `handleMaxClick` с MAX ссылкой
+- Иконка `Send` --> `MessageCircle`
+- Текст: "Telegram" --> "MAX", "@one_help" --> "Написать"
+
+### PrivacyPolicyContent.tsx
+- href на MAX ссылку
+- Текст: "Telegram: @one_help" --> "MAX Мессенджер"
+
