@@ -36,49 +36,46 @@ export function CookieBanner() {
 
   return (
     <div 
-      className={`fixed bottom-0 left-0 right-0 z-50 p-4 
+      className={`fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-4 
         bg-background/95 backdrop-blur-sm border-t border-border shadow-lg
         transform transition-transform duration-300 ease-in-out
         ${isClosing ? 'translate-y-full' : 'translate-y-0'}`}
       role="dialog"
       aria-label="Уведомление о cookies"
     >
-      <div className="container mx-auto max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <Cookie className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden="true" />
-          <p className="text-sm text-muted-foreground">
-            Мы используем cookies для улучшения работы сайта и аналитики. 
-            Продолжая использование сайта, вы соглашаетесь с нашей{' '}
-            <Link 
-              to="/privacy" 
-              className="text-primary hover:underline font-medium"
-            >
-              политикой конфиденциальности
-            </Link>
-            {' '}и{' '}
-            <Link 
-              to="/terms" 
-              className="text-primary hover:underline font-medium"
-            >
-              пользовательским соглашением
-            </Link>.
+      <div className="container mx-auto max-w-4xl flex flex-row items-center justify-between gap-2 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <Cookie className="h-5 w-5 text-primary shrink-0 hidden sm:block" aria-hidden="true" />
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            <span className="sm:hidden">Мы используем cookies.{' '}
+              <Link to="/privacy" className="text-primary hover:underline font-medium">Подробнее</Link>
+            </span>
+            <span className="hidden sm:inline">
+              Мы используем cookies для улучшения работы сайта и аналитики. 
+              Продолжая использование сайта, вы соглашаетесь с нашей{' '}
+              <Link to="/privacy" className="text-primary hover:underline font-medium">политикой конфиденциальности</Link>
+              {' '}и{' '}
+              <Link to="/terms" className="text-primary hover:underline font-medium">пользовательским соглашением</Link>.
+            </span>
           </p>
         </div>
-        <div className="flex gap-2 shrink-0">
+        <div className="flex gap-1.5 sm:gap-2 shrink-0">
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => handleAccept(false)}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs sm:text-sm h-7 sm:h-9 px-2 sm:px-3"
           >
-            Только необходимые
+            <span className="sm:hidden">Нет</span>
+            <span className="hidden sm:inline">Только необходимые</span>
           </Button>
           <Button 
             size="sm"
             onClick={() => handleAccept(true)}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-xs sm:text-sm h-7 sm:h-9 px-2 sm:px-3"
           >
-            Принять все
+            <span className="sm:hidden">ОК</span>
+            <span className="hidden sm:inline">Принять все</span>
           </Button>
         </div>
       </div>
