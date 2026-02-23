@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import NotFound from './NotFound';
-import { useEffect, Suspense, lazy } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import { Check, Phone, ChevronRight, Shield, Clock, Award, FileText, ShieldCheck, AlertTriangle, Beaker, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -43,6 +43,7 @@ import ServiceQuiz from "@/components/ServiceQuiz";
 import ServiceTariffs from "@/components/ServiceTariffs";
 import WhyProblemReturns from "@/components/WhyProblemReturns";
 import LazySection from "@/components/LazySection";
+import CalculatorModal from "@/components/CalculatorModal";
 
 // Ленивая загрузка DistrictPage для избежания циклических зависимостей
 const DistrictPage = lazy(() => import("./DistrictPage"));
@@ -51,6 +52,7 @@ const ServicePage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { context } = useTraffic();
+  const [showCalculator, setShowCalculator] = useState(false);
 
   const districtSlug = slug || "";
   const isDistrictPage = districtSlug.startsWith('dezinfekciya-');
@@ -92,7 +94,7 @@ const ServicePage = () => {
       source: 'service_page',
       service: service.slug
     });
-    navigate('/#calculator');
+    setShowCalculator(true);
   };
 
   const displayServices = service.relatedServices
@@ -812,6 +814,7 @@ const ServicePage = () => {
       </main>
 
       <Footer />
+      <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
     </>
   );
 };

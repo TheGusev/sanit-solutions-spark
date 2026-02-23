@@ -1,6 +1,6 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import NotFound from './NotFound';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Phone, Check, Shield, Clock, Award, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,10 +25,11 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { getSubpageByPath } from "@/data/serviceSubpages";
 import { getServiceBySlug } from "@/data/services";
 import { trackGoal } from "@/lib/analytics";
+import CalculatorModal from "@/components/CalculatorModal";
 
 const ServiceSubpage = () => {
   const { parentSlug, subSlug } = useParams<{ parentSlug: string; subSlug: string }>();
-  const navigate = useNavigate();
+  const [showCalculator, setShowCalculator] = useState(false);
   const subpage = getSubpageByPath(parentSlug || "", subSlug || "");
   const parentService = getServiceBySlug(parentSlug || "");
 
@@ -46,7 +47,7 @@ const ServiceSubpage = () => {
 
   const handleCalculatorClick = () => {
     trackGoal('calculator_click', { source: 'subpage', service: subpage.fullPath });
-    navigate('/#calculator');
+    setShowCalculator(true);
   };
 
   const schemaMarkup = {
@@ -382,6 +383,7 @@ const ServiceSubpage = () => {
       </main>
 
       <Footer />
+      <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
     </>
   );
 };
