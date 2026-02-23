@@ -136,7 +136,10 @@ const Footer = memo(() => {
           <p className="mt-2">Деятельность по дезинфекции, дезинсекции и дератизации подлежит лицензированию. Компания внесена в реестр Роспотребнадзора.</p>
           <p className="mt-2">
             ИНН: 5410169338 | ОГРН: 1255400030555
-            <a href="/admin/login" className="ml-2 opacity-30 hover:opacity-100 transition-opacity">◊</a>
+          <a href="/admin/login" className="ml-2 opacity-30 hover:opacity-100 transition-opacity">◊</a>
+          </p>
+          <p className="mt-2 text-xs opacity-50">
+            Данный сайт носит исключительно информационный характер и ни при каких условиях не является публичной офертой, определяемой положениями Статьи 437 (2) ГК РФ.
           </p>
         </div>
       </div>
