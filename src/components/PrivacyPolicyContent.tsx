@@ -1,4 +1,4 @@
-import { Mail, Phone, Send } from 'lucide-react';
+import { Mail, Phone, MessageCircle } from 'lucide-react';
 
 const PrivacyPolicyContent = () => {
   return (
@@ -198,9 +198,9 @@ const PrivacyPolicyContent = () => {
               </a>
             </li>
             <li className="flex items-center gap-2">
-              <Send className="w-4 h-4 text-primary" />
-              <a href="https://t.me/one_help" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                Telegram: @one_help
+              <MessageCircle className="w-4 h-4 text-primary" />
+              <a href="https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                MAX Мессенджер
               </a>
             </li>
           </ul>

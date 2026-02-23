@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { Phone, Mail, Send, MapPin, Clock, Beaker } from "lucide-react";
+import { Phone, Mail, MessageCircle, MapPin, Clock, Beaker } from "lucide-react";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 
@@ -108,15 +108,15 @@ const Footer = memo(() => {
                 </a>
               </li>
               <li className="flex items-center gap-2">
-                <Send className="h-4 w-4 flex-shrink-0" />
+                <MessageCircle className="h-4 w-4 flex-shrink-0" />
                 <a 
-                  href="https://t.me/one_help" 
+                  href="https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  onClick={() => handleMessengerClick('telegram')}
+                  onClick={() => handleMessengerClick('max')}
                   className="hover:opacity-100"
                 >
-                  Telegram: @one_help
+                  MAX Мессенджер
                 </a>
               </li>
               <li className="flex items-center gap-2">

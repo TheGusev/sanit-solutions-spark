@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { Phone, Mail, MapPin, Clock, Send, ArrowRight } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, MessageCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -41,8 +41,8 @@ const Contacts = () => {
     window.location.href = "tel:84950181817";
   };
 
-  const handleTelegramClick = () => {
-    window.open("https://t.me/one_help", "_blank");
+  const handleMaxClick = () => {
+    window.open("https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo", "_blank");
   };
 
   const handleEmailClick = () => {
@@ -97,7 +97,7 @@ const Contacts = () => {
       "priceRange": "₽₽",
       "image": "https://goruslugimsk.ru/og-image.jpg",
       "sameAs": [
-        "https://t.me/one_help"
+        "https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo"
       ]
     }
   };
@@ -169,15 +169,15 @@ const Contacts = () => {
                 </button>
 
                 <button
-                  onClick={handleTelegramClick}
+                  onClick={handleMaxClick}
                   className="flex items-center gap-4 w-full p-3 rounded-lg hover:bg-muted transition-colors text-left"
                 >
-                  <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center">
-                    <Send className="w-6 h-6 text-blue-500" />
+                  <div className="w-12 h-12 bg-[#168DE2]/10 rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-6 h-6 text-[#168DE2]" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Telegram</p>
-                    <p className="text-lg font-medium text-foreground">@one_help</p>
+                    <p className="text-sm text-muted-foreground">MAX</p>
+                    <p className="text-lg font-medium text-foreground">Написать</p>
                   </div>
                 </button>
 
