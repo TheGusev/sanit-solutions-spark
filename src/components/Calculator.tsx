@@ -452,9 +452,9 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
         <div className={isModal ? '' : 'max-w-6xl mx-auto lg:flex lg:gap-8'}>
           {/* Left column - Main calculator */}
           <div className={isModal ? 'w-full' : 'lg:w-7/12'}>
-            <div className={isModal ? 'space-y-6' : 'bg-card p-4 sm:p-8 rounded-3xl shadow-xl mb-20 lg:mb-0'}>
+            <div className={isModal ? 'space-y-4' : 'bg-card p-4 sm:p-8 rounded-3xl shadow-xl mb-20 lg:mb-0'}>
             {/* БЛОК 1: Базовый расчёт */}
-            <div className="space-y-6">
+            <div className={isModal ? 'space-y-4' : 'space-y-6'}>
               
               {/* Что нужно обработать? */}
               <div>
@@ -628,15 +628,17 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
               {/* Компактная кнопка для формы */}
               <CompactRequestButton />
               
-              {/* Альтернативная кнопка для полной формы */}
-              <div className="text-center">
-                <button
-                  onClick={handleOrder}
-                  className="text-sm text-muted-foreground hover:text-primary underline underline-offset-2"
-                >
-                  Заполнить полную форму заявки
-                </button>
-              </div>
+              {/* Альтернативная кнопка для полной формы - скрыта в модале */}
+              {!isModal && (
+                <div className="text-center">
+                  <button
+                    onClick={handleOrder}
+                    className="text-sm text-muted-foreground hover:text-primary underline underline-offset-2"
+                  >
+                    Заполнить полную форму заявки
+                  </button>
+                </div>
+              )}
               
               {(clientType === 'ip' || clientType === 'company') && (
                 <Button
@@ -650,7 +652,8 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
 
             </div>
 
-            {/* БЛОК 2: Расширенные настройки (аккордеон) */}
+            {/* БЛОК 2: Расширенные настройки (аккордеон) - скрыт в модале */}
+            {!isModal && (
             <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced} className="mt-8">
               <CollapsibleTrigger className="w-full bg-muted/30 hover:bg-muted/50 p-4 rounded-xl transition-all flex items-center justify-between">
                 <div className="text-left">
@@ -739,8 +742,10 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
 
               </CollapsibleContent>
             </Collapsible>
+            )}
 
-            {/* БЛОК 3: Аналитика (по клику) */}
+            {/* БЛОК 3: Аналитика (по клику) - скрыт в модале */}
+            {!isModal && (
             <div className="mt-8 space-y-4">
               
               {/* Кнопки для показа аналитики */}
@@ -851,6 +856,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
               )}
 
             </div>
+            )}
 
             {/* Подпись о персональных данных */}
             <p className="text-xs text-muted-foreground text-center mt-6">
