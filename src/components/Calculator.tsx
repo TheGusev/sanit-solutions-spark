@@ -458,7 +458,6 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
               
               {/* Что нужно обработать? */}
               <div>
-                <Label className="text-base font-bold mb-3 block">Что нужно обработать?</Label>
                 <div className="flex flex-wrap gap-2">
                   {premiseTypes.map(type => {
                     const Icon = type.icon;
@@ -522,9 +521,6 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
                     <p className="text-destructive text-sm">{areaError}</p>
                   )}
                   
-                  <p className="text-xs text-muted-foreground">
-                    Если не знаете точно — укажите примерно. Скидка считается от площади.
-                  </p>
                 </div>
               </div>
 
@@ -577,14 +573,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
                     </button>
                   </div>
                 </div>
-              ) : (
-                <button
-                  onClick={() => setShowClientType(true)}
-                  className="text-sm text-muted-foreground hover:text-primary underline underline-offset-2"
-                >
-                  Я представляю компанию или ИП →
-                </button>
-              )}
+              ) : null}
 
               {/* Блок результата */}
               <div className="bg-gradient-to-br from-primary/5 to-success/5 p-4 sm:p-6 rounded-2xl space-y-3">

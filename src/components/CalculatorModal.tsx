@@ -19,9 +19,7 @@ export const CalculatorModal = ({ open, onOpenChange }: CalculatorModalProps) =>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
         <DialogHeader className="p-6 pb-0">
-          <DialogTitle className="text-2xl font-bold">
-            Рассчитать стоимость
-          </DialogTitle>
+          <DialogTitle className="sr-only">Калькулятор</DialogTitle>
         </DialogHeader>
         <div className="px-2 pb-6">
           <Suspense fallback={<SectionLoader />}>

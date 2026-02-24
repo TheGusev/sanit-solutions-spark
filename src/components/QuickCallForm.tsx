@@ -175,15 +175,6 @@ export function QuickCallForm({ calculatorData, onSuccess }: QuickCallFormProps)
         {error && <p className="text-sm text-destructive">{error}</p>}
       </form>
 
-      {/* Social proof */}
-      <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <Clock className="w-3 h-3" />
-          Перезвоним за 15 мин
-        </span>
-        <span>•</span>
-        <span>Сегодня уже 3 заявки</span>
-      </div>
     </div>
   );
 }
