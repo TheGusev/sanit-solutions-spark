@@ -7,7 +7,8 @@ import { useParams, Link } from 'react-router-dom';
 import NotFound from './NotFound';
 import SEOHead from '@/components/SEOHead';
 import type { PageMetadata } from '@/lib/metadata';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import CalculatorModal from '@/components/CalculatorModal';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -35,6 +36,8 @@ export default function ServicePestPage() {
   const params = useParams<{ service?: string; pest?: string; parentSlug?: string; subSlug?: string }>();
   const service = params.service || params.parentSlug;
   const pestSlug = params.pest || params.subSlug;
+  
+  const [showCalculator, setShowCalculator] = useState(false);
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -239,8 +242,8 @@ export default function ServicePestPage() {
                       Позвонить: {SEO_CONFIG.phone}
                     </a>
                   </Button>
-                  <Button size="lg" variant="outline" asChild className="whitespace-normal">
-                    <Link to="/#calculator">Рассчитать стоимость</Link>
+                  <Button size="lg" variant="outline" className="whitespace-normal" onClick={() => setShowCalculator(true)}>
+                    Рассчитать стоимость
                   </Button>
                 </div>
 
@@ -535,6 +538,7 @@ export default function ServicePestPage() {
       </main>
       
       <Footer />
+      <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
     </>
   );
 }

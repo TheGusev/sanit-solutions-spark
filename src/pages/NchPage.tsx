@@ -9,7 +9,8 @@
 import { useParams, Link } from 'react-router-dom';
 import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import CalculatorModal from '@/components/CalculatorModal';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -48,6 +49,8 @@ export default function NchPage() {
   const service = params.service;
   const pestSlug = params.pest || params.segment2;
   const neighborhoodSlug = params.neighborhood || params.segment3;
+  
+  const [showCalculator, setShowCalculator] = useState(false);
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -289,8 +292,8 @@ export default function NchPage() {
                       {SEO_CONFIG.phone}
                     </a>
                   </Button>
-                  <Button size="lg" variant="outline" asChild className="whitespace-normal">
-                    <Link to="/#calculator">Рассчитать стоимость</Link>
+                  <Button size="lg" variant="outline" className="whitespace-normal" onClick={() => setShowCalculator(true)}>
+                    Рассчитать стоимость
                   </Button>
                 </div>
               </div>
@@ -508,6 +511,7 @@ export default function NchPage() {
       </main>
       
       <Footer />
+      <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
     </>
   );
 }
