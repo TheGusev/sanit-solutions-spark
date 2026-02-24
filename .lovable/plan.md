@@ -1,22 +1,43 @@
 
 
-# Удаление элементов из калькулятора
+# Исправление кнопки "Рассчитать стоимость" на страницах вредителей
 
-## Что убираем
+## Проблема
 
-На скриншотах подчёркнуты 5 элементов, которые нужно удалить:
+На страницах услуг по вредителям (клопы, тараканы и т.п.) кнопка "Рассчитать стоимость" использует `<Link to="/#calculator">`, что перекидывает на главную страницу вместо открытия калькулятора прямо на текущей странице.
 
-1. **Заголовок "Рассчитать стоимость"** в модальном окне (`CalculatorModal.tsx`, DialogTitle)
-2. **Лейбл "Что нужно обработать?"** над кнопками выбора типа помещения (`Calculator.tsx`, строка 461)
-3. **Подсказка "Если не знаете точно — укажите примерно. Скидка считается от площади."** под слайдером площади (`Calculator.tsx`, строки 525-527)
-4. **Ссылка "Я представляю компанию или ИП -->"** (`Calculator.tsx`, строки 581-586)
-5. **Строка "Перезвоним за 15 мин * Сегодня уже 3 заявки"** в форме быстрого звонка (`QuickCallForm.tsx`, блок social proof)
+## Решение
 
-## Файлы
+Добавить `CalculatorModal` и состояние `showCalculator` в три файла, заменив `<Link to="/#calculator">` на `onClick={() => setShowCalculator(true)}`.
+
+## Файлы для изменения
 
 | Файл | Изменение |
 |---|---|
-| `src/components/CalculatorModal.tsx` | Убрать DialogTitle "Рассчитать стоимость" (заменить на пустой или визуально скрытый для доступности) |
-| `src/components/Calculator.tsx` | Убрать Label "Что нужно обработать?", подсказку про площадь, и ссылку "Я представляю компанию или ИП" |
-| `src/components/QuickCallForm.tsx` | Убрать блок social proof ("Перезвоним за 15 мин * Сегодня уже 3 заявки") |
+| `src/pages/ServicePestPage.tsx` | Добавить `useState`, импорт `CalculatorModal`, заменить `Link to="/#calculator"` на `onClick`, добавить `<CalculatorModal>` перед `</>`  |
+| `src/pages/NchPage.tsx` | То же самое |
+| `src/pages/MoscowRegionCityPage.tsx` | То же самое |
 
+## Детали
+
+В каждом из трёх файлов:
+
+1. Добавить `import { useState } from 'react'` (или дополнить существующий импорт)
+2. Добавить `import CalculatorModal from '@/components/CalculatorModal'`
+3. Добавить состояние: `const [showCalculator, setShowCalculator] = useState(false)`
+4. Заменить:
+```tsx
+// Было:
+<Button asChild>
+  <Link to="/#calculator">Рассчитать стоимость</Link>
+</Button>
+
+// Стало:
+<Button onClick={() => setShowCalculator(true)}>
+  Рассчитать стоимость
+</Button>
+```
+5. Добавить компонент перед закрывающим `</>`:
+```tsx
+<CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
+```
