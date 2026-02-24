@@ -8,7 +8,8 @@
 import { useParams, Link } from 'react-router-dom';
 import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import CalculatorModal from '@/components/CalculatorModal';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -25,6 +26,8 @@ import HeroBackground from '@/components/HeroBackground';
 
 export default function MoscowRegionCityPage() {
   const { citySlug } = useParams<{ citySlug: string }>();
+  
+  const [showCalculator, setShowCalculator] = useState(false);
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -174,8 +177,8 @@ export default function MoscowRegionCityPage() {
                     {SEO_CONFIG.phone}
                   </a>
                 </Button>
-                <Button size="lg" variant="outline" className="bg-white/10 border-white text-white hover:bg-white hover:text-primary" asChild>
-                  <Link to="/#calculator">Рассчитать стоимость</Link>
+                <Button size="lg" variant="outline" className="bg-white/10 border-white text-white hover:bg-white hover:text-primary" onClick={() => setShowCalculator(true)}>
+                  Рассчитать стоимость
                 </Button>
               </div>
             </div>
@@ -308,6 +311,7 @@ export default function MoscowRegionCityPage() {
       </main>
       
       <Footer />
+      <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
     </>
   );
 }
