@@ -1,43 +1,30 @@
 
 
-# Исправление кнопки "Рассчитать стоимость" на страницах вредителей
+# Переделка целей аналитики
 
-## Проблема
+## Текущие цели → Новое назначение
 
-На страницах услуг по вредителям (клопы, тараканы и т.п.) кнопка "Рассчитать стоимость" использует `<Link to="/#calculator">`, что перекидывает на главную страницу вместо открытия калькулятора прямо на текущей странице.
+| Идентификатор | Было | Станет (по скриншотам) |
+|---|---|---|
+| `calc_open` | Калькулятор попал в область видимости | **Отправка данных с квиза** (ServiceQuiz) |
+| `calc_calculate` | Изменение полей калькулятора | **Клик по кнопке "Узнать цену"** (ServiceStickyBar) |
+| `calc_submit` | Клик "Заказать" в калькуляторе | **Отправка заявки** из компактной формы (CompactRequestModal) |
 
-## Решение
+## Цели к удалению
 
-Добавить `CalculatorModal` и состояние `showCalculator` в три файла, заменив `<Link to="/#calculator">` на `onClick={() => setShowCalculator(true)}`.
+Все вызовы `trackGoal` для: `compact_form_open`, `compact_form_submit`, `whatsapp_click` — удаляются.
 
-## Файлы для изменения
+## Файлы и изменения
 
-| Файл | Изменение |
+| Файл | Что делаем |
 |---|---|
-| `src/pages/ServicePestPage.tsx` | Добавить `useState`, импорт `CalculatorModal`, заменить `Link to="/#calculator"` на `onClick`, добавить `<CalculatorModal>` перед `</>`  |
-| `src/pages/NchPage.tsx` | То же самое |
-| `src/pages/MoscowRegionCityPage.tsx` | То же самое |
+| `src/components/ServiceQuiz.tsx` | `trackGoal('quiz_submit', ...)` → `trackGoal('calc_open', ...)` |
+| `src/components/ServiceStickyBar.tsx` | `trackGoal('service_sticky_price', ...)` → `trackGoal('calc_calculate', ...)` |
+| `src/components/CompactRequestModal.tsx` | `trackGoal('compact_form_submit', ...)` → `trackGoal('calc_submit', ...)` |
+| `src/components/Calculator.tsx` | Удалить 4 вызова trackGoal: `calc_open` (IntersectionObserver), `calc_calculate` (useEffect при изменении полей), `calc_submit` (handleOrder), `compact_form_open` (handleCompactRequest) |
+| `src/lib/analytics.ts` | Обновить маппинги VK Pixel и Top.Mail.Ru: `calc_open` → `'lead'` (вместо `'view_content'`) |
 
 ## Детали
 
-В каждом из трёх файлов:
+В `Calculator.tsx` все 4 старых вызова trackGoal убираются, т.к. цели теперь привязаны к другим компонентам. Сама логика калькулятора (формы, модалки) не меняется — меняются только трекинг-вызовы.
 
-1. Добавить `import { useState } from 'react'` (или дополнить существующий импорт)
-2. Добавить `import CalculatorModal from '@/components/CalculatorModal'`
-3. Добавить состояние: `const [showCalculator, setShowCalculator] = useState(false)`
-4. Заменить:
-```tsx
-// Было:
-<Button asChild>
-  <Link to="/#calculator">Рассчитать стоимость</Link>
-</Button>
-
-// Стало:
-<Button onClick={() => setShowCalculator(true)}>
-  Рассчитать стоимость
-</Button>
-```
-5. Добавить компонент перед закрывающим `</>`:
-```tsx
-<CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
-```
