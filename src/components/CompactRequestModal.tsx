@@ -56,7 +56,7 @@ export const CompactRequestModal = ({
 
     setIsSubmitting(true);
     
-    trackGoal('compact_form_submit', {
+    trackGoal('calc_submit', {
       intent: context?.intent,
       variant: context?.variantId,
       hasName: !!name.trim(),

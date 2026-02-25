@@ -88,7 +88,7 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle }: Servic
       .map((step, i) => `${step.question}: ${answers[i] || '—'}`)
       .join('\n');
 
-    trackGoal('quiz_submit', {
+    trackGoal('calc_open', {
       intent: context?.intent,
       service: serviceSlug,
     });
