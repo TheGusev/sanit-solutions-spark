@@ -58,7 +58,7 @@ const dezinsekciyaPestSlugs = ['tarakany', 'klopy', 'muravyi', 'blohi', 'mol'];
 const deratizaciyaPestSlugs = ['krysy', 'myshi', 'kroty'];
 
 // Города МО
-const moscowRegionCitySlugs = ['khimki', 'mytishchi', 'balashikha', 'podolsk', 'korolev', 'lyubertsy', 'krasnogorsk', 'odintsovo', 'domodedovo'];
+const moscowRegionCitySlugs = ['khimki', 'mytishchi', 'balashikha', 'podolsk', 'korolev', 'lyubertsy', 'krasnogorsk', 'odintsovo', 'shchyolkovo', 'dolgoprudny'];
 const moscowRegionServices = ['dezinsekciya', 'deratizaciya', 'dezinfekciya', 'ozonirovanie'];
 
 // Топ районов для НЧ-страниц (синхронизировано с seoRoutes.ts)
