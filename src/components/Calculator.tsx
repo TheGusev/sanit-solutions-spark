@@ -88,40 +88,10 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     }
   }, [context, initialized]);
 
-  // Логирование calc_open при первом появлении калькулятора
-  useEffect(() => {
-    const calcElement = document.getElementById('calculator');
-    if (!calcElement || !context) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          trackGoal('calc_open', {
-            intent: context?.intent,
-            variant: context?.variantId
-          });
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    observer.observe(calcElement);
-    return () => observer.disconnect();
-  }, [context]);
-
-  // Логирование calc_calculate при изменении ключевых полей
+  // Логирование изменений полей калькулятора
   useEffect(() => {
     if (!context || !initialized) return;
-
-    trackGoal('calc_calculate', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      area,
-      premiseType,
-      serviceType,
-      finalPrice: calculatePrice() - Math.round((calculatePrice() * calculateDiscount()) / 100)
-    });
 
     const timeoutId = setTimeout(() => {
       supabase.functions.invoke('log-traffic-event', {
@@ -271,15 +241,6 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
 
   // Обработка заказа (полная форма)
   const handleOrder = () => {
-    trackGoal('calc_submit', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      area,
-      premiseType,
-      serviceType,
-      finalPrice
-    });
-    
     if (context) {
       supabase.functions.invoke('log-traffic-event', {
         body: {
@@ -311,13 +272,6 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
 
   // Обработка компактной формы
   const handleCompactRequest = () => {
-    trackGoal('compact_form_open', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      area,
-      finalPrice
-    });
-    
     setShowCompactForm(true);
   };
 

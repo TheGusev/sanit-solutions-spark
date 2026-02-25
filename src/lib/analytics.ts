@@ -134,7 +134,7 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
       const vkEventMap: Record<string, string> = {
         'lead_submit': 'lead',
         'popup_submit': 'lead',
-        'calc_open': 'view_content',
+        'calc_open': 'lead',
         'phone_click': 'contact',
         'telegram_click': 'contact'
       };
@@ -155,7 +155,7 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
       const tmrGoalMap: Record<string, string> = {
         'lead_submit': 'lead',
         'popup_submit': 'lead',
-        'calc_open': 'view_content',
+        'calc_open': 'lead',
         'phone_click': 'contact',
         
         'telegram_click': 'contact'

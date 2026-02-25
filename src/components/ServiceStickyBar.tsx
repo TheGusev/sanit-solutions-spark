@@ -25,7 +25,7 @@ export default function ServiceStickyBar() {
   };
 
   const handlePrice = () => {
-    trackGoal('service_sticky_price', { source: 'sticky_bar' });
+    trackGoal('calc_calculate', { source: 'sticky_bar' });
     const target = document.getElementById('quiz') || document.getElementById('pricing-by-area') || document.getElementById('calculator');
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
