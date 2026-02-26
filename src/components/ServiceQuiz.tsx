@@ -88,11 +88,6 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle }: Servic
       .map((step, i) => `${step.question}: ${answers[i] || '—'}`)
       .join('\n');
 
-    trackGoal('calc_open', {
-      intent: context?.intent,
-      service: serviceSlug,
-    });
-
     try {
       const { data, error } = await supabase.functions.invoke('handle-lead', {
         body: {
@@ -117,6 +112,11 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle }: Servic
       if (error || !data?.success) {
         throw error || new Error('Failed');
       }
+
+      trackGoal('calc_open', {
+        intent: context?.intent,
+        service: serviceSlug,
+      });
 
       toast.success('✅ Заявка отправлена! Перезвоним в течение 15 минут');
       setCurrentStep(0);
