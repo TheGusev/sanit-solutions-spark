@@ -1,30 +1,46 @@
 
 
-# Исправление 404 на /moscow-oblast/khimki/
+# Исправление: цель calc_open срабатывает до успешной отправки лида
 
-## Диагностика
+## Проблема
 
-Страница `/moscow-oblast/khimki/` работает в SPA-режиме (проверено в превью). Проблема — на продакшене (goruslugimsk.ru), где сайт отдаётся через nginx как статический HTML, сгенерированный SSG.
-
-Обнаружена рассинхронизация между данными городов и SSG-конфигурацией:
-
-| Источник | Города |
-|---|---|
-| `src/data/moscowRegion.ts` | mytishchi, khimki, lyubertsy, balashikha, korolev, odintsovo, krasnogorsk, podolsk, **shchyolkovo**, **dolgoprudny** |
-| `vite-plugin-ssg.ts` (строка 61) | khimki, mytishchi, balashikha, podolsk, korolev, lyubertsy, krasnogorsk, odintsovo, **domodedovo** |
-
-Проблемы:
-1. **`domodedovo`** есть в SSG, но отсутствует в данных → SSG пытается отрендерить несуществующую страницу → `NotFound` → может ломать весь SSG-процесс
-2. **`shchyolkovo`** и **`dolgoprudny`** есть в данных, но отсутствуют в SSG → не генерируются статические HTML
-3. Если SSG падает из-за domodedovo, то ВСЕ страницы moscow-oblast не генерируются, включая khimki
+В `src/components/ServiceQuiz.tsx` (строка 91) вызов `trackGoal('calc_open', ...)` стоит **перед** вызовом `supabase.functions.invoke('handle-lead', ...)`. Яндекс Директ списывает деньги за конверсию, даже если API-запрос упал и лид не дошёл до Telegram.
 
 ## Решение
 
-Синхронизировать список городов в SSG с данными:
+Перенести `trackGoal('calc_open', ...)` **после** проверки успешного ответа (после строки 119, внутри success-блока).
 
 | Файл | Изменение |
 |---|---|
-| `vite-plugin-ssg.ts` (строка 61) | Заменить список на: `khimki, mytishchi, balashikha, podolsk, korolev, lyubertsy, krasnogorsk, odintsovo, shchyolkovo, dolgoprudny` — убрать `domodedovo`, добавить `shchyolkovo` и `dolgoprudny` |
+| `src/components/ServiceQuiz.tsx` | Убрать `trackGoal` со строки 91, поставить после `if (error ...) throw` на строке 119 |
 
-Одно изменение в одном файле. После пересборки SSG сгенерирует корректные HTML для всех 10 городов, включая khimki.
+## Код
+
+Было (строки 87-121):
+```tsx
+setIsSubmitting(true);
+const quizSummary = ...;
+trackGoal('calc_open', { ... }); // ← срабатывает ДО API
+
+try {
+  const { data, error } = await supabase.functions.invoke('handle-lead', { ... });
+  if (error || !data?.success) throw ...;
+  toast.success('✅ Заявка отправлена!');
+```
+
+Станет:
+```tsx
+setIsSubmitting(true);
+const quizSummary = ...;
+
+try {
+  const { data, error } = await supabase.functions.invoke('handle-lead', { ... });
+  if (error || !data?.success) throw ...;
+  
+  trackGoal('calc_open', { ... }); // ← только после успешной отправки
+  
+  toast.success('✅ Заявка отправлена!');
+```
+
+Одно изменение в одном файле. Цель будет срабатывать только когда лид реально создан и отправлен в Telegram.
 
