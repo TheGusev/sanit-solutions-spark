@@ -1,46 +1,75 @@
 
 
-# Исправление: цель calc_open срабатывает до успешной отправки лида
+# Редизайн секций по образцу san-resheniya.ru — усиление патриотической темы
 
-## Проблема
+## Что берём с san-resheniya.ru
 
-В `src/components/ServiceQuiz.tsx` (строка 91) вызов `trackGoal('calc_open', ...)` стоит **перед** вызовом `supabase.functions.invoke('handle-lead', ...)`. Яндекс Директ списывает деньги за конверсию, даже если API-запрос упал и лид не дошёл до Telegram.
+По скриншотам и сайту видно следующие ключевые паттерны:
+- Над заголовком секции — маленький label (капсом, цветной): "КАК МЫ РАБОТАЕМ", "СТОИМОСТЬ РАБОТ"
+- Карточки шагов с цветными left-border (синий → красный → зелёный — триколор)
+- Numbered circles (синий фон, белый текст)
+- Карточки услуг с цветным top-border (градиент cyan/blue)
+- Чистый белый фон карточек, мягкие тени, rounded-xl
+- Зелёные галочки для преимуществ, синие щиты для доверия
 
-## Решение
+## Технические изменения
 
-Перенести `trackGoal('calc_open', ...)` **после** проверки успешного ответа (после строки 119, внутри success-блока).
+### 1. Создать переиспользуемый компонент `SectionHeading`
+Файл: `src/components/ui/SectionHeading.tsx`
 
-| Файл | Изменение |
+Компонент с:
+- Необязательный label сверху (capslock, цветной текст, мелкий шрифт)
+- Заголовок H2 (жирный)
+- Подзаголовок
+- Триколорная линия-подчёркивание (белый-синий-красный, 4px высота, ~12rem ширина)
+- Выравнивание: по центру или по левому краю (проп)
+
+### 2. Обновить CSS — добавить зелёный акцент и новые утилиты
+Файл: `src/index.css`
+
+- Добавить CSS-переменную `--patriot-green: 145 63% 42%` (зелёный для галочек/успеха)
+- Добавить утилитарные классы `.card-border-blue`, `.card-border-red`, `.card-border-green` для цветных top/left border на карточках
+- Добавить `.section-label` — стиль для label над заголовком (uppercase, tracking-wide, font-semibold, small)
+
+### 3. Обновить все секции главной страницы
+
+| Компонент | Изменения |
 |---|---|
-| `src/components/ServiceQuiz.tsx` | Убрать `trackGoal` со строки 91, поставить после `if (error ...) throw` на строке 119 |
+| `MiniPricing.tsx` | Заменить простой h2 на SectionHeading с label "НАШИ УСЛУГИ", добавить триколор-подчёркивание |
+| `WhyUsExtended.tsx` | SectionHeading с label "ПОЧЕМУ МЫ", триколор |
+| `PricingByArea.tsx` | SectionHeading с label "СТОИМОСТЬ", триколор |
+| `WorkProcess.tsx` | SectionHeading с label "КАК МЫ РАБОТАЕМ", цветные left-border на карточках шагов (синий→красный→зелёный) |
+| `WorkGallery.tsx` | SectionHeading с label "ПОРТФОЛИО" |
+| `FAQ.tsx` | SectionHeading с label "ВОПРОСЫ И ОТВЕТЫ" |
+| `Reviews.tsx` | SectionHeading с label "ОТЗЫВЫ" |
+| `FinalCTA.tsx` | Без label, но триколор-линия |
+| `ServiceAreaMap.tsx` | SectionHeading с label "ГЕОГРАФИЯ", убрать emoji из заголовка |
+| `TrustBadge.tsx` | Добавить зелёный акцент на бордер |
 
-## Код
+### 4. Стиль карточек шагов WorkProcess — как на san-resheniya.ru
+- Мобильная версия: каждый шаг в карточке с цветным left-border (4px)
+  - Шаг 1: синий (#003DA5) + label "ЗА 15 МИНУТ"
+  - Шаг 2: красный (#CC0000) + label "ЧЕРЕЗ 1-3 ЧАСА"  
+  - Шаг 3: зелёный (#1DB954) + label "ЧЕРЕЗ 24 ЧАСА"
+  - Шаг 4: золотой + label "ГАРАНТИЯ"
+- Номерной кружок внутри карточки
 
-Было (строки 87-121):
-```tsx
-setIsSubmitting(true);
-const quizSummary = ...;
-trackGoal('calc_open', { ... }); // ← срабатывает ДО API
+### 5. Обновить карточки услуг (MiniPricing)
+- Добавить тонкий цветной top-border (gradient blue→cyan, 3px)
+- Hover: усилить тень с синим оттенком
 
-try {
-  const { data, error } = await supabase.functions.invoke('handle-lead', { ... });
-  if (error || !data?.success) throw ...;
-  toast.success('✅ Заявка отправлена!');
-```
+### 6. Обновить стиль Footer
+Файл: `src/components/Footer.tsx`
+- Фон: dark navy (`bg-[hsl(230,25%,12%)]`) вместо `bg-foreground`
+- Триколорная полоса снизу тоже (зеркально шапке)
 
-Станет:
-```tsx
-setIsSubmitting(true);
-const quizSummary = ...;
+### 7. Обновить ServicePage и DistrictPage
+- Заголовки секций на страницах услуг тоже через SectionHeading
+- Карточки тарифов с цветными рамками (синяя/красная/зелёная)
 
-try {
-  const { data, error } = await supabase.functions.invoke('handle-lead', { ... });
-  if (error || !data?.success) throw ...;
-  
-  trackGoal('calc_open', { ... }); // ← только после успешной отправки
-  
-  toast.success('✅ Заявка отправлена!');
-```
-
-Одно изменение в одном файле. Цель будет срабатывать только когда лид реально создан и отправлен в Telegram.
+## Объём работ
+- 1 новый файл (SectionHeading)
+- ~12 файлов с изменениями заголовков секций
+- CSS дополнения в index.css
+- Без изменений логики, только визуал
 
