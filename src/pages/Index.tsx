@@ -14,6 +14,7 @@ import TrustBadge from "@/components/TrustBadge";
 // New components for restructured layout
 const MiniPricing = lazy(() => import("@/components/MiniPricing"));
 const WhyUsExtended = lazy(() => import("@/components/WhyUsExtended"));
+const WorkProcess = lazy(() => import("@/components/WorkProcess"));
 const PricingByArea = lazy(() => import("@/components/PricingByArea"));
 const ServiceAreaMap = lazy(() => import("@/components/ServiceAreaMap"));
 const Reviews = lazy(() => import("@/components/Reviews"));
@@ -86,6 +87,11 @@ const Index = () => {
       {/* Short "Why Us" block */}
       <Suspense fallback={<SectionLoader />}>
         <WhyUsExtended />
+      </Suspense>
+
+      {/* Work Process - how we work */}
+      <Suspense fallback={<SectionLoader />}>
+        <WorkProcess />
       </Suspense>
       
       {/* Full pricing tables with surcharges */}

@@ -1,6 +1,7 @@
 import { Microscope, Bug, Rat, Sparkles, Wind, AlertTriangle, Mountain, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 const services = [
   { icon: Microscope, title: "Дезинфекция квартиры", href: "/uslugi/dezinfekciya" },
@@ -23,9 +24,11 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
   return (
     <section className="py-10 md:py-16 bg-muted/30">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
-          Наши основные услуги
-        </h2>
+        <SectionHeading
+          label="НАШИ УСЛУГИ"
+          title="Основные услуги"
+          subtitle="Профессиональная санитарная обработка любых объектов"
+        />
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-5xl mx-auto mb-8">
           {services.map((service, index) => {
             const Icon = service.icon;
@@ -35,7 +38,7 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
                 to={citySlug ? `/goroda/${citySlug}${service.href}` : service.href}
                 className="group"
               >
-                <div className="bg-card rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all">
+                <div className="bg-card rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all card-top-gradient">
                   <h3 className="text-sm font-medium text-foreground mb-3 leading-tight min-h-[2.5rem]">
                     {service.title}
                   </h3>

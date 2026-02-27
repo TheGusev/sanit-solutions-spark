@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Phone, Search, Beaker, CheckCircle } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 const steps = [
   {
@@ -8,28 +9,36 @@ const steps = [
     icon: Phone,
     title: "Звонок и консультация",
     description: "Бесплатная оценка ситуации по телефону. Ответим на все вопросы и подберём подходящее решение.",
-    color: "text-primary"
+    borderClass: "card-border-blue",
+    label: "ЗА 15 МИНУТ",
+    labelColor: "text-primary",
   },
   {
     number: 2,
     icon: Search,
     title: "Диагностика помещения",
     description: "Выезд специалиста для осмотра. Определяем масштаб проблемы и составляем план обработки.",
-    color: "text-blue-500"
+    borderClass: "card-border-red",
+    label: "ЧЕРЕЗ 1–3 ЧАСА",
+    labelColor: "text-russia-red",
   },
   {
     number: 3,
     icon: Beaker,
     title: "Профессиональная обработка",
     description: "Выполняем работы сертифицированными препаратами. Используем современное оборудование.",
-    color: "text-purple-500"
+    borderClass: "card-border-green",
+    label: "ЧЕРЕЗ 24 ЧАСА",
+    labelColor: "text-[hsl(var(--patriot-green))]",
   },
   {
     number: 4,
     icon: CheckCircle,
     title: "Проверка и сертификат",
     description: "Контрольная проверка результата. Выдаём документы и активируем гарантию на 30 дней.",
-    color: "text-success"
+    borderClass: "card-border-gold",
+    label: "ГАРАНТИЯ",
+    labelColor: "text-[hsl(var(--patriot-gold))]",
   }
 ];
 
@@ -37,14 +46,11 @@ const WorkProcess = memo(() => {
   return (
     <section className="py-8 md:py-24 bg-background">
       <div className="container mx-auto px-4">
-        <AnimatedSection animation="fade-up" className="text-center mb-8 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Как мы работаем?
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Прозрачный процесс от заявки до гарантии результата
-          </p>
-        </AnimatedSection>
+        <SectionHeading
+          label="КАК МЫ РАБОТАЕМ"
+          title="От звонка до чистого помещения"
+          subtitle="Прозрачный процесс от заявки до гарантии результата"
+        />
 
         {/* Desktop: Horizontal Timeline */}
         <div className="hidden md:flex relative max-w-6xl mx-auto">
@@ -61,13 +67,18 @@ const WorkProcess = memo(() => {
               <div className="flex flex-col items-center text-center px-4">
                 {/* Icon Circle */}
                 <div className="w-32 h-32 rounded-full bg-primary/10 border-4 border-background shadow-lg flex items-center justify-center mb-6 relative z-10 hover:scale-110 transition-transform">
-                  <step.icon className={`w-14 h-14 ${step.color}`} />
+                  <step.icon className={`w-14 h-14 ${step.labelColor}`} />
                 </div>
                 
                 {/* Step Number */}
-                <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center mb-3 shadow-md">
+                <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center mb-2 shadow-md">
                   {step.number}
                 </div>
+
+                {/* Timing Label */}
+                <span className={`text-[10px] font-semibold uppercase tracking-wider ${step.labelColor} mb-2`}>
+                  {step.label}
+                </span>
 
                 {/* Content */}
                 <h3 className="text-lg font-bold text-foreground mb-2">
@@ -81,36 +92,34 @@ const WorkProcess = memo(() => {
           ))}
         </div>
 
-        {/* Mobile: Vertical Timeline */}
-        <div className="md:hidden space-y-6 max-w-md mx-auto">
+        {/* Mobile: Cards with colored left-border */}
+        <div className="md:hidden space-y-4 max-w-md mx-auto">
           {steps.map((step, index) => (
             <AnimatedSection
               key={index} 
               animation="fade-up"
               delay={index * 150}
-              className="flex gap-3"
             >
-              {/* Left: Icon + Number */}
-              <div className="flex flex-col items-center flex-shrink-0">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
-                  <step.icon className={`w-6 h-6 ${step.color}`} />
-                </div>
-                <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-xs">
-                  {step.number}
-                </div>
-                {index < steps.length - 1 && (
-                  <div className="w-0.5 h-12 bg-border mt-2"></div>
-                )}
-              </div>
+              <div className={`bg-card rounded-xl p-4 shadow-sm border border-border ${step.borderClass}`}>
+                <div className="flex items-start gap-3">
+                  {/* Number Circle */}
+                  <div className="w-9 h-9 rounded-full bg-primary text-primary-foreground font-bold flex items-center justify-center text-sm flex-shrink-0">
+                    {step.number}
+                  </div>
 
-              {/* Right: Content */}
-              <div className="flex-1">
-                <h3 className="text-base font-bold text-foreground mb-1">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {step.description}
-                </p>
+                  {/* Content */}
+                  <div className="flex-1">
+                    <span className={`text-[10px] font-semibold uppercase tracking-wider ${step.labelColor}`}>
+                      {step.label}
+                    </span>
+                    <h3 className="text-base font-bold text-foreground mb-1">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
               </div>
             </AnimatedSection>
           ))}

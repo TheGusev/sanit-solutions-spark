@@ -1,4 +1,5 @@
-import { Shield, Award, FileCheck, Clock, CheckCircle2, ChevronDown } from "lucide-react";
+import { Shield, Award, FileCheck, Clock, CheckCircle2 } from "lucide-react";
+import SectionHeading from "@/components/ui/SectionHeading";
 import AnimatedSection from "@/components/AnimatedSection";
 import {
   Accordion,
@@ -38,14 +39,12 @@ const WhyUsExtended = () => {
   return (
     <section className="py-10 md:py-16 bg-background">
       <div className="container mx-auto px-4">
-        <AnimatedSection animation="fade-up" className="text-center mb-8 md:mb-12">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3">
-            Профессиональный подход к <span className="text-primary">каждому объекту</span>
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Работаем по стандартам, которые гарантируют результат и безопасность
-          </p>
-        </AnimatedSection>
+        <SectionHeading
+          label="ПОЧЕМУ МЫ"
+          title="Профессиональный подход к"
+          titleHighlight="каждому объекту"
+          subtitle="Работаем по стандартам, которые гарантируют результат и безопасность"
+        />
 
         {/* Mobile: Accordion */}
         <div className="md:hidden mb-6">

@@ -2,6 +2,7 @@ import { useState } from "react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 type MediaItem = {
   type: "video" | "image";
@@ -39,14 +40,12 @@ const WorkGallery = () => {
   return (
     <section className="py-10 md:py-16 bg-muted/30">
       <div className="container mx-auto px-4">
-        <AnimatedSection animation="fade-up" className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3">
-            Наши <span className="text-primary">работы</span>
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Реальные фото и видео с объектов наших клиентов
-          </p>
-        </AnimatedSection>
+        <SectionHeading
+          label="ПОРТФОЛИО"
+          title="Наши"
+          titleHighlight="работы"
+          subtitle="Реальные фото и видео с объектов наших клиентов"
+        />
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {visibleItems.map((item, index) => (
