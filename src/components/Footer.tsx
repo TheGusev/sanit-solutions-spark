@@ -25,7 +25,7 @@ const Footer = memo(() => {
   };
 
   return (
-    <footer className="bg-foreground text-background">
+    <footer className="bg-[hsl(230,25%,12%)] text-white">
       {/* Триколор-полоса сверху */}
       <div className="h-1 w-full flex">
         <div className="flex-1 bg-white"></div>
@@ -131,7 +131,7 @@ const Footer = memo(() => {
           </div>
         </div>
 
-        <div className="border-t border-background/20 pt-8 text-center text-sm opacity-60">
+        <div className="border-t border-white/20 pt-8 text-center text-sm opacity-60">
           <p>© {new Date().getFullYear()} ООО "Санитарные Решения". Все права защищены.</p>
           <p className="mt-2">Деятельность по дезинфекции, дезинсекции и дератизации подлежит лицензированию. Компания внесена в реестр Роспотребнадзора.</p>
           <p className="mt-2">
@@ -142,6 +142,13 @@ const Footer = memo(() => {
             Данный сайт носит исключительно информационный характер и ни при каких условиях не является публичной офертой, определяемой положениями Статьи 437 (2) ГК РФ.
           </p>
         </div>
+      </div>
+
+      {/* Триколорная полоса снизу */}
+      <div className="h-1 w-full flex">
+        <div className="flex-1 bg-white"></div>
+        <div className="flex-1 bg-primary"></div>
+        <div className="flex-1 bg-russia-red"></div>
       </div>
     </footer>
   );

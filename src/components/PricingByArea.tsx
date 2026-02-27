@@ -1,5 +1,6 @@
 import { Calculator, CheckCircle, Info } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import SectionHeading from "@/components/ui/SectionHeading";
 import {
   Accordion,
   AccordionContent,
@@ -54,15 +55,11 @@ const PricingByArea = () => {
   return (
     <section className="py-16 bg-muted/30" id="pricing-by-area">
       <div className="container mx-auto px-4">
-        {/* Заголовок секции */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Цены на услуги в Москве
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Прозрачное ценообразование. Выезд и диагностика в пределах МКАД — бесплатно!
-          </p>
-        </div>
+        <SectionHeading
+          label="СТОИМОСТЬ"
+          title="Цены на услуги в Москве"
+          subtitle="Прозрачное ценообразование. Выезд и диагностика в пределах МКАД — бесплатно!"
+        />
 
         {/* Таблица цен */}
         <div ref={tableRef} className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border mb-8">

@@ -49,6 +49,10 @@ All colors MUST be HSL.
     --russia-red: 0 72% 51%;
     --russia-red-light: 0 72% 95%;
 
+    /* Patriotic green accent */
+    --patriot-green: 145 63% 42%;
+    --patriot-gold: 43 74% 49%;
+
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(207 90% 54%) 0%, hsl(207 90% 64%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(36 100% 50%) 0%, hsl(36 100% 60%) 100%);
@@ -93,6 +97,10 @@ All colors MUST be HSL.
     /* Patriotic Russia Red accent - lighter for dark mode */
     --russia-red: 0 72% 60%;
     --russia-red-light: 0 72% 15%;
+
+    /* Patriotic green accent - dark mode */
+    --patriot-green: 145 63% 50%;
+    --patriot-gold: 43 74% 55%;
 
     /* Soft elegant gradients */
     --gradient-hero: linear-gradient(135deg, hsl(220 60% 45%) 0%, hsl(260 50% 40%) 100%);
@@ -524,6 +532,32 @@ All colors MUST be HSL.
   .tricolor-underline > span:nth-child(3) {
     flex: 1;
     background: hsl(var(--russia-red));
+  }
+
+  /* Card colored border utilities */
+  .card-border-blue {
+    border-left: 4px solid hsl(var(--primary));
+  }
+
+  .card-border-red {
+    border-left: 4px solid hsl(var(--russia-red));
+  }
+
+  .card-border-green {
+    border-left: 4px solid hsl(var(--patriot-green));
+  }
+
+  .card-border-gold {
+    border-left: 4px solid hsl(var(--patriot-gold));
+  }
+
+  /* Card top border gradient */
+  .card-top-gradient {
+    border-top: 3px solid transparent;
+    background-image: linear-gradient(hsl(var(--card)), hsl(var(--card))),
+      linear-gradient(135deg, hsl(var(--primary)), hsl(190 80% 50%));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
   }
 
   /* Scrollbar hide utility */

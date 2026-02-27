@@ -1,7 +1,7 @@
  import { FileCheck, Shield, Receipt } from "lucide-react";
  
  const TrustBadge = () => (
-   <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 py-4 px-4 md:px-6 bg-muted/50 rounded-xl border border-border">
+   <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 py-4 px-4 md:px-6 bg-muted/50 rounded-xl border border-border card-border-green">
      <div className="flex items-center gap-2 text-sm">
        <FileCheck className="w-4 h-4 text-primary flex-shrink-0" />
        <span>Договор</span>

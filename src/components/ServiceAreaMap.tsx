@@ -1,4 +1,5 @@
 import { useState } from "react";
+import SectionHeading from "@/components/ui/SectionHeading";
 import { Link } from "react-router-dom";
 import { moscowDistricts, moscowRegion, ServiceArea } from "@/data/serviceAreas";
 import { neighborhoods, getNeighborhoodsByDistrict } from "@/data/neighborhoods";
@@ -41,14 +42,11 @@ const ServiceAreaMap = () => {
   return (
     <section className="py-10 md:py-20 bg-background" id="service-areas">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-8 animate-fade-in">
-          <h2 className="text-4xl font-bold mb-4">
-            🗺️ Зоны обслуживания
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-6">
-            Работаем по всей Москве и Московской области с быстрым выездом
-          </p>
-        </div>
+        <SectionHeading
+          label="ГЕОГРАФИЯ"
+          title="Зоны обслуживания"
+          subtitle="Работаем по всей Москве и Московской области с быстрым выездом"
+        />
         
         {/* SEO text block - hidden on mobile */}
         <div className="hidden md:block max-w-4xl mx-auto mb-10 space-y-4 text-muted-foreground">
