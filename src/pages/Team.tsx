@@ -5,6 +5,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { blogAuthors } from "@/data/blog/types";
 import { SEO_CONFIG } from "@/lib/seo";
 import { Shield, Award, Clock } from "lucide-react";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 const teamExtras: Record<string, { description: string }> = {
   'gusev-m': { description: 'Специализируется на уничтожении тараканов и клопов в жилых помещениях. Провёл более 2 000 обработок квартир и домов.' },
@@ -61,12 +62,7 @@ const Team = () => (
     <section className="py-12 md:py-16 px-4">
       <div className="container mx-auto max-w-5xl">
         <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Наша команда экспертов
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Сертифицированные специалисты с суммарным опытом более 49 лет в области санитарной обработки
-          </p>
+          <SectionHeading label="НАША КОМАНДА" title="Наша команда экспертов" subtitle="Сертифицированные специалисты с суммарным опытом более 49 лет в области санитарной обработки" />
 
           <div className="flex flex-wrap justify-center gap-6 mt-8">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">

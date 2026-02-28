@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { districtPages } from "@/data/districtPages";
 import { getDistrictImage } from "@/data/districtImages";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 const DistrictsOverview = () => {
   const breadcrumbItems = [
@@ -41,13 +42,7 @@ const DistrictsOverview = () => {
 
           {/* Hero */}
           <section className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              Дезинфекция и дезинсекция по округам Москвы
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-              Работаем во всех 9 административных округах столицы. Выезд от 15 минут, 
-              гарантия результата, доступные цены.
-            </p>
+            <SectionHeading label="ОКРУГА МОСКВЫ" title="Дезинфекция и дезинсекция по округам Москвы" subtitle="Работаем во всех 9 административных округах столицы. Выезд от 15 минут, гарантия результата, доступные цены." />
             <div className="flex flex-wrap justify-center gap-4">
               <Badge variant="secondary" className="text-sm py-2 px-4">
                 <Clock className="w-4 h-4 mr-2" />
@@ -66,7 +61,7 @@ const DistrictsOverview = () => {
 
           {/* Districts Grid */}
           <section className="mb-16">
-            <h2 className="text-2xl font-bold mb-6 text-center">Выберите ваш округ</h2>
+            <SectionHeading label="ОКРУГА" title="Выберите ваш округ" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {districtPages.map((district) => {
                 const bgImage = getDistrictImage(district.id);
@@ -109,7 +104,7 @@ const DistrictsOverview = () => {
 
           {/* Services */}
           <section className="mb-16">
-            <h2 className="text-2xl font-bold mb-6 text-center">Услуги во всех округах</h2>
+            <SectionHeading label="НАШИ УСЛУГИ" title="Услуги во всех округах" />
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {services.map((service) => (
                 <Link key={service.href} to={service.href}>
