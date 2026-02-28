@@ -44,6 +44,7 @@ import ServiceTariffs from "@/components/ServiceTariffs";
 import WhyProblemReturns from "@/components/WhyProblemReturns";
 import LazySection from "@/components/LazySection";
 import CalculatorModal from "@/components/CalculatorModal";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 // Ленивая загрузка DistrictPage для избежания циклических зависимостей
 const DistrictPage = lazy(() => import("./DistrictPage"));
@@ -341,13 +342,8 @@ const ServicePage = () => {
         {service.whenNeeded && (
           <section className="py-12 md:py-20">
             <div className="container mx-auto px-4">
-              <AnimatedSection animation="fade-up" className="text-center mb-12">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                  Когда нужна {service.title.toLowerCase()}
-                </h2>
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                  {service.whenNeeded.intro}
-                </p>
+              <AnimatedSection animation="fade-up">
+                <SectionHeading label="КОГДА НУЖНО" title={`Когда нужна ${service.title.toLowerCase()}`} subtitle={service.whenNeeded.intro} />
               </AnimatedSection>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -374,9 +370,7 @@ const ServicePage = () => {
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
               <AnimatedSection animation="fade-right">
-                <h2 className="text-2xl md:text-3xl font-bold mb-6">
-                  О услуге {service.title.toLowerCase()}
-                </h2>
+                <SectionHeading label="О УСЛУГЕ" title={`О услуге ${service.title.toLowerCase()}`} align="left" />
                 <div className="prose prose-lg text-muted-foreground">
                   {service.description.split('\n').map((paragraph, idx) => (
                     <p key={idx} className="mb-4">{paragraph.trim()}</p>
@@ -404,13 +398,8 @@ const ServicePage = () => {
         {/* Methods */}
         <section className="py-12 md:py-20">
           <div className="container mx-auto px-4">
-            <AnimatedSection animation="fade-up" className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                Методы обработки
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Выбираем оптимальный метод в зависимости от объекта и степени заражения
-              </p>
+            <AnimatedSection animation="fade-up">
+              <SectionHeading label="МЕТОДЫ" title="Методы обработки" subtitle="Выбираем оптимальный метод в зависимости от объекта и степени заражения" />
             </AnimatedSection>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -435,10 +424,8 @@ const ServicePage = () => {
         {service.safetyInfo && (
           <section className="py-12 md:py-20 bg-muted/30">
             <div className="container mx-auto px-4">
-              <AnimatedSection animation="fade-up" className="text-center mb-12">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                  Безопасность препаратов
-                </h2>
+              <AnimatedSection animation="fade-up">
+                <SectionHeading label="БЕЗОПАСНОСТЬ" title="Безопасность препаратов" />
               </AnimatedSection>
 
               <div className="max-w-3xl mx-auto space-y-4">
@@ -461,10 +448,8 @@ const ServicePage = () => {
         {service.targetPests && (
           <section className="py-12 md:py-20">
             <div className="container mx-auto px-4">
-              <AnimatedSection animation="fade-up" className="text-center mb-12">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                  {service.slug === 'dezinsekciya' ? 'От каких насекомых избавляем' : 'От каких грызунов избавляем'}
-                </h2>
+              <AnimatedSection animation="fade-up">
+                <SectionHeading label="ВРЕДИТЕЛИ" title={service.slug === 'dezinsekciya' ? 'От каких насекомых избавляем' : 'От каких грызунов избавляем'} />
               </AnimatedSection>
 
               <div className="flex flex-wrap justify-center gap-4">
@@ -484,10 +469,8 @@ const ServicePage = () => {
         {service.process ? (
           <section className="py-12 md:py-20 bg-muted/30">
             <div className="container mx-auto px-4">
-              <AnimatedSection animation="fade-up" className="text-center mb-12">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                  Этапы работы
-                </h2>
+              <AnimatedSection animation="fade-up">
+                <SectionHeading label="ЭТАПЫ РАБОТЫ" title="Этапы работы" />
               </AnimatedSection>
 
               <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-6">
@@ -520,10 +503,8 @@ const ServicePage = () => {
         {service.pricing && (
           <section id="pricing-by-area" className="py-12 md:py-20">
             <div className="container mx-auto px-4">
-              <AnimatedSection animation="fade-up" className="text-center mb-12">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                  Стоимость {service.title.toLowerCase()} в Москве
-                </h2>
+              <AnimatedSection animation="fade-up">
+                <SectionHeading label="СТОИМОСТЬ" title={`Стоимость ${service.title.toLowerCase()} в Москве`} />
               </AnimatedSection>
 
               <div className="max-w-4xl mx-auto">
@@ -597,10 +578,8 @@ const ServicePage = () => {
         {service.guarantees && (
           <section className="py-12 md:py-20 bg-muted/30">
             <div className="container mx-auto px-4">
-              <AnimatedSection animation="fade-up" className="text-center mb-12">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                  Гарантии и документы
-                </h2>
+              <AnimatedSection animation="fade-up">
+                <SectionHeading label="ГАРАНТИИ" title="Гарантии и документы" />
               </AnimatedSection>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
@@ -627,10 +606,8 @@ const ServicePage = () => {
         <LazySection minHeight="300px">
           <section className="py-12 md:py-20">
             <div className="container mx-auto px-4">
-              <AnimatedSection animation="fade-up" className="text-center mb-12">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-                  Часто задаваемые вопросы
-                </h2>
+              <AnimatedSection animation="fade-up">
+                <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title="Часто задаваемые вопросы" />
               </AnimatedSection>
 
               <div className="max-w-3xl mx-auto">
@@ -686,14 +663,9 @@ const ServicePage = () => {
             return (
               <section className="py-12 md:py-20">
                 <div className="container mx-auto px-4">
-                  <AnimatedSection animation="fade-up" className="text-center mb-12">
-                    <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                      Полезные статьи
-                    </h2>
-                    <p className="text-muted-foreground max-w-2xl mx-auto">
-                      Читайте материалы по теме для более глубокого понимания вопроса
-                    </p>
-                  </AnimatedSection>
+            <AnimatedSection animation="fade-up">
+              <SectionHeading label="БЛОГ" title="Полезные статьи" subtitle="Читайте материалы по теме для более глубокого понимания вопроса" />
+            </AnimatedSection>
 
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
                     {relatedArticles.map((article, idx) => (
@@ -729,13 +701,8 @@ const ServicePage = () => {
         {/* Districts quick links */}
         <section className="py-12 md:py-16">
           <div className="container mx-auto px-4">
-            <AnimatedSection animation="fade-up" className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                {service.title} по округам Москвы
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Работаем во всех административных округах столицы с выездом от 15 минут
-              </p>
+            <AnimatedSection animation="fade-up">
+              <SectionHeading label="ГЕОГРАФИЯ" title={`${service.title} по округам Москвы`} subtitle="Работаем во всех административных округах столицы с выездом от 15 минут" />
             </AnimatedSection>
 
             <div className="flex flex-wrap justify-center gap-3">
@@ -785,10 +752,8 @@ const ServicePage = () => {
         {/* Related / Other Services */}
         <section className="py-12 md:py-20 bg-muted/30">
           <div className="container mx-auto px-4">
-            <AnimatedSection animation="fade-up" className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                {service.relatedServices ? 'Может быть полезно' : 'Другие услуги'}
-              </h2>
+            <AnimatedSection animation="fade-up">
+              <SectionHeading label="УСЛУГИ" title={service.relatedServices ? 'Может быть полезно' : 'Другие услуги'} />
             </AnimatedSection>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">

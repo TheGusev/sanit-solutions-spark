@@ -39,6 +39,7 @@ const getActiveMenuClass = (isActive: boolean) => {
 const Header = ({ onCalculatorClick }: HeaderProps) => {
   const { context } = useTraffic();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
@@ -59,6 +60,8 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
       if (!ticking) {
         requestAnimationFrame(() => {
           setIsScrolled(window.scrollY > 100);
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          setScrollProgress(docHeight > 0 ? Math.min((window.scrollY / docHeight) * 100, 100) : 0);
           ticking = false;
         });
         ticking = true;
@@ -132,6 +135,13 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
         <div className="flex-1 bg-white dark:bg-white/90"></div>
         <div className="flex-1 bg-primary"></div>
         <div className="flex-1 bg-russia-red"></div>
+      </div>
+      {/* Прогресс-бар прокрутки */}
+      <div className="absolute bottom-0 left-0 right-0 h-[3px] z-50">
+        <div 
+          className="h-full bg-gradient-to-r from-primary to-russia-red transition-[width] duration-150 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+        />
       </div>
       <div 
         className={`h-full transition-transform duration-300 origin-top ${isScrolled ? 'scale-y-[0.875]' : 'scale-y-100'}`}

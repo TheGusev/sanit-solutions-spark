@@ -26,6 +26,7 @@ import { VariableHeading } from '@/components/ui/VariableHeading';
 import { WarningBlock } from '@/components/ui/WarningBlock';
 import { VariableCTA } from '@/components/ui/VariableCTA';
 import { getPageVariation, cardStyles } from '@/lib/contentVariations';
+import SectionHeading from '@/components/ui/SectionHeading';
 
 // JSON-LD imports
 import { generateNeighborhoodLD, generateBreadcrumbLD, generateFAQLD, generateServiceLD, renderJSONLD } from '@/lib/jsonLD';
@@ -313,9 +314,7 @@ const NeighborhoodPage = () => {
         {neighborhoodImagesData && neighborhoodImagesData.galleryImages.length > 0 && (
           <section className="py-12">
             <div className="container mx-auto px-4">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                Обрабатываем все типы объектов в {neighborhood.name}
-              </h2>
+              <SectionHeading label="ОБЪЕКТЫ" title={`Обрабатываем все типы объектов в ${neighborhood.name}`} align="left" />
               <p className="text-muted-foreground mb-8 max-w-2xl">
                 От старого фонда до элитной недвижимости — гарантируем результат для любого типа помещений
               </p>
@@ -366,9 +365,7 @@ const NeighborhoodPage = () => {
             <section className="py-12 bg-primary/5">
               <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto">
-                  <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                    Дезинфекция и дезинсекция в районе {extendedContent.name}
-                  </h2>
+                  <SectionHeading label="О РАЙОНЕ" title={`Дезинфекция и дезинсекция в районе ${extendedContent.name}`} align="left" />
                   <p className="text-muted-foreground text-lg leading-relaxed">
                     {extendedContent.intro}
                   </p>
@@ -380,9 +377,7 @@ const NeighborhoodPage = () => {
             <section className="py-12">
               <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto">
-                  <h2 className="text-2xl font-bold mb-6">
-                    Почему выбирают нас в {extendedContent.name}
-                  </h2>
+                  <SectionHeading label="ПОЧЕМУ МЫ" title={`Почему выбирают нас в ${extendedContent.name}`} align="left" />
                   <div className="grid md:grid-cols-2 gap-4">
                     {extendedContent.whyUs.map((reason, index) => (
                       <div 
@@ -453,9 +448,7 @@ const NeighborhoodPage = () => {
         {/* Landmarks */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              Известные места в {neighborhood.name}
-            </h2>
+            <SectionHeading label="ОРИЕНТИРЫ" title={`Известные места в ${neighborhood.name}`} align="left" />
             <div className="flex flex-wrap gap-2">
               {neighborhood.landmarks.map((landmark, idx) => (
                 <Badge key={idx} variant="secondary" className="text-sm py-2 px-4">
@@ -471,7 +464,7 @@ const NeighborhoodPage = () => {
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="bg-background rounded-2xl p-6 md:p-8 shadow-sm">
-              <h2 className="text-2xl font-bold mb-4">Улицы, которые мы обслуживаем</h2>
+              <SectionHeading label="УЛИЦЫ" title="Улицы, которые мы обслуживаем" align="left" />
               <p className="text-muted-foreground mb-4">
                 Мы уже работали на этих улицах в {neighborhood.name}:
               </p>
@@ -489,9 +482,7 @@ const NeighborhoodPage = () => {
         {/* Why Us */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8">
-              Почему выбирают нас в {neighborhood.name}
-            </h2>
+            <SectionHeading label="ПРЕИМУЩЕСТВА" title={`Почему выбирают нас в ${neighborhood.name}`} align="left" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="border-2">
                 <CardContent className="p-6">
@@ -530,9 +521,7 @@ const NeighborhoodPage = () => {
         {/* FAQ */}
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              Частые вопросы о дезинфекции в {neighborhood.name}
-            </h2>
+            <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title={`Частые вопросы о дезинфекции в ${neighborhood.name}`} align="left" />
             <Accordion type="single" collapsible className="max-w-3xl">
               {neighborhood.faq.map((item, idx) => (
                 <AccordionItem key={idx} value={`faq-${idx}`}>
@@ -579,9 +568,7 @@ const NeighborhoodPage = () => {
         {siblingNeighborhoods.length > 0 && (
           <section className="py-12">
             <div className="container mx-auto px-4">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6">
-                Другие районы {parentDistrict?.name || 'округа'}
-              </h2>
+              <SectionHeading label="СОСЕДНИЕ РАЙОНЫ" title={`Другие районы ${parentDistrict?.name || 'округа'}`} align="left" />
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 {siblingNeighborhoods.map((n) => (
                   <Link key={n.slug} to={`/rajony/${n.slug}`}>

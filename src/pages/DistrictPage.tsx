@@ -20,6 +20,7 @@ import DistrictPricing from '@/components/district/DistrictPricing';
 import DistrictCases from '@/components/district/DistrictCases';
 import DistrictReviews from '@/components/district/DistrictReviews';
 import DistrictCTA from '@/components/district/DistrictCTA';
+import SectionHeading from '@/components/ui/SectionHeading';
 
 interface DistrictPageProps {
   districtId?: string;
@@ -186,7 +187,7 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
 
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Районы в {district.name}</h2>
+            <SectionHeading label="РАЙОНЫ" title={`Районы в ${district.name}`} align="left" />
 
             {(() => {
               const neighborhoodPages = getNeighborhoodsByDistrict(district.id);
@@ -237,9 +238,7 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
 
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              Услуги дезинфекции в {district.name}
-            </h2>
+            <SectionHeading label="УСЛУГИ" title={`Услуги дезинфекции в ${district.name}`} align="left" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {services.map((service) => (
                 <Link key={service.href} to={service.href}>
@@ -260,9 +259,7 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
 
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              Популярные объекты в {district.name}
-            </h2>
+            <SectionHeading label="ОБЪЕКТЫ" title={`Популярные объекты в ${district.name}`} align="left" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {district.popularObjects.map((obj, idx) => (
                 <Card key={idx}>
@@ -307,9 +304,7 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
 
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
-              Частые вопросы про {district.name}
-            </h2>
+            <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title={`Частые вопросы про ${district.name}`} align="left" />
             <Accordion type="single" collapsible className="max-w-3xl">
               {district.faq.map((item, idx) => (
                 <AccordionItem key={idx} value={`faq-${idx}`}>
@@ -325,7 +320,7 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
 
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Другие округа Москвы</h2>
+            <SectionHeading label="ОКРУГА" title="Другие округа Москвы" align="left" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {otherDistricts.map((d) => (
                 <Link key={d.id} to={`/uslugi/${d.slug}`}>

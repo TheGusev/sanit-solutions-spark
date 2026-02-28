@@ -6,6 +6,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { Phone, Mail, MapPin, Clock, MessageCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 // Administrative districts
 const adminDistricts = [
@@ -143,9 +144,7 @@ const Contacts = () => {
             <Breadcrumbs items={[{ label: "Контакты" }]} />
           </div>
           
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-8 text-center">
-            Контакты и реквизиты
-          </h1>
+          <SectionHeading label="КОНТАКТЫ" title="Контакты и реквизиты" />
           
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Contact Information */}
