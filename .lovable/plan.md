@@ -1,75 +1,70 @@
 
 
-# Редизайн секций по образцу san-resheniya.ru — усиление патриотической темы
+# Прогресс-бар прокрутки + SectionHeading на всех страницах
 
-## Что берём с san-resheniya.ru
+## 1. Прогресс-бар прокрутки в Header
 
-По скриншотам и сайту видно следующие ключевые паттерны:
-- Над заголовком секции — маленький label (капсом, цветной): "КАК МЫ РАБОТАЕМ", "СТОИМОСТЬ РАБОТ"
-- Карточки шагов с цветными left-border (синий → красный → зелёный — триколор)
-- Numbered circles (синий фон, белый текст)
-- Карточки услуг с цветным top-border (градиент cyan/blue)
-- Чистый белый фон карточек, мягкие тени, rounded-xl
-- Зелёные галочки для преимуществ, синие щиты для доверия
+**Файл: `src/components/Header.tsx`**
 
-## Технические изменения
+Добавить состояние `scrollProgress` (0-100) в существующий scroll-обработчик (строки 54-69). Рендерить `<div>` с градиентом `from-primary to-russia-red` высотой 3px сразу после триколор-полоски (строка 135), ширина `${scrollProgress}%`.
 
-### 1. Создать переиспользуемый компонент `SectionHeading`
-Файл: `src/components/ui/SectionHeading.tsx`
+## 2. SectionHeading на страницах услуг (ServicePage)
 
-Компонент с:
-- Необязательный label сверху (capslock, цветной текст, мелкий шрифт)
-- Заголовок H2 (жирный)
-- Подзаголовок
-- Триколорная линия-подчёркивание (белый-синий-красный, 4px высота, ~12rem ширина)
-- Выравнивание: по центру или по левому краю (проп)
+**Файл: `src/pages/ServicePage.tsx`**
 
-### 2. Обновить CSS — добавить зелёный акцент и новые утилиты
-Файл: `src/index.css`
+Заменить обычные `<h2>` в секциях на `SectionHeading`:
+- "Когда нужна..." → label "КОГДА НУЖНО"
+- "О услуге..." → label "О УСЛУГЕ"  
+- "Методы обработки" → label "МЕТОДЫ"
+- "Безопасность препаратов" → label "БЕЗОПАСНОСТЬ"
+- "Этапы работы" → label "ЭТАПЫ РАБОТЫ"
+- "Стоимость..." → label "СТОИМОСТЬ"
+- "Гарантии и документы" → label "ГАРАНТИИ"
+- "Часто задаваемые вопросы" → label "ВОПРОСЫ И ОТВЕТЫ"
+- "По округам Москвы" → label "ГЕОГРАФИЯ"
+- "Полезные статьи" → label "БЛОГ"
 
-- Добавить CSS-переменную `--patriot-green: 145 63% 42%` (зелёный для галочек/успеха)
-- Добавить утилитарные классы `.card-border-blue`, `.card-border-red`, `.card-border-green` для цветных top/left border на карточках
-- Добавить `.section-label` — стиль для label над заголовком (uppercase, tracking-wide, font-semibold, small)
+## 3. SectionHeading на страницах округов (DistrictPage)
 
-### 3. Обновить все секции главной страницы
+**Файл: `src/pages/DistrictPage.tsx`**
 
-| Компонент | Изменения |
-|---|---|
-| `MiniPricing.tsx` | Заменить простой h2 на SectionHeading с label "НАШИ УСЛУГИ", добавить триколор-подчёркивание |
-| `WhyUsExtended.tsx` | SectionHeading с label "ПОЧЕМУ МЫ", триколор |
-| `PricingByArea.tsx` | SectionHeading с label "СТОИМОСТЬ", триколор |
-| `WorkProcess.tsx` | SectionHeading с label "КАК МЫ РАБОТАЕМ", цветные left-border на карточках шагов (синий→красный→зелёный) |
-| `WorkGallery.tsx` | SectionHeading с label "ПОРТФОЛИО" |
-| `FAQ.tsx` | SectionHeading с label "ВОПРОСЫ И ОТВЕТЫ" |
-| `Reviews.tsx` | SectionHeading с label "ОТЗЫВЫ" |
-| `FinalCTA.tsx` | Без label, но триколор-линия |
-| `ServiceAreaMap.tsx` | SectionHeading с label "ГЕОГРАФИЯ", убрать emoji из заголовка |
-| `TrustBadge.tsx` | Добавить зелёный акцент на бордер |
+Заменить `<h2>` на `SectionHeading` во всех секциях:
+- "Районы в ..." → label "РАЙОНЫ"
+- "Услуги дезинфекции в ..." → label "УСЛУГИ"
+- "Популярные объекты" → label "ОБЪЕКТЫ"
+- "Частые вопросы про ..." → label "ВОПРОСЫ И ОТВЕТЫ"
+- "Другие округа Москвы" → label "ОКРУГА"
 
-### 4. Стиль карточек шагов WorkProcess — как на san-resheniya.ru
-- Мобильная версия: каждый шаг в карточке с цветным left-border (4px)
-  - Шаг 1: синий (#003DA5) + label "ЗА 15 МИНУТ"
-  - Шаг 2: красный (#CC0000) + label "ЧЕРЕЗ 1-3 ЧАСА"  
-  - Шаг 3: зелёный (#1DB954) + label "ЧЕРЕЗ 24 ЧАСА"
-  - Шаг 4: золотой + label "ГАРАНТИЯ"
-- Номерной кружок внутри карточки
+## 4. SectionHeading на страницах блога
 
-### 5. Обновить карточки услуг (MiniPricing)
-- Добавить тонкий цветной top-border (gradient blue→cyan, 3px)
-- Hover: усилить тень с синим оттенком
+**Файл: `src/pages/Blog.tsx`**
+- Hero заголовок: уже есть триколор, оставляем
+- CTA секция: добавить триколор
 
-### 6. Обновить стиль Footer
-Файл: `src/components/Footer.tsx`
-- Фон: dark navy (`bg-[hsl(230,25%,12%)]`) вместо `bg-foreground`
-- Триколорная полоса снизу тоже (зеркально шапке)
+**Файл: `src/pages/BlogPost.tsx`**
+- Уже есть триколор-акцент в header, ок
 
-### 7. Обновить ServicePage и DistrictPage
-- Заголовки секций на страницах услуг тоже через SectionHeading
-- Карточки тарифов с цветными рамками (синяя/красная/зелёная)
+## 5. SectionHeading на странице Контактов
 
-## Объём работ
-- 1 новый файл (SectionHeading)
-- ~12 файлов с изменениями заголовков секций
-- CSS дополнения в index.css
-- Без изменений логики, только визуал
+**Файл: `src/pages/Contacts.tsx`**
+- Заголовок "Контакты и реквизиты" → SectionHeading с label "КОНТАКТЫ"
+
+## 6. SectionHeading на странице Команда
+
+**Файл: `src/pages/Team.tsx`**
+- Заголовок команды → SectionHeading с label "НАША КОМАНДА"
+
+## 7. SectionHeading на странице обзора округов
+
+**Файл: `src/pages/DistrictsOverview.tsx`**
+- Hero → SectionHeading с label "ОКРУГА МОСКВЫ"
+
+## 8. SectionHeading на странице района (NeighborhoodPage)
+
+**Файл: `src/pages/NeighborhoodPage.tsx`**
+- Секции с h2 → SectionHeading с соответствующими labels
+
+## Итого изменений
+- 1 файл Header — добавить прогресс-бар
+- ~8 файлов страниц — заменить h2 на SectionHeading с label и триколором
 
