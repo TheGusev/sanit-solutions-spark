@@ -91,7 +91,6 @@ def send_telegram_message(message: str) -> bool:
         "parse_mode": "HTML",
         "disable_web_page_preview": True,
     }
-
     try:
         response = requests.post(url, json=payload, timeout=10)
         if response.status_code == 200:
@@ -106,35 +105,66 @@ def send_telegram_message(message: str) -> bool:
 
 
 def update_monitoring_md(url_results: list[dict], ssl_info: dict):
-    """Обновляет дату последнего обновления в MONITORING.md (для git commit в CI)."""
+    """Обновляет MONITORING.md с актуальными данными и датой."""
     md_path = os.path.join(os.path.dirname(__file__), "..", "MONITORING.md")
     if not os.path.exists(md_path):
         return
 
-    now = datetime.now().strftime("%d.%m.%Y")
+    now_date = datetime.now().strftime("%d.%m.%Y")
+    now_full = datetime.now().strftime("%d.%m.%Y")
+
     try:
         with open(md_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        # Обновляем только нижнюю строку с датой
+        # Обновляем дату в шапке
         import re
         content = re.sub(
+            r"\*\*Дата последнего обновления:\*\* \d{2}\.\d{2}\.\d{4}",
+            f"**Дата последнего обновления:** {now_date}",
+            content,
+        )
+
+        # Обновляем нижнюю строку
+        content = re.sub(
             r"\*\*Последнее обновление:\*\*.*$",
-            f"**Последнее обновление:** {now}",
+            f"**Последнее обновление:** {now_full}",
             content,
             flags=re.MULTILINE,
         )
 
+        # Добавляем строку в таблицу Алерты (если есть проблемы)
+        problems = [r for r in url_results if not r["ok"]]
+        if problems:
+            for prob in problems:
+                alert_line = f"| URL {prob['url']} недоступен | {now_date} | ⚠️ Высокий | 🔴 Активна |"
+                if alert_line not in content:
+                    # Найдём секцию Алерты и добавим
+                    alerts_section_match = re.search(
+                        r"(🚨 Алерты и проблемы.*?\n.*?\|.*?\|.*?\|.*?\|.*?\|)",
+                        content,
+                        re.DOTALL,
+                    )
+                    if alerts_section_match:
+                        insert_pos = content.find("\n\n", alerts_section_match.end())
+                        if insert_pos != -1:
+                            content = (
+                                content[:insert_pos]
+                                + "\n"
+                                + alert_line
+                                + content[insert_pos:]
+                            )
+
         with open(md_path, "w", encoding="utf-8") as f:
             f.write(content)
 
-        print(f"📝 MONITORING.md обновлён ({now})")
+        print(f"📝 MONITORING.md обновлён ({now_date})")
     except Exception as e:
         print(f"⚠️ Не удалось обновить MONITORING.md: {e}")
 
 
 def generate_report(url_results: list[dict], ssl_info: dict) -> str:
-    """Генерация динамического отчёта мониторинга."""
+    """Генерация динамического отчёта мониторинга с актуальными задачами."""
     now = datetime.now().strftime("%d.%m.%Y %H:%M MSK")
 
     # Статус URL
@@ -148,7 +178,6 @@ def generate_report(url_results: list[dict], ssl_info: dict) -> str:
         emoji = "✅" if r["ok"] else "❌"
         time_str = f"{r['response_time']} мс" if r["ok"] else f"ОШИБКА"
         url_lines.append(f"  {emoji} {path} — {time_str}")
-
     urls_block = "\n".join(url_lines)
 
     # SSL
@@ -160,7 +189,6 @@ def generate_report(url_results: list[dict], ssl_info: dict) -> str:
 
     report = f"""📊 <b>Ежедневный мониторинг goruslugimsk.ru</b>
 🕐 {now}
-
 ━━━━━━━━━━━━━━━━━━━━
 
 <b>{site_emoji} Статус сайта</b> (ср. отклик {avg_time} мс)
@@ -190,16 +218,21 @@ def generate_report(url_results: list[dict], ssl_info: dict) -> str:
 
 ━━━━━━━━━━━━━━━━━━━━
 
-<b>✅ Задачи (Февраль 2026)</b>
-3️⃣ Проверить индексацию 176 статей блога
-4️⃣ Довести PageSpeed до 100/100
-5️⃣ Заполнить данные о конкурентах
-6️⃣ Настроить аналитику конверсий
+<b>✅ Задачи (Март 2026)</b>
+
+1️⃣ Добавить 130 страниц дезинфекция+районы
+2️⃣ Расширить страницы озонирование (объекты+районы)
+3️⃣ Перенести гео-статьи кроты в коммерческие страницы
+4️⃣ Добавить демеркуризация+объекты (квартиры, офисы, школы)
+5️⃣ Внутренняя перелинковка блога → коммерческие страницы
+6️⃣ Отправить sitemap-index.xml на переобход в Яндекс/Google
+7️⃣ Разбить рекламу на 4 группы (клопы/тараканы/крысы/дезинфекция)
+8️⃣ Проверить позиции ТОП-10 по ВЧ-запросам через Serpstat/Яндекс.Вебмастер
 
 ━━━━━━━━━━━━━━━━━━━━
 
-📝 <a href="https://github.com/TheGusev/sanit-solutions-spark/blob/main/MONITORING.md">MONITORING.md</a>
-🤖 <a href="https://github.com/TheGusev/sanit-solutions-spark/actions">Workflows</a>
+📝 <a href=\"https://github.com/TheGusev/sanit-solutions-spark/blob/main/MONITORING.md\">MONITORING.md</a>
+🤖 <a href=\"https://github.com/TheGusev/sanit-solutions-spark/actions\">Workflows</a>
 """
 
     return report
