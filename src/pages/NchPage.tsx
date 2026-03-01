@@ -117,8 +117,8 @@ export default function NchPage() {
   const schemaMarkup = {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    name: `Уничтожение ${pest.genitive} в ${neighborhood.name}`,
-    description: `Профессиональная ${serviceName.toLowerCase()} ${pest.genitive} в районе ${neighborhood.name}. Выезд за 30-60 минут, гарантия до 3 лет.`,
+    name: `Уничтожение ${pest.genitive} ${locationText}`,
+    description: `Профессиональная ${serviceName.toLowerCase()} ${pest.genitive} ${locationText}. Выезд за 30-60 минут, гарантия до 3 лет.`,
     provider: {
       '@type': 'LocalBusiness',
       name: SEO_CONFIG.companyName,
@@ -335,7 +335,7 @@ export default function NchPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Star className="w-5 h-5 text-yellow-500" />
-                    Стоимость в {neighborhood.name}
+                    Стоимость {locationText}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -345,7 +345,7 @@ export default function NchPage() {
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-green-500" />
-                      Выезд в {neighborhood.name} — бесплатно
+                      Выезд {locationText} — бесплатно
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-green-500" />
@@ -368,7 +368,7 @@ export default function NchPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MapPin className="w-5 h-5 text-primary" />
-                    Почему мы в {neighborhood.name}
+                    Почему мы {locationText}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -401,10 +401,10 @@ export default function NchPage() {
                 {pest.description} Чтобы полностью избавиться от {pest.genitive}, необходима профессиональная обработка 
                 с использованием современных препаратов.
               </p>
-              <h3 className="text-lg font-semibold mt-6 mb-3">Как мы работаем в {neighborhood.name}</h3>
+              <h3 className="text-lg font-semibold mt-6 mb-3">Как мы работаем {locationText}</h3>
               <ol className="list-decimal pl-4 space-y-2">
                 <li><strong>Заявка:</strong> Вы звоните или оставляете заявку на сайте</li>
-                <li><strong>Выезд:</strong> Мастер приезжает в {neighborhood.name} за {responseTime}</li>
+                <li><strong>Выезд:</strong> Мастер приезжает {locationText} за {responseTime}</li>
                 <li><strong>Диагностика:</strong> Осмотр помещения, определение степени заражения</li>
                 <li><strong>Обработка:</strong> Применяем {pest.methods.join(', ')}</li>
                 <li><strong>Гарантия:</strong> Даём гарантию до 3 лет на все работы</li>
@@ -490,7 +490,7 @@ export default function NchPage() {
         <AnimatedSection className="py-10 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-3">
-              Закажите обработку в {neighborhood.name}
+              Закажите обработку {locationText}
             </h2>
             <p className="opacity-90 mb-4">
               Выезд за {responseTime}. Гарантия до 3 лет. Безопасно для людей и животных.
