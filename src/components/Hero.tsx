@@ -137,7 +137,7 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
               const cards = [
                 { Icon: Zap, color: 'primary', title: 'Выезд за 15 минут', mobileDesc: 'Самый быстрый в Москве', desc: 'Самый быстрый выезд в Москве' },
                 { Icon: CheckCircle, color: 'success', title: 'Сертификаты', mobileDesc: 'Все документы', desc: 'Все необходимые документы' },
-                { Icon: Shield, color: 'accent', title: 'Гарантия', mobileDesc: 'На все работы', desc: 'На все виды работ' },
+                { Icon: Shield, color: 'accent', title: 'Гарантия до 3 лет', mobileDesc: 'На все работы', desc: 'На все виды работ' },
               ];
               const card = cards[i];
               return (

@@ -57,7 +57,7 @@ export default function ServiceObjectPage() {
     { question: `Сколько стоит ${serviceName.toLowerCase()} ${objectType.genitive}?`, answer: `От ${priceFrom}₽. В стоимость входит выезд, диагностика и гарантия.` },
     { question: `Как подготовить ${objectType.accusative}?`, answer: `Обеспечьте доступ к плинтусам, уберите продукты, выведите людей и животных на 2-3 часа.` },
     { question: `Сколько времени занимает обработка?`, answer: `${objectType.averageTime}. Зависит от площади (${objectType.minArea}-${objectType.maxArea} м²).` },
-    { question: `Даёте ли гарантию?`, answer: `Да, гарантия до 1 года. Повторная обработка бесплатно.` }
+    { question: `Даёте ли гарантию?`, answer: `Да, гарантия до 3 лет. Повторная обработка бесплатно.` }
   ];
   
   const schemaMarkup = {
@@ -106,7 +106,7 @@ export default function ServiceObjectPage() {
               <p className="text-lg text-muted-foreground mb-6">{objectType.description}</p>
               <div className="flex flex-wrap gap-4 mb-6">
                 <div className="flex items-center gap-2 text-sm"><Clock className="w-5 h-5 text-primary" /><span>{objectType.averageTime}</span></div>
-                <div className="flex items-center gap-2 text-sm"><Shield className="w-5 h-5 text-primary" /><span>Гарантия 1 год</span></div>
+                <div className="flex items-center gap-2 text-sm"><Shield className="w-5 h-5 text-primary" /><span>Гарантия до 3 лет</span></div>
                 <div className="flex items-center gap-2 text-sm"><Ruler className="w-5 h-5 text-primary" /><span>{objectType.minArea}-{objectType.maxArea} м²</span></div>
               </div>
               <Button size="lg" asChild><a href={`tel:${SEO_CONFIG.phoneClean}`}><Phone className="w-5 h-5 mr-2" />{SEO_CONFIG.phone}</a></Button>
@@ -122,7 +122,7 @@ export default function ServiceObjectPage() {
                 <CardContent>
                   <div className="text-3xl font-bold text-primary mb-2">от {priceFrom}₽</div>
                   <ul className="space-y-2 text-sm">
-                    {['Выезд — бесплатно', 'Диагностика включена', 'Гарантия до 1 года', 'Безопасные препараты'].map((item, i) => (
+                    {['Выезд — бесплатно', 'Диагностика включена', 'Гарантия до 3 лет', 'Безопасные препараты'].map((item, i) => (
                       <li key={i} className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" />{item}</li>
                     ))}
                   </ul>
@@ -161,7 +161,7 @@ export default function ServiceObjectPage() {
         <AnimatedSection className="py-10 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-3">Закажите {serviceName.toLowerCase()} {objectType.genitive}</h2>
-            <p className="opacity-90 mb-4">Выезд за 30 минут. Гарантия 1 год.</p>
+            <p className="opacity-90 mb-4">Выезд за 30 минут. Гарантия до 3 лет.</p>
             <Button size="lg" variant="secondary" asChild><a href={`tel:${SEO_CONFIG.phoneClean}`}><Phone className="w-5 h-5 mr-2" />{SEO_CONFIG.phone}</a></Button>
           </div>
         </AnimatedSection>
