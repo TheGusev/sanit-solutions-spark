@@ -40,6 +40,8 @@ const NeighborhoodPage = () => {
     return <NotFound />;
   }
 
+  const locationText = neighborhood.prepositional || `в ${neighborhood.name}`;
+
   // Get variation for this neighborhood
   const variation = getPageVariation(neighborhood.slug);
   const variationSlug = neighborhood.slug;
@@ -92,7 +94,7 @@ const NeighborhoodPage = () => {
 
   // Service schema for main service
   const serviceSchema = generateServiceLD({
-    name: `Дезинфекция в ${neighborhood.name}`,
+    name: `Дезинфекция ${locationText}`,
     description: neighborhood.metaDescription,
     url: `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`,
     price: 1000 + neighborhood.surcharge
@@ -265,7 +267,7 @@ const NeighborhoodPage = () => {
                     />
                     {/* Badge overlay */}
                     <div className="absolute bottom-4 left-4 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg">
-                      <p className="font-bold">Гарантия 12 месяцев!</p>
+                      <p className="font-bold">Гарантия до 3 лет!</p>
                       <p className="text-sm opacity-90">На все виды услуг</p>
                     </div>
                   </div>
@@ -286,7 +288,7 @@ const NeighborhoodPage = () => {
               category="services" 
               level="h2" 
               className="text-2xl md:text-3xl font-bold mb-6"
-              fallback={`Услуги в ${neighborhood.name}`}
+              fallback={`Услуги ${locationText}`}
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {services.map((service) => (
@@ -314,7 +316,7 @@ const NeighborhoodPage = () => {
         {neighborhoodImagesData && neighborhoodImagesData.galleryImages.length > 0 && (
           <section className="py-12">
             <div className="container mx-auto px-4">
-              <SectionHeading label="ОБЪЕКТЫ" title={`Обрабатываем все типы объектов в ${neighborhood.name}`} align="left" />
+              <SectionHeading label="ОБЪЕКТЫ" title={`Обрабатываем все типы объектов ${locationText}`} align="left" />
               <p className="text-muted-foreground mb-8 max-w-2xl">
                 От старого фонда до элитной недвижимости — гарантируем результат для любого типа помещений
               </p>
@@ -329,7 +331,7 @@ const NeighborhoodPage = () => {
                     <div className="aspect-[4/3] overflow-hidden">
                       <img 
                         src={image.url}
-                        alt={`${image.title} - дезинфекция в ${neighborhood.name}`}
+                        alt={`${image.title} - дезинфекция ${locationText}`}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                       />
@@ -377,7 +379,7 @@ const NeighborhoodPage = () => {
             <section className="py-12">
               <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto">
-                  <SectionHeading label="ПОЧЕМУ МЫ" title={`Почему выбирают нас в ${extendedContent.name}`} align="left" />
+                  <SectionHeading label="ПОЧЕМУ МЫ" title={`Почему выбирают нас ${locationText}`} align="left" />
                   <div className="grid md:grid-cols-2 gap-4">
                     {extendedContent.whyUs.map((reason, index) => (
                       <div 
@@ -448,7 +450,7 @@ const NeighborhoodPage = () => {
         {/* Landmarks */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <SectionHeading label="ОРИЕНТИРЫ" title={`Известные места в ${neighborhood.name}`} align="left" />
+            <SectionHeading label="ОРИЕНТИРЫ" title={`Известные места ${locationText}`} align="left" />
             <div className="flex flex-wrap gap-2">
               {neighborhood.landmarks.map((landmark, idx) => (
                 <Badge key={idx} variant="secondary" className="text-sm py-2 px-4">
@@ -466,7 +468,7 @@ const NeighborhoodPage = () => {
             <div className="bg-background rounded-2xl p-6 md:p-8 shadow-sm">
               <SectionHeading label="УЛИЦЫ" title="Улицы, которые мы обслуживаем" align="left" />
               <p className="text-muted-foreground mb-4">
-                Мы уже работали на этих улицах в {neighborhood.name}:
+                Мы уже работали на этих улицах {locationText}:
               </p>
               <div className="flex flex-wrap gap-2">
                 {neighborhood.streets.map((street, idx) => (
@@ -482,14 +484,14 @@ const NeighborhoodPage = () => {
         {/* Why Us */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <SectionHeading label="ПРЕИМУЩЕСТВА" title={`Почему выбирают нас в ${neighborhood.name}`} align="left" />
+            <SectionHeading label="ПРЕИМУЩЕСТВА" title={`Почему выбирают нас ${locationText}`} align="left" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="border-2">
                 <CardContent className="p-6">
                   <Clock className="w-10 h-10 text-primary mb-4" />
                   <h3 className="font-bold text-lg mb-2">Быстрый выезд</h3>
                   <p className="text-muted-foreground">
-                    Приезжаем в {neighborhood.name} за {neighborhood.responseTime}. 
+                    Приезжаем {locationText} за {neighborhood.responseTime}. 
                     Работаем круглосуточно без выходных.
                   </p>
                 </CardContent>
@@ -499,7 +501,7 @@ const NeighborhoodPage = () => {
                   <Shield className="w-10 h-10 text-primary mb-4" />
                   <h3 className="font-bold text-lg mb-2">Гарантия результата</h3>
                   <p className="text-muted-foreground">
-                    Даём гарантию 1 год на все виды работ. 
+                    Даём гарантию до 3 лет на все виды работ. 
                     Если проблема вернётся — обработаем бесплатно.
                   </p>
                 </CardContent>
@@ -521,7 +523,7 @@ const NeighborhoodPage = () => {
         {/* FAQ */}
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
-            <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title={`Частые вопросы о дезинфекции в ${neighborhood.name}`} align="left" />
+            <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title={`Частые вопросы о дезинфекции ${locationText}`} align="left" />
             <Accordion type="single" collapsible className="max-w-3xl">
               {neighborhood.faq.map((item, idx) => (
                 <AccordionItem key={idx} value={`faq-${idx}`}>
@@ -541,7 +543,7 @@ const NeighborhoodPage = () => {
               category="cta" 
               level="h2" 
               className="text-2xl md:text-3xl font-bold mb-4"
-              fallback={`Вызвать дезинфектора в ${neighborhood.name}`}
+              fallback={`Вызвать дезинфектора ${locationText}`}
             />
             <p className="text-lg mb-8 opacity-90">
               Выезд за {neighborhood.responseTime} • Гарантия до 3 лет • От {1000 + neighborhood.surcharge}₽
