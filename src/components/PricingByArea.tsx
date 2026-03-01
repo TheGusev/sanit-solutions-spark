@@ -40,7 +40,7 @@ const includedNotes = [
   { icon: Info, text: "Выезд и диагностика в пределах МКАД — бесплатно" },
   { icon: CheckCircle, text: "Обработка помещения (холодный/горячий туман)" },
   { icon: CheckCircle, text: "Безопасные препараты IV класса" },
-  { icon: CheckCircle, text: "Гарантия до 1 года" },
+  { icon: CheckCircle, text: "Гарантия до 3 лет" },
   { icon: CheckCircle, text: "Договор и акт — бесплатно" },
   { icon: CheckCircle, text: "Консультация 24/7" },
 ];

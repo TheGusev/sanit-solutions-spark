@@ -70,7 +70,7 @@ export default function ServiceDistrictPage() {
   const faqItems = [
     { question: `Сколько стоит ${serviceName.toLowerCase()} в ${neighborhood.name}?`, answer: `От ${priceFrom}₽. Выезд и диагностика бесплатно.` },
     { question: `Как быстро приедет мастер?`, answer: `В ${neighborhood.name} за ${responseTime}. Работаем без выходных.` },
-    { question: `Какие гарантии?`, answer: `Гарантия до 1 года. Повторная обработка бесплатно.` },
+    { question: `Какие гарантии?`, answer: `Гарантия до 3 лет. Повторная обработка бесплатно.` },
     { question: `Безопасно для детей и животных?`, answer: `Да, препараты IV класса опасности. Проветрить 2-3 часа.` }
   ];
   
@@ -129,7 +129,7 @@ export default function ServiceDistrictPage() {
               <p className="text-lg text-muted-foreground mb-6">Профессиональная {serviceName.toLowerCase()} в {neighborhood.name}. Работаем с квартирами, домами, офисами.</p>
               <div className="flex flex-wrap gap-4 mb-6">
                 <div className="flex items-center gap-2 text-sm"><Clock className="w-5 h-5 text-primary" /><span>Выезд за {responseTime}</span></div>
-                <div className="flex items-center gap-2 text-sm"><Shield className="w-5 h-5 text-primary" /><span>Гарантия 1 год</span></div>
+                <div className="flex items-center gap-2 text-sm"><Shield className="w-5 h-5 text-primary" /><span>Гарантия до 3 лет</span></div>
                 <div className="flex items-center gap-2 text-sm"><MapPin className="w-5 h-5 text-primary" /><span>{neighborhood.name}, {districtName}</span></div>
               </div>
               <Button size="lg" asChild><a href={`tel:${SEO_CONFIG.phoneClean}`}><Phone className="w-5 h-5 mr-2" />{SEO_CONFIG.phone}</a></Button>
@@ -145,7 +145,7 @@ export default function ServiceDistrictPage() {
                 <CardContent>
                   <div className="text-3xl font-bold text-primary mb-2">от {priceFrom}₽</div>
                   <ul className="space-y-2 text-sm">
-                    {[`Выезд в ${neighborhood.name} — бесплатно`, 'Диагностика включена', 'Гарантия до 1 года', 'Безопасные препараты'].map((item, i) => (
+                    {[`Выезд в ${neighborhood.name} — бесплатно`, 'Диагностика включена', 'Гарантия до 3 лет', 'Безопасные препараты'].map((item, i) => (
                       <li key={i} className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" />{item}</li>
                     ))}
                   </ul>
@@ -200,7 +200,7 @@ export default function ServiceDistrictPage() {
         <AnimatedSection className="py-10 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-3">Закажите {serviceName.toLowerCase()} в {neighborhood.name}</h2>
-            <p className="opacity-90 mb-4">Выезд за {responseTime}. Гарантия 1 год.</p>
+            <p className="opacity-90 mb-4">Выезд за {responseTime}. Гарантия до 3 лет.</p>
             <Button size="lg" variant="secondary" asChild><a href={`tel:${SEO_CONFIG.phoneClean}`}><Phone className="w-5 h-5 mr-2" />{SEO_CONFIG.phone}</a></Button>
           </div>
         </AnimatedSection>

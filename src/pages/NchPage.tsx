@@ -115,7 +115,7 @@ export default function NchPage() {
     '@context': 'https://schema.org',
     '@type': 'Service',
     name: `Уничтожение ${pest.genitive} в ${neighborhood.name}`,
-    description: `Профессиональная ${serviceName.toLowerCase()} ${pest.genitive} в районе ${neighborhood.name}. Выезд за 30-60 минут, гарантия до 1 года.`,
+    description: `Профессиональная ${serviceName.toLowerCase()} ${pest.genitive} в районе ${neighborhood.name}. Выезд за 30-60 минут, гарантия до 3 лет.`,
     provider: {
       '@type': 'LocalBusiness',
       name: SEO_CONFIG.companyName,
@@ -277,7 +277,7 @@ export default function NchPage() {
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Shield className="w-5 h-5 text-primary" />
-                    <span>Гарантия 1 год</span>
+                    <span>Гарантия до 3 лет</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <MapPin className="w-5 h-5 text-primary" />
@@ -350,7 +350,7 @@ export default function NchPage() {
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-green-500" />
-                      Гарантия до 1 года
+                      Гарантия до 3 лет
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-green-500" />
@@ -404,7 +404,7 @@ export default function NchPage() {
                 <li><strong>Выезд:</strong> Мастер приезжает в {neighborhood.name} за {responseTime}</li>
                 <li><strong>Диагностика:</strong> Осмотр помещения, определение степени заражения</li>
                 <li><strong>Обработка:</strong> Применяем {pest.methods.join(', ')}</li>
-                <li><strong>Гарантия:</strong> Даём гарантию до 1 года на все работы</li>
+                <li><strong>Гарантия:</strong> Даём гарантию до 3 лет на все работы</li>
               </ol>
               <p className="mt-4">
                 Результат заметен через {pest.timeToResult}. При необходимости проводим повторную обработку бесплатно.
@@ -490,7 +490,7 @@ export default function NchPage() {
               Закажите обработку в {neighborhood.name}
             </h2>
             <p className="opacity-90 mb-4">
-              Выезд за {responseTime}. Гарантия 1 год. Безопасно для людей и животных.
+              Выезд за {responseTime}. Гарантия до 3 лет. Безопасно для людей и животных.
             </p>
             <Button size="lg" variant="secondary" asChild className="whitespace-normal">
               <a href={`tel:${SEO_CONFIG.phoneClean}`}>

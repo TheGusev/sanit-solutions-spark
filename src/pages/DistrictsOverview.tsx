@@ -50,7 +50,7 @@ const DistrictsOverview = () => {
               </Badge>
               <Badge variant="secondary" className="text-sm py-2 px-4">
                 <Shield className="w-4 h-4 mr-2" />
-                Гарантия до 1 года
+                Гарантия до 3 лет
               </Badge>
               <Badge variant="secondary" className="text-sm py-2 px-4">
                 <MapPin className="w-4 h-4 mr-2" />
@@ -134,7 +134,7 @@ const DistrictsOverview = () => {
             <ul>
               <li>Выезд от 15 минут в центральные районы</li>
               <li>Фиксированные цены без скрытых доплат</li>
-              <li>Гарантия результата до 1 года</li>
+              <li>Гарантия результата до 3 лет</li>
               <li>Работа круглосуточно, без выходных</li>
               <li>Сертифицированные препараты</li>
             </ul>

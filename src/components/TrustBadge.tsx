@@ -8,7 +8,7 @@
      </div>
      <div className="flex items-center gap-2 text-sm">
        <Shield className="w-4 h-4 text-success flex-shrink-0" />
-       <span>Гарантия до 1 года</span>
+       <span>Гарантия до 3 лет</span>
      </div>
      <div className="flex items-center gap-2 text-sm">
        <Receipt className="w-4 h-4 text-russia-red flex-shrink-0" />
