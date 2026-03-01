@@ -7,7 +7,7 @@ export function generateOrganizationLD() {
     "@type": "LocalBusiness",
     "name": "ГорУслуги — Санитарные Решения",
     "alternateName": SEO_CONFIG.companyName,
-    "description": "Профессиональная дезинфекция, дезинсекция и дератизация в Москве и Московской области. Лицензированные специалисты, гарантия до 12 месяцев.",
+    "description": "Профессиональная дезинфекция, дезинсекция и дератизация в Москве и Московской области. Лицензированные специалисты, гарантия до 3 лет.",
     "url": SEO_CONFIG.baseUrl,
     "telephone": SEO_CONFIG.phone,
     "email": "west-centro@mail.ru",

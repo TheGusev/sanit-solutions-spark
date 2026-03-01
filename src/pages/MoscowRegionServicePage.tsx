@@ -319,7 +319,7 @@ export default function MoscowRegionServicePage() {
         <AnimatedSection className="py-12 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Заказать {serviceData.title.toLowerCase()} {city.prepositional}
+              Заказать {serviceData.nameAccusative?.toLowerCase() || serviceData.title.toLowerCase()} {city.prepositional}
             </h2>
             <p className="text-lg opacity-90 mb-6">
               Выезд {city.responseTime}. Гарантия до 3 лет.
