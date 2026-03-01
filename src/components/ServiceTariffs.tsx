@@ -15,9 +15,10 @@ interface Tariff {
 interface ServiceTariffsProps {
   tariffs: Tariff[];
   serviceTitle: string;
+  serviceAccusative?: string;
 }
 
-const ServiceTariffs = ({ tariffs, serviceTitle }: ServiceTariffsProps) => {
+const ServiceTariffs = ({ tariffs, serviceTitle, serviceAccusative }: ServiceTariffsProps) => {
   if (!tariffs || tariffs.length === 0) return null;
 
   return (
@@ -25,7 +26,7 @@ const ServiceTariffs = ({ tariffs, serviceTitle }: ServiceTariffsProps) => {
       <div className="container mx-auto px-4">
         <AnimatedSection animation="fade-up" className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-            Тарифы на {serviceTitle.toLowerCase()}
+            Тарифы на {serviceAccusative || serviceTitle.toLowerCase()}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Выберите подходящий тариф — или позвоните для индивидуального расчёта

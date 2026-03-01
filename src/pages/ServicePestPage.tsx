@@ -56,7 +56,7 @@ export default function ServicePestPage() {
     return <NotFound />;
   }
   
-  const guaranteeText = pest.guaranteeYears || 'до 1 года';
+  const guaranteeText = pest.guaranteeYears || 'до 3 лет';
   
   // SEO
   const serviceName = service === 'dezinsekciya' ? 'Дезинсекция' : 'Дератизация';
@@ -288,10 +288,11 @@ export default function ServicePestPage() {
         {/* Tariffs */}
         <LazySection minHeight="300px">
           {pest.tariffs && pest.tariffs.length > 0 && (
-            <ServiceTariffs
-              tariffs={pest.tariffs}
-              serviceTitle={`Уничтожение ${pest.genitive}`}
-            />
+             <ServiceTariffs
+               tariffs={pest.tariffs}
+               serviceTitle={`Уничтожение ${pest.genitive}`}
+               serviceAccusative={`уничтожение ${pest.genitive}`}
+             />
           )}
         </LazySection>
         
