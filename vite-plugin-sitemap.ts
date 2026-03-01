@@ -51,6 +51,10 @@ const staticUrls: SitemapUrl[] = [
   { loc: '/moscow-oblast/', lastmod: '', changefreq: 'monthly', priority: '0.8' },
   { loc: '/uslugi/po-okrugam-moskvy/', lastmod: '', changefreq: 'monthly', priority: '0.85' },
   { loc: '/privacy/', lastmod: '', changefreq: 'yearly', priority: '0.2' },
+  { loc: '/sluzhba-dezinsekcii/', lastmod: '', changefreq: 'monthly', priority: '0.85' },
+  { loc: '/otzyvy/', lastmod: '', changefreq: 'weekly', priority: '0.7' },
+  { loc: '/uslugi/obrabotka-uchastkov/', lastmod: '', changefreq: 'monthly', priority: '0.85' },
+  { loc: '/team/', lastmod: '', changefreq: 'monthly', priority: '0.5' },
 ];
 
 // Услуги
@@ -72,6 +76,20 @@ const serviceSubpageRoutes = [
   { parent: 'dezinsekciya', sub: 'unichtozhenie-tarakanov' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-krys' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-myshej' },
+  // Phase 1: новые подстраницы
+  { parent: 'dezinsekciya', sub: 'klopov-v-kvartire' },
+  { parent: 'dezinsekciya', sub: 'postelnyh-klopov' },
+  { parent: 'dezinsekciya', sub: 'domashnih-klopov' },
+  { parent: 'dezinsekciya', sub: 'tarakanov-v-kvartire' },
+  { parent: 'dezinsekciya', sub: 'klopov-i-tarakanov' },
+  { parent: 'dezinsekciya', sub: 'klopov-i-bloh' },
+  { parent: 'dezinsekciya', sub: 'blokh-ot-zhivotnyh' },
+  { parent: 'dezinsekciya', sub: 'holodnym-tumanom' },
+  { parent: 'dezinsekciya', sub: 'parom' },
+  { parent: 'dezinsekciya', sub: 'parogeneratorom' },
+  { parent: 'dezinsekciya', sub: 'bez-zapaha' },
+  { parent: 'dezinsekciya', sub: 'srochno' },
+  { parent: 'dezinsekciya', sub: 'kruglosutochno' },
 ];
 
 // Вредители для дезинсекции

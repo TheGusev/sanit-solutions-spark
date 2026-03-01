@@ -34,7 +34,7 @@ const FloatingButtons = () => {
           onClick={handlePhoneClick}
           onMouseEnter={() => setShowPhoneTooltip(true)}
           onMouseLeave={() => setShowPhoneTooltip(false)}
-          className="w-14 h-14 md:w-14 md:h-14 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 hover:ring-2 hover:ring-russia-red hover:ring-offset-2 animate-pulse-attention"
+          className="w-14 h-14 md:w-14 md:h-14 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg flex items-center justify-center transition-all hover:scale-110 hover:ring-2 hover:ring-russia-red hover:ring-offset-2 animate-pulse-attention"
           aria-label="Позвонить"
         >
           <Phone className="w-6 h-6 md:w-7 md:h-7" />

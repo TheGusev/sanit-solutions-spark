@@ -65,10 +65,10 @@ export function generateSEOMeta(
 }
 
 /**
- * Формат заголовка услуги: "[Услуга] в Москве от [цена]₽ — Гарантия 1 год | Санитарные Решения"
+ * Формат заголовка услуги: "[Услуга] в Москве от [цена]₽ — Гарантия до 3 лет | Санитарные Решения"
  */
 export function formatServiceTitle(serviceName: string, priceFrom: number): string {
-  return `${serviceName} в Москве от ${priceFrom}₽ — Гарантия 1 год | ${SEO_CONFIG.companyName}`;
+  return `${serviceName} в Москве от ${priceFrom}₽ — Гарантия до 3 лет | ${SEO_CONFIG.companyName}`;
 }
 
 /**
