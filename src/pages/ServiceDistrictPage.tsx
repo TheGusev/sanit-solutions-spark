@@ -49,7 +49,7 @@ export default function ServiceDistrictPage() {
   const responseTime = neighborhood.responseTime || (districtName.includes('ЦАО') ? '30-45 мин' : '40-60 мин');
   
   const pageTitle = `${serviceName} в ${neighborhood.name} — от ${priceFrom}₽ | Выезд ${responseTime}`;
-  const pageDescription = `Профессиональная ${serviceName.toLowerCase()} в районе ${neighborhood.name} от ${priceFrom}₽. Гарантия 1 год. ☎️ ${SEO_CONFIG.phone}`;
+  const pageDescription = `Профессиональная ${serviceName.toLowerCase()} в районе ${neighborhood.name} от ${priceFrom}₽. Гарантия до 3 лет. ☎️ ${SEO_CONFIG.phone}`;
   const seoMeta = generateSEOMeta(`/uslugi/${serviceSlug}/${districtSlug}`, pageTitle, pageDescription);
   
   const breadcrumbItems = [
@@ -77,7 +77,7 @@ export default function ServiceDistrictPage() {
   const schemaMarkup = {
     '@context': 'https://schema.org', '@type': 'Service',
     name: `${serviceName} в ${neighborhood.name}`,
-    description: `${serviceName} в районе ${neighborhood.name}. Выезд ${responseTime}, гарантия 1 год.`,
+    description: `${serviceName} в районе ${neighborhood.name}. Выезд ${responseTime}, гарантия до 3 лет.`,
     provider: { '@type': 'LocalBusiness', name: SEO_CONFIG.companyName, telephone: SEO_CONFIG.phone },
     areaServed: { '@type': 'Place', name: `${neighborhood.name}, Москва` },
     offers: { '@type': 'Offer', priceSpecification: { '@type': 'PriceSpecification', price: priceFrom, priceCurrency: 'RUB' } }
