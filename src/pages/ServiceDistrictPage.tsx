@@ -47,9 +47,10 @@ export default function ServiceDistrictPage() {
   const priceFrom = service.priceFrom || 1500;
   const districtName = neighborhood.districtId?.toUpperCase() || '';
   const responseTime = neighborhood.responseTime || (districtName.includes('ЦАО') ? '30-45 мин' : '40-60 мин');
+  const locationText = neighborhood.prepositional || `в ${neighborhood.name}`;
   
-  const pageTitle = `${serviceName} в ${neighborhood.name} — от ${priceFrom}₽ | Выезд ${responseTime}`;
-  const pageDescription = `Профессиональная ${serviceName.toLowerCase()} в районе ${neighborhood.name} от ${priceFrom}₽. Гарантия до 3 лет. ☎️ ${SEO_CONFIG.phone}`;
+  const pageTitle = `${serviceName} ${locationText} — от ${priceFrom}₽ | Выезд ${responseTime}`;
+  const pageDescription = `Профессиональная ${serviceName.toLowerCase()} ${locationText} от ${priceFrom}₽. Гарантия до 3 лет. ☎️ ${SEO_CONFIG.phone}`;
   const seoMeta = generateSEOMeta(`/uslugi/${serviceSlug}/${districtSlug}`, pageTitle, pageDescription);
   
   const breadcrumbItems = [
@@ -68,16 +69,16 @@ export default function ServiceDistrictPage() {
   });
   
   const faqItems = [
-    { question: `Сколько стоит ${serviceName.toLowerCase()} в ${neighborhood.name}?`, answer: `От ${priceFrom}₽. Выезд и диагностика бесплатно.` },
-    { question: `Как быстро приедет мастер?`, answer: `В ${neighborhood.name} за ${responseTime}. Работаем без выходных.` },
+    { question: `Сколько стоит ${serviceName.toLowerCase()} ${locationText}?`, answer: `От ${priceFrom}₽. Выезд и диагностика бесплатно.` },
+    { question: `Как быстро приедет мастер?`, answer: `${locationText.charAt(0).toUpperCase() + locationText.slice(1)} за ${responseTime}. Работаем без выходных.` },
     { question: `Какие гарантии?`, answer: `Гарантия до 3 лет. Повторная обработка бесплатно.` },
     { question: `Безопасно для детей и животных?`, answer: `Да, препараты IV класса опасности. Проветрить 2-3 часа.` }
   ];
   
   const schemaMarkup = {
     '@context': 'https://schema.org', '@type': 'Service',
-    name: `${serviceName} в ${neighborhood.name}`,
-    description: `${serviceName} в районе ${neighborhood.name}. Выезд ${responseTime}, гарантия до 3 лет.`,
+    name: `${serviceName} ${locationText}`,
+    description: `${serviceName} ${locationText}. Выезд ${responseTime}, гарантия до 3 лет.`,
     provider: { '@type': 'LocalBusiness', name: SEO_CONFIG.companyName, telephone: SEO_CONFIG.phone },
     areaServed: { '@type': 'Place', name: `${neighborhood.name}, Москва` },
     offers: { '@type': 'Offer', priceSpecification: { '@type': 'PriceSpecification', price: priceFrom, priceCurrency: 'RUB' } }
@@ -126,7 +127,7 @@ export default function ServiceDistrictPage() {
                 <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Выезд {responseTime}</span>
               </div>
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">{serviceName} в районе {neighborhood.name}</h1>
-              <p className="text-lg text-muted-foreground mb-6">Профессиональная {serviceName.toLowerCase()} в {neighborhood.name}. Работаем с квартирами, домами, офисами.</p>
+              <p className="text-lg text-muted-foreground mb-6">Профессиональная {serviceName.toLowerCase()} {locationText}. Работаем с квартирами, домами, офисами.</p>
               <div className="flex flex-wrap gap-4 mb-6">
                 <div className="flex items-center gap-2 text-sm"><Clock className="w-5 h-5 text-primary" /><span>Выезд за {responseTime}</span></div>
                 <div className="flex items-center gap-2 text-sm"><Shield className="w-5 h-5 text-primary" /><span>Гарантия до 3 лет</span></div>
@@ -141,18 +142,18 @@ export default function ServiceDistrictPage() {
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               <Card>
-                <CardHeader><CardTitle className="flex items-center gap-2"><Star className="w-5 h-5 text-yellow-500" />Стоимость в {neighborhood.name}</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="flex items-center gap-2"><Star className="w-5 h-5 text-yellow-500" />Стоимость {locationText}</CardTitle></CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold text-primary mb-2">от {priceFrom}₽</div>
                   <ul className="space-y-2 text-sm">
-                    {[`Выезд в ${neighborhood.name} — бесплатно`, 'Диагностика включена', 'Гарантия до 3 лет', 'Безопасные препараты'].map((item, i) => (
+                    {[`Выезд ${locationText} — бесплатно`, 'Диагностика включена', 'Гарантия до 3 лет', 'Безопасные препараты'].map((item, i) => (
                       <li key={i} className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" />{item}</li>
                     ))}
                   </ul>
                 </CardContent>
               </Card>
               <Card>
-                <CardHeader><CardTitle className="flex items-center gap-2"><MapPin className="w-5 h-5 text-primary" />Почему мы в {neighborhood.name}</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="flex items-center gap-2"><MapPin className="w-5 h-5 text-primary" />Почему мы {locationText}</CardTitle></CardHeader>
                 <CardContent>
                   <ul className="space-y-2 text-sm">
                     {localFeatures.map((feature, i) => (
@@ -168,7 +169,7 @@ export default function ServiceDistrictPage() {
         {servicePests.length > 0 && (
           <AnimatedSection className="py-10">
             <div className="container mx-auto px-4">
-              <h2 className="text-xl font-bold mb-6 text-center">{serviceName} в {neighborhood.name}: виды работ</h2>
+              <h2 className="text-xl font-bold mb-6 text-center">{serviceName} {locationText}: виды работ</h2>
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
                 {servicePests.map((pest) => (
                   <Link key={pest.slug} to={`/uslugi/${serviceSlug}/${pest.slug}/${districtSlug}`} className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors">
@@ -199,7 +200,7 @@ export default function ServiceDistrictPage() {
         
         <AnimatedSection className="py-10 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-xl md:text-2xl font-bold mb-3">Закажите {serviceName.toLowerCase()} в {neighborhood.name}</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-3">Закажите {serviceName.toLowerCase()} {locationText}</h2>
             <p className="opacity-90 mb-4">Выезд за {responseTime}. Гарантия до 3 лет.</p>
             <Button size="lg" variant="secondary" asChild><a href={`tel:${SEO_CONFIG.phoneClean}`}><Phone className="w-5 h-5 mr-2" />{SEO_CONFIG.phone}</a></Button>
           </div>
