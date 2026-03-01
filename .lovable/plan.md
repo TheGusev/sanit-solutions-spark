@@ -1,55 +1,78 @@
 
 
-## План: 3 конверсионных цели с умной маршрутизацией sticky → quiz
+## CSV-файл с 60 целями Яндекс.Метрики
 
-### Суть изменений
+Создам файл `public/metrika-goals.csv` со всеми 60 целями, сгруппированными по страницам.
 
-Полностью переделать логику целей. Вместо текущих `lead_{slug}`, `callback_{slug}`, `quiz_{slug}` будут **3 новых цели**:
+Префиксы из `PATHNAME_SLUG_MAP` + `main` (главная) + `general` (fallback) = 20 префиксов. Каждый × 3 типа цели = 60 строк.
 
-| # | Цель | Триггер | Goal ID |
-|---|------|---------|---------|
-| 1 | Калькулятор | Успешная отправка формы из `LeadFormModal` или `CompactRequestModal` | `calc_lead_{prefix}` |
-| 2 | Обычный квиз | Пользователь сам дошёл до квиза и заполнил | `quiz_lead_{prefix}` |
-| 3 | Стики → Квиз | Нажал "Узнать цену" в стики-баре, скроллнулся к квизу, заполнил | `sticky_quiz_lead_{prefix}` |
+### Файл: `public/metrika-goals.csv`
 
-`{prefix}` берётся из существующей функции `getYmGoalId` (переименуем внутреннюю часть).
+Содержимое:
 
-### Файлы и изменения
+```csv
+Идентификатор,Тип,Страница
+calc_lead_main,Калькулятор,/ (Главная)
+quiz_lead_main,Квиз,/ (Главная)
+sticky_quiz_lead_main,Стики→Квиз,/ (Главная)
+calc_lead_klopy,Калькулятор,/uslugi/dezinsekciya/klopy
+quiz_lead_klopy,Квиз,/uslugi/dezinsekciya/klopy
+sticky_quiz_lead_klopy,Стики→Квиз,/uslugi/dezinsekciya/klopy
+calc_lead_tarakany,Калькулятор,/uslugi/dezinsekciya/tarakany
+quiz_lead_tarakany,Квиз,/uslugi/dezinsekciya/tarakany
+sticky_quiz_lead_tarakany,Стики→Квиз,/uslugi/dezinsekciya/tarakany
+calc_lead_muravyi,Калькулятор,/uslugi/dezinsekciya/muravyi
+quiz_lead_muravyi,Квиз,/uslugi/dezinsekciya/muravyi
+sticky_quiz_lead_muravyi,Стики→Квиз,/uslugi/dezinsekciya/muravyi
+calc_lead_blohi,Калькулятор,/uslugi/dezinsekciya/blohi
+quiz_lead_blohi,Квиз,/uslugi/dezinsekciya/blohi
+sticky_quiz_lead_blohi,Стики→Квиз,/uslugi/dezinsekciya/blohi
+calc_lead_kleshchi,Калькулятор,/uslugi/dezinsekciya/kleshchi
+quiz_lead_kleshchi,Квиз,/uslugi/dezinsekciya/kleshchi
+sticky_quiz_lead_kleshchi,Стики→Квиз,/uslugi/dezinsekciya/kleshchi
+calc_lead_komary,Калькулятор,/uslugi/dezinsekciya/komary
+quiz_lead_komary,Квиз,/uslugi/dezinsekciya/komary
+sticky_quiz_lead_komary,Стики→Квиз,/uslugi/dezinsekciya/komary
+calc_lead_muhi,Калькулятор,/uslugi/dezinsekciya/muhi
+quiz_lead_muhi,Квиз,/uslugi/dezinsekciya/muhi
+sticky_quiz_lead_muhi,Стики→Квиз,/uslugi/dezinsekciya/muhi
+calc_lead_mol,Калькулятор,/uslugi/dezinsekciya/mol
+quiz_lead_mol,Квиз,/uslugi/dezinsekciya/mol
+sticky_quiz_lead_mol,Стики→Квиз,/uslugi/dezinsekciya/mol
+calc_lead_krysy,Калькулятор,/uslugi/deratizaciya/krysy
+quiz_lead_krysy,Квиз,/uslugi/deratizaciya/krysy
+sticky_quiz_lead_krysy,Стики→Квиз,/uslugi/deratizaciya/krysy
+calc_lead_kroty,Калькулятор,/uslugi/deratizaciya/kroty
+quiz_lead_kroty,Квиз,/uslugi/deratizaciya/kroty
+sticky_quiz_lead_kroty,Стики→Квиз,/uslugi/deratizaciya/kroty
+calc_lead_dezinsekciya,Калькулятор,/uslugi/dezinsekciya
+quiz_lead_dezinsekciya,Квиз,/uslugi/dezinsekciya
+sticky_quiz_lead_dezinsekciya,Стики→Квиз,/uslugi/dezinsekciya
+calc_lead_deratizaciya,Калькулятор,/uslugi/deratizaciya
+quiz_lead_deratizaciya,Квиз,/uslugi/deratizaciya
+sticky_quiz_lead_deratizaciya,Стики→Квиз,/uslugi/deratizaciya
+calc_lead_dezinfekciya,Калькулятор,/uslugi/dezinfekciya
+quiz_lead_dezinfekciya,Квиз,/uslugi/dezinfekciya
+sticky_quiz_lead_dezinfekciya,Стики→Квиз,/uslugi/dezinfekciya
+calc_lead_dezodoraciya,Калькулятор,/uslugi/dezodoraciya
+quiz_lead_dezodoraciya,Квиз,/uslugi/dezodoraciya
+sticky_quiz_lead_dezodoraciya,Стики→Квиз,/uslugi/dezodoraciya
+calc_lead_ozonirovanie,Калькулятор,/uslugi/ozonirovanie
+quiz_lead_ozonirovanie,Квиз,/uslugi/ozonirovanie
+sticky_quiz_lead_ozonirovanie,Стики→Квиз,/uslugi/ozonirovanie
+calc_lead_sertifikaciya,Калькулятор,/uslugi/sertifikaciya
+quiz_lead_sertifikaciya,Квиз,/uslugi/sertifikaciya
+sticky_quiz_lead_sertifikaciya,Стики→Квиз,/uslugi/sertifikaciya
+calc_lead_uchastki,Калькулятор,/uslugi/obrabotka-uchastkov
+quiz_lead_uchastki,Квиз,/uslugi/obrabotka-uchastkov
+sticky_quiz_lead_uchastki,Стики→Квиз,/uslugi/obrabotka-uchastkov
+calc_lead_ses,Калькулятор,/sluzhba-dezinsekcii
+quiz_lead_ses,Квиз,/sluzhba-dezinsekcii
+sticky_quiz_lead_ses,Стики→Квиз,/sluzhba-dezinsekcii
+calc_lead_general,Калькулятор,Все остальные страницы
+quiz_lead_general,Квиз,Все остальные страницы
+sticky_quiz_lead_general,Стики→Квиз,Все остальные страницы
+```
 
-**1. `src/lib/analytics.ts`**
-- Добавить экспортируемую функцию `getYmGoalPrefix(): string` — вынести логику определения slug из `getYmGoalId` в отдельную функцию. Она возвращает только slug (`klopy`, `main`, `general`).
-- `getYmGoalId` продолжает работать как раньше (для обратной совместимости).
-
-**2. `src/components/ServiceStickyBar.tsx`** (кнопка "Узнать цену")
-- В `handlePrice` добавить `sessionStorage.setItem('quiz_source', 'sticky_bar')` перед скроллом к квизу.
-
-**3. `src/components/ServiceQuiz.tsx`** (при успешной отправке)
-- Убрать текущие `trackGoal('calc_open', ...)` и `trackGoal(getYmGoalId('quiz'), ...)`.
-- Вместо них: проверить `sessionStorage.getItem('quiz_source')`.
-  - Если `=== 'sticky_bar'` → `trackGoal('sticky_quiz_lead_' + prefix)`, затем `sessionStorage.removeItem('quiz_source')`.
-  - Иначе → `trackGoal('quiz_lead_' + prefix)`.
-
-**4. `src/components/LeadFormModal.tsx`** (при успешной отправке)
-- Убрать текущие `trackGoal('lead_submit', ...)` и `trackGoal(getYmGoalId('lead'), ...)`.
-- Вместо них: `trackGoal('calc_lead_' + prefix)`.
-
-**5. `src/components/CompactRequestModal.tsx`** (при успешной отправке)
-- Убрать текущие `trackGoal('calc_submit', ...)` и `trackGoal(getYmGoalId('lead'), ...)`.
-- Вместо них: `trackGoal('calc_lead_' + prefix)`.
-
-**6. `src/components/HeroCallbackForm.tsx`**
-- Оставляем как есть (маркетолог упомянул только 3 цели, callback не входит в новую схему). Старые generic goals `hero_callback_submit` продолжат стрелять.
-
-### Пример: страница Клопы (`/uslugi/dezinsekciya/klopy`)
-
-Маркетолог создаёт в Яндекс.Метрике 3 цели (тип: JavaScript-событие):
-1. `calc_lead_klopy`
-2. `quiz_lead_klopy`
-3. `sticky_quiz_lead_klopy`
-
-### Технические детали
-
-- `sessionStorage` выбран потому что флаг должен жить только в рамках текущей вкладки и автоматически очищается при закрытии.
-- Флаг очищается сразу после отправки цели, чтобы повторное заполнение квиза (без клика по стики) не считалось sticky-конверсией.
-- Старые generic goals (`lead_submit`, `calc_open`, `calc_submit`) будут удалены из этих компонентов — маркетолог от них отказался.
+Файл будет доступен по прямой ссылке для скачивания.
 
