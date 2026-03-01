@@ -1,7 +1,8 @@
 import { useParams, Link } from "react-router-dom";
 import NotFound from './NotFound';
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import SEOHead from "@/components/SEOHead";
+import type { PageMetadata } from "@/lib/metadata";
 import { Phone, Check, Shield, Clock, Award, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -82,23 +83,29 @@ const ServiceSubpage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{subpage.metaTitle}</title>
-        <meta name="description" content={subpage.metaDescription} />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href={`https://goruslugimsk.ru${subpage.fullPath.endsWith('/') ? subpage.fullPath : subpage.fullPath + '/'}`} />
-        <meta property="og:title" content={subpage.metaTitle} />
-        <meta property="og:description" content={subpage.metaDescription} />
-        <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
+      <SEOHead metadata={{
+        title: subpage.metaTitle,
+        description: subpage.metaDescription,
+        canonical: `https://goruslugimsk.ru${subpage.fullPath.endsWith('/') ? subpage.fullPath : subpage.fullPath + '/'}`,
+        robots: 'index, follow',
+        ogTitle: subpage.metaTitle,
+        ogDescription: subpage.metaDescription,
+        schema: [schemaMarkup, faqSchema],
+      } as PageMetadata} pagePath={subpage.fullPath} />
 
       <Header />
 
       <main className="pt-20">
         {/* Hero Section */}
         <section className="relative min-h-[60vh] bg-gradient-to-br from-primary via-primary/90 to-accent flex items-center">
-          <div className="absolute inset-0 bg-black/20" />
+          <img 
+            src="/images/work/fog-generator.jpg" 
+            alt="Профессиональное оборудование для обработки помещений" 
+            width={1200} height={800} 
+            loading="eager" decoding="async"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-primary/70" />
           <div className="container mx-auto px-4 py-16 relative z-10">
             <Breadcrumb className="mb-6">
               <BreadcrumbList className="text-white/80">

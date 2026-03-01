@@ -45,6 +45,7 @@ const topFeaturedSlugs = [
 
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
+  const [visibleCount, setVisibleCount] = useState(30);
 
   const baseList = selectedCategory === "Все" 
     ? allBlogArticles 
@@ -154,7 +155,7 @@ const Blog = () => {
                 <Button
                   key={category}
                   variant={selectedCategory === category ? "default" : "outline"}
-                  onClick={() => setSelectedCategory(category)}
+                  onClick={() => { setSelectedCategory(category); setVisibleCount(30); }}
                   className="rounded-full text-[11px] md:text-sm px-2.5 md:px-4 py-1.5 md:py-2 h-auto whitespace-nowrap gap-1"
                 >
                   <IconComp className="w-4 h-4" />
@@ -171,7 +172,7 @@ const Blog = () => {
       <section className="py-8 md:py-16 px-2 md:px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-            {filteredPosts.map((post) => {
+            {filteredPosts.slice(0, visibleCount).map((post) => {
               const redCategories = ['Насекомые', 'Советы', 'Законодательство'];
               const gradientCategories = ['Грызуны', 'Случаи из практики'];
               
@@ -240,6 +241,13 @@ const Blog = () => {
               );
             })}
           </div>
+          {visibleCount < filteredPosts.length && (
+            <div className="text-center mt-8">
+              <Button variant="outline" size="lg" onClick={() => setVisibleCount(c => c + 30)}>
+                Показать ещё ({filteredPosts.length - visibleCount} осталось)
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -13,14 +14,15 @@ import {
   Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Phone, TreePine, Bug, Droplets, Shield, Leaf } from "lucide-react";
+import { Phone, TreePine, Bug, Droplets, Shield, Leaf, Calculator } from "lucide-react";
 import { trackGoal } from "@/lib/analytics";
+import CalculatorModal from "@/components/CalculatorModal";
 import type { PageMetadata } from "@/lib/metadata";
 
 const metadata: PageMetadata = {
   title: "Обработка участков от клещей, комаров и борщевика в Москве и МО",
   description: "Профессиональная обработка дачных участков, газонов и территорий от клещей, комаров, борщевика. Безопасные препараты, гарантия до 3 лет. Выезд по Москве и МО.",
-  canonical: "https://sanit-solutions-spark.lovable.app/uslugi/obrabotka-uchastkov",
+  canonical: "https://goruslugimsk.ru/uslugi/obrabotka-uchastkov",
   schema: {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -55,6 +57,7 @@ const faq = [
 ];
 
 const ServiceLandingUchastkiPage = () => {
+  const [showCalculator, setShowCalculator] = useState(false);
   return (
     <>
       <SEOHead metadata={metadata} pagePath="/uslugi/obrabotka-uchastkov" />
@@ -81,13 +84,27 @@ const ServiceLandingUchastkiPage = () => {
                   Защитите свой участок от клещей, комаров и борщевика. 
                   Профессиональная обработка безопасными препаратами с гарантией результата.
                 </p>
-                <Button size="lg" className="gap-2" asChild>
-                  <a href="tel:84950181817" onClick={() => trackGoal('phone_click', { source: 'uchastki_hero' })}>
-                    <Phone className="h-5 w-5" /> 8-495-018-18-17
-                  </a>
-                </Button>
+                <div className="flex flex-wrap gap-3">
+                  <Button size="lg" className="gap-2" asChild>
+                    <a href="tel:84950181817" onClick={() => trackGoal('phone_click', { source: 'uchastki_hero' })}>
+                      <Phone className="h-5 w-5" /> 8-495-018-18-17
+                    </a>
+                  </Button>
+                  <Button size="lg" variant="outline" className="gap-2" onClick={() => { trackGoal('calculator_click', { source: 'uchastki_hero' }); setShowCalculator(true); }}>
+                    <Calculator className="h-5 w-5" /> Рассчитать стоимость
+                  </Button>
+                </div>
               </div>
-              <HeroCallbackForm serviceSlug="obrabotka-uchastkov" />
+              <div className="space-y-4">
+                <img 
+                  src="/images/work/outdoor-treatment.png" 
+                  alt="Обработка дачного участка от клещей и комаров" 
+                  width={600} height={400} 
+                  loading="lazy" decoding="async"
+                  className="rounded-xl shadow-lg w-full object-cover max-h-[280px]"
+                />
+                <HeroCallbackForm serviceSlug="obrabotka-uchastkov" />
+              </div>
             </div>
           </div>
         </section>
@@ -161,13 +178,19 @@ const ServiceLandingUchastkiPage = () => {
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Закажите обработку участка</h2>
             <p className="mb-6 opacity-90">Бесплатный выезд специалиста для оценки территории</p>
-            <Button size="lg" variant="secondary" className="gap-2" asChild>
-              <a href="tel:84950181817"><Phone className="h-5 w-5" /> 8-495-018-18-17</a>
-            </Button>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button size="lg" variant="secondary" className="gap-2" asChild>
+                <a href="tel:84950181817"><Phone className="h-5 w-5" /> 8-495-018-18-17</a>
+              </Button>
+              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary gap-2" onClick={() => setShowCalculator(true)}>
+                <Calculator className="h-5 w-5" /> Рассчитать стоимость
+              </Button>
+            </div>
           </div>
         </section>
       </main>
       <Footer />
+      <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
     </>
   );
 };
