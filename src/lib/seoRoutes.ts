@@ -30,6 +30,21 @@ export const serviceSubpageRoutes = [
   { parent: 'dezinsekciya', sub: 'unichtozhenie-tarakanov' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-krys' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-myshej' },
+  // Квалификаторы (высокочастотные коммерческие запросы)
+  { parent: 'dezinsekciya', sub: 'klopov-v-kvartire' },
+  { parent: 'dezinsekciya', sub: 'postelnyh-klopov' },
+  { parent: 'dezinsekciya', sub: 'domashnih-klopov' },
+  { parent: 'dezinsekciya', sub: 'tarakanov-v-kvartire' },
+  { parent: 'dezinsekciya', sub: 'klopov-i-tarakanov' },
+  { parent: 'dezinsekciya', sub: 'klopov-i-bloh' },
+  { parent: 'dezinsekciya', sub: 'blokh-ot-zhivotnyh' },
+  // Методы обработки
+  { parent: 'dezinsekciya', sub: 'holodnym-tumanom' },
+  { parent: 'dezinsekciya', sub: 'parom' },
+  { parent: 'dezinsekciya', sub: 'parogeneratorom' },
+  { parent: 'dezinsekciya', sub: 'bez-zapaha' },
+  { parent: 'dezinsekciya', sub: 'srochno' },
+  { parent: 'dezinsekciya', sub: 'kruglosutochno' },
 ];
 
 // Вредители для дезинсекции
