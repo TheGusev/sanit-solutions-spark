@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { supabase } from "@/integrations/supabase/client";
-import { trackGoal, getYmGoalId } from "@/lib/analytics";
+import { trackGoal, getYmGoalPrefix } from "@/lib/analytics";
 
 interface CompactRequestModalProps {
   open: boolean;
@@ -56,15 +56,14 @@ export const CompactRequestModal = ({
 
     setIsSubmitting(true);
     
-    const goalParams = {
+    const prefix = getYmGoalPrefix();
+    trackGoal(`calc_lead_${prefix}`, {
       intent: context?.intent,
       variant: context?.variantId,
       hasName: !!name.trim(),
       phoneLength: phone.length,
       finalPrice: calculatorData.finalPrice
-    };
-    trackGoal('calc_submit', goalParams);
-    trackGoal(getYmGoalId('lead'), goalParams);
+    });
     
     try {
       const { data, error } = await supabase.functions.invoke("handle-lead", {
