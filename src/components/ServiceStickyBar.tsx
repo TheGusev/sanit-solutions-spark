@@ -26,6 +26,7 @@ export default function ServiceStickyBar() {
 
   const handlePrice = () => {
     trackGoal('calc_calculate', { source: 'sticky_bar' });
+    sessionStorage.setItem('quiz_source', 'sticky_bar');
     const target = document.getElementById('quiz') || document.getElementById('pricing-by-area') || document.getElementById('calculator');
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });

@@ -139,32 +139,32 @@ const PATHNAME_SLUG_MAP: Record<string, string> = {
 };
 
 /**
+ * Возвращает slug (префикс) на основе текущего URL.
+ * Пример: на /uslugi/dezinsekciya/klopy → 'klopy'
+ */
+export function getYmGoalPrefix(): string {
+  if (typeof window === 'undefined') return 'general';
+
+  const pathname = window.location.pathname.replace(/\/$/, '') || '/';
+
+  if (PATHNAME_SLUG_MAP[pathname]) return PATHNAME_SLUG_MAP[pathname];
+  if (pathname === '/') return 'main';
+
+  for (const [pattern, slug] of Object.entries(PATHNAME_SLUG_MAP)) {
+    if (pathname.startsWith(pattern + '/') || pathname.startsWith(pattern + '?')) {
+      return slug;
+    }
+  }
+
+  return 'general';
+}
+
+/**
  * Возвращает pest-specific goal ID на основе текущего URL.
  * Пример: getYmGoalId('lead') на /uslugi/dezinsekciya/klopy → 'lead_klopy'
  */
 export function getYmGoalId(actionType: string): string {
-  if (typeof window === 'undefined') return `${actionType}_general`;
-
-  const pathname = window.location.pathname.replace(/\/$/, '') || '/';
-
-  // Точное совпадение
-  if (PATHNAME_SLUG_MAP[pathname]) {
-    return `${actionType}_${PATHNAME_SLUG_MAP[pathname]}`;
-  }
-
-  // Главная страница
-  if (pathname === '/') {
-    return `${actionType}_main`;
-  }
-
-  // Проверка по префиксу (для вложенных страниц типа /uslugi/dezinsekciya/klopy/something)
-  for (const [pattern, slug] of Object.entries(PATHNAME_SLUG_MAP)) {
-    if (pathname.startsWith(pattern + '/') || pathname.startsWith(pattern + '?')) {
-      return `${actionType}_${slug}`;
-    }
-  }
-
-  return `${actionType}_general`;
+  return `${actionType}_${getYmGoalPrefix()}`;
 }
 
 // Трекинг целей (конверсий)

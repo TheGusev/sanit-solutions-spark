@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useTraffic } from '@/contexts/TrafficContext';
-import { trackGoal, getYmGoalId } from '@/lib/analytics';
+import { trackGoal, getYmGoalPrefix } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
 
@@ -113,12 +113,14 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle }: Servic
         throw error || new Error('Failed');
       }
 
-      const goalParams = {
-        intent: context?.intent,
-        service: serviceSlug,
-      };
-      trackGoal('calc_open', goalParams);
-      trackGoal(getYmGoalId('quiz'), goalParams);
+      const prefix = getYmGoalPrefix();
+      const quizSource = sessionStorage.getItem('quiz_source');
+      if (quizSource === 'sticky_bar') {
+        trackGoal(`sticky_quiz_lead_${prefix}`, { intent: context?.intent, service: serviceSlug });
+        sessionStorage.removeItem('quiz_source');
+      } else {
+        trackGoal(`quiz_lead_${prefix}`, { intent: context?.intent, service: serviceSlug });
+      }
 
       toast.success('✅ Заявка отправлена! Перезвоним в течение 15 минут');
       setCurrentStep(0);
