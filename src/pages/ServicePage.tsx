@@ -280,7 +280,7 @@ const ServicePage = () => {
                 <div className="flex flex-wrap gap-6 mt-8 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Shield className="w-5 h-5 text-primary" />
-                    <span>Гарантия {service.guaranteeYears || (service.slug === 'borba-s-krotami' ? '6 месяцев' : 'до 1 года')}</span>
+                    <span>Гарантия {service.guaranteeYears || (service.slug === 'borba-s-krotami' ? '6 месяцев' : 'до 3 лет')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-5 h-5 text-primary" />
@@ -310,7 +310,7 @@ const ServicePage = () => {
         {/* Service Tariffs */}
         <LazySection minHeight="300px">
           {service.tariffs && service.tariffs.length > 0 && (
-            <ServiceTariffs tariffs={service.tariffs} serviceTitle={service.title} />
+            <ServiceTariffs tariffs={service.tariffs} serviceTitle={service.title} serviceAccusative={service.nameAccusative} />
           )}
         </LazySection>
 
