@@ -73,11 +73,14 @@ export default function NchPage() {
   // SEO - оптимизированные лимиты (Title: 40-60, Description: 140-160)
   const serviceName = service === 'dezinsekciya' ? 'Дезинсекция' : 'Дератизация';
   
+  // Используем предложный падеж если есть, иначе "в {name}"
+  const locationText = neighborhood.prepositional || `в ${neighborhood.name}`;
+  
   // Title: ~55 символов
-  const pageTitle = `${pest.name} в ${neighborhood.name} — от ${pest.priceFrom}₽ | Выезд 30 мин`;
+  const pageTitle = `${pest.name} ${locationText} — от ${pest.priceFrom}₽ | Выезд 30 мин`;
   
   // Description: ~155 символов  
-  const pageDescription = `Уничтожение ${pest.genitive} в ${neighborhood.name} от ${pest.priceFrom}₽. Выезд за 30 мин, гарантия 1 год. Безопасные препараты. ${SEO_CONFIG.phone}`;
+  const pageDescription = `Уничтожение ${pest.genitive} ${locationText} от ${pest.priceFrom}₽. Выезд за 30 мин, гарантия до 3 лет. Безопасные препараты. ${SEO_CONFIG.phone}`;
   
   const canonicalPath = `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`;
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);

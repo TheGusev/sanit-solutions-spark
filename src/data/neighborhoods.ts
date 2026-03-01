@@ -19,6 +19,7 @@ export interface Neighborhood {
   streets: string[];
   center: [number, number];
   faq: NeighborhoodFAQ[];
+  prepositional?: string; // "на Арбате", "в Тверском районе"
 }
 
 // Маппинг округов на названия в предложном падеже
@@ -74,7 +75,7 @@ const genFAQ = (name: string, responseTime: string, surcharge: number): Neighbor
 // ЦАО (10 районов)
 const caoNeighborhoods: Neighborhood[] = [
   {
-    id: 'arbat', slug: 'arbat', name: 'Арбат', fullName: 'район Арбат',
+    id: 'arbat', slug: 'arbat', name: 'Арбат', fullName: 'район Арбат', prepositional: 'на Арбате',
     districtId: 'cao', metaTitle: 'Дезинфекция на Арбате — выезд 15 мин | от 1000₽',
     metaDescription: 'Профессиональная дезинфекция в районе Арбат ЦАО Москвы. Уничтожение тараканов, клопов, грызунов. Выезд 15 минут. Гарантия 1 год.',
     h1: 'Дезинфекция на Арбате — выезд за 15 минут',
@@ -85,7 +86,7 @@ const caoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'tverskoy', slug: 'tverskoy', name: 'Тверской', fullName: 'Тверской район',
+    id: 'tverskoy', slug: 'tverskoy', name: 'Тверской', fullName: 'Тверской район', prepositional: 'в Тверском районе',
     districtId: 'cao', metaTitle: 'Дезинфекция в Тверском районе — выезд 15 мин | от 1000₽',
     metaDescription: 'Дезинфекция, дезинсекция и дератизация в Тверском районе Москвы. Обработка квартир, ресторанов, офисов. Гарантия.',
     h1: 'Дезинфекция в Тверском районе — выезд за 15 минут',
@@ -96,7 +97,7 @@ const caoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'zamoskvorechye', slug: 'zamoskvorechye', name: 'Замоскворечье', fullName: 'район Замоскворечье',
+    id: 'zamoskvorechye', slug: 'zamoskvorechye', name: 'Замоскворечье', fullName: 'район Замоскворечье', prepositional: 'в Замоскворечье',
     districtId: 'cao', metaTitle: 'Дезинфекция в Замоскворечье — выезд 15 мин | от 1000₽',
     metaDescription: 'Дезинфекция в Замоскворечье ЦАО Москвы. Обработка от тараканов, клопов, грызунов. Выезд 15 минут.',
     h1: 'Дезинфекция в Замоскворечье — быстрый выезд',
@@ -107,7 +108,7 @@ const caoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'khamovniki', slug: 'khamovniki', name: 'Хамовники', fullName: 'район Хамовники',
+    id: 'khamovniki', slug: 'khamovniki', name: 'Хамовники', fullName: 'район Хамовники', prepositional: 'в Хамовниках',
     districtId: 'cao', metaTitle: 'Дезинфекция в Хамовниках — выезд 15 мин | от 1000₽',
     metaDescription: 'Дезинфекция в Хамовниках Москвы. Уничтожение насекомых и грызунов. Обработка элитных ЖК. Гарантия 1 год.',
     h1: 'Дезинфекция в Хамовниках — выезд за 15 минут',
@@ -118,7 +119,7 @@ const caoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'presnensky', slug: 'presnensky', name: 'Пресненский', fullName: 'Пресненский район',
+    id: 'presnensky', slug: 'presnensky', name: 'Пресненский', fullName: 'Пресненский район', prepositional: 'в Пресненском районе',
     districtId: 'cao', metaTitle: 'Дезинфекция в Пресненском районе — выезд 15 мин | от 1000₽',
     metaDescription: 'Дезинфекция в Пресненском районе Москвы. Москва-Сити, Красная Пресня. Работаем с бизнес-центрами.',
     h1: 'Дезинфекция в Пресненском районе Москвы',
@@ -188,7 +189,7 @@ const caoNeighborhoods: Neighborhood[] = [
 // САО (16 районов)
 const saoNeighborhoods: Neighborhood[] = [
   {
-    id: 'aeroport', slug: 'aeroport', name: 'Аэропорт', fullName: 'район Аэропорт',
+    id: 'aeroport', slug: 'aeroport', name: 'Аэропорт', fullName: 'район Аэропорт', prepositional: 'в районе Аэропорт',
     districtId: 'sao', metaTitle: 'Дезинфекция в Аэропорте — выезд 25 мин | от 1000₽',
     metaDescription: 'Дезинфекция в районе Аэропорт САО Москвы. Быстрый выезд, гарантия.',
     h1: 'Дезинфекция в районе Аэропорт Москвы',
@@ -210,7 +211,7 @@ const saoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'sokol', slug: 'sokol', name: 'Сокол', fullName: 'район Сокол',
+    id: 'sokol', slug: 'sokol', name: 'Сокол', fullName: 'район Сокол', prepositional: 'в районе Сокол',
     districtId: 'sao', metaTitle: 'Дезинфекция в Соколе — выезд 25 мин | от 1000₽',
     metaDescription: 'Дезинфекция в районе Сокол САО Москвы. Посёлок Сокол, Ленинградка.',
     h1: 'Дезинфекция в районе Сокол Москвы',
@@ -379,7 +380,7 @@ const svaoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'babushkinsky', slug: 'babushkinsky', name: 'Бабушкинский', fullName: 'Бабушкинский район',
+    id: 'babushkinsky', slug: 'babushkinsky', name: 'Бабушкинский', fullName: 'Бабушкинский район', prepositional: 'в Бабушкинском районе',
     districtId: 'svao', metaTitle: 'Дезинфекция в Бабушкинском районе — от 1200₽',
     metaDescription: 'Дезинфекция в Бабушкинском районе СВАО. Бабушкинский парк.',
     h1: 'Дезинфекция в Бабушкинском районе',
@@ -625,7 +626,7 @@ const vaoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'izmaylovo', slug: 'izmaylovo', name: 'Измайлово', fullName: 'район Измайлово',
+    id: 'izmaylovo', slug: 'izmaylovo', name: 'Измайлово', fullName: 'район Измайлово', prepositional: 'в Измайлово',
     districtId: 'vao', metaTitle: 'Дезинфекция в Измайлово — от 1000₽',
     metaDescription: 'Дезинфекция в Измайлово ВАО. Измайловский парк.',
     h1: 'Дезинфекция в Измайлово Москвы',
@@ -724,7 +725,7 @@ const vaoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'sokolniki', slug: 'sokolniki', name: 'Сокольники', fullName: 'район Сокольники',
+    id: 'sokolniki', slug: 'sokolniki', name: 'Сокольники', fullName: 'район Сокольники', prepositional: 'в Сокольниках',
     districtId: 'vao', metaTitle: 'Дезинфекция в Сокольниках — от 1000₽',
     metaDescription: 'Дезинфекция в Сокольниках ВАО. Парк Сокольники.',
     h1: 'Дезинфекция в Сокольниках Москвы',
@@ -783,7 +784,7 @@ const yuvaoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'lyublino', slug: 'lyublino', name: 'Люблино', fullName: 'район Люблино',
+    id: 'lyublino', slug: 'lyublino', name: 'Люблино', fullName: 'район Люблино', prepositional: 'в Люблино',
     districtId: 'yuvao', metaTitle: 'Дезинфекция в Люблино — от 1200₽',
     metaDescription: 'Дезинфекция в Люблино ЮВАО Москвы.',
     h1: 'Дезинфекция в Люблино Москвы',
@@ -794,7 +795,7 @@ const yuvaoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'maryino', slug: 'maryino', name: 'Марьино', fullName: 'район Марьино',
+    id: 'maryino', slug: 'maryino', name: 'Марьино', fullName: 'район Марьино', prepositional: 'в Марьино',
     districtId: 'yuvao', metaTitle: 'Дезинфекция в Марьино — от 1200₽',
     metaDescription: 'Дезинфекция в Марьино ЮВАО Москвы.',
     h1: 'Дезинфекция в Марьино Москвы',
@@ -1018,7 +1019,7 @@ const yaoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'chertanovo-severnoe', slug: 'chertanovo-severnoe', name: 'Чертаново Северное', fullName: 'район Чертаново Северное',
+    id: 'chertanovo-severnoe', slug: 'chertanovo-severnoe', name: 'Чертаново Северное', fullName: 'район Чертаново Северное', prepositional: 'в Чертаново Северном',
     districtId: 'yao', metaTitle: 'Дезинфекция в Чертаново Северном — от 1000₽',
     metaDescription: 'Дезинфекция в Чертаново Северном ЮАО.',
     h1: 'Дезинфекция в Чертаново Северном',
@@ -1088,7 +1089,7 @@ const yzaoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'konkovo', slug: 'konkovo', name: 'Коньково', fullName: 'район Коньково',
+    id: 'konkovo', slug: 'konkovo', name: 'Коньково', fullName: 'район Коньково', prepositional: 'в Коньково',
     districtId: 'yzao', metaTitle: 'Дезинфекция в Коньково — от 1200₽',
     metaDescription: 'Дезинфекция в Коньково ЮЗАО Москвы.',
     h1: 'Дезинфекция в Коньково Москвы',
@@ -1382,7 +1383,7 @@ const szaoNeighborhoods: Neighborhood[] = [
     description: '', faq: []
   },
   {
-    id: 'strogino', slug: 'strogino', name: 'Строгино', fullName: 'район Строгино',
+    id: 'strogino', slug: 'strogino', name: 'Строгино', fullName: 'район Строгино', prepositional: 'в Строгино',
     districtId: 'szao', metaTitle: 'Дезинфекция в Строгино — от 1200₽',
     metaDescription: 'Дезинфекция в Строгино СЗАО Москвы.',
     h1: 'Дезинфекция в Строгино Москвы',
