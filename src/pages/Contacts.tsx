@@ -171,8 +171,8 @@ const Contacts = () => {
                   onClick={handleMaxClick}
                   className="flex items-center gap-4 w-full p-3 rounded-lg hover:bg-muted transition-colors text-left"
                 >
-                  <div className="w-12 h-12 bg-[#168DE2]/10 rounded-full flex items-center justify-center">
-                    <MessageCircle className="w-6 h-6 text-[#168DE2]" />
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-6 h-6 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">MAX</p>

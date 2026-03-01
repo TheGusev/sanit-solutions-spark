@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -12,20 +13,21 @@ import {
 import {
   Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Phone, Shield, Clock, Award, Bug, Zap, CheckCircle, Users, Beaker } from "lucide-react";
+import { Phone, Shield, Clock, Award, Bug, Zap, CheckCircle, Users, Beaker, Calculator } from "lucide-react";
 import { trackGoal } from "@/lib/analytics";
+import CalculatorModal from "@/components/CalculatorModal";
 import type { PageMetadata } from "@/lib/metadata";
 
 const metadata: PageMetadata = {
   title: "Служба дезинсекции в Москве — вызвать специалиста круглосуточно",
   description: "Профессиональная служба дезинсекции в Москве. Уничтожение тараканов, клопов, блох и других насекомых. Выезд за 30 минут, гарантия до 3 лет.",
-  canonical: "https://sanit-solutions-spark.lovable.app/sluzhba-dezinsekcii",
+  canonical: "https://goruslugimsk.ru/sluzhba-dezinsekcii",
   schema: {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: "Санитарные Решения — Служба дезинсекции",
     description: "Профессиональная служба дезинсекции в Москве и МО",
-    url: "https://sanit-solutions-spark.lovable.app/sluzhba-dezinsekcii",
+    url: "https://goruslugimsk.ru/sluzhba-dezinsekcii",
     telephone: "+74950181817",
     areaServed: { "@type": "City", name: "Москва" },
     openingHours: "Mo-Su 00:00-23:59",
@@ -50,6 +52,7 @@ const faq = [
 ];
 
 const ServiceSESPage = () => {
+  const [showCalculator, setShowCalculator] = useState(false);
   return (
     <>
       <SEOHead metadata={metadata} pagePath="/sluzhba-dezinsekcii" />
@@ -79,13 +82,27 @@ const ServiceSESPage = () => {
                     <span key={p} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">{p}</span>
                   ))}
                 </div>
-                <Button size="lg" className="gap-2" asChild>
-                  <a href="tel:84950181817" onClick={() => trackGoal('phone_click', { source: 'ses_hero' })}>
-                    <Phone className="h-5 w-5" /> 8-495-018-18-17
-                  </a>
-                </Button>
+                <div className="flex flex-wrap gap-3">
+                  <Button size="lg" className="gap-2" asChild>
+                    <a href="tel:84950181817" onClick={() => trackGoal('phone_click', { source: 'ses_hero' })}>
+                      <Phone className="h-5 w-5" /> 8-495-018-18-17
+                    </a>
+                  </Button>
+                  <Button size="lg" variant="outline" className="gap-2" onClick={() => { trackGoal('calculator_click', { source: 'ses_hero' }); setShowCalculator(true); }}>
+                    <Calculator className="h-5 w-5" /> Рассчитать стоимость
+                  </Button>
+                </div>
               </div>
-              <HeroCallbackForm serviceSlug="dezinsekciya" />
+              <div className="space-y-4">
+                <img 
+                  src="/images/work/specialist-closeup.jpg" 
+                  alt="Специалист службы дезинсекции в защитном костюме" 
+                  width={600} height={400} 
+                  loading="lazy" decoding="async"
+                  className="rounded-xl shadow-lg w-full object-cover max-h-[280px]"
+                />
+                <HeroCallbackForm serviceSlug="dezinsekciya" />
+              </div>
             </div>
           </div>
         </section>
@@ -157,13 +174,19 @@ const ServiceSESPage = () => {
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Закажите дезинсекцию прямо сейчас</h2>
             <p className="mb-6 opacity-90">Звоните — выезд специалиста в течение 30 минут</p>
-            <Button size="lg" variant="secondary" className="gap-2" asChild>
-              <a href="tel:84950181817"><Phone className="h-5 w-5" /> 8-495-018-18-17</a>
-            </Button>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button size="lg" variant="secondary" className="gap-2" asChild>
+                <a href="tel:84950181817"><Phone className="h-5 w-5" /> 8-495-018-18-17</a>
+              </Button>
+              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary gap-2" onClick={() => setShowCalculator(true)}>
+                <Calculator className="h-5 w-5" /> Рассчитать стоимость
+              </Button>
+            </div>
           </div>
         </section>
       </main>
       <Footer />
+      <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
     </>
   );
 };
