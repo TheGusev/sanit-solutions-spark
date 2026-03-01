@@ -53,7 +53,13 @@ export const dezinsekciyaPestSlugs = [
   'klopy',
   'muravyi',
   'blohi',
-  'mol'
+  'mol',
+  'komary',
+  'muhi',
+  'osy-shershni',
+  'cheshuynitsy',
+  'kleshchi',
+  'mokricy'
 ];
 
 // Вредители для дератизации
@@ -114,7 +120,8 @@ export const topNeighborhoods = [
 
 // Типы объектов (синхронизировано с src/data/objects.ts)
 export const objectSlugs = [
-  'kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv'
+  'kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv',
+  'gostinic', 'detskih-sadov', 'hostela', 'magazinov', 'avtomobiley'
 ];
 
 // Услуги для объектов (5 основных, включая демеркуризацию)
