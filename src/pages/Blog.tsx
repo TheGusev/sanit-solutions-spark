@@ -115,14 +115,14 @@ const Blog = () => {
       <Header />
 
       {/* Breadcrumbs */}
-      <section className="pt-28 pb-4 px-4 border-b">
+      <section className="pt-28 pb-4 px-2 md:px-4 border-b">
         <div className="container mx-auto max-w-6xl">
           <Breadcrumbs items={[{ label: "Блог" }]} />
         </div>
       </section>
 
       {/* Clean Hero — no background image */}
-      <section className="py-8 md:py-12 px-4">
+      <section className="py-8 md:py-12 px-3 md:px-4">
         <div className="container mx-auto max-w-6xl text-center">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 text-foreground flex items-center justify-center gap-3">
             <BookOpen className="w-8 h-8 md:w-10 md:h-10 text-primary" />
@@ -142,9 +142,9 @@ const Blog = () => {
       </section>
 
       {/* Category Swipe Carousel */}
-      <section className="py-4 md:py-6 px-4 border-b">
+      <section className="py-4 md:py-6 px-2 md:px-4 border-b">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 md:flex-wrap md:justify-center md:gap-3 md:overflow-visible md:pb-0">
+          <div className="flex flex-wrap gap-1.5 md:gap-3 justify-center">
             {blogCategories.map((category) => {
               const catConfig = categoryIcons[category] || { icon: FileText, emoji: "📄" };
               const IconComp = catConfig.icon;
@@ -155,7 +155,7 @@ const Blog = () => {
                   key={category}
                   variant={selectedCategory === category ? "default" : "outline"}
                   onClick={() => setSelectedCategory(category)}
-                  className="rounded-full text-xs md:text-sm px-3 md:px-4 py-2 h-auto whitespace-nowrap shrink-0 gap-1.5"
+                  className="rounded-full text-[11px] md:text-sm px-2.5 md:px-4 py-1.5 md:py-2 h-auto whitespace-nowrap gap-1"
                 >
                   <IconComp className="w-4 h-4" />
                   {category}
@@ -168,9 +168,9 @@ const Blog = () => {
       </section>
 
       {/* Blog Posts Grid */}
-      <section className="py-10 md:py-16 px-4">
+      <section className="py-8 md:py-16 px-2 md:px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {filteredPosts.map((post) => {
               const redCategories = ['Насекомые', 'Советы', 'Законодательство'];
               const gradientCategories = ['Грызуны', 'Случаи из практики'];
@@ -244,7 +244,7 @@ const Blog = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 md:py-16 px-4 bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-primary-foreground">
+      <section className="py-12 md:py-16 px-3 md:px-4 bg-gradient-to-br from-primary via-primary/90 to-primary/80 text-primary-foreground">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
             Нужна профессиональная помощь?
