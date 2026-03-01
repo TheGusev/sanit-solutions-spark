@@ -111,7 +111,7 @@ export function validateAndFormatMetadata(
 export function generateIndexMetadata(): PageMetadata {
   return validateAndFormatMetadata({
     title: 'Дезинфекция, дезинсекция, дератизация в Москве',
-    description: 'Профессиональная СЭС служба в Москве • Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 1 года • 8-495-018-18-17',
+    description: 'Профессиональная СЭС служба в Москве • Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 3 лет • 8-495-018-18-17',
     h1: 'Профессиональная служба СЭС в Москве и области',
     canonical: 'https://goruslugimsk.ru/',
     keywords: ['дезинфекция москва', 'дезинсекция москва', 'дератизация москва', 'сэс москва'],
@@ -132,7 +132,7 @@ export function generateServiceMetadata(params: {
 
   return validateAndFormatMetadata({
     title: `${serviceName} в Москве — от ${priceFrom}₽ за ${pricePer}`,
-    description: description || `Профессиональная ${serviceName.toLowerCase()} в Москве • Лицензия Роспотребнадзора • Выезд за 30 минут • Гарантия до 1 года • 8-495-018-18-17`,
+    description: description || `Профессиональная ${serviceName.toLowerCase()} в Москве • Лицензия Роспотребнадзора • Выезд за 30 минут • Гарантия до 3 лет • 8-495-018-18-17`,
     h1: `${serviceName} в Москве`,
     canonical: `https://goruslugimsk.ru/uslugi/${serviceSlug}/`,
     keywords: [`${serviceName.toLowerCase()} москва`, `${serviceName.toLowerCase()} цена`],
@@ -153,7 +153,7 @@ export function generateNchMetadata(params: {
 
   return validateAndFormatMetadata({
     title: `${service} от ${pestGenitive} в ${location} — от ${priceFrom}₽`,
-    description: `Уничтожение ${pestGenitive} в ${location} • Выезд за 30 минут • Гарантия до 1 года • Безопасные препараты • 8-495-018-18-17`,
+    description: `Уничтожение ${pestGenitive} в ${location} • Выезд за 30 минут • Гарантия до 3 лет • Безопасные препараты • 8-495-018-18-17`,
     h1: `${service} от ${pestGenitive} в районе ${location}`,
     canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${pest}/${location}/`,
     keywords: [`${pest} ${location}`, `уничтожение ${pestGenitive} ${location}`],

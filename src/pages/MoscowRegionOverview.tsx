@@ -22,7 +22,7 @@ export default function MoscowRegionOverview() {
   }, []);
   
   const pageTitle = `Дезинсекция и дератизация в Московской области — от 1200₽ | ${SEO_CONFIG.companyName}`;
-  const pageDescription = `Профессиональная дезинсекция, дератизация и дезинфекция в городах Московской области от 1200₽ • Выезд от 30 мин • Гарантия 1 год • ${SEO_CONFIG.phone}`;
+  const pageDescription = `Профессиональная дезинсекция, дератизация и дезинфекция в городах Московской области от 1200₽ • Выезд от 30 мин • Гарантия до 3 лет • ${SEO_CONFIG.phone}`;
   const canonicalPath = '/moscow-oblast';
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);
   

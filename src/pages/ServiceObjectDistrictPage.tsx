@@ -58,7 +58,7 @@ export default function ServiceObjectDistrictPage() {
   const responseTime = neighborhood.responseTime || (districtName.includes('ЦАО') ? '30-45 мин' : '40-60 мин');
   
   const pageTitle = `${serviceName} ${objectType.genitive} в ${neighborhood.name} — от ${priceFrom}₽`;
-  const pageDescription = `${serviceName} ${objectType.genitive} в ${neighborhood.name} от ${priceFrom}₽. Выезд ${responseTime}, гарантия 1 год. ☎️ ${SEO_CONFIG.phone}`;
+  const pageDescription = `${serviceName} ${objectType.genitive} в ${neighborhood.name} от ${priceFrom}₽. Выезд ${responseTime}, гарантия до 3 лет. ☎️ ${SEO_CONFIG.phone}`;
   const seoMeta = generateSEOMeta(`/uslugi/${serviceSlug}/${objectSlug}/${districtSlug}`, pageTitle, pageDescription);
   
   const breadcrumbItems = [
@@ -86,7 +86,7 @@ export default function ServiceObjectDistrictPage() {
   const schemaMarkup = {
     '@context': 'https://schema.org', '@type': 'Service',
     name: `${serviceName} ${objectType.genitive} в ${neighborhood.name}`,
-    description: `${serviceName} ${objectType.genitive} в районе ${neighborhood.name}. Выезд ${responseTime}, гарантия 1 год.`,
+    description: `${serviceName} ${objectType.genitive} в районе ${neighborhood.name}. Выезд ${responseTime}, гарантия до 3 лет.`,
     provider: { '@type': 'LocalBusiness', name: SEO_CONFIG.companyName, telephone: SEO_CONFIG.phone },
     areaServed: { '@type': 'Place', name: `${neighborhood.name}, Москва` },
     offers: { '@type': 'Offer', priceSpecification: { '@type': 'PriceSpecification', price: priceFrom, priceCurrency: 'RUB' } }
@@ -139,7 +139,7 @@ export default function ServiceObjectDistrictPage() {
               <p className="text-lg text-muted-foreground mb-6">Профессиональная {serviceName.toLowerCase()} {objectType.genitive} в {neighborhood.name}. Площадь {objectType.minArea}-{objectType.maxArea} м².</p>
               <div className="flex flex-wrap gap-4 mb-6">
                 <div className="flex items-center gap-2 text-sm"><Clock className="w-5 h-5 text-primary" /><span>Выезд за {responseTime}</span></div>
-                <div className="flex items-center gap-2 text-sm"><Shield className="w-5 h-5 text-primary" /><span>Гарантия 1 год</span></div>
+                <div className="flex items-center gap-2 text-sm"><Shield className="w-5 h-5 text-primary" /><span>Гарантия до 3 лет</span></div>
                 <div className="flex items-center gap-2 text-sm"><MapPin className="w-5 h-5 text-primary" /><span>{neighborhood.name}</span></div>
                 <div className="flex items-center gap-2 text-sm"><Ruler className="w-5 h-5 text-primary" /><span>{objectType.minArea}-{objectType.maxArea} м²</span></div>
               </div>
@@ -156,7 +156,7 @@ export default function ServiceObjectDistrictPage() {
                 <CardContent>
                   <div className="text-3xl font-bold text-primary mb-2">от {priceFrom}₽</div>
                   <ul className="space-y-2 text-sm">
-                    {[`Выезд в ${neighborhood.name} — бесплатно`, 'Диагностика включена', 'Гарантия до 1 года', 'Безопасные препараты IV класса'].map((item, i) => (
+                    {[`Выезд в ${neighborhood.name} — бесплатно`, 'Диагностика включена', 'Гарантия до 3 лет', 'Безопасные препараты IV класса'].map((item, i) => (
                       <li key={i} className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" />{item}</li>
                     ))}
                   </ul>
@@ -195,7 +195,7 @@ export default function ServiceObjectDistrictPage() {
               <Award className="w-8 h-8 text-green-600" />
             </div>
             <h2 className="text-xl font-bold mb-4">Наша гарантия</h2>
-            <p className="text-muted-foreground">Гарантия до 1 года на {serviceName.toLowerCase()} {objectType.genitive} в {neighborhood.name}. Повторная обработка бесплатно.</p>
+            <p className="text-muted-foreground">Гарантия до 3 лет на {serviceName.toLowerCase()} {objectType.genitive} в {neighborhood.name}. Повторная обработка бесплатно.</p>
           </div>
         </AnimatedSection>
         
@@ -218,7 +218,7 @@ export default function ServiceObjectDistrictPage() {
         <AnimatedSection className="py-10 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-3">Закажите {serviceName.toLowerCase()} {objectType.genitive} в {neighborhood.name}</h2>
-            <p className="opacity-90 mb-4">Выезд за {responseTime}. Гарантия 1 год.</p>
+            <p className="opacity-90 mb-4">Выезд за {responseTime}. Гарантия до 3 лет.</p>
             <Button size="lg" variant="secondary" asChild><a href={`tel:${SEO_CONFIG.phoneClean}`}><Phone className="w-5 h-5 mr-2" />{SEO_CONFIG.phone}</a></Button>
           </div>
         </AnimatedSection>

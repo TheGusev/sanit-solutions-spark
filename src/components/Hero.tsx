@@ -111,7 +111,7 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
           </h1>
           
           <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10">
-            {copy.subtitle || "Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 1 года"}
+            {copy.subtitle || "Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 3 лет"}
           </p>
 
           <div className="flex justify-center">

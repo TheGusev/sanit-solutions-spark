@@ -230,7 +230,7 @@ const NeighborhoodPage = () => {
                   </Badge>
                   <Badge className="bg-primary/20 text-primary py-2 px-4 backdrop-blur-sm">
                     <Shield className="w-4 h-4 mr-2" />
-                    Гарантия 1 год
+                    Гарантия до 3 лет
                   </Badge>
                   <Badge className="bg-warning/20 text-warning py-2 px-4 backdrop-blur-sm">
                     от {1000 + neighborhood.surcharge}₽
@@ -544,7 +544,7 @@ const NeighborhoodPage = () => {
               fallback={`Вызвать дезинфектора в ${neighborhood.name}`}
             />
             <p className="text-lg mb-8 opacity-90">
-              Выезд за {neighborhood.responseTime} • Гарантия 1 год • От {1000 + neighborhood.surcharge}₽
+              Выезд за {neighborhood.responseTime} • Гарантия до 3 лет • От {1000 + neighborhood.surcharge}₽
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" variant="secondary" asChild>

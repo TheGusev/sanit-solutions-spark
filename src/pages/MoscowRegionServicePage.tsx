@@ -58,7 +58,7 @@ export default function MoscowRegionServicePage() {
   
   // SEO - оптимизированные лимиты
   const pageTitle = `${serviceData.title} ${city.prepositional} от ${priceWithSurcharge}₽ — ${SEO_CONFIG.companyName}`;
-  const pageDescription = `${serviceData.title} ${city.prepositional} от ${priceWithSurcharge}₽. Выезд ${city.responseTime}. Гарантия 1 год. ☎️ ${SEO_CONFIG.phone}`;
+  const pageDescription = `${serviceData.title} ${city.prepositional} от ${priceWithSurcharge}₽. Выезд ${city.responseTime}. Гарантия до 3 лет. ☎️ ${SEO_CONFIG.phone}`;
   const canonicalPath = `/moscow-oblast/${citySlug}/${serviceSlug}`;
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);
   
@@ -183,7 +183,7 @@ export default function MoscowRegionServicePage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Shield className="w-5 h-5 text-primary" />
-                      <span>Гарантия 1 год</span>
+                      <span>Гарантия до 3 лет</span>
                     </div>
                   </div>
                 </AlertDescription>
@@ -221,7 +221,7 @@ export default function MoscowRegionServicePage() {
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-success" />
-                    <span>Гарантия до 1 года</span>
+                    <span>Гарантия до 3 лет</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-success" />
@@ -322,7 +322,7 @@ export default function MoscowRegionServicePage() {
               Заказать {serviceData.title.toLowerCase()} {city.prepositional}
             </h2>
             <p className="text-lg opacity-90 mb-6">
-              Выезд {city.responseTime}. Гарантия 1 год.
+              Выезд {city.responseTime}. Гарантия до 3 лет.
             </p>
             <Button size="lg" variant="secondary" asChild className="whitespace-normal">
               <a href={`tel:${SEO_CONFIG.phoneClean}`}>

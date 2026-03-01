@@ -44,7 +44,7 @@ export default function ServiceObjectPage() {
   const priceFrom = Math.round((service.priceFrom || 1500) * objectType.priceMultiplier);
   
   const pageTitle = `${serviceName} ${objectType.genitive} в Москве — от ${priceFrom}₽ | Выезд 30 мин`;
-  const pageDescription = `Профессиональная ${serviceName.toLowerCase()} ${objectType.genitive} в Москве от ${priceFrom}₽. Гарантия 1 год. ☎️ ${SEO_CONFIG.phone}`;
+  const pageDescription = `Профессиональная ${serviceName.toLowerCase()} ${objectType.genitive} в Москве от ${priceFrom}₽. Гарантия до 3 лет. ☎️ ${SEO_CONFIG.phone}`;
   const seoMeta = generateSEOMeta(`/uslugi/${serviceSlug}/${objectSlug}`, pageTitle, pageDescription);
   
   const breadcrumbItems = [
