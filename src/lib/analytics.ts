@@ -116,6 +116,57 @@ export function setUserProperties(props: UserProperties): void {
   }
 }
 
+// ─── URL → slug mapping для pest-specific целей ───────────────
+const PATHNAME_SLUG_MAP: Record<string, string> = {
+  '/uslugi/dezinsekciya/klopy': 'klopy',
+  '/uslugi/dezinsekciya/tarakany': 'tarakany',
+  '/uslugi/dezinsekciya/muravyi': 'muravyi',
+  '/uslugi/dezinsekciya/blohi': 'blohi',
+  '/uslugi/dezinsekciya/kleshchi': 'kleshchi',
+  '/uslugi/dezinsekciya/komary': 'komary',
+  '/uslugi/dezinsekciya/muhi': 'muhi',
+  '/uslugi/dezinsekciya/mol': 'mol',
+  '/uslugi/deratizaciya/krysy': 'krysy',
+  '/uslugi/deratizaciya/kroty': 'kroty',
+  '/uslugi/dezinsekciya': 'dezinsekciya',
+  '/uslugi/deratizaciya': 'deratizaciya',
+  '/uslugi/dezinfekciya': 'dezinfekciya',
+  '/uslugi/dezodoraciya': 'dezodoraciya',
+  '/uslugi/ozonirovanie': 'ozonirovanie',
+  '/uslugi/sertifikaciya': 'sertifikaciya',
+  '/uslugi/obrabotka-uchastkov': 'uchastki',
+  '/sluzhba-dezinsekcii': 'ses',
+};
+
+/**
+ * Возвращает pest-specific goal ID на основе текущего URL.
+ * Пример: getYmGoalId('lead') на /uslugi/dezinsekciya/klopy → 'lead_klopy'
+ */
+export function getYmGoalId(actionType: string): string {
+  if (typeof window === 'undefined') return `${actionType}_general`;
+
+  const pathname = window.location.pathname.replace(/\/$/, '') || '/';
+
+  // Точное совпадение
+  if (PATHNAME_SLUG_MAP[pathname]) {
+    return `${actionType}_${PATHNAME_SLUG_MAP[pathname]}`;
+  }
+
+  // Главная страница
+  if (pathname === '/') {
+    return `${actionType}_main`;
+  }
+
+  // Проверка по префиксу (для вложенных страниц типа /uslugi/dezinsekciya/klopy/something)
+  for (const [pattern, slug] of Object.entries(PATHNAME_SLUG_MAP)) {
+    if (pathname.startsWith(pattern + '/') || pathname.startsWith(pattern + '?')) {
+      return `${actionType}_${slug}`;
+    }
+  }
+
+  return `${actionType}_general`;
+}
+
 // Трекинг целей (конверсий)
 export function trackGoal(goalName: string, params?: Record<string, any>): void {
   // Яндекс.Метрика

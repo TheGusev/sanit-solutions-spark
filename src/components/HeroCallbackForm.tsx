@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useTraffic } from '@/contexts/TrafficContext';
-import { trackGoal } from '@/lib/analytics';
+import { trackGoal, getYmGoalId } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 
 interface HeroCallbackFormProps {
@@ -47,10 +47,12 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
 
     setIsSubmitting(true);
 
-    trackGoal('hero_callback_submit', {
+    const goalParams = {
       intent: context?.intent,
       service: serviceSlug,
-    });
+    };
+    trackGoal('hero_callback_submit', goalParams);
+    trackGoal(getYmGoalId('callback'), goalParams);
 
     try {
       const { data, error } = await supabase.functions.invoke('handle-lead', {

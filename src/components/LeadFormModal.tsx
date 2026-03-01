@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, Loader2, Clock, Shield, Target } from "lucide-react";
-import { trackGoal } from "@/lib/analytics";
+import { trackGoal, getYmGoalId } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 
 interface LeadFormModalProps {
@@ -145,12 +145,14 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
 
       if (error || !data?.success) throw error || new Error("Failed to submit lead");
 
-      trackGoal('lead_submit', {
+      const goalParams = {
         intent: context?.intent,
         variant: context?.variantId,
         service_type: calculatorData.serviceType,
         price: calculatorData.finalPrice
-      });
+      };
+      trackGoal('lead_submit', goalParams);
+      trackGoal(getYmGoalId('lead'), goalParams);
 
       toast({
         title: "Заявка принята!",
