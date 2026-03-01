@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useTraffic } from "@/contexts/TrafficContext";
-import { trackGoal } from "@/lib/analytics";
+import { trackGoal, getYmGoalId } from "@/lib/analytics";
 import { Gift, Clock, Phone } from "lucide-react";
 
 const ExitIntentPopup = () => {
@@ -160,6 +160,9 @@ const ExitIntentPopup = () => {
           intent: context?.intent,
           variant: context?.variantId
         });
+
+        const pageGoal = getYmGoalId(window.location.pathname);
+        trackGoal(pageGoal, { source: 'exit_intent' });
         
         sessionStorage.setItem("leadSubmitted", "true");
         setSubmitted(true);

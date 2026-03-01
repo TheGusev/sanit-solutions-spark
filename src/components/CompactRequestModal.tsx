@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { supabase } from "@/integrations/supabase/client";
-import { trackGoal } from "@/lib/analytics";
+import { trackGoal, getYmGoalId } from "@/lib/analytics";
 
 interface CompactRequestModalProps {
   open: boolean;
@@ -98,6 +98,10 @@ export const CompactRequestModal = ({
       }
 
       toast.success("✅ Заявка отправлена! Мы перезвоним вам в течение 15 минут");
+
+      const pageGoal = getYmGoalId(window.location.pathname);
+      trackGoal(pageGoal, { source: 'calculator_compact', price: calculatorData.finalPrice });
+
       onOpenChange(false);
       
       setName("");
