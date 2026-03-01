@@ -1,169 +1,73 @@
 
 
-## Результаты QA-аудита: 12 тестов
+## Отчёт: Анализ текущих целей Яндекс.Метрики
 
----
+### 1. Номер счётчика
+**105828040** (строка 3, `src/lib/analytics.ts`)
 
-### 🧪 ТЕСТ 1: TypeScript и SSG-сборка — ⚠️ НАЙДЕНЫ ПРОБЛЕМЫ
+### 2. Текущие цели на странице клопов (и ВСЕХ остальных страницах)
 
-1. **`prepositional` всё ещё опциональное** — интерфейс `Neighborhood` (строка 22 `neighborhoods.ts`) имеет `prepositional?: string` вместо `prepositional: string`. Это значит TypeScript не поймает пропущенные районы.
+**Специфичных целей для клопов НЕТ.** Функция `getYmGoalId` упоминается в памяти проекта, но в коде НЕ СУЩЕСТВУЕТ. Все страницы вредителей используют одни и те же **3 общих цели**:
 
-2. **`/uslugi/obrabotka-uchastkov` отсутствует в `seoRoutes.ts`** — SSG не генерирует эту страницу. В `getAllSSGRoutes()` нет записи для `/uslugi/obrabotka-uchastkov`, значит `dist/uslugi/obrabotka-uchastkov/index.html` не создаётся при билде.
+| # | Goal ID | Триггер (событие React) | Компонент |
+|---|---------|------------------------|-----------|
+| 1 | `hero_callback_submit` | Отправка формы обратного звонка в hero-секции | `HeroCallbackForm.tsx` → `handleSubmit` |
+| 2 | `lead_submit` | Отправка заявки через модальную форму (после калькулятора) | `LeadFormModal.tsx` → `handleSubmit` |
+| 3 | `calc_open` | Отправка квиз-заявки (quiz form submit) | `ServiceQuiz.tsx` → `handleSubmit` |
 
----
+Дополнительно на всех страницах срабатывают: `phone_click` (клик по номеру телефона), `calc_submit` (CompactRequestModal), `sticky_cta_click/call`, `service_sticky_call/calc_calculate`.
 
-### 🧪 ТЕСТ 2: SEO, Canonical и Sitemap — ✅ ЧАСТИЧНО / ⚠️ НАЙДЕНА ПРОБЛЕМА
+**Ни одна из этих целей не содержит slug вредителя/услуги.** Все цели пишутся одинаково для клопов, тараканов, блох и т.д. — в Метрику приходит `lead_submit` без разделения по вредителю.
 
-1. ✅ **Нет `lovable.app`, `localhost`, `127.0.0.1`** в src/. Чисто.
-2. ⚠️ **`/uslugi/obrabotka-uchastkov` отсутствует в sitemap** (вытекает из ТЕСТ 1).
-3. ✅ `/sluzhba-dezinsekcii` и `/otzyvy` в `seoRoutes.ts` есть.
-4. ✅ Пагинация без URL — подтверждено политикой проекта.
+### 3. План: создать `getYmGoalId` и внедрить pest-specific цели
 
----
+Поскольку эталонных pest-specific целей в коде нет, нужно:
 
-### 🧪 ТЕСТ 3: Склонения и грамматика — ⚠️ НАЙДЕНЫ ПРОБЛЕМЫ
+**A. Добавить функцию `getYmGoalId` в `src/lib/analytics.ts`**
 
-1. ✅ **"Тарифы на"** — `ServiceTariffs.tsx` использует `serviceAccusative` с fallback. Корректно.
-2. ✅ **"Уничтожение"** — нигде не найдено `pest.name` в этом контексте, только `pest.genitive`.
-3. ✅ **`в {neighborhood.name}`** — заменено на `locationText` в NchPage, ServiceDistrictPage, ServiceObjectDistrictPage, NeighborhoodPage.
-4. ⚠️ **`MoscowRegionServicePage.tsx` строка 322**: `Заказать {serviceData.title.toLowerCase()}` — именительный падеж! Должно быть `serviceData.nameAccusative || serviceData.title.toLowerCase()`.
-5. ⚠️ **`DistrictPricing.tsx` строка 75**: `Цены на дезинфекцию в {district.name}` — `district.name` (именительный). Нужен предложный падеж округа.
+Структура нейминга (на базе существующих 3 триггеров):
+- `lead_{pest}` — отправка заявки (LeadFormModal, CompactRequestModal)
+- `callback_{pest}` — обратный звонок из hero (HeroCallbackForm)
+- `quiz_{pest}` — отправка квиз-формы (ServiceQuiz)
 
----
-
-### 🧪 ТЕСТ 4: Роутинг — ❌ КРИТИЧЕСКАЯ ОШИБКА
-
-**`/uslugi/obrabotka-uchastkov` НИКОГДА НЕ СРАБОТАЕТ!**
-
-В `App.tsx`:
+Где `{pest}` определяется из `window.location.pathname`:
 ```
-строка 110: <Route path="/uslugi/:parentSlug/:subSlug" ... />  ← ловит ВСЁ
-строка 113: <Route path="/uslugi/obrabotka-uchastkov" ... />   ← МЁРТВЫЙ МАРШРУТ
-```
-
-React Router v6 матчит маршруты по scoring, но `obrabotka-uchastkov` может конфликтовать с параметрическим. Нужно поставить статический роут ПЕРЕД параметрическим.
-
-Ссылки в Footer на `/sluzhba-dezinsekcii`, `/otzyvy`, `/uslugi/obrabotka-uchastkov` — ✅ есть.
-
-404-страница — ✅ CTA, ссылки на услуги и главную есть.
-
----
-
-### 🧪 ТЕСТ 5: Формы и модалки — ✅ ПРОЙДЕНО
-
-`LeadFormModal`, `CalculatorModal`, `CompactRequestModal` не вставляют `service.name` динамически в заголовки. Грамматических ошибок в формах нет.
-
----
-
-### 🧪 ТЕСТ 6: Изображения — ✅ ПРОЙДЕНО (в рамках аудита кода)
-
-Требует визуальной проверки конкретных страниц.
-
----
-
-### 🧪 ТЕСТ 7: Мобильная версия — ✅ ПРОЙДЕНО (в рамках аудита кода)
-
-Требует визуальной проверки.
-
----
-
-### 🧪 ТЕСТ 8: Schema.org — ⚠️ НАЙДЕНА ПРОБЛЕМА
-
-`jsonLD.ts` строка 10: `"гарантия до 12 месяцев"` — должно быть `"гарантия до 3 лет"`.
-
----
-
-### 🧪 ТЕСТ 9: robots.txt — ✅ ПРОЙДЕНО
-
-- `/admin/` заблокирован.
-- `Sitemap: https://goruslugimsk.ru/sitemap-index.xml` — есть.
-- Нет дублирующих путей.
-
----
-
-### 🧪 ТЕСТ 10: Хлебные крошки и перелинковка — ✅ ПРОЙДЕНО
-
-Footer содержит ссылки на все ключевые хабы.
-
----
-
-### 🧪 ТЕСТ 11: Безопасность и чистота кода — ⚠️ НАЙДЕНА ПРОБЛЕМА
-
-**`console.log` в продакшн-коде** (~45 вхождений):
-- `src/lib/analytics.ts` — 5 вхождений (логирование целей)
-- `src/hooks/useTrafficContext.ts` — 1 (MVT variant)
-- `src/components/LeadFormModal.tsx` строка 113 — **КРИТИЧНО**: логирует payload заявки с session_id и intent
-- `src/lib/validateCopyMap.ts` — 1
-
-Нет `debugger`, `FIXME`, `TODO`. API-ключи только через `.env`.
-
----
-
-### 🧪 ТЕСТ 12: Симуляция Яндекс-бота — ✅ ЧАСТИЧНО
-
-SSG генерирует HTML с контентом. Но `/uslugi/obrabotka-uchastkov` не будет в SSG (см. ТЕСТ 1).
-
----
-
-## План исправлений
-
-### 1. Критический роутинг: переместить статический роут
-
-**`src/App.tsx`**: переместить `<Route path="/uslugi/obrabotka-uchastkov">` ПЕРЕД параметрическими роутами `/uslugi/:parentSlug/:subSlug`.
-
-### 2. Добавить `/uslugi/obrabotka-uchastkov` в SSG-маршруты
-
-**`src/lib/seoRoutes.ts`**: добавить в `staticRoutes`:
-```ts
-{ path: '/uslugi/obrabotka-uchastkov', outputPath: 'uslugi/obrabotka-uchastkov/index.html', priority: '0.8', changefreq: 'monthly' }
+/uslugi/dezinsekciya/klopy → klopy
+/uslugi/dezinsekciya/tarakany → tarakany
+/uslugi/dezinsekciya/muravyi → muravyi
+/uslugi/dezinsekciya/blohi → blohi
+/uslugi/deratizaciya/krysy → krysy
+/uslugi/deratizaciya/kroty → kroty
+/uslugi/obrabotka-uchastkov → uchastki
+/sluzhba-dezinsekcii → ses
+/ → main
+fallback → general
 ```
 
-### 3. Исправить "Заказать" в MoscowRegionServicePage
+Функция `getYmGoalId(actionType: string): string` берёт `pathname` из `window.location` и возвращает, например, `lead_klopy` или `quiz_tarakany`.
 
-**`src/pages/MoscowRegionServicePage.tsx`** строка 322:
-```tsx
-// БЫЛО: Заказать {serviceData.title.toLowerCase()} {city.prepositional}
-// СТАЛО: Заказать {serviceData.nameAccusative || serviceData.title.toLowerCase()} {city.prepositional}
-```
+**B. Обновить 4 компонента:**
 
-### 4. Исправить `DistrictPricing.tsx`
+1. **`LeadFormModal.tsx`** — заменить `trackGoal('lead_submit', ...)` на `trackGoal(getYmGoalId('lead'), ...)`
+2. **`CompactRequestModal.tsx`** — заменить `trackGoal('calc_submit', ...)` на `trackGoal(getYmGoalId('lead'), ...)`
+3. **`HeroCallbackForm.tsx`** — заменить `trackGoal('hero_callback_submit', ...)` на `trackGoal(getYmGoalId('callback'), ...)`
+4. **`ServiceQuiz.tsx`** — заменить `trackGoal('calc_open', ...)` на `trackGoal(getYmGoalId('quiz'), ...)`
 
-Строка 75: заменить `в {district.name}` на предложный падеж из объекта `district`.
+Старые generic цели сохраняются как fallback (`lead_general`, `callback_general`, `quiz_general`).
 
-### 5. Обновить "до 1 года" → "до 3 лет" в оставшихся ~20 файлах
-
-Ключевые файлы:
-- `src/lib/jsonLD.ts` строка 10
-- `src/lib/contentGenerator.ts` строки 23, 48, 178, 233, 235
-- `src/lib/districtVariations.ts` строка 103
-- `src/lib/blogContentGenerator.ts` строка 145
-- `src/lib/neighborhoodContentGenerator.ts` строка 178
-- `src/data/services.ts` строка 194
-- `src/data/servicePrices.ts` строка 146
-- `src/data/neighborhoodContent.ts` строки 38, 163
-- `src/components/district/DistrictPricing.tsx` строка 51
-- `src/data/blog/pests-articles.ts` (~6 вхождений)
-- `src/data/blog/premises-articles.ts` (~2 вхождения)
-- `src/data/newBlogPosts.ts` (~4 вхождения)
-- `src/data/pests.ts` строка 275
-
-### 6. Удалить/заглушить `console.log` в продакшн-коде
-
-Особенно **`LeadFormModal.tsx` строка 113** — логирует данные заявки.
-
-### 7. Сделать `prepositional` обязательным в интерфейсе
-
-`src/data/neighborhoods.ts` строка 22: `prepositional?: string` → `prepositional: string`
+**C. Также отправлять старый generic goal** параллельно, чтобы не ломать существующие отчёты в Метрике.
 
 ---
 
-### Топ-5 критических находок
+### Итоговый список целей для маркетологов (после внедрения)
 
-| # | Проблема | Файл | Уровень |
-|---|----------|------|---------|
-| 1 | `/uslugi/obrabotka-uchastkov` мёртвый маршрут + нет SSG | App.tsx, seoRoutes.ts | ❌ Критично |
-| 2 | "Заказать дезинфекция" в МО-страницах | MoscowRegionServicePage.tsx | ❌ SEO |
-| 3 | "гарантия до 12 месяцев" в Schema.org | jsonLD.ts | ⚠️ SEO |
-| 4 | ~20 файлов с "до 1 года" вместо "до 3 лет" | Контент-генераторы | ⚠️ Бренд |
-| 5 | `console.log` логирует payload заявок | LeadFormModal.tsx | ⚠️ Безопасность |
+| Action | Главная | Клопы | Тараканы | Муравьи | Блохи | Клещи | Крысы | Кроты | Участки | СЭС | Прочее |
+|--------|---------|-------|----------|---------|-------|-------|-------|-------|---------|-----|--------|
+| Заявка | `lead_main` | `lead_klopy` | `lead_tarakany` | `lead_muravyi` | `lead_blohi` | `lead_kleshchi` | `lead_krysy` | `lead_kroty` | `lead_uchastki` | `lead_ses` | `lead_general` |
+| Звонок | `callback_main` | `callback_klopy` | `callback_tarakany` | `callback_muravyi` | `callback_blohi` | `callback_kleshchi` | `callback_krysy` | `callback_kroty` | `callback_uchastki` | `callback_ses` | `callback_general` |
+| Квиз | `quiz_main` | `quiz_klopy` | `quiz_tarakany` | `quiz_muravyi` | `quiz_blohi` | `quiz_kleshchi` | `quiz_krysy` | `quiz_kroty` | `quiz_uchastki` | `quiz_ses` | `quiz_general` |
+
+**Итого: 33 pest-specific цели + 3 generic fallback = 36 целей.**
+
+Файлы к изменению: `src/lib/analytics.ts` (добавить `getYmGoalId`), `LeadFormModal.tsx`, `CompactRequestModal.tsx`, `HeroCallbackForm.tsx`, `ServiceQuiz.tsx`.
 
