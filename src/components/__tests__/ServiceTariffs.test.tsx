@@ -5,7 +5,7 @@ import ServiceTariffs from '../ServiceTariffs';
 const mockTariffs = [
   { name: 'Эконом', price: 'от 1500₽', features: ['Обработка до 30м²', 'Гарантия 3 мес'] },
   { name: 'Стандарт', price: 'от 2500₽', popular: true, features: ['Обработка до 60м²', 'Гарантия 6 мес'] },
-  { name: 'Премиум', price: 'от 4000₽', features: ['Обработка до 100м²', 'Гарантия 1 год'] },
+  { name: 'Премиум', price: 'от 4000₽', features: ['Обработка до 100м²', 'Гарантия до 3 лет'] },
 ];
 
 describe('ServiceTariffs', () => {
