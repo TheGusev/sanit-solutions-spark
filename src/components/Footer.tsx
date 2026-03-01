@@ -58,6 +58,8 @@ const Footer = memo(() => {
               <li><Link to="/uslugi/dezodoraciya" className="hover:opacity-100">• Дезодорация</Link></li>
               <li><Link to="/uslugi/demerkurizaciya" className="hover:opacity-100">• Демеркуризация</Link></li>
               <li><Link to="/uslugi/borba-s-krotami" className="hover:opacity-100">• Борьба с кротами</Link></li>
+              <li><Link to="/uslugi/obrabotka-uchastkov" className="hover:opacity-100">• Обработка участков</Link></li>
+              <li><Link to="/sluzhba-dezinsekcii" className="hover:opacity-100">• Служба дезинсекции</Link></li>
             </ul>
           </div>
 
@@ -73,6 +75,7 @@ const Footer = memo(() => {
               <li><Link to="/terms" className="hover:opacity-100">• Пользовательское соглашение</Link></li>
               <li><Link to="/contacts" className="hover:opacity-100">• Контакты и реквизиты</Link></li>
               <li><Link to="/team" className="hover:opacity-100">• Наша команда</Link></li>
+              <li><Link to="/otzyvy" className="hover:opacity-100">• Отзывы клиентов</Link></li>
             </ul>
           </div>
 

@@ -9,6 +9,8 @@ export const staticRoutes = [
   { path: '/contacts', outputPath: 'contacts/index.html', priority: '0.8', changefreq: 'monthly' },
   { path: '/blog', outputPath: 'blog/index.html', priority: '0.7', changefreq: 'weekly' },
   { path: '/privacy', outputPath: 'privacy/index.html', priority: '0.2', changefreq: 'yearly' },
+  { path: '/sluzhba-dezinsekcii', outputPath: 'sluzhba-dezinsekcii/index.html', priority: '0.8', changefreq: 'monthly' },
+  { path: '/otzyvy', outputPath: 'otzyvy/index.html', priority: '0.7', changefreq: 'weekly' },
 ];
 
 // Услуги (коммерческие страницы высокого приоритета)

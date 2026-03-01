@@ -42,6 +42,9 @@ const MoscowRegionCityPage = lazy(
 const MoscowRegionServicePage = lazy(
   () => import("./pages/MoscowRegionServicePage")
 );
+const ServiceSESPage = lazy(() => import("./pages/ServiceSESPage"));
+const ReviewsPage = lazy(() => import("./pages/ReviewsPage"));
+const ServiceLandingUchastkiPage = lazy(() => import("./pages/ServiceLandingUchastkiPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Админка
@@ -78,6 +81,8 @@ const App = () => (
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/contacts" element={<Contacts />} />
                   <Route path="/team" element={<Team />} />
+                  <Route path="/sluzhba-dezinsekcii" element={<ServiceSESPage />} />
+                  <Route path="/otzyvy" element={<ReviewsPage />} />
 
                   {/* Округа Москвы */}
                   <Route path="/uslugi/po-okrugam-moskvy" element={<DistrictsOverview />} />
@@ -105,6 +110,7 @@ const App = () => (
                     path="/uslugi/:parentSlug/:subSlug"
                     element={<ServiceRouteResolver />}
                   />
+                  <Route path="/uslugi/obrabotka-uchastkov" element={<ServiceLandingUchastkiPage />} />
                   {/* Универсальный роут для всех услуг и округов */}
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
 
