@@ -20,7 +20,7 @@ export function generateNchPageMetadata(ctx: ContentContext): PageMetadata {
 
   return validateAndFormatMetadata({
     title: `${serviceName} от ${pestGenitive} в ${location} — от ${priceFrom}₽`,
-    description: `Уничтожение ${pestGenitive} в районе ${location} • Выезд за ${ctx.responseTime || '30-60 минут'} • Гарантия до 1 года • Безопасные препараты • 8-495-018-18-17`,
+    description: `Уничтожение ${pestGenitive} в районе ${location} • Выезд за ${ctx.responseTime || '30-60 минут'} • Гарантия до 3 лет • Безопасные препараты • 8-495-018-18-17`,
     h1: `${serviceName} от ${pestGenitive} в ${location}`,
     canonical: `https://goruslugimsk.ru/uslugi/${ctx.service}/${ctx.pest?.slug}/${ctx.neighborhoodName || ctx.cityName}/`,
     keywords: [
@@ -45,7 +45,7 @@ export function generateObjectPageMetadata(params: {
 
   return validateAndFormatMetadata({
     title: `${service} ${objectGenitive} в Москве — от ${priceFrom}₽`,
-    description: `Профессиональная ${serviceGenitive} ${objectGenitive} в Москве • Лицензия Роспотребнадзора • Выезд за 30 минут • Гарантия до 1 года • 8-495-018-18-17`,
+    description: `Профессиональная ${serviceGenitive} ${objectGenitive} в Москве • Лицензия Роспотребнадзора • Выезд за 30 минут • Гарантия до 3 лет • 8-495-018-18-17`,
     h1: `${service} ${objectGenitive}`,
     canonical: `https://goruslugimsk.ru/uslugi/${service.toLowerCase()}/${object}/`,
     keywords: [`${serviceGenitive} ${objectGenitive} москва`, `${service.toLowerCase()} ${objectGenitive}`],
@@ -175,7 +175,7 @@ export function generateLocalFeatures(ctx: ContentContext): string[] {
     'Знаем типичные места заражения в этом районе',
     'Работаем с управляющими компаниями',
     'Сертифицированные препараты IV класса опасности',
-    'Гарантия до 1 года на все работы',
+    'Гарантия до 3 лет на все работы',
     'Бесплатная повторная обработка при необходимости',
   ];
   
@@ -230,9 +230,9 @@ export function generateGuaranteeText(ctx: ContentContext): string {
   const templates = [
     `Если в течение 30 дней после обработки в ${location} вы заметили признаки присутствия ${pestGenitive}, мы приедем повторно бесплатно. Это гарантирует, что проблема решена окончательно.`,
     
-    `Мы уверены в качестве своей работы и даём гарантию до 1 года. Если ${pestGenitive.replace('от ', '')} появятся снова в течение гарантийного срока — проведём повторную обработку за наш счёт.`,
+    `Мы уверены в качестве своей работы и даём гарантию до 3 лет. Если ${pestGenitive.replace('от ', '')} появятся снова в течение гарантийного срока — проведём повторную обработку за наш счёт.`,
     
-    `Гарантия результата — наш главный принцип. После обработки в ${location} вы получите гарантийный талон на срок до 1 года. При повторном появлении ${pestGenitive} — бесплатный выезд и обработка.`,
+    `Гарантия результата — наш главный принцип. После обработки в ${location} вы получите гарантийный талон на срок до 3 лет. При повторном появлении ${pestGenitive} — бесплатный выезд и обработка.`,
   ];
   
   const hashStr = `guarantee-${location}`;

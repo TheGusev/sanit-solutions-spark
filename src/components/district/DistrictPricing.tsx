@@ -48,7 +48,7 @@ const DistrictPricing = ({ district }: DistrictPricingProps) => {
     'Профессиональные препараты (Европа/РФ)',
     'Современное оборудование (генераторы тумана)',
     'Обработка всех зон и поверхностей',
-    'Гарантия результата до 1 года',
+    'Гарантия результата до 3 лет',
     'Документы о проведённой обработке',
     'Рекомендации по уходу после обработки',
   ];
@@ -72,7 +72,7 @@ const DistrictPricing = ({ district }: DistrictPricingProps) => {
     <section className="py-12">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">
-          Цены на дезинфекцию в {district.name}
+          Цены на дезинфекцию в {district.fullName}
         </h2>
         
         <div className="flex items-center gap-2 mb-6">

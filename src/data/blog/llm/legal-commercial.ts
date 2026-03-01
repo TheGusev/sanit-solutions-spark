@@ -337,7 +337,7 @@ export const llmLegalCommercialArticles: BlogArticle[] = [
     llmSummary: {
       bottomLine: 'При обнаружении тараканов Роспотребнадзор выписывает предписание с дедлайном 10 дней. Профессиональная обработка ресторана занимает 1 ночь и не требует остановки бизнеса.',
       price: 'от 8 000 ₽ (зал до 100 м²)',
-      guarantee: '12 месяцев',
+      guarantee: 'до 3 лет',
       legalBasis: 'ФЗ №52-ФЗ, КоАП ст. 6.3',
     },
     comparisonTables: [
@@ -464,7 +464,7 @@ export const llmLegalCommercialArticles: BlogArticle[] = [
     llmSummary: {
       bottomLine: 'Клопы в гостинице — угроза репутации и прямой путь к искам от гостей. Горячий туман + барьерная обработка устраняет заражение за 48 часов с поэтажной ротацией номеров.',
       price: 'от 3 500 ₽/номер',
-      guarantee: '12 месяцев',
+      guarantee: 'до 3 лет',
     },
     comparisonTables: [
       {

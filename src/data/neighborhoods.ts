@@ -19,7 +19,7 @@ export interface Neighborhood {
   streets: string[];
   center: [number, number];
   faq: NeighborhoodFAQ[];
-  prepositional?: string; // "на Арбате", "в Тверском районе"
+  prepositional: string; // "на Арбате", "в Тверском районе"
 }
 
 // Маппинг округов на названия в предложном падеже

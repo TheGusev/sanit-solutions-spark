@@ -110,13 +110,6 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
     }
 
     try {
-      console.log('📤 Lead submission payload:', {
-        session_id: context?.sessionId,
-        intent: context?.intent || 'default',
-        variant_id: context?.variantId,
-        utm_source: context?.utm_source,
-        device_type: context?.deviceType
-      });
 
       const { data, error } = await supabase.functions.invoke("handle-lead", {
         body: {

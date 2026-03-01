@@ -106,11 +106,11 @@ const App = () => (
                     path="/uslugi/:service/:segment2/:segment3"
                     element={<ThreeSegmentRouteResolver />}
                   />
+                  <Route path="/uslugi/obrabotka-uchastkov" element={<ServiceLandingUchastkiPage />} />
                   <Route
                     path="/uslugi/:parentSlug/:subSlug"
                     element={<ServiceRouteResolver />}
                   />
-                  <Route path="/uslugi/obrabotka-uchastkov" element={<ServiceLandingUchastkiPage />} />
                   {/* Универсальный роут для всех услуг и округов */}
                   <Route path="/uslugi/:slug" element={<ServicePage />} />
 
