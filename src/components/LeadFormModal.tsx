@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, Loader2, Clock, Shield, Target } from "lucide-react";
-import { trackGoal, getYmGoalId } from "@/lib/analytics";
+import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 
 interface LeadFormModalProps {
@@ -151,9 +151,6 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
         service_type: calculatorData.serviceType,
         price: calculatorData.finalPrice
       });
-
-      const pageGoal = getYmGoalId(window.location.pathname);
-      trackGoal(pageGoal, { source: 'lead_form', price: calculatorData.finalPrice });
 
       toast({
         title: "Заявка принята!",

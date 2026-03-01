@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Phone, CheckCircle2, Loader2, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { trackGoal, getYmGoalId } from "@/lib/analytics";
+import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 
 interface QuickCallFormProps {
@@ -119,9 +119,6 @@ export function QuickCallForm({ calculatorData, onSuccess }: QuickCallFormProps)
         price: calculatorData.finalPrice,
         source: 'quick_call'
       });
-
-      const pageGoal = getYmGoalId(window.location.pathname);
-      trackGoal(pageGoal, { source: 'quick_call', price: calculatorData.finalPrice });
 
       setIsSuccess(true);
       toast({

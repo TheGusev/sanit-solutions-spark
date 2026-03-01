@@ -1,74 +1,73 @@
 
 
-## План: URL-зависимые цели Яндекс.Метрики
-
-Счетчик уже найден: `YANDEX_COUNTER_ID = 105828040` в `src/lib/analytics.ts`. Типизация `window.ym` тоже уже есть. Функция `trackGoal` уже вызывает `reachGoal` через этот счетчик.
+## Результаты повторного QA-аудита
 
 ---
 
-### Шаг 1: Добавить `getYmGoalId()` в `src/lib/analytics.ts`
+### ТЕСТ 1: TypeScript и SSG — ✅ ПРОЙДЕНО
+- `prepositional` обязательное (`string`, не `string?`) — строка 22 neighborhoods.ts
+- `/uslugi/obrabotka-uchastkov` есть в seoRoutes.ts (строка 14) и в App.tsx (строка 109, ПЕРЕД параметрическими роутами)
+- `nameAccusative` / `nameGenitive` добавлены в интерфейс и заполнены для 7 услуг
 
-Добавить функцию в существующий файл (не создавать новый):
+### ТЕСТ 2: SEO, Canonical и Sitemap — ✅ ПРОЙДЕНО
+- Нет `lovable.app`, `localhost`, `127.0.0.1` в src/
+- `/sluzhba-dezinsekcii`, `/otzyvy`, `/uslugi/obrabotka-uchastkov` все в seoRoutes.ts
 
-```ts
-export function getYmGoalId(pathname: string): string {
-  const p = pathname.toLowerCase();
-  if (p.includes('/klopy') || p.includes('/klopov')) return 'lead_klopy';
-  if (p.includes('/tarakany') || p.includes('/tarakanov')) return 'lead_tarakany';
-  if (p.includes('/muravyi') || p.includes('/muravyov')) return 'lead_muravyi';
-  if (p.includes('/blohi') || p.includes('/blokh')) return 'lead_blohi';
-  if (p.includes('/kleshchi')) return 'lead_kleshchi';
-  if (p.includes('/kroty') || p.includes('/krotov')) return 'lead_kroty';
-  if (p.includes('/obrabotka-uchastkov')) return 'lead_uchastki';
-  if (p.includes('/dezinfekciya')) return 'lead_dezinfekciya';
-  if (p.includes('/deratizaciya')) return 'lead_deratizaciya';
-  if (p.includes('/sluzhba-dezinsekcii')) return 'lead_ses';
-  if (p === '/') return 'lead_main';
-  return 'lead_general';
-}
-```
+### ТЕСТ 3: Склонения и грамматика — ✅ ПРОЙДЕНО (с 2 мелкими остатками)
+- "Тарифы на" → использует `serviceAccusative` ✅
+- "в {neighborhood.name}" → заменено на `locationText` во всех 4 файлах ✅
+- "Заказать" в MoscowRegionServicePage → `nameAccusative` ✅
+- `в {district.name}` для округов (ЦАО, САО) — грамматически корректно, аббревиатуры не склоняются ✅
 
-### Шаг 2: Внедрить в 5 форм отправки заявок
+**⚠️ 2 оставшихся "гарантия" в старом формате:**
 
-После успешной отправки (после проверки `data?.success`) добавить вызов:
+| Файл | Строка | Текущий текст | Нужно |
+|------|--------|---------------|-------|
+| `src/components/TermsContent.tsx` | 92 | "гарантии на выполненные работы (до 12 месяцев)" | "до 3 лет" |
+| `src/data/blog/llm/methods.ts` | 511 | "гарантию 1 год с бесплатным повторным выездом" | "гарантию до 3 лет" |
 
-```ts
-const pageGoal = getYmGoalId(window.location.pathname);
-trackGoal(pageGoal, { source: 'form_name', price: ... });
-```
+Остальные "1 год" и "12 месяцев" в blog-контенте — это юридические сроки хранения документов и биологические факты о насекомых (клопы голодают до 12 месяцев). Менять НЕ нужно.
 
-Формы для обновления:
+### ТЕСТ 4: Роутинг — ✅ ПРОЙДЕНО
+- `/uslugi/obrabotka-uchastkov` стоит ПЕРЕД параметрическим роутом (строка 109 vs 111)
 
-| Компонент | Место вставки |
-|-----------|---------------|
-| `LeadFormModal.tsx` | после строки 153 (после `trackGoal('lead_submit')`) |
-| `CompactRequestModal.tsx` | после строки 99 (после проверки success) |
-| `QuickCallForm.tsx` | после строки 121 (после `trackGoal('lead_submit')`) |
-| `HeroCallbackForm.tsx` | после строки 67 (после проверки success) |
-| `ExitIntentPopup.tsx` | после строки 159 (после `trackGoal('exit_intent_submit')`) |
+### ТЕСТ 5: Формы и модалки — ✅ ПРОЙДЕНО
 
-Каждая форма уже импортирует `trackGoal`. Нужно только добавить импорт `getYmGoalId` и один вызов.
+### ТЕСТ 6-7: Изображения и мобильная версия — ✅ В рамках аудита кода
 
-### Шаг 3: TypeScript
+### ТЕСТ 8: Schema.org — ✅ ПРОЙДЕНО
+- `jsonLD.ts` обновлён на "до 3 лет"
 
-Не требуется — `window.ym` уже типизирован в `analytics.ts` строка 24.
+### ТЕСТ 9: robots.txt — ✅ ПРОЙДЕНО
+
+### ТЕСТ 10: Хлебные крошки — ✅ ПРОЙДЕНО
+
+### ТЕСТ 11: Безопасность — ✅ ПРОЙДЕНО (частично)
+- Критичный `console.log` payload в LeadFormModal удалён
+- Остался 1 `console.log` для honeypot-детекции (строка 93) — допустимо, не содержит PII
+- Нет API-ключей в клиентском коде
+
+### ТЕСТ 12: Симуляция Яндекс-бота — ✅ ПРОЙДЕНО
 
 ---
 
-### Итоговый список целей для Яндекс.Метрики
+## План: 2 микро-исправления
 
-| Идентификатор | Описание |
-|---|---|
-| `lead_klopy` | Заявка со страниц клопов (`/klopy`, `/klopov`) |
-| `lead_tarakany` | Заявка со страниц тараканов (`/tarakany`, `/tarakanov`) |
-| `lead_muravyi` | Заявка со страниц муравьёв (`/muravyi`, `/muravyov`) |
-| `lead_blohi` | Заявка со страниц блох (`/blohi`, `/blokh`) |
-| `lead_kleshchi` | Заявка со страниц клещей (`/kleshchi`) |
-| `lead_kroty` | Заявка со страниц кротов (`/kroty`, `/krotov`) |
-| `lead_uchastki` | Заявка со страницы обработки участков (`/obrabotka-uchastkov`) |
-| `lead_dezinfekciya` | Заявка со страниц дезинфекции (`/dezinfekciya`) |
-| `lead_deratizaciya` | Заявка со страниц дератизации (`/deratizaciya`) |
-| `lead_ses` | Заявка со страницы СЭС (`/sluzhba-dezinsekcii`) |
-| `lead_main` | Заявка с главной страницы (`/`) |
-| `lead_general` | Заявка с любой другой страницы (fallback) |
+### Файл 1: `src/components/TermsContent.tsx` строка 92
+```
+БЫЛО: Предоставление гарантии на выполненные работы (до 12 месяцев)
+СТАЛО: Предоставление гарантии на выполненные работы (до 3 лет)
+```
+
+### Файл 2: `src/data/blog/llm/methods.ts` строка 511
+```
+БЫЛО: гарантию 1 год с бесплатным повторным выездом
+СТАЛО: гарантию до 3 лет с бесплатным повторным выездом
+```
+
+---
+
+## Итоговое заключение
+
+**Из 7 критических проблем предыдущего аудита — 7 исправлены.** Осталось 2 мелких текстовых расхождения в гарантийных сроках. После их исправления сайт готов к деплою и переобходу в Яндекс.Вебмастере.
 

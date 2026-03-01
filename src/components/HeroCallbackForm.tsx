@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useTraffic } from '@/contexts/TrafficContext';
-import { trackGoal, getYmGoalId } from '@/lib/analytics';
+import { trackGoal } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 
 interface HeroCallbackFormProps {
@@ -75,9 +75,6 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
       if (error || !data?.success) {
         throw error || new Error('Failed');
       }
-
-      const pageGoal = getYmGoalId(window.location.pathname);
-      trackGoal(pageGoal, { source: 'hero_callback' });
 
       toast.success('✅ Заявка отправлена! Перезвоним в течение 15 минут');
       setPhone('+7');

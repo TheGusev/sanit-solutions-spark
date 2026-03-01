@@ -116,23 +116,6 @@ export function setUserProperties(props: UserProperties): void {
   }
 }
 
-// Определение цели Метрики по URL страницы
-export function getYmGoalId(pathname: string): string {
-  const p = pathname.toLowerCase();
-  if (p.includes('/klopy') || p.includes('/klopov')) return 'lead_klopy';
-  if (p.includes('/tarakany') || p.includes('/tarakanov')) return 'lead_tarakany';
-  if (p.includes('/muravyi') || p.includes('/muravyov')) return 'lead_muravyi';
-  if (p.includes('/blohi') || p.includes('/blokh')) return 'lead_blohi';
-  if (p.includes('/kleshchi')) return 'lead_kleshchi';
-  if (p.includes('/kroty') || p.includes('/krotov')) return 'lead_kroty';
-  if (p.includes('/obrabotka-uchastkov')) return 'lead_uchastki';
-  if (p.includes('/dezinfekciya')) return 'lead_dezinfekciya';
-  if (p.includes('/deratizaciya')) return 'lead_deratizaciya';
-  if (p.includes('/sluzhba-dezinsekcii')) return 'lead_ses';
-  if (p === '/') return 'lead_main';
-  return 'lead_general';
-}
-
 // Трекинг целей (конверсий)
 export function trackGoal(goalName: string, params?: Record<string, any>): void {
   // Яндекс.Метрика
