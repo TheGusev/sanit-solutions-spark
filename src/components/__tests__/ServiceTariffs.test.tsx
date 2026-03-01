@@ -10,12 +10,12 @@ const mockTariffs = [
 
 describe('ServiceTariffs', () => {
   it('renders three tariff cards', () => {
-    render(<ServiceTariffs tariffs={mockTariffs} serviceTitle="Дезинсекция" />);
+    render(<ServiceTariffs tariffs={mockTariffs} serviceTitle="Дезинсекция" serviceAccusative="дезинсекцию" />);
     expect(screen.getAllByText(/Заказать/)).toHaveLength(3);
   });
 
   it('shows "Популярный" badge on popular tariff', () => {
-    render(<ServiceTariffs tariffs={mockTariffs} serviceTitle="Дезинсекция" />);
+    render(<ServiceTariffs tariffs={mockTariffs} serviceTitle="Дезинсекция" serviceAccusative="дезинсекцию" />);
     expect(screen.getByText('Популярный')).toBeInTheDocument();
   });
 
