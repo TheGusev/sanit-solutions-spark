@@ -105,7 +105,8 @@ export const neighborhoodSlugs = [
 
 // Города Московской области
 export const moscowRegionCitySlugs = [
-  'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo'
+  'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo',
+  'klin', 'ramenskoe', 'chekhov', 'domodedovo'
 ];
 
 // Услуги для городов МО
@@ -188,7 +189,15 @@ export function getAllSSGRoutes() {
     });
   });
   
-  
+  // Дезинфекция по 130 районам Москвы
+  neighborhoodSlugs.forEach(neighborhoodSlug => {
+    routes.push({
+      path: `/uslugi/dezinfekciya/${neighborhoodSlug}`,
+      outputPath: `uslugi/dezinfekciya/${neighborhoodSlug}/index.html`,
+      priority: '0.75',
+      changefreq: 'monthly'
+    });
+  });
   
   // НЧ-страницы: Услуга + Вредитель + Топ-15 районов (~105 страниц)
   dezinsekciyaPestSlugs.forEach(pestSlug => {
