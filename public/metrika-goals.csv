@@ -1,0 +1,61 @@
+Идентификатор,Тип,Страница
+calc_lead_main,Калькулятор,/ (Главная)
+quiz_lead_main,Квиз,/ (Главная)
+sticky_quiz_lead_main,Стики→Квиз,/ (Главная)
+calc_lead_klopy,Калькулятор,/uslugi/dezinsekciya/klopy
+quiz_lead_klopy,Квиз,/uslugi/dezinsekciya/klopy
+sticky_quiz_lead_klopy,Стики→Квиз,/uslugi/dezinsekciya/klopy
+calc_lead_tarakany,Калькулятор,/uslugi/dezinsekciya/tarakany
+quiz_lead_tarakany,Квиз,/uslugi/dezinsekciya/tarakany
+sticky_quiz_lead_tarakany,Стики→Квиз,/uslugi/dezinsekciya/tarakany
+calc_lead_muravyi,Калькулятор,/uslugi/dezinsekciya/muravyi
+quiz_lead_muravyi,Квиз,/uslugi/dezinsekciya/muravyi
+sticky_quiz_lead_muravyi,Стики→Квиз,/uslugi/dezinsekciya/muravyi
+calc_lead_blohi,Калькулятор,/uslugi/dezinsekciya/blohi
+quiz_lead_blohi,Квиз,/uslugi/dezinsekciya/blohi
+sticky_quiz_lead_blohi,Стики→Квиз,/uslugi/dezinsekciya/blohi
+calc_lead_kleshchi,Калькулятор,/uslugi/dezinsekciya/kleshchi
+quiz_lead_kleshchi,Квиз,/uslugi/dezinsekciya/kleshchi
+sticky_quiz_lead_kleshchi,Стики→Квиз,/uslugi/dezinsekciya/kleshchi
+calc_lead_komary,Калькулятор,/uslugi/dezinsekciya/komary
+quiz_lead_komary,Квиз,/uslugi/dezinsekciya/komary
+sticky_quiz_lead_komary,Стики→Квиз,/uslugi/dezinsekciya/komary
+calc_lead_muhi,Калькулятор,/uslugi/dezinsekciya/muhi
+quiz_lead_muhi,Квиз,/uslugi/dezinsekciya/muhi
+sticky_quiz_lead_muhi,Стики→Квиз,/uslugi/dezinsekciya/muhi
+calc_lead_mol,Калькулятор,/uslugi/dezinsekciya/mol
+quiz_lead_mol,Квиз,/uslugi/dezinsekciya/mol
+sticky_quiz_lead_mol,Стики→Квиз,/uslugi/dezinsekciya/mol
+calc_lead_krysy,Калькулятор,/uslugi/deratizaciya/krysy
+quiz_lead_krysy,Квиз,/uslugi/deratizaciya/krysy
+sticky_quiz_lead_krysy,Стики→Квиз,/uslugi/deratizaciya/krysy
+calc_lead_kroty,Калькулятор,/uslugi/deratizaciya/kroty
+quiz_lead_kroty,Квиз,/uslugi/deratizaciya/kroty
+sticky_quiz_lead_kroty,Стики→Квиз,/uslugi/deratizaciya/kroty
+calc_lead_dezinsekciya,Калькулятор,/uslugi/dezinsekciya
+quiz_lead_dezinsekciya,Квиз,/uslugi/dezinsekciya
+sticky_quiz_lead_dezinsekciya,Стики→Квиз,/uslugi/dezinsekciya
+calc_lead_deratizaciya,Калькулятор,/uslugi/deratizaciya
+quiz_lead_deratizaciya,Квиз,/uslugi/deratizaciya
+sticky_quiz_lead_deratizaciya,Стики→Квиз,/uslugi/deratizaciya
+calc_lead_dezinfekciya,Калькулятор,/uslugi/dezinfekciya
+quiz_lead_dezinfekciya,Квиз,/uslugi/dezinfekciya
+sticky_quiz_lead_dezinfekciya,Стики→Квиз,/uslugi/dezinfekciya
+calc_lead_dezodoraciya,Калькулятор,/uslugi/dezodoraciya
+quiz_lead_dezodoraciya,Квиз,/uslugi/dezodoraciya
+sticky_quiz_lead_dezodoraciya,Стики→Квиз,/uslugi/dezodoraciya
+calc_lead_ozonirovanie,Калькулятор,/uslugi/ozonirovanie
+quiz_lead_ozonirovanie,Квиз,/uslugi/ozonirovanie
+sticky_quiz_lead_ozonirovanie,Стики→Квиз,/uslugi/ozonirovanie
+calc_lead_sertifikaciya,Калькулятор,/uslugi/sertifikaciya
+quiz_lead_sertifikaciya,Квиз,/uslugi/sertifikaciya
+sticky_quiz_lead_sertifikaciya,Стики→Квиз,/uslugi/sertifikaciya
+calc_lead_uchastki,Калькулятор,/uslugi/obrabotka-uchastkov
+quiz_lead_uchastki,Квиз,/uslugi/obrabotka-uchastkov
+sticky_quiz_lead_uchastki,Стики→Квиз,/uslugi/obrabotka-uchastkov
+calc_lead_ses,Калькулятор,/sluzhba-dezinsekcii
+quiz_lead_ses,Квиз,/sluzhba-dezinsekcii
+sticky_quiz_lead_ses,Стики→Квиз,/sluzhba-dezinsekcii
+calc_lead_general,Калькулятор,Все остальные страницы
+quiz_lead_general,Квиз,Все остальные страницы
+sticky_quiz_lead_general,Стики→Квиз,Все остальные страницы
