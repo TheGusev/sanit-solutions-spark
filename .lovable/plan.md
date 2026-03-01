@@ -1,119 +1,49 @@
 
 
-## План исправления грамматики и склонений по всему фронтенду
+## План: Исправить оставшиеся `в {neighborhood.name}` в NchPage и NeighborhoodPage
+
+Два файла по-прежнему содержат именительный падеж вместо предложного.
 
 ---
 
-### Проблемы
+### Файл 1: `src/pages/NchPage.tsx` — 10 замен
 
-1. **«Тарифы на дезинфекция»** — `ServiceTariffs.tsx` строка 28: `serviceTitle.toLowerCase()` даёт именительный падеж
-2. **~80+ районов без `prepositional`** — Басманный, Красносельский, Мещанский, Таганский, Якиманка, Беговой, Войковский, Головинский, Коптево, Тимирязевский, Ховрино, Савёловский, все СВАО (кроме Бабушкинского), все ВАО, и далее
-3. **`ServiceDistrictPage.tsx`** — 12+ вхождений `в {neighborhood.name}` в FAQ, карточках, Schema.org, CTA
-4. **`ServiceObjectDistrictPage.tsx`** — 10+ вхождений `в {neighborhood.name}` + `"до 1 года"` в FAQ (строка 83)
-5. **`genFAQ()` в `neighborhoods.ts`** — 5 вопросов с `в ${name}` (именительный)
-6. **`ServicePestPage.tsx` строка 59** — fallback `'до 1 года'`
-7. **`services.ts` строка 167** — `guaranteeYears: "до 1 года"` у дезинфекции
+`locationText` уже определен на строке 77. Нужно заменить оставшиеся хардкод-вхождения:
 
----
+| Строка | Было | Стало |
+|--------|------|-------|
+| 120 | `Уничтожение ${pest.genitive} в ${neighborhood.name}` | `Уничтожение ${pest.genitive} ${locationText}` |
+| 121 | `в районе ${neighborhood.name}` | `${locationText}` |
+| 338 | `Стоимость в {neighborhood.name}` | `Стоимость ${locationText}` |
+| 348 | `Выезд в {neighborhood.name}` | `Выезд ${locationText}` |
+| 371 | `Почему мы в {neighborhood.name}` | `Почему мы ${locationText}` |
+| 394 | `в районе {neighborhood.name}` — OK (именительный с «в районе» допустим) | Без изменений |
+| 397 | `Район {neighborhood.name}` — OK (именительный) | Без изменений |
+| 404 | `Как мы работаем в {neighborhood.name}` | `Как мы работаем ${locationText}` |
+| 407 | `приезжает в {neighborhood.name}` | `приезжает ${locationText}` |
 
-### ШАГ 1: Добавить `nameAccusative` в интерфейс и данные услуг
+Schema.org строки 129, 134 — `neighborhood.name` в `addressRegion` и `areaServed` — оставляем именительный (Schema.org ожидает названия).
 
-**Файл: `src/data/services.ts`**
+### Файл 2: `src/pages/NeighborhoodPage.tsx` — 10 замен
 
-Добавить в интерфейс `ServicePage`:
-```ts
-nameAccusative?: string; // "дезинфекцию", для "Тарифы на..."
-nameGenitive?: string;   // "дезинфекции", для "Стоимость..."
-```
+Добавить `const locationText = neighborhood.prepositional || "в " + neighborhood.name;` в начало компонента. Затем заменить:
 
-Заполнить для 7 услуг:
-| slug | title | nameAccusative | nameGenitive |
-|------|-------|---------------|--------------|
-| dezinfekciya | Дезинфекция | дезинфекцию | дезинфекции |
-| dezinsekciya | Дезинсекция | дезинсекцию | дезинсекции |
-| deratizaciya | Дератизация | дератизацию | дератизации |
-| ozonirovanie | Озонирование | озонирование | озонирования |
-| dezodoraciya | Дезодорация | дезодорацию | дезодорации |
-| demerkurizaciya | Демеркуризация | демеркуризацию | демеркуризации |
-| borba-s-krotami | Борьба с кротами | борьбу с кротами | борьбы с кротами |
-
-Исправить `guaranteeYears: "до 1 года"` → `"до 3 лет"` у дезинфекции.
-
-### ШАГ 2: Обновить `ServiceTariffs.tsx`
-
-Добавить проп `serviceAccusative?: string`. Строка 28:
-```tsx
-// БЫЛО: Тарифы на {serviceTitle.toLowerCase()}
-// СТАЛО: Тарифы на {serviceAccusative || serviceTitle.toLowerCase()}
-```
-
-### ШАГ 3: Обновить вызовы `ServiceTariffs` в `ServicePage.tsx` и `ServicePestPage.tsx`
-
-- `ServicePage.tsx` строка 313: передать `serviceAccusative={service.nameAccusative}`
-- `ServicePestPage.tsx` строка 291-294: `serviceAccusative` уже получается из `Уничтожение ${pest.genitive}` — это корректно для фразы "Тарифы на уничтожение клопов". Передать как проп.
-- `ServicePestPage.tsx` строка 59: `'до 1 года'` → `'до 3 лет'`
-
-### ШАГ 4: Добавить `prepositional` ко ВСЕМ ~80+ районам без него
-
-**Файл: `src/data/neighborhoods.ts`**
-
-Добавить `prepositional` ко всем районам, у которых его нет. Примеры:
-- Басманный → `'в Басманном районе'`
-- Красносельский → `'в Красносельском районе'`
-- Мещанский → `'в Мещанском районе'`
-- Таганский → `'в Таганском районе'`
-- Якиманка → `'в Якиманке'`
-- Беговой → `'в Беговом районе'`
-- Войковский → `'в Войковском районе'`
-- Головинский → `'в Головинском районе'`
-- Коптево → `'в Коптево'`
-- Тимирязевский → `'в Тимирязевском районе'`
-- Ховрино → `'в Ховрино'`
-- и все остальные (~80 штук)
-
-Сделать поле **обязательным** в интерфейсе (`prepositional: string` без `?`).
-
-### ШАГ 5: Исправить `genFAQ()` в `neighborhoods.ts`
-
-Строки 50-72: функция принимает `name` → добавить параметр `prepositional`:
-```ts
-// БЫЛО: `Сколько стоит дезинфекция в ${name}?`
-// СТАЛО: `Сколько стоит дезинфекция ${prepositional}?`
-```
-
-Обновить все 5 FAQ-вопросов. Обновить все вызовы `genFAQ()` — передавать `prepositional`.
-
-### ШАГ 6: Заменить `в {neighborhood.name}` на `{locationText}` в компонентах
-
-**`ServiceDistrictPage.tsx`** — 12 вхождений:
-- Добавить `const locationText = neighborhood.prepositional || "в " + neighborhood.name;`
-- FAQ (строки 70-74): заменить `в ${neighborhood.name}` → `${locationText}`
-- Schema.org (строки 79-80): заменить
-- Карточки (строки 144, 155): заменить
-- H2 виды работ (строка 171): заменить
-- CTA (строка 202): заменить
-- H1 (строка 128): оставить `в районе {neighborhood.name}` (грамматически верно)
-
-**`ServiceObjectDistrictPage.tsx`** — 10 вхождений:
-- Аналогичная замена во всех текстовых блоках
-- FAQ строка 83: `'до 1 года'` → `'до 3 лет'`
-
-### ШАГ 7: Обновить тест `ServiceTariffs.test.tsx`
-
-Обновить пропсы под новый интерфейс (добавить `serviceAccusative`).
+| Строка | Было | Стало |
+|--------|------|-------|
+| 95 | `Дезинфекция в ${neighborhood.name}` | `Дезинфекция ${locationText}` |
+| 289 | `Услуги в ${neighborhood.name}` | `Услуги ${locationText}` |
+| 317 | `Обрабатываем все типы объектов в ${neighborhood.name}` | `...объектов ${locationText}` |
+| 332 | `дезинфекция в ${neighborhood.name}` | `дезинфекция ${locationText}` |
+| 380 | `Почему выбирают нас в ${extendedContent.name}` | `...нас ${locationText}` |
+| 451 | `Известные места в ${neighborhood.name}` | `...места ${locationText}` |
+| 469 | `в {neighborhood.name}:` | `${locationText}:` |
+| 485 | `Почему выбирают нас в ${neighborhood.name}` | `...нас ${locationText}` |
+| 492 | `Приезжаем в {neighborhood.name}` | `Приезжаем ${locationText}` |
+| 502 | `Гарантия 1 год` | `Гарантия до 3 лет` |
+| 524 | `о дезинфекции в ${neighborhood.name}` | `...дезинфекции ${locationText}` |
+| 544 | `Вызвать дезинфектора в ${neighborhood.name}` | `...дезинфектора ${locationText}` |
 
 ---
 
-### Масштаб изменений
-
-| Файл | Суть правки |
-|------|-------------|
-| `src/data/services.ts` | +`nameAccusative`/`nameGenitive` в интерфейс и 7 записей, fix гарантия |
-| `src/components/ServiceTariffs.tsx` | Новый проп `serviceAccusative` |
-| `src/pages/ServicePage.tsx` | Передать `nameAccusative` |
-| `src/pages/ServicePestPage.tsx` | Передать `serviceAccusative` + fix гарантия |
-| `src/data/neighborhoods.ts` | +`prepositional` для ~80 районов, обязательное поле, fix `genFAQ()` |
-| `src/pages/ServiceDistrictPage.tsx` | 12 замен `в {name}` → `{locationText}` |
-| `src/pages/ServiceObjectDistrictPage.tsx` | 10 замен + fix гарантия |
-| `src/components/__tests__/ServiceTariffs.test.tsx` | Обновить тест |
+### Итого: 2 файла, ~20 замен, 0 новых интерфейсов
 
