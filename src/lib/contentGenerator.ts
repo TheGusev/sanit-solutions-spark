@@ -253,8 +253,8 @@ export function generateFAQ(ctx: ContentContext): Array<{ question: string; answ
       answer: `Выезд в район ${location} бесплатный. Стоимость обработки от ${priceFrom}₽ в зависимости от площади помещения и степени заражения.`,
     },
     {
-      question: `Как быстро приедете в ${location}?`,
-      answer: `Мастер приезжает в район ${location} за ${ctx.responseTime || '30-60 минут'}. Работаем круглосуточно, без выходных и праздников.`,
+      question: `Время прибытия мастера в ${location}?`,
+      answer: `Мастер прибывает в район ${location} за ${ctx.responseTime || '30-60 минут'}. Работаем круглосуточно, без выходных и праздников.`,
     },
     {
       question: 'Нужно ли покидать квартиру во время обработки?',
