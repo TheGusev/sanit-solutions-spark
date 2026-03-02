@@ -20,14 +20,78 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # ── Phase 1: Build locally (NO push) ──
+      - name: Build image locally
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          tags: ${{ env.IMAGE_NAME }}:ci-check
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # ── Phase 2: Smoke-check BEFORE push ──
+      - name: Smoke check SSG coverage
+        run: |
+          docker run --rm ${{ env.IMAGE_NAME }}:ci-check sh -c '
+            echo "=== SSG Artifact Verification ==="
+
+            # Count public static vs SSG-generated files separately
+            PUBLIC_COUNT=$(find /usr/share/nginx/html -name "index.html" -path "*/uslugi/*" | grep -v "dezinsekciya/[a-z]" | wc -l)
+            SSG_COUNT=$(find /usr/share/nginx/html -name "index.html" | wc -l)
+            echo "Total index.html pages: $SSG_COUNT"
+            echo "Uslugi static (public) pages: $PUBLIC_COUNT"
+
+            # Hard checks: critical SSG marker pages
+            FAIL=0
+            for f in \
+              uslugi/dezinsekciya/klopy/index.html \
+              uslugi/dezinsekciya/blohi/index.html \
+              uslugi/deratizaciya/krysy/index.html \
+              uslugi/dezinfekciya/arbat/index.html \
+              rajony/arbat/index.html \
+              moscow-oblast/khimki/index.html \
+              blog/klopy-v-kvartire/index.html \
+              uslugi/dezinsekciya/klopov-v-kvartire/index.html \
+              sluzhba-dezinsekcii/index.html \
+              rajony/maryino/index.html; do
+              if [ ! -f "/usr/share/nginx/html/$f" ]; then
+                echo "❌ MISSING: $f"; FAIL=1
+              else
+                echo "✅ OK: $f"
+              fi
+            done
+
+            # Show dezinsekciya subtree for debugging
+            echo ""
+            echo "=== dezinsekciya subtree ==="
+            find /usr/share/nginx/html/uslugi/dezinsekciya -name "index.html" | sort
+            echo ""
+
+            # Minimum page count gate (should be 800+)
+            if [ "$SSG_COUNT" -lt 500 ]; then
+              echo "❌ FAIL: Only $SSG_COUNT pages found, expected 500+. SSG likely failed."
+              FAIL=1
+            fi
+
+            if [ $FAIL -eq 1 ]; then
+              echo ""
+              echo "❌ SMOKE CHECK FAILED — image will NOT be pushed"
+              exit 1
+            fi
+            echo ""
+            echo "✅ All smoke checks passed — safe to push"
+          '
+
+      # ── Phase 3: Push only after smoke-check passes ──
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push
-        id: build-and-push
+      - name: Push verified image
+        id: push-image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -39,30 +103,4 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Image digest
-        run: echo "Image pushed with digest ${{ steps.build-and-push.outputs.digest }}"
-
-      - name: Smoke check SSG coverage
-        run: |
-          docker pull ${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker run --rm ${{ env.IMAGE_NAME }}:${{ github.sha }} sh -c '
-            FAIL=0
-            for f in \
-              uslugi/dezinsekciya/klopy/index.html \
-              uslugi/dezinsekciya/blohi/index.html \
-              rajony/arbat/index.html \
-              uslugi/deratizaciya/krysy/index.html \
-              uslugi/dezinfekciya/arbat/index.html \
-              moscow-oblast/khimki/index.html \
-              blog/klopy-v-kvartire/index.html \
-              uslugi/dezinsekciya/klopov-v-kvartire/index.html \
-              sluzhba-dezinsekcii/index.html \
-              rajony/maryino/index.html; do
-              if [ ! -f "/usr/share/nginx/html/$f" ]; then
-                echo "MISSING: $f"; FAIL=1
-              fi
-            done
-            if [ $FAIL -eq 1 ]; then exit 1; fi
-            echo "All smoke-check files present"
-            TOTAL=$(find /usr/share/nginx/html -name "index.html" | wc -l)
-            echo "Total SSG pages in image: $TOTAL"
-          '
+        run: echo "✅ Verified image pushed with digest ${{ steps.push-image.outputs.digest }}"
