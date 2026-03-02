@@ -550,7 +550,8 @@ export function ssgPlugin(): Plugin {
       console.log('\n🚀 Starting SSG prerendering...\n');
       
       try {
-        // Read the template HTML
+        // Phase 1: Read template
+        console.log('📂 SSG Phase: Template read');
         const templatePath = resolve(distDir, 'index.html');
         if (!existsSync(templatePath)) {
           console.error('❌ Template index.html not found in dist/');
@@ -558,11 +559,13 @@ export function ssgPlugin(): Plugin {
         }
         
         const template = readFileSync(templatePath, 'utf-8');
+        console.log('✓ Template read OK');
         
         // Build SSR bundle
         const { build } = await import('vite');
         
-        console.log('📦 Building SSR bundle...');
+        // Phase 2: Build SSR bundle
+        console.log('📦 SSG Phase: SSR bundle build');
         
         // Load .env file manually for SSR build (configFile: false doesn't auto-load it)
         let envDefines: Record<string, string> = {};
@@ -623,9 +626,11 @@ export function ssgPlugin(): Plugin {
         
         console.log('✓ SSR bundle built\n');
         
-        // Import the SSR bundle
+        // Phase 3: Import SSR bundle
+        console.log('📥 SSG Phase: SSR bundle import');
         const serverEntryPath = pathToFileURL(resolve(distDir, 'server/entry-server.js')).href;
         const { render } = await import(serverEntryPath);
+        console.log('✓ SSR bundle imported OK');
         
         // Get all routes to prerender
         const routes = getAllRoutes();
@@ -637,7 +642,8 @@ export function ssgPlugin(): Plugin {
         const titleMap = new Map<string, string[]>();
         const descriptionMap = new Map<string, string[]>();
         
-        console.log(`📄 Prerendering ${routes.length} pages...\n`);
+        // Phase 4: Render all routes
+        console.log(`🔄 SSG Phase: Route rendering loop (${routes.length} pages)\n`);
         
         for (const route of routes) {
           try {
@@ -738,7 +744,7 @@ export function ssgPlugin(): Plugin {
             successCount++;
             
           } catch (error) {
-            console.error(`❌ ${route.path}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            console.error(`❌ ${route.path}:`, error instanceof Error ? error.stack : error);
             errorCount++;
           }
         }
@@ -877,7 +883,7 @@ export function ssgPlugin(): Plugin {
         }
 
       } catch (error) {
-        console.error('❌ SSG prerendering failed:', error);
+        console.error('❌ SSG prerendering failed:', error instanceof Error ? error.stack : error);
         if (!!process.env.GITHUB_ACTIONS || !!process.env.DOCKER_BUILD) throw error;
       }
     }

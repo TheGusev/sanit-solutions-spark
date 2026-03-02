@@ -39,3 +39,11 @@ jobs:
 
       - name: Image digest
         run: echo "Image pushed with digest ${{ steps.build-and-push.outputs.digest }}"
+
+      - name: Smoke check critical SSG files
+        run: |
+          docker pull ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker run --rm ${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy/index.html \
+               /usr/share/nginx/html/uslugi/dezinsekciya/blohi/index.html \
+               /usr/share/nginx/html/rajony/arbat/index.html
