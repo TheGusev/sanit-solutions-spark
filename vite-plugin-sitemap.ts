@@ -50,7 +50,7 @@ const staticUrls: SitemapUrl[] = [
   { loc: '/rajony/', lastmod: '', changefreq: 'monthly', priority: '0.85' },
   { loc: '/moscow-oblast/', lastmod: '', changefreq: 'monthly', priority: '0.8' },
   { loc: '/uslugi/po-okrugam-moskvy/', lastmod: '', changefreq: 'monthly', priority: '0.85' },
-  { loc: '/privacy/', lastmod: '', changefreq: 'yearly', priority: '0.2' },
+  
   { loc: '/sluzhba-dezinsekcii/', lastmod: '', changefreq: 'monthly', priority: '0.85' },
   { loc: '/otzyvy/', lastmod: '', changefreq: 'weekly', priority: '0.7' },
   { loc: '/uslugi/obrabotka-uchastkov/', lastmod: '', changefreq: 'monthly', priority: '0.85' },
