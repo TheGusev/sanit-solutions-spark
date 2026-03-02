@@ -1,48 +1,35 @@
 
 
-## Plan: Create `scripts/verify-build.js` Build Verification Script
+## Fix: Add `hasDist` gate to `scripts/verify-build.js`
 
-### What will be created
+### Problem
+The script checks for `dist/` files that only exist in Docker production builds. In Lovable's cloud build, SSG doesn't run, so the script finds missing files → FAIL → `process.exit(1)` → build blocked.
 
-**One new file:** `scripts/verify-build.js` — a pure Node.js script (no dependencies) that runs 10 verification blocks after each build.
+### Changes (1 file)
 
-**One edit:** `package.json` — update `build` script to chain verification, add `verify` script.
+**`scripts/verify-build.js`**
 
-### Block-by-block implementation
+**Add after line 26** (after the `header` function definition):
+```js
+const hasDist = fs.existsSync('dist/index.html');
 
-**Block 1 — File existence:** Check 35+ critical paths via `fs.existsSync`. Any miss = FAIL + exit(1).
-
-**Block 2 — File size:** Each HTML from Block 1 checked via `fs.statSync`. Below 15KB = FAIL, below 5KB = CRITICAL.
-
-**Block 3 — SEO audit:** Read each HTML, regex-check for `<title>`, `<meta name="description"`, `<link rel="canonical"`, single `<h1>`, `window.ym`, `schema.org`. Also check for forbidden strings (`undefined`, `lovable.app`, `localhost`, bad grammar, old guarantee text, dev artifacts).
-
-**Block 4 — Metrika & goals:** Read source files `src/lib/analytics.ts`, `src/components/ServiceQuiz.tsx`, `src/components/LeadFormModal.tsx` and verify presence of `getYmGoalPrefix`, counter ID constant, `calc_lead_`, `quiz_lead_`, `sticky_quiz_lead_`, `quiz_source` sessionStorage check. No `lead_all` check (it doesn't exist in current code — will skip that sub-check).
-
-**Block 5 — Sitemap:** Check `dist/sitemap-index.xml` existence, count `<sitemap>` tags (min 5 sub-sitemaps). Also check individual sitemap files for `<url>` count (min 700 total). Verify no `lovable.app`/`localhost`, verify critical URLs present.
-
-**Block 6 — Robots.txt:** Check `dist/robots.txt`, verify `Sitemap:` line with correct domain, no full `Disallow: /` for `*`, has `Disallow: /admin/`.
-
-**Block 7 — Internal links:** Read `src/components/Footer.tsx`, check for `/otzyvy`, `/sluzhba-dezinsekcii`, `/uslugi/obrabotka-uchastkov` links. Read `src/components/InternalLinks.tsx`, verify it generates related links.
-
-**Block 8 — Code security:** Recursive scan of `src/` for `debugger` (FAIL), API key patterns (CRITICAL), `console.log`/`TODO`/`FIXME` (WARN).
-
-**Block 9 — Image accessibility:** Scan `.tsx` files in `src/pages/` for `<img` tags without `alt=` (FAIL) or `loading=` (WARN).
-
-**Block 10 — Summary:** Print totals, exit(1) if any FAIL/CRITICAL.
-
-### package.json changes
-
-```json
-"verify": "node scripts/verify-build.js",
-"build": "vite build && node scripts/verify-build.js"
+if (!hasDist) {
+  console.log(`\n${YELLOW}${BOLD}⚠ dist/ не найден — пропускаем проверки SSG-файлов (блоки 1-3, 5).${RESET}`);
+  console.log(`${YELLOW}  Эти проверки выполняются только в Docker-сборке.${RESET}\n`);
+}
 ```
 
-### Technical notes
+**Block 1 (lines 83-90)** — wrap the `for` loop in `if (hasDist) { ... } else { console.log('⏭ Пропущено'); }`
 
-- Script uses only `fs`, `path` — zero external deps
-- All checks are synchronous for simplicity
-- Output format: colored terminal output with PASS/FAIL/WARN per check
-- The sitemap plugin generates `sitemap-index.xml` (not `sitemap.xml`), so Block 5 accounts for that
-- `lead_all` goal doesn't exist in current code — Block 4 will not check for it to avoid false negatives
-- Canonical check uses regex to extract href and verify `https://goruslugimsk.ru` prefix
+**Block 2 (lines 97-107)** — wrap the `for` loop in `if (hasDist) { ... } else { console.log('⏭ Пропущено'); }`
+
+**Block 3 (lines 129-206)** — wrap the `for` loop in `if (hasDist) { ... } else { console.log('⏭ Пропущено'); }`
+
+**Block 5 (lines 265-337)** — wrap the entire sitemap check body in `if (hasDist) { ... } else { console.log('⏭ Пропущено'); }`
+
+**Blocks 4, 6, 7, 8, 9, 10** — no changes (they check `src/` files, always available).
+
+### Result
+- **Lovable Preview build**: Blocks 1-3, 5 skipped → only source checks (4, 6-9) run → build passes
+- **Docker production build**: `dist/index.html` exists → all 10 blocks run → full QA audit
 
