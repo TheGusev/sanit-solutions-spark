@@ -579,7 +579,11 @@ export function ssgPlugin(): Plugin {
               const eqIndex = trimmed.indexOf('=');
               if (eqIndex === -1) continue;
               const key = trimmed.substring(0, eqIndex).trim();
-              const val = trimmed.substring(eqIndex + 1).trim();
+              let val = trimmed.substring(eqIndex + 1).trim();
+              // Strip wrapping quotes from .env values (e.g. "https://..." → https://...)
+              if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+                val = val.slice(1, -1);
+              }
               if (key.startsWith('VITE_')) {
                 envDefines[`import.meta.env.${key}`] = JSON.stringify(val);
               }
