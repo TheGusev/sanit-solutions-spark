@@ -637,6 +637,7 @@ export function ssgPlugin(): Plugin {
         let successCount = 0;
         let errorCount = 0;
         let warningCount = 0;
+        const failedRoutes: { path: string; error: string }[] = [];
         
         // Track duplicates
         const titleMap = new Map<string, string[]>();
@@ -746,6 +747,7 @@ export function ssgPlugin(): Plugin {
           } catch (error) {
             console.error(`❌ ${route.path}:`, error instanceof Error ? error.stack : error);
             errorCount++;
+            failedRoutes.push({ path: route.path, error: error instanceof Error ? error.message : String(error) });
           }
         }
         
@@ -847,23 +849,29 @@ export function ssgPlugin(): Plugin {
           }
         });
         
-        console.log(`\n📊 SSG Results:`);
+        const totalRoutes = routes.length;
+        console.log(`\n📊 SSG Results: ${successCount}/${totalRoutes} pages OK, ${failedRoutes.length} failed`);
         console.log(`   ✅ Success: ${successCount}`);
         console.log(`   ⚠️  Warnings: ${warningCount}`);
         console.log(`   ❌ Errors: ${errorCount}`);
-        console.log(`   🔗 Dead links: ${deadLinks.length}`);
         if (duplicateCount > 0) {
           console.log(`   📋 Duplicate titles/descriptions: ${duplicateCount}`);
         }
+        console.log(`   🔗 Dead links: ${deadLinks.length}`);
         console.log('');
         
-        if (successCount > 0) {
-          console.log('✅ SSG prerendering complete! Static HTML files generated in dist/\n');
+        // Fail-fast: only throw in Docker/GitHub Actions builds, NOT in Lovable preview
+        const isDockerCI = !!process.env.GITHUB_ACTIONS || !!process.env.DOCKER_BUILD;
+        
+        // PRIMARY CHECK: Any failed route in CI → hard fail with full list
+        if (failedRoutes.length > 0) {
+          const msg = `SSG FAILED: ${failedRoutes.length}/${totalRoutes} routes failed:\n` +
+            failedRoutes.map(r => `  ✗ ${r.path}: ${r.error}`).join('\n');
+          if (isDockerCI) throw new Error(msg);
+          else console.warn(`⚠️  ${msg}`);
         }
         
-        // Fail-fast: only throw in Docker/GitHub Actions builds, NOT in Lovable preview
-        // Lovable sets CI=true but doesn't support SSG, so we check for Docker-specific env
-        const isDockerCI = !!process.env.GITHUB_ACTIONS || !!process.env.DOCKER_BUILD;
+        // BELT-AND-SUSPENDERS: Check critical marker pages on disk
         const criticalPages = [
           'rajony/arbat/index.html',
           'uslugi/dezinsekciya/klopy/index.html',
@@ -871,7 +879,7 @@ export function ssgPlugin(): Plugin {
         ];
         const missingCritical = criticalPages.filter(p => !existsSync(resolve(distDir, p)));
         if (missingCritical.length > 0) {
-          const msg = `SSG CRITICAL: Missing critical pages:\n${missingCritical.map(p => `  - ${p}`).join('\n')}`;
+          const msg = `SSG CRITICAL: Missing marker pages on disk:\n${missingCritical.map(p => `  - ${p}`).join('\n')}`;
           if (isDockerCI) throw new Error(msg);
           else console.warn(msg);
         }
@@ -880,6 +888,10 @@ export function ssgPlugin(): Plugin {
           const msg = 'SSG CRITICAL: Zero pages were generated.';
           if (isDockerCI) throw new Error(msg);
           else console.warn(msg);
+        }
+        
+        if (successCount > 0 && failedRoutes.length === 0) {
+          console.log(`✅ SSG prerendering complete! All ${totalRoutes} pages generated in dist/\n`);
         }
 
       } catch (error) {
