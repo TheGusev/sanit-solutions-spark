@@ -47,7 +47,7 @@ export default defineConfig(({ mode }) => ({
     // Minification settings
     minify: 'esbuild',
     // Target modern browsers for smaller bundle
-    target: 'es2020',
+    target: 'es2022',
   },
   // SSR configuration for server-side rendering
   ssr: {
