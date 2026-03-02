@@ -40,10 +40,28 @@ jobs:
       - name: Image digest
         run: echo "Image pushed with digest ${{ steps.build-and-push.outputs.digest }}"
 
-      - name: Smoke check critical SSG files
+      - name: Smoke check SSG coverage
         run: |
           docker pull ${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker run --rm ${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy/index.html \
-               /usr/share/nginx/html/uslugi/dezinsekciya/blohi/index.html \
-               /usr/share/nginx/html/rajony/arbat/index.html
+          docker run --rm ${{ env.IMAGE_NAME }}:${{ github.sha }} sh -c '
+            FAIL=0
+            for f in \
+              uslugi/dezinsekciya/klopy/index.html \
+              uslugi/dezinsekciya/blohi/index.html \
+              rajony/arbat/index.html \
+              uslugi/deratizaciya/krysy/index.html \
+              uslugi/dezinfekciya/arbat/index.html \
+              moscow-oblast/khimki/index.html \
+              blog/klopy-v-kvartire/index.html \
+              uslugi/dezinsekciya/klopov-v-kvartire/index.html \
+              sluzhba-dezinsekcii/index.html \
+              rajony/maryino/index.html; do
+              if [ ! -f "/usr/share/nginx/html/$f" ]; then
+                echo "MISSING: $f"; FAIL=1
+              fi
+            done
+            if [ $FAIL -eq 1 ]; then exit 1; fi
+            echo "All smoke-check files present"
+            TOTAL=$(find /usr/share/nginx/html -name "index.html" | wc -l)
+            echo "Total SSG pages in image: $TOTAL"
+          '
