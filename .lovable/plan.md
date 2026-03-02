@@ -1,28 +1,71 @@
 
+Коротко и честно: ты прав, я ошибся в диагностике несколько раз. Ниже — глубокий разбор по коду и где именно была моя ошибка.
 
-## Diagnosis: Routes are correct, likely stale image
+1) Что подтвердил аудит кода (факты)
+- Маршрут `/uslugi/dezinsekciya/klopy` реально есть в генераторе SSG:
+  - `vite-plugin-ssg.ts` → `dezinsekciyaPestSlugs` содержит `klopy`
+  - `outputPath` = `uslugi/dezinsekciya/klopy/index.html`
+- SSR-роутинг для этого URL тоже корректный:
+  - `AppSSR.tsx` → `/uslugi/:parentSlug/:subSlug` → `ServiceRouteResolver`
+  - `ServiceRouteResolver.tsx` → `getPestBySlug('klopy')` → `ServicePestPage`
+- Docker copy корректный:
+  - `Dockerfile` копирует `/app/dist` в `/usr/share/nginx/html`
+- Nginx корректно отдает статические SSG-файлы, если они есть.
 
-### What the code shows
-1. **vite-plugin-ssg.ts line 255-261**: `/uslugi/dezinsekciya/klopy` IS in the route list with outputPath `uslugi/dezinsekciya/klopy/index.html`
-2. **AppSSR.tsx line 66**: `/uslugi/:parentSlug/:subSlug` → `ServiceRouteResolver` → `getPestBySlug('klopy')` → finds pest → renders `ServicePestPage`
-3. **Dockerfile line 23**: `COPY --from=builder /app/dist /usr/share/nginx/html` — correct
-4. **GitHub Actions line 44-68**: Smoke check already verifies `uslugi/dezinsekciya/klopy/index.html` exists
+2) Почему на сервере есть `/uslugi/dezinsekciya/index.html`, но нет `/uslugi/dezinsekciya/klopy/index.html`
+- В `public/uslugi/dezinsekciya/index.html` файл есть изначально (ручной статический файл).
+- В `public/uslugi/dezinsekciya/klopy/index.html` файла нет.
+- Значит твое наблюдение идеально совпадает со сценарием: в образ попал “базовый public”, а SSG-артефакт `klopy/index.html` не был сгенерен/не попал в итоговый `dist`.
 
-### Most likely cause
-The image you checked was built BEFORE the `.env` quote-stripping fix. If the previous build crashed on `Invalid supabaseUrl`, SSG generated 0 pages (or partial), so `klopy/` was never written. The "861/861 OK" log was from the Lovable preview, not from Docker.
+3) Где я допустил ошибку
+- Ошибка #1: я слишком долго держался за гипотезу “stale image”, вместо того чтобы сразу признать твой серверный `ls` как более сильное доказательство.
+- Ошибка #2: я трактовал smoke-check в GitHub Actions как гарантию качества `latest`. Это неверно по текущему workflow:
+  - сначала `build-push-action` уже пушит `latest` и `sha`,
+  - и только потом выполняется smoke-check.
+  - То есть даже при провале smoke-check “битый” `latest` уже мог быть опубликован.
+- Ошибка #3: я не потребовал сразу артефактную проверку уровня `find dist ...` как единственный источник истины для SSG.
 
-### Plan
+4) Наиболее вероятная первопричина сейчас
+- Не “Nginx/Docker”, а именно разрыв в цепочке сборки артефактов:
+  - либо SSG не завершился в том конкретном билде,
+  - либо был использован образ из запуска, где SSG-артефакты не были в `dist`,
+  - либо workflow запушил `latest` до прохождения smoke-check и он оказался дефектным.
 
-1. **Check GitHub Actions status** — go to the repo Actions tab and verify the LATEST run (after the `.env` fix commit) completed successfully, including the "Smoke check SSG coverage" step at line 44-68. If the smoke check passed, the files ARE in the new image.
+5) План исправления (конкретный, чтобы закрыть проблему окончательно)
+Шаг A. Сделать CI атомарным (чтобы битый `latest` никогда не публиковался)
+- Перестроить workflow в 2 фазы:
+  1) build без push (локально на runner),
+  2) smoke-check по локальному образу,
+  3) push в Docker Hub только если smoke-check успешен.
 
-2. **Pull the NEW image** — run:
-   ```bash
-   docker pull thegusev/sanit-solutions:latest
-   docker run --rm thegusev/sanit-solutions:latest ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy/
-   ```
+Шаг B. Добавить “жесткое доказательство артефактов” в CI
+- После `npm run build` внутри docker build/CI логировать:
+  - `find dist -maxdepth 5 -type f -path "*uslugi/dezinsekciya*"`
+  - и явный check:
+    - `test -f dist/uslugi/dezinsekciya/klopy/index.html`
+- При отсутствии файла — fail build.
 
-3. **If smoke check FAILED** — then SSG renders that route but something crashes during SSR (e.g., ServicePestPage throws). In that case I'll add a debug log inside `closeBundle()` to print exactly which routes fail and why, and potentially add try/catch guards in ServicePestPage for SSR safety.
+Шаг C. Добавить пост-push верификацию по digest
+- Проверять именно `IMAGE@sha256:...`, а не плавающий `latest`.
+- Логировать:
+  - `ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy`
+  - `find /usr/share/nginx/html/uslugi -maxdepth 4 -name index.html | wc -l`
 
-### No code changes needed right now
-The routing, SSG config, and Dockerfile are all correct. The fix was the `.env` parsing (already applied). We need to confirm the new image was actually built and pulled before making further changes.
+Шаг D. Убрать маскировку проблемы
+- В отчете CI отдельно показывать:
+  - “public static files count”
+  - “SSG generated files count”
+- Чтобы `/public/uslugi/dezinsekciya/index.html` не создавал ложное ощущение, что SSG ок.
 
+6) Технические детали (для прозрачности)
+```text
+Сейчас pipeline:
+[build+push latest] -> [smoke-check]
+Проблема: latest уже опубликован до smoke-check
+
+Нужно:
+[build local, no push] -> [smoke-check local image] -> [push latest + sha]
+Гарантия: в registry попадает только проверенный образ
+```
+
+Если одобряешь, следующим шагом я дам точный план правок по `.github/workflows/docker-build.yml` (без воды, с конкретными командами), чтобы это больше никогда не повторялось.
