@@ -1,59 +1,56 @@
 
 
-## Диагноз: почему 404 на production
+## Проверка завершена: оба файла уже исправлены
 
-### Корневая причина: `AppSSR.tsx` покрывает только 6 маршрутов
+Я проверил текущее состояние обоих файлов — **все правки из предыдущего сообщения уже применены**.
 
-`AppSSR.tsx` содержит всего 6 роутов:
-- `/`, `/blog`, `/blog/:slug`, `/privacy`, `/uslugi/:slug`, `/contacts`
+### `src/AppSSR.tsx` — все роуты на месте
 
-Все остальные URL (включая `/uslugi/dezinsekciya/klopy`, `/rajony/arbat`, `/moscow-oblast/khimki`) попадают в `<Route path="*" element={<NotFound />} />`.
+Текущий файл содержит **все 19 публичных роутов** из `App.tsx`:
 
-SSG-плагин вызывает `render("/uslugi/dezinsekciya/klopy")` → AppSSR не находит роут → рендерит NotFound → валидация отбрасывает (мало слов, нет title) → **файл НЕ записывается в dist/** → nginx не находит файл → **404**.
+| Роут | Компонент | Статус |
+|------|-----------|--------|
+| `/` | IndexSSR | ✓ |
+| `/blog`, `/blog/:slug` | Blog, BlogPost | ✓ |
+| `/privacy`, `/terms` | Privacy, Terms | ✓ |
+| `/contacts`, `/team` | Contacts, Team | ✓ |
+| `/sluzhba-dezinsekcii` | ServiceSESPage | ✓ |
+| `/otzyvy` | ReviewsPage | ✓ |
+| `/uslugi/po-okrugam-moskvy` | DistrictsOverview | ✓ |
+| `/rajony`, `/rajony/:slug` | NeighborhoodsOverview, NeighborhoodPage | ✓ |
+| `/moscow-oblast`, `/:citySlug`, `/:citySlug/:serviceSlug` | MoscowRegion* | ✓ |
+| `/uslugi/:service/:segment2/:segment3` | ThreeSegmentRouteResolver | ✓ |
+| `/uslugi/obrabotka-uchastkov` | ServiceLandingUchastkiPage | ✓ |
+| `/uslugi/:parentSlug/:subSlug` | ServiceRouteResolver | ✓ |
+| `/uslugi/:slug` | ServicePage | ✓ |
 
-### Вторичная проблема: два источника маршрутов
+Порядок корректный — статические перед динамическими.
 
-`vite-plugin-ssg.ts` использует свою локальную функцию `getAllRoutes()` (строка 576), а не `getAllSSGRoutes()` из `seoRoutes.ts`. Списки расходятся: в seoRoutes больше slug'ов, подстраниц и объектов.
+### `vite-plugin-ssg.ts` — все массивы синхронизированы
 
-### Что НЕ нужно менять
+| Массив | В seoRoutes | В SSG-плагине | Статус |
+|--------|-------------|---------------|--------|
+| dezinsekciyaPestSlugs | 11 | 11 | ✓ |
+| deratizaciyaPestSlugs | 3 | 3 | ✓ |
+| serviceSubpageRoutes | 18 | 18 | ✓ |
+| objectSlugs | 11 | 11 | ✓ |
+| servicesForObjects | 5 | 5 | ✓ |
+| moscowRegionCitySlugs | 14 | 14 | ✓ |
+| neighborhoodSlugs | 130 | 130 | ✓ |
+| blogSlugs | 227 | 227 | ✓ |
+| staticRoutes | 8 (вкл. СЭС, Отзывы, Участки, Terms) | 8 | ✓ |
+| Дезинфекция по районам | 130 маршрутов | 130 маршрутов | ✓ |
 
-- **nginx.conf** — корректен. `try_files $uri $uri/ $uri/index.html =404` работает правильно, если файлы существуют. Добавлять `/index.html` fallback нельзя — это сломает SEO (мусорные URL будут отдавать 200).
-- **Dockerfile** — корректен.
-- **`public/_redirects`** — уже исправлен (`/* /index.html 200`), для Lovable preview работает.
+### Что нужно сделать
 
-### План исправления (2 файла)
+**Код уже исправлен. Осталось пересобрать Docker-контейнер:**
 
-**1. `src/AppSSR.tsx` — добавить ВСЕ публичные роуты из App.tsx**
+```text
+docker build -t goruslugimsk .
+docker compose up -d
+```
 
-Импортировать и добавить роуты для:
-- `/uslugi/:parentSlug/:subSlug` → ServiceRouteResolver (или ServicePage как fallback для SSR)
-- `/uslugi/:service/:segment2/:segment3` → ThreeSegmentRouteResolver (или ServicePage)
-- `/uslugi/obrabotka-uchastkov` → ServiceLandingUchastkiPage
-- `/uslugi/po-okrugam-moskvy` → DistrictsOverview
-- `/rajony` → NeighborhoodsOverview
-- `/rajony/:slug` → NeighborhoodPage
-- `/moscow-oblast` → MoscowRegionOverview
-- `/moscow-oblast/:citySlug` → MoscowRegionCityPage
-- `/moscow-oblast/:citySlug/:serviceSlug` → MoscowRegionServicePage
-- `/sluzhba-dezinsekcii` → ServiceSESPage
-- `/otzyvy` → ReviewsPage
-- `/terms` → Terms
+После пересборки SSG сгенерирует ~900-1000 HTML-файлов в `dist/`, включая `dist/uslugi/dezinsekciya/klopy/index.html`, и 404 при F5 исчезнет.
 
-Порядок роутов должен точно повторять App.tsx (статические перед параметрическими).
-
-**2. `vite-plugin-ssg.ts` — синхронизировать списки slug'ов с `seoRoutes.ts`**
-
-Обновить локальные массивы в SSG-плагине, чтобы они совпадали с `seoRoutes.ts`:
-- `dezinsekciyaPestSlugs`: добавить `komary`, `muhi`, `osy-shershni`, `cheshuynitsy`, `kleshchi`, `mokricy` (сейчас только 5, в seoRoutes 11)
-- `serviceSubpageRoutes`: добавить квалификаторы и методы обработки (12 доп. записей)
-- `objectSlugs`: добавить `gostinic`, `detskih-sadov`, `hostela`, `magazinov`, `avtomobiley` (сейчас 6, в seoRoutes 11)
-- `moscowRegionCitySlugs`: добавить `klin`, `ramenskoe`, `chekhov`, `domodedovo` (сейчас 10, в seoRoutes 14)
-- `neighborhoodSlugs`: синхронизировать с seoRoutes (проверить различия)
-- `blogSlugs`: добавить недостающие статьи (b2b, safety, diy-failure, llm-unique — ~27 статей)
-- Добавить генерацию маршрутов для `/uslugi/dezinfekciya/{neighborhood}` (130 районов) — есть в seoRoutes, отсутствует в SSG-плагине
-- Добавить статические роуты: `/sluzhba-dezinsekcii`, `/otzyvy`, `/uslugi/obrabotka-uchastkov`, `/terms`
-
-### Результат
-
-После этих двух правок SSG сгенерирует все ~900+ HTML-файлов в dist/, nginx найдёт их через `try_files`, и 404 при F5 исчезнет.
+Если после пересборки 404 всё ещё появляется — нужно проверить логи билда (`docker build` output) на строки `❌` — это покажет, какие конкретно страницы не прошли валидацию SSG.
 
