@@ -30,6 +30,10 @@ const staticRoutes: SSGRoute[] = [
   { path: '/contacts', outputPath: 'contacts/index.html' },
   { path: '/blog', outputPath: 'blog/index.html' },
   { path: '/privacy', outputPath: 'privacy/index.html' },
+  { path: '/sluzhba-dezinsekcii', outputPath: 'sluzhba-dezinsekcii/index.html' },
+  { path: '/otzyvy', outputPath: 'otzyvy/index.html' },
+  { path: '/uslugi/obrabotka-uchastkov', outputPath: 'uslugi/obrabotka-uchastkov/index.html' },
+  { path: '/terms', outputPath: 'terms/index.html' },
 ];
 
 // Услуги
@@ -43,7 +47,7 @@ const servicesSlugs = [
   'borba-s-krotami'
 ];
 
-// Подстраницы услуг
+// Подстраницы услуг (синхронизировано с seoRoutes.ts)
 const serviceSubpageRoutes = [
   { parent: 'dezinfekciya', sub: 'kvartir' },
   { parent: 'dezinfekciya', sub: 'ofisov' },
@@ -51,14 +55,35 @@ const serviceSubpageRoutes = [
   { parent: 'dezinsekciya', sub: 'unichtozhenie-tarakanov' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-krys' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-myshej' },
+  // Квалификаторы
+  { parent: 'dezinsekciya', sub: 'klopov-v-kvartire' },
+  { parent: 'dezinsekciya', sub: 'postelnyh-klopov' },
+  { parent: 'dezinsekciya', sub: 'domashnih-klopov' },
+  { parent: 'dezinsekciya', sub: 'tarakanov-v-kvartire' },
+  { parent: 'dezinsekciya', sub: 'klopov-i-tarakanov' },
+  { parent: 'dezinsekciya', sub: 'klopov-i-bloh' },
+  { parent: 'dezinsekciya', sub: 'blokh-ot-zhivotnyh' },
+  // Методы обработки
+  { parent: 'dezinsekciya', sub: 'holodnym-tumanom' },
+  { parent: 'dezinsekciya', sub: 'parom' },
+  { parent: 'dezinsekciya', sub: 'parogeneratorom' },
+  { parent: 'dezinsekciya', sub: 'bez-zapaha' },
+  { parent: 'dezinsekciya', sub: 'srochno' },
+  { parent: 'dezinsekciya', sub: 'kruglosutochno' },
 ];
 
-// Вредители для услуга + вредитель страниц
-const dezinsekciyaPestSlugs = ['tarakany', 'klopy', 'muravyi', 'blohi', 'mol'];
+// Вредители для услуга + вредитель страниц (синхронизировано с seoRoutes.ts)
+const dezinsekciyaPestSlugs = [
+  'tarakany', 'klopy', 'muravyi', 'blohi', 'mol',
+  'komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'
+];
 const deratizaciyaPestSlugs = ['krysy', 'myshi', 'kroty'];
 
-// Города МО
-const moscowRegionCitySlugs = ['khimki', 'mytishchi', 'balashikha', 'podolsk', 'korolev', 'lyubertsy', 'krasnogorsk', 'odintsovo', 'shchyolkovo', 'dolgoprudny'];
+// Города МО (синхронизировано с seoRoutes.ts)
+const moscowRegionCitySlugs = [
+  'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo',
+  'klin', 'ramenskoe', 'chekhov', 'domodedovo'
+];
 const moscowRegionServices = ['dezinsekciya', 'deratizaciya', 'dezinfekciya', 'ozonirovanie'];
 
 // Топ районов для НЧ-страниц (синхронизировано с seoRoutes.ts)
@@ -73,58 +98,34 @@ const districtSlugs = [
   'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao', 'nao', 'tao', 'zelao'
 ];
 
-// Районы Москвы (130 районов) - синхронизировано с src/data/neighborhoods.ts
+// Районы Москвы (130 районов) - синхронизировано с seoRoutes.ts
 const neighborhoodSlugs = [
-  // ЦАО (10)
-  'arbat', 'basmannyy', 'zamoskvorechye', 'krasnoselsky', 'meshchansky',
-  'presnensky', 'tagansky', 'tverskoy', 'khamovniki', 'yakimanka',
-  // САО (16)
-  'aeroport', 'begovoy', 'beskudnikovsky', 'voykovskiy', 'vostochnoe-degunino',
-  'golovinsky', 'dmitrovsky', 'zapadnoe-degunino', 'koptevo', 'levoberezhny',
-  'molzhaninovsky', 'savelovsky', 'sokol', 'timiryazevsky', 'khovrino', 'khoroshevsky',
-  // СВАО (17)
-  'altufyevsky', 'babushkinsky', 'bibirevo', 'butyrsky', 'lianozovo',
-  'losinoostrovskiy', 'marfino', 'marina-roshcha', 'ostankinsky', 'otradnoe',
-  'rostokino', 'sviblovo', 'severny', 'severnoe-medvedkovo', 'yuzhnoe-medvedkovo',
-  'yaroslavsky', 'severny-rayon',
-  // ВАО (16)
-  'bogorodskoe', 'veshnyaki', 'vostochnoe-izmaylovo', 'vostochny', 'golyanovo',
-  'ivanovskoe', 'izmaylovo', 'kosino-ukhtomsky', 'metrogorodok', 'novogireevo',
-  'novokosino', 'perovo', 'preobrazhenskoe', 'severnoe-izmaylovo', 'sokolinaya-gora', 'sokolniki',
-  // ЮВАО (12)
-  'vykhino-zhulebino', 'kapotnya', 'kuzminki', 'lefortovo', 'lyublino',
-  'maryino', 'nekrasovka', 'nizhegorodsky', 'pechatniki', 'ryazansky',
-  'tekstilshchiki', 'yuzhnoport',
-  // ЮАО (16)
-  'biryulyovo-vostochnoe', 'biryulyovo-zapadnoe', 'brateevo', 'danilovsky', 'donskoy',
-  'zyablikovo', 'moskvorechye-saburovo', 'nagatino-sadovniki', 'nagatinsky-zaton',
-  'nagorny', 'orekhovo-borisovo-severnoe', 'orekhovo-borisovo-yuzhnoe', 'tsaritsyno',
-  'chertanovo-severnoe', 'chertanovo-tsentralnoe', 'chertanovo-yuzhnoe',
-  // ЮЗАО (12)
-  'akademichesky', 'gagarinsky', 'zyuzino', 'konkovo', 'kotlovka',
-  'lomonosovsky', 'obruchevsky', 'severnoe-butovo', 'tyoply-stan',
-  'cheryomushki', 'yuzhnoe-butovo', 'yasenevo',
-  // ЗАО (13)
-  'vnukovo', 'dorogomilovo', 'krylatskoe', 'kuntsevo', 'mozhaysky',
-  'novo-peredelkino', 'ochakovo-matveevskoe', 'prospekt-vernadskogo', 'ramenki',
-  'solntsevo', 'troparyovo-nikulino', 'filyovsky-park', 'fili-davydkovo',
-  // СЗАО (8)
-  'kurkino', 'mitino', 'pokrovskoe-streshnevo', 'severnoe-tushino',
-  'strogino', 'khoroshyovo-mnyovniki', 'shchukino', 'yuzhnoe-tushino',
-  // НАО (8)
-  'sosenskoe', 'vnukovskoe', 'voronovskoe', 'desenovskoe', 'kievsky',
-  'kokoshkino', 'marushkinskoe', 'moskovsky',
-  // ТАО (10)
-  'troitsk', 'shcherbinka', 'filimonkovskoe', 'pervomayskoe', 'novofeodorovskoe',
-  'rogovskoe', 'krasnopakhorskoe', 'klenovskoe', 'shchapovskoe', 'voskresenskoe',
-  // Зеленоград (5)
-  'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5'
+  // ЦАО
+  'arbat', 'tverskoy', 'zamoskvorechye', 'khamovniki', 'presnensky', 'basmannyy', 'krasnoselsky', 'meshchansky', 'tagansky', 'yakimanka',
+  // САО
+  'aeroport', 'begovoy', 'sokol', 'voykovskiy', 'golovinsky', 'koptevo', 'timiryazevsky', 'khovrino', 'savelovsky', 'levoberezhny', 'dmitrovsky', 'zapadnoe-degunino', 'vostochnoe-degunino', 'beskudnikovsky', 'molzhaninovsky', 'khoroshevsky',
+  // СВАО
+  'altufyevsky', 'babushkinsky', 'bibirevo', 'butyrsky', 'lianozovo', 'losinoostrovskiy', 'marfino', 'marina-roshcha', 'ostankinsky', 'otradnoe', 'rostokino', 'sviblovo', 'severny', 'severnoe-medvedkovo', 'yuzhnoe-medvedkovo', 'yaroslavsky', 'severny-rayon',
+  // ВАО
+  'bogorodskoe', 'veshnyaki', 'vostochnoe-izmaylovo', 'vostochny', 'golyanovo', 'ivanovskoe', 'izmaylovo', 'kosino-ukhtomsky', 'metrogorodok', 'novogireevo', 'novokosino', 'perovo', 'preobrazhenskoe', 'severnoe-izmaylovo', 'sokolinaya-gora', 'sokolniki',
+  // ЮВАО
+  'vykhino-zhulebino', 'kapotnya', 'kuzminki', 'lefortovo', 'lyublino', 'maryino', 'nekrasovka', 'nizhegorodsky', 'pechatniki', 'ryazansky', 'tekstilshchiki', 'yuzhnoport',
+  // ЮАО
+  'biryulyovo-vostochnoe', 'biryulyovo-zapadnoe', 'brateevo', 'danilovsky', 'donskoy', 'zyablikovo', 'moskvorechye-saburovo', 'nagatino-sadovniki', 'nagatinsky-zaton', 'nagorny', 'orekhovo-borisovo-severnoe', 'orekhovo-borisovo-yuzhnoe', 'tsaritsyno', 'chertanovo-severnoe', 'chertanovo-tsentralnoe', 'chertanovo-yuzhnoe',
+  // ЮЗАО
+  'akademichesky', 'gagarinsky', 'zyuzino', 'konkovo', 'kotlovka', 'lomonosovsky', 'obruchevsky', 'severnoe-butovo', 'tyoply-stan', 'cheryomushki', 'yuzhnoe-butovo', 'yasenevo',
+  // ЗАО
+  'vnukovo', 'dorogomilovo', 'krylatskoe', 'kuntsevo', 'mozhaysky', 'novo-peredelkino', 'ochakovo-matveevskoe', 'prospekt-vernadskogo', 'ramenki', 'solntsevo', 'troparyovo-nikulino', 'filyovsky-park', 'fili-davydkovo',
+  // СЗАО
+  'kurkino', 'mitino', 'pokrovskoe-streshnevo', 'severnoe-tushino', 'strogino', 'khoroshevo-mnevniki', 'shchukino', 'yuzhnoe-tushino',
+  // НАО, ТАО, ЗелАО
+  'sosenskoe', 'vnukovskoe', 'troitsk', 'shcherbinka', 'moskovsky', 'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5',
 ];
 
-// Типы объектов (синхронизировано с src/data/objects.ts)
-const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv'];
+// Типы объектов (синхронизировано с seoRoutes.ts)
+const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv', 'gostinic', 'detskih-sadov', 'hostela', 'magazinov', 'avtomobiley'];
 
-// Услуги для объектов (4 основных)
+// Услуги для объектов
 const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'demerkurizaciya'];
 
 
@@ -214,6 +215,20 @@ const blogSlugs = [
   'kroty-novorizhskoe-shosse', 'kroty-istra', 'kroty-krasnogorsk', 'kroty-nakhabino', 'kroty-dedovsk', 'kroty-snt-novaya-riga',
   'kroty-rublevskoe-shosse', 'kroty-odintsovo', 'kroty-barvikha', 'kroty-usovo', 'kroty-zhukovka', 'kroty-snt-rublevka',
   'kroty-dmitrovskoe-shosse', 'kroty-dolgoprudny', 'kroty-lobnya', 'kroty-dmitrov', 'kroty-yakhroma', 'kroty-snt-dmitrovka',
+  // ===== B2B articles (5) =====
+  'shtrafy-za-dezinfekciyu-bez-licenzii-2026', 'haccp-pest-kontrol-restoran', 'zhurnal-ucheta-dezinsekcii-obshhepit',
+  'sanpin-deratizaciya-skladov', 'dogovor-na-dezinsekciyu-hostela',
+  // ===== Safety articles (5) =====
+  'cherez-skolko-puskat-koshku-posle-tumana', 'goryachij-tuman-i-akvarium', 'dezinsekciya-s-grudnym-rebenkom',
+  'bezopasnost-obrabotki-dlya-beremennyh', 'allergiya-na-preparaty-dezinsekcii',
+  // ===== DIY-failure articles (5) =====
+  'pochemu-dihlofos-ne-beret-klopov', 'rezistentnost-tarakanov-k-bornoj-kislote', 'oshibki-samodeyatelnoj-obrabotki',
+  'pochemu-tarakany-vozvrashchayutsya-posle-obrabotki', 'aerozoli-ot-klopov-ne-rabotayut',
+  // ===== LLM-unique articles (12) =====
+  'bezopasnost-detej-i-zhivotnyh', 'vrediteli-v-kvartire-vidy', 'postelnye-klopy-polnyj-gajd',
+  'ryzhie-tarakany-unichtozhenie', 'domashnie-muravi-pochemu-ne-pomogaet', 'podgotovka-kvartiry-chek-list',
+  'dezinfekciya-posle-bolezni', 'profilaktika-tarakanov', 'kak-vybrat-sluzhbu-dezinfekcii',
+  'kejs-restoran-tarakany', 'kejs-gostinica-klopy', 'dezinfekciya-ofisa-bez-pomeh',
 ];
 
 // Generate all routes for SSG
@@ -266,6 +281,14 @@ function getAllRoutes(): SSGRoute[] {
     });
   });
   
+  // Дезинфекция по 130 районам Москвы (ServiceDistrictPage)
+  neighborhoodSlugs.forEach(neighborhoodSlug => {
+    routes.push({
+      path: `/uslugi/dezinfekciya/${neighborhoodSlug}`,
+      outputPath: `uslugi/dezinfekciya/${neighborhoodSlug}/index.html`,
+      priority: '0.75'
+    });
+  });
   
   // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
   
