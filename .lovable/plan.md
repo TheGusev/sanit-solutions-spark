@@ -1,55 +1,59 @@
 
 
-## План: 3 конверсионных цели с умной маршрутизацией sticky → quiz
+## Диагноз: почему 404 на production
 
-### Суть изменений
+### Корневая причина: `AppSSR.tsx` покрывает только 6 маршрутов
 
-Полностью переделать логику целей. Вместо текущих `lead_{slug}`, `callback_{slug}`, `quiz_{slug}` будут **3 новых цели**:
+`AppSSR.tsx` содержит всего 6 роутов:
+- `/`, `/blog`, `/blog/:slug`, `/privacy`, `/uslugi/:slug`, `/contacts`
 
-| # | Цель | Триггер | Goal ID |
-|---|------|---------|---------|
-| 1 | Калькулятор | Успешная отправка формы из `LeadFormModal` или `CompactRequestModal` | `calc_lead_{prefix}` |
-| 2 | Обычный квиз | Пользователь сам дошёл до квиза и заполнил | `quiz_lead_{prefix}` |
-| 3 | Стики → Квиз | Нажал "Узнать цену" в стики-баре, скроллнулся к квизу, заполнил | `sticky_quiz_lead_{prefix}` |
+Все остальные URL (включая `/uslugi/dezinsekciya/klopy`, `/rajony/arbat`, `/moscow-oblast/khimki`) попадают в `<Route path="*" element={<NotFound />} />`.
 
-`{prefix}` берётся из существующей функции `getYmGoalId` (переименуем внутреннюю часть).
+SSG-плагин вызывает `render("/uslugi/dezinsekciya/klopy")` → AppSSR не находит роут → рендерит NotFound → валидация отбрасывает (мало слов, нет title) → **файл НЕ записывается в dist/** → nginx не находит файл → **404**.
 
-### Файлы и изменения
+### Вторичная проблема: два источника маршрутов
 
-**1. `src/lib/analytics.ts`**
-- Добавить экспортируемую функцию `getYmGoalPrefix(): string` — вынести логику определения slug из `getYmGoalId` в отдельную функцию. Она возвращает только slug (`klopy`, `main`, `general`).
-- `getYmGoalId` продолжает работать как раньше (для обратной совместимости).
+`vite-plugin-ssg.ts` использует свою локальную функцию `getAllRoutes()` (строка 576), а не `getAllSSGRoutes()` из `seoRoutes.ts`. Списки расходятся: в seoRoutes больше slug'ов, подстраниц и объектов.
 
-**2. `src/components/ServiceStickyBar.tsx`** (кнопка "Узнать цену")
-- В `handlePrice` добавить `sessionStorage.setItem('quiz_source', 'sticky_bar')` перед скроллом к квизу.
+### Что НЕ нужно менять
 
-**3. `src/components/ServiceQuiz.tsx`** (при успешной отправке)
-- Убрать текущие `trackGoal('calc_open', ...)` и `trackGoal(getYmGoalId('quiz'), ...)`.
-- Вместо них: проверить `sessionStorage.getItem('quiz_source')`.
-  - Если `=== 'sticky_bar'` → `trackGoal('sticky_quiz_lead_' + prefix)`, затем `sessionStorage.removeItem('quiz_source')`.
-  - Иначе → `trackGoal('quiz_lead_' + prefix)`.
+- **nginx.conf** — корректен. `try_files $uri $uri/ $uri/index.html =404` работает правильно, если файлы существуют. Добавлять `/index.html` fallback нельзя — это сломает SEO (мусорные URL будут отдавать 200).
+- **Dockerfile** — корректен.
+- **`public/_redirects`** — уже исправлен (`/* /index.html 200`), для Lovable preview работает.
 
-**4. `src/components/LeadFormModal.tsx`** (при успешной отправке)
-- Убрать текущие `trackGoal('lead_submit', ...)` и `trackGoal(getYmGoalId('lead'), ...)`.
-- Вместо них: `trackGoal('calc_lead_' + prefix)`.
+### План исправления (2 файла)
 
-**5. `src/components/CompactRequestModal.tsx`** (при успешной отправке)
-- Убрать текущие `trackGoal('calc_submit', ...)` и `trackGoal(getYmGoalId('lead'), ...)`.
-- Вместо них: `trackGoal('calc_lead_' + prefix)`.
+**1. `src/AppSSR.tsx` — добавить ВСЕ публичные роуты из App.tsx**
 
-**6. `src/components/HeroCallbackForm.tsx`**
-- Оставляем как есть (маркетолог упомянул только 3 цели, callback не входит в новую схему). Старые generic goals `hero_callback_submit` продолжат стрелять.
+Импортировать и добавить роуты для:
+- `/uslugi/:parentSlug/:subSlug` → ServiceRouteResolver (или ServicePage как fallback для SSR)
+- `/uslugi/:service/:segment2/:segment3` → ThreeSegmentRouteResolver (или ServicePage)
+- `/uslugi/obrabotka-uchastkov` → ServiceLandingUchastkiPage
+- `/uslugi/po-okrugam-moskvy` → DistrictsOverview
+- `/rajony` → NeighborhoodsOverview
+- `/rajony/:slug` → NeighborhoodPage
+- `/moscow-oblast` → MoscowRegionOverview
+- `/moscow-oblast/:citySlug` → MoscowRegionCityPage
+- `/moscow-oblast/:citySlug/:serviceSlug` → MoscowRegionServicePage
+- `/sluzhba-dezinsekcii` → ServiceSESPage
+- `/otzyvy` → ReviewsPage
+- `/terms` → Terms
 
-### Пример: страница Клопы (`/uslugi/dezinsekciya/klopy`)
+Порядок роутов должен точно повторять App.tsx (статические перед параметрическими).
 
-Маркетолог создаёт в Яндекс.Метрике 3 цели (тип: JavaScript-событие):
-1. `calc_lead_klopy`
-2. `quiz_lead_klopy`
-3. `sticky_quiz_lead_klopy`
+**2. `vite-plugin-ssg.ts` — синхронизировать списки slug'ов с `seoRoutes.ts`**
 
-### Технические детали
+Обновить локальные массивы в SSG-плагине, чтобы они совпадали с `seoRoutes.ts`:
+- `dezinsekciyaPestSlugs`: добавить `komary`, `muhi`, `osy-shershni`, `cheshuynitsy`, `kleshchi`, `mokricy` (сейчас только 5, в seoRoutes 11)
+- `serviceSubpageRoutes`: добавить квалификаторы и методы обработки (12 доп. записей)
+- `objectSlugs`: добавить `gostinic`, `detskih-sadov`, `hostela`, `magazinov`, `avtomobiley` (сейчас 6, в seoRoutes 11)
+- `moscowRegionCitySlugs`: добавить `klin`, `ramenskoe`, `chekhov`, `domodedovo` (сейчас 10, в seoRoutes 14)
+- `neighborhoodSlugs`: синхронизировать с seoRoutes (проверить различия)
+- `blogSlugs`: добавить недостающие статьи (b2b, safety, diy-failure, llm-unique — ~27 статей)
+- Добавить генерацию маршрутов для `/uslugi/dezinfekciya/{neighborhood}` (130 районов) — есть в seoRoutes, отсутствует в SSG-плагине
+- Добавить статические роуты: `/sluzhba-dezinsekcii`, `/otzyvy`, `/uslugi/obrabotka-uchastkov`, `/terms`
 
-- `sessionStorage` выбран потому что флаг должен жить только в рамках текущей вкладки и автоматически очищается при закрытии.
-- Флаг очищается сразу после отправки цели, чтобы повторное заполнение квиза (без клика по стики) не считалось sticky-конверсией.
-- Старые generic goals (`lead_submit`, `calc_open`, `calc_submit`) будут удалены из этих компонентов — маркетолог от них отказался.
+### Результат
+
+После этих двух правок SSG сгенерирует все ~900+ HTML-файлов в dist/, nginx найдёт их через `try_files`, и 404 при F5 исчезнет.
 
