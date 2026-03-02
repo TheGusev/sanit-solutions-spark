@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { initializeTrafficContext, TrafficContext as TrafficContextType } from '@/hooks/useTrafficContext';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabaseClient';
 import { setUserProperties, trackPageView } from '@/lib/analytics';
 
 interface TrafficContextValue {

@@ -4,7 +4,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { useParallax } from "@/hooks/useParallax";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { getCopy } from "@/lib/copyUtils";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useRef, useCallback, useState } from "react";
 import { trackGoal } from "@/lib/analytics";
 

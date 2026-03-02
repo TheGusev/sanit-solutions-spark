@@ -4,11 +4,14 @@ export const useParallax = (speed: number = 0.5, enabled: boolean = true) => {
   const [offset, setOffset] = useState(0);
 
   const handleScroll = useCallback(() => {
-    setOffset(window.scrollY * speed);
+    if (typeof window !== 'undefined') {
+      setOffset(window.scrollY * speed);
+    }
   }, [speed]);
 
   useEffect(() => {
-    if (!enabled) return;
+    // SSR guard: no window/scroll in Node.js
+    if (import.meta.env.SSR || !enabled || typeof window === 'undefined') return;
     
     let ticking = false;
     const onScroll = () => {

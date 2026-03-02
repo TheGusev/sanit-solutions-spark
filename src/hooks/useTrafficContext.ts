@@ -59,7 +59,7 @@ export async function initializeTrafficContext(): Promise<TrafficContext> {
   
   try {
     // Динамический импорт supabase только при необходимости
-    const { supabase } = await import('@/integrations/supabase/client');
+    const { supabase } = await import('@/lib/supabaseClient');
     
     const { data, error } = await supabase.functions.invoke('mvt-optimize', {
       body: {

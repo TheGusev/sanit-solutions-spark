@@ -593,13 +593,6 @@ export function ssgPlugin(): Plugin {
           console.warn('⚠️  Could not read .env file for SSR build');
         }
         
-        // Diagnostic: log parsed env values so Docker build logs show correctness
-        const parsedUrl = envDefines['import.meta.env.VITE_SUPABASE_URL'];
-        console.log(`🔧 SSG ENV: VITE_SUPABASE_URL = ${parsedUrl || '(not set)'}`);
-        if (parsedUrl && (parsedUrl.includes('\\"') || parsedUrl.includes("\\'"))) {
-          console.error('❌ SSG ENV: VITE_SUPABASE_URL still contains escaped quotes — .env parsing bug!');
-        }
-        
         // Fallback placeholders so supabase client doesn't crash with undefined URL/key
         if (!envDefines['import.meta.env.VITE_SUPABASE_URL']) {
           console.warn('⚠️  SSG ENV: VITE_SUPABASE_URL not found in .env, using placeholder');

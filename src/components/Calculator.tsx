@@ -22,7 +22,7 @@ import { QuickCallForm } from "./QuickCallForm";
 import StickyCTA from "./StickyCTA";
 import DesktopStickySidebar from "./DesktopStickySidebar";
 import { useTraffic } from "@/contexts/TrafficContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabaseClient";
 import { trackGoal } from "@/lib/analytics";
 
 // Предустановки калькулятора по интентам
