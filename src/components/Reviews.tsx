@@ -3,7 +3,8 @@ import { Star, MessageSquarePlus, MessageCircle, ChevronDown } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import ReviewFormModal from "@/components/ReviewFormModal";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabaseClient";
+import { staticReviews } from "@/data/reviews";
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
@@ -19,9 +20,10 @@ interface Review {
 const Reviews = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<Review[]>(staticReviews as Review[]);
 
   useEffect(() => {
+    if (import.meta.env.SSR) return;
     const fetchReviews = async () => {
       try {
         const { data, error } = await supabase
@@ -29,7 +31,7 @@ const Reviews = () => {
           .select('id, display_name, text, rating, object_type, created_at')
           .limit(15);
 
-        if (!error && data) {
+        if (!error && data && data.length > 0) {
           setReviews(data as Review[]);
         }
       } catch (e) {

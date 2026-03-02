@@ -12,6 +12,12 @@ export const useScrollAnimation = (options: UseScrollAnimationOptions = {}) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // SSR guard: IntersectionObserver doesn't exist in Node.js
+    if (import.meta.env.SSR || typeof IntersectionObserver === 'undefined') {
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {

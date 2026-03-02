@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useTraffic } from "@/contexts/TrafficContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabaseClient";
 import { trackGoal, getYmGoalPrefix } from "@/lib/analytics";
 
 interface CompactRequestModalProps {

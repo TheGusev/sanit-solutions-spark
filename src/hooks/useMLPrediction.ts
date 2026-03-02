@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTraffic } from '@/contexts/TrafficContext';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabaseClient';
 
 export interface MLPrediction {
   p_conv: number;
