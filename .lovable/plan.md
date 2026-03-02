@@ -1,40 +1,46 @@
 
 
-## Fix: SSR renders AnimatedSection content as invisible
+## 3-Way Route Sync Audit
 
-### Problem
-`useScrollAnimation` initializes `useState(false)`. During SSR, `useEffect` never executes (React's `renderToString` skips effects). So `isVisible` stays `false` → `AnimatedSection` applies `opacity-0 translate-y-10` → all SSG HTML has invisible content.
+### Comparison Results
 
-This means even though files are generated, the HTML contains hidden content — bad for SEO and users with JS disabled.
+| Route | App.tsx | AppSSR.tsx | seoRoutes.ts |
+|-------|---------|------------|-------------|
+| `/` | ✓ | ✓ | ✓ |
+| `/blog` | ✓ | ✓ | ✓ |
+| `/blog/:slug` | ✓ | ✓ | ✓ (227 slugs) |
+| `/privacy` | ✓ | ✓ | ✓ |
+| `/terms` | ✓ | ✓ | **MISSING** |
+| `/team` | ✓ | ✓ | **MISSING** |
+| `/contacts` | ✓ | ✓ | ✓ |
+| `/sluzhba-dezinsekcii` | ✓ | ✓ | ✓ |
+| `/otzyvy` | ✓ | ✓ | ✓ |
+| `/uslugi/po-okrugam-moskvy` | ✓ | ✓ | ✓ |
+| `/uslugi/:slug` (services) | ✓ | ✓ | ✓ (7 slugs) |
+| `/uslugi/:p/:s` (subpages) | ✓ | ✓ | ✓ (22 combos) |
+| `/uslugi/:s/:p/:n` (3-seg) | ✓ | ✓ | ✓ (~210 combos) |
+| `/uslugi/obrabotka-uchastkov` | ✓ | ✓ | ✓ |
+| `/uslugi/dezinfekciya-{id}` (districts) | ✓ | ✓ | ✓ (12 slugs) |
+| `/rajony` | ✓ | ✓ | ✓ |
+| `/rajony/:slug` | ✓ | ✓ | ✓ (130 slugs) |
+| `/moscow-oblast` | ✓ | ✓ | ✓ |
+| `/moscow-oblast/:city` | ✓ | ✓ | ✓ (14 cities) |
+| `/moscow-oblast/:city/:svc` | ✓ | ✓ | ✓ (56 combos) |
+
+Route ordering in AppSSR.tsx matches App.tsx — static routes before parametric. No issues there.
+
+### Problems Found
+
+Two public routes exist in App.tsx and AppSSR.tsx but are **not listed** in `seoRoutes.ts`. This means SSG will not generate HTML for them — they will 404 on production when accessed directly.
 
 ### Fix
-One line change in `src/hooks/useScrollAnimation.ts` line 12:
+
+Add 2 entries to the `staticRoutes` array in `src/lib/seoRoutes.ts`:
 
 ```typescript
-// BEFORE:
-const [isVisible, setIsVisible] = useState(false);
-
-// AFTER:
-const [isVisible, setIsVisible] = useState(typeof window === 'undefined');
+{ path: '/terms', outputPath: 'terms/index.html', priority: '0.2', changefreq: 'yearly' },
+{ path: '/team', outputPath: 'team/index.html', priority: '0.5', changefreq: 'monthly' },
 ```
 
-This makes `isVisible = true` during SSR (content visible in HTML), and `isVisible = false` on client (so animation plays on scroll). The `useEffect` SSR guard inside the effect is fine and can stay as-is.
-
-### No other changes needed
-- All Supabase imports are correctly migrated (verified: zero non-admin files import from `@/integrations/supabase/client`)
-- `useParallax` is safe (offset defaults to 0, effect guarded)
-- `supabaseClient.ts` wrapper is correctly structured
-- `reviews.ts` static data exists
-- `vite-plugin-ssg.ts` error logging includes full stack trace
-- Route generation covers all required paths (klopy, blohi, arbat, etc.)
-
-### To verify the build
-After this fix, run locally:
-```bash
-npm run build
-# Check for zero ❌ CRASH lines
-# Check files exist:
-test -f dist/uslugi/dezinsekciya/klopy/index.html && echo "✅ klopy"
-test -f dist/rajony/arbat/index.html && echo "✅ arbat"
-```
+No changes needed in App.tsx or AppSSR.tsx — they are already in sync.
 
