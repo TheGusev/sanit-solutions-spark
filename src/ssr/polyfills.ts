@@ -91,7 +91,26 @@ if (typeof globalThis.document === 'undefined') {
       head: { appendChild: () => {}, removeChild: () => {} },
       body: { appendChild: () => {}, removeChild: () => {}, style: {} },
       cookie: '',
-      activeElement: null
+      activeElement: null,
+      implementation: {
+        createHTMLDocument: (title?: string) => ({
+          createElement: (tag: string) => ({ 
+            style: {}, tagName: tag.toUpperCase(), 
+            setAttribute: () => {}, getAttribute: () => null,
+            appendChild: () => {}, removeChild: () => {},
+            classList: { add: () => {}, remove: () => {}, toggle: () => {}, contains: () => false },
+            childNodes: [], firstChild: null, lastChild: null,
+            innerHTML: '', textContent: '',
+            cloneNode: () => ({})
+          }),
+          createTextNode: () => ({}),
+          body: { appendChild: () => {}, removeChild: () => {}, childNodes: [], innerHTML: '' },
+          documentElement: { getElementsByTagName: () => [] },
+          querySelector: () => null,
+          querySelectorAll: () => [],
+          getElementsByTagName: () => []
+        })
+      }
     },
     writable: true,
     configurable: true

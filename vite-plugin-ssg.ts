@@ -648,7 +648,8 @@ export function ssgPlugin(): Plugin {
         
         for (const route of routes) {
           try {
-            // Render the route
+            // Log BEFORE render so if process crashes we know which route killed it
+            console.log(`⏳ Rendering ${route.path}...`);
             const result = render(route.path);
             
             // Replace entire root div content using indexOf for reliability

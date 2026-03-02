@@ -248,13 +248,16 @@ const BlogPost = () => {
               <div 
                 className="prose prose-lg prose-slate dark:prose-invert max-w-none prose-headings:scroll-mt-28"
                 dangerouslySetInnerHTML={{ 
-                  __html: DOMPurify.sanitize(
-                    generateContentWithIds(post.content),
-                    { 
+                  __html: (() => {
+                    const raw = generateContentWithIds(post.content);
+                    // DOMPurify requires a real DOM — skip sanitization during SSR
+                    // Content is trusted (generated from our own data files)
+                    if (typeof window === 'undefined' || typeof DOMPurify?.sanitize !== 'function') return raw;
+                    return DOMPurify.sanitize(raw, { 
                       ALLOWED_TAGS: ['h2', 'h3', 'h4', 'p', 'strong', 'li', 'ul', 'ol', 'em', 'br', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'div', 'blockquote', 'span'], 
                       ALLOWED_ATTR: ['id', 'class'] 
-                    }
-                  )
+                    });
+                  })()
                 }}
               />
 
