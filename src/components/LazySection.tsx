@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, type ReactNode } from 'react';
 
-// Detect SSR: no window.IntersectionObserver or no document
-const isSSR = typeof window === 'undefined' || typeof document === 'undefined';
+// Detect SSR via Vite's built-in flag (polyfills in entry-server.tsx make typeof window unreliable)
+const isSSR = !!(import.meta as any).env?.SSR;
 
 interface LazySectionProps {
   children: ReactNode;

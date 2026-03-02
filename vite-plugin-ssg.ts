@@ -377,13 +377,14 @@ function getAllRoutes(): SSGRoute[] {
 
 // Extract title from HTML
 function extractTitle(html: string): string | null {
-  const match = html.match(/<title>([^<]+)<\/title>/i);
+  const match = html.match(/<title[^>]*>([^<]+)<\/title>/i);
   return match ? match[1].trim() : null;
 }
 
-// Extract description from HTML
+// Extract description from HTML (handles attribute order variations from react-helmet-async)
 function extractDescription(html: string): string | null {
-  const match = html.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
+  const match = html.match(/<meta[^>]*name="description"[^>]*content="([^"]+)"/i)
+    || html.match(/<meta[^>]*content="([^"]+)"[^>]*name="description"/i);
   return match ? match[1].trim() : null;
 }
 
@@ -691,10 +692,10 @@ export function ssgPlugin(): Plugin {
             const validation = validateHtml(html, route.path);
             
             if (!validation.valid) {
-              console.error(`❌ ${route.path}: Validation errors:`);
-              validation.errors.forEach(err => console.error(`   - ${err}`));
+              console.warn(`⚠️  ${route.path}: Validation errors (file will still be written):`);
+              validation.errors.forEach(err => console.warn(`   - ${err}`));
               errorCount++;
-              continue;
+              // Do NOT skip — always write the file
             }
             
             if (validation.warnings.length > 0) {
@@ -854,8 +855,24 @@ export function ssgPlugin(): Plugin {
           console.log('✅ SSG prerendering complete! Static HTML files generated in dist/\n');
         }
         
+        // Fail-fast: verify critical pages were generated
+        const criticalPages = [
+          'rajony/arbat/index.html',
+          'uslugi/dezinsekciya/klopy/index.html',
+          'uslugi/dezinsekciya/blohi/index.html',
+        ];
+        const missingCritical = criticalPages.filter(p => !existsSync(resolve(distDir, p)));
+        if (missingCritical.length > 0) {
+          throw new Error(`SSG CRITICAL: Missing critical pages:\n${missingCritical.map(p => `  - ${p}`).join('\n')}`);
+        }
+
+        if (successCount === 0) {
+          throw new Error('SSG CRITICAL: Zero pages were generated. Build cannot continue.');
+        }
+
       } catch (error) {
         console.error('❌ SSG prerendering failed:', error);
+        throw error; // Re-throw to fail CI
       }
     }
   };
