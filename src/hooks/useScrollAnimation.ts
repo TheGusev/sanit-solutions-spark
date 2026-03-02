@@ -9,7 +9,7 @@ interface UseScrollAnimationOptions {
 export const useScrollAnimation = (options: UseScrollAnimationOptions = {}) => {
   const { threshold = 0.1, rootMargin = "0px", triggerOnce = true } = options;
   const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(!!import.meta.env.SSR);
 
   useEffect(() => {
     // SSR guard: IntersectionObserver doesn't exist in Node.js
