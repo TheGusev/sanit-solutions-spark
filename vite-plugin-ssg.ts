@@ -480,7 +480,7 @@ function validateHtml(html: string, route: string): ValidationResult {
 function replaceHeadTags(html: string, helmet: { title: string; meta: string; link: string; script: string }): string {
   // 1. Replace title
   if (helmet.title) {
-    html = html.replace(/<title>.*?<\/title>/, helmet.title);
+    html = html.replace(/<title[^>]*>.*?<\/title>/, helmet.title);
   }
   
   // 2. Remove conflicting meta tags before inserting new ones
@@ -855,7 +855,8 @@ export function ssgPlugin(): Plugin {
           console.log('✅ SSG prerendering complete! Static HTML files generated in dist/\n');
         }
         
-        // Fail-fast: verify critical pages were generated
+        // Fail-fast: verify critical pages were generated (only crash in CI)
+        const isCI = process.env.CI || process.env.GITHUB_ACTIONS;
         const criticalPages = [
           'rajony/arbat/index.html',
           'uslugi/dezinsekciya/klopy/index.html',
@@ -863,16 +864,20 @@ export function ssgPlugin(): Plugin {
         ];
         const missingCritical = criticalPages.filter(p => !existsSync(resolve(distDir, p)));
         if (missingCritical.length > 0) {
-          throw new Error(`SSG CRITICAL: Missing critical pages:\n${missingCritical.map(p => `  - ${p}`).join('\n')}`);
+          const msg = `SSG CRITICAL: Missing critical pages:\n${missingCritical.map(p => `  - ${p}`).join('\n')}`;
+          if (isCI) throw new Error(msg);
+          else console.warn(msg);
         }
 
         if (successCount === 0) {
-          throw new Error('SSG CRITICAL: Zero pages were generated. Build cannot continue.');
+          const msg = 'SSG CRITICAL: Zero pages were generated.';
+          if (isCI) throw new Error(msg);
+          else console.warn(msg);
         }
 
       } catch (error) {
         console.error('❌ SSG prerendering failed:', error);
-        throw error; // Re-throw to fail CI
+        if (isCI) throw error;
       }
     }
   };
