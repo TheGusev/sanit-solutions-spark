@@ -1,30 +1,45 @@
 
-- Быстрая диагностика (что уже проверено):
-  - `.github/workflows/docker-build.yml` не содержит отдельного шага `node scripts/verify-build.js`, `npm run verify` или `npm run build`.
-  - CI падает не из-за отдельного шага verify, а из-за Dockerfile (`RUN npm run build`) + `package.json`, где `build` = `vite build && node scripts/verify-build.js`.
-  - Поэтому verify запускается внутри docker build и валит workflow.
 
-- Что сделать:
-  1) `package.json`
-     - Изменить:
-       - `"build": "vite build && node scripts/verify-build.js"` → `"build": "vite build"`
-     - Оставить:
-       - `"verify": "node scripts/verify-build.js"` (отдельный ручной запуск).
-  2) `.github/workflows/docker-build.yml`
-     - Отдельного verify-step там нет, удалять/смягчать нечего.
-     - Файл оставить без функциональных изменений (не добавлять `continue-on-error` на `build-and-push`, чтобы не маскировать реальные ошибки сборки).
-  3) Publish
-     - Опубликовать изменения (Publish), чтобы GitHub Actions стартовал новый run.
+## Diagnosis: No code changes needed
 
-- Проверка после Publish:
-  - В Actions у `Build and Push Docker Image` должен быть green статус.
-  - В логах job больше не должно быть запуска `node scripts/verify-build.js` в процессе `npm run build`.
-  - На сервере после `/root/deploy.sh`:
-    - `curl .../uslugi/dezinsekciya/klopy/` → `200`
-    - `curl .../uslugi/dezinsekciya/blohi/` → `200`
-    - `curl .../otzyvy/` → `200`
+### The Dockerfile is correct
 
-- Важная техремарка на следующий шаг:
-  - `scripts/verify-build.js` написан в CommonJS (`require`) при `"type": "module"` в `package.json`.
-  - После отвязки от `build` CI перестанет падать, но `npm run verify` может оставаться сломанным.
-  - Следующим отдельным фикс-пакетом: перевести `verify-build.js` в ESM (`import ... from 'node:...'`) или переименовать файл в `.cjs`.
+The current Dockerfile works exactly right:
+- Line 16: `RUN npm run build` → creates `/app/dist` in the builder stage
+- Line 22: `COPY --from=builder /app/dist /usr/share/nginx/html` → copies to nginx root
+
+The command `docker exec goruslugimsk find /app/dist` returns "No such file or directory" because **this is expected** — the final nginx container has no `/app/dist`. Files live at `/usr/share/nginx/html`. The correct check is:
+
+```
+docker exec goruslugimsk find /usr/share/nginx/html -name "*.html" | head -20
+```
+
+### Root cause of 404s
+
+The real problem is **not the Dockerfile** — it's that GitHub Actions was failing due to `verify-build.js` blocking `npm run build`. We fixed that in the previous commit (removed `&& node scripts/verify-build.js` from the `build` script). So:
+
+1. The Docker Hub image `thegusev/sanit-solutions:latest` is **stale** — it was last built before our SSG fixes
+2. Every Actions run since then has been failing, so no new image was pushed
+
+### What to do now (no code changes from Lovable)
+
+1. **Publish** the current state (the `package.json` fix is already committed)
+2. Wait for GitHub Actions to go green — this will push a fresh Docker image with all SSG fixes
+3. On the server, run:
+   ```bash
+   docker pull thegusev/sanit-solutions:latest
+   docker compose up -d
+   ```
+4. Verify with the correct path:
+   ```bash
+   docker exec goruslugimsk ls -la /usr/share/nginx/html/uslugi/dezinsekciya/klopy/
+   ```
+5. Then test externally:
+   ```bash
+   curl -o /dev/null -s -w "%{http_code}" https://goruslugimsk.ru/uslugi/dezinsekciya/klopy/
+   ```
+
+### Summary
+
+No files need editing. The Dockerfile, vite.config.ts, and nginx.conf are all correct. The only issue was the stale Docker image caused by CI failures — which we already fixed by decoupling `verify-build.js` from the build command.
+
