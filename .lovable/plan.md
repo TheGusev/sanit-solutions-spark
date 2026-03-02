@@ -1,54 +1,28 @@
 
 
-## Diagnosis: SSG output path is correct
+## Diagnosis: Routes are correct, likely stale image
 
-The SSG plugin writes files directly into `dist/` (line 738-745 of `vite-plugin-ssg.ts`):
-```
-const outputPath = resolve(distDir, route.outputPath);
-// e.g. dist/uslugi/dezinsekciya/klopy/index.html
-```
+### What the code shows
+1. **vite-plugin-ssg.ts line 255-261**: `/uslugi/dezinsekciya/klopy` IS in the route list with outputPath `uslugi/dezinsekciya/klopy/index.html`
+2. **AppSSR.tsx line 66**: `/uslugi/:parentSlug/:subSlug` → `ServiceRouteResolver` → `getPestBySlug('klopy')` → finds pest → renders `ServicePestPage`
+3. **Dockerfile line 23**: `COPY --from=builder /app/dist /usr/share/nginx/html` — correct
+4. **GitHub Actions line 44-68**: Smoke check already verifies `uslugi/dezinsekciya/klopy/index.html` exists
 
-The Dockerfile copies exactly that directory:
-```dockerfile
-COPY --from=builder /app/dist /usr/share/nginx/html
-```
+### Most likely cause
+The image you checked was built BEFORE the `.env` quote-stripping fix. If the previous build crashed on `Invalid supabaseUrl`, SSG generated 0 pages (or partial), so `klopy/` was never written. The "861/861 OK" log was from the Lovable preview, not from Docker.
 
-So `dist/uslugi/dezinsekciya/klopy/index.html` → `/usr/share/nginx/html/uslugi/dezinsekciya/klopy/index.html`. The paths are correct.
+### Plan
 
-### What to verify
+1. **Check GitHub Actions status** — go to the repo Actions tab and verify the LATEST run (after the `.env` fix commit) completed successfully, including the "Smoke check SSG coverage" step at line 44-68. If the smoke check passed, the files ARE in the new image.
 
-The `.env` quote-stripping fix was pushed and the build showed **861/861 pages OK** in logs. If the Docker push also completed, then the `latest` image on Docker Hub should contain all SSG pages.
+2. **Pull the NEW image** — run:
+   ```bash
+   docker pull thegusev/sanit-solutions:latest
+   docker run --rm thegusev/sanit-solutions:latest ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy/
+   ```
 
-You need to verify on **your server**:
+3. **If smoke check FAILED** — then SSG renders that route but something crashes during SSR (e.g., ServicePestPage throws). In that case I'll add a debug log inside `closeBundle()` to print exactly which routes fail and why, and potentially add try/catch guards in ServicePestPage for SSR safety.
 
-```bash
-# 1. Pull the NEW image (force, don't use cache)
-docker pull thegusev/sanit-solutions:latest
-
-# 2. Check if SSG pages exist inside the image
-docker run --rm thegusev/sanit-solutions:latest ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy/
-
-# 3. Check root contents
-docker run --rm thegusev/sanit-solutions:latest ls /usr/share/nginx/html/ | head -20
-
-# 4. If files exist, restart the container
-docker compose down && docker compose up -d
-```
-
-### If files are missing in the image
-
-That means either:
-1. The Docker push didn't complete (the build log showed it was slow) — check GitHub Actions for the final status
-2. You're still running the **old** cached image — `docker pull` should fix this
-
-### If files ARE present but site still 404
-
-Check nginx config — `nginx.conf` uses `try_files $uri $uri/index.html =404`. This should work. Verify with:
-```bash
-curl -I http://localhost:5173/uslugi/dezinsekciya/klopy/
-```
-
-### No code changes needed
-
-The SSG output directory and the Dockerfile COPY path are already aligned. The fix was the `.env` quote-stripping (already applied). The issue is confirming the new image was pushed and deployed.
+### No code changes needed right now
+The routing, SSG config, and Dockerfile are all correct. The fix was the `.env` parsing (already applied). We need to confirm the new image was actually built and pulled before making further changes.
 
