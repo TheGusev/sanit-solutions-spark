@@ -855,8 +855,9 @@ export function ssgPlugin(): Plugin {
           console.log('✅ SSG prerendering complete! Static HTML files generated in dist/\n');
         }
         
-        // Fail-fast: verify critical pages were generated (only crash in CI)
-        const isCI = process.env.CI || process.env.GITHUB_ACTIONS;
+        // Fail-fast: only throw in Docker/GitHub Actions builds, NOT in Lovable preview
+        // Lovable sets CI=true but doesn't support SSG, so we check for Docker-specific env
+        const isDockerCI = !!process.env.GITHUB_ACTIONS || !!process.env.DOCKER_BUILD;
         const criticalPages = [
           'rajony/arbat/index.html',
           'uslugi/dezinsekciya/klopy/index.html',
@@ -865,19 +866,19 @@ export function ssgPlugin(): Plugin {
         const missingCritical = criticalPages.filter(p => !existsSync(resolve(distDir, p)));
         if (missingCritical.length > 0) {
           const msg = `SSG CRITICAL: Missing critical pages:\n${missingCritical.map(p => `  - ${p}`).join('\n')}`;
-          if (isCI) throw new Error(msg);
+          if (isDockerCI) throw new Error(msg);
           else console.warn(msg);
         }
 
         if (successCount === 0) {
           const msg = 'SSG CRITICAL: Zero pages were generated.';
-          if (isCI) throw new Error(msg);
+          if (isDockerCI) throw new Error(msg);
           else console.warn(msg);
         }
 
       } catch (error) {
         console.error('❌ SSG prerendering failed:', error);
-        if (isCI) throw error;
+        if (!!process.env.GITHUB_ACTIONS || !!process.env.DOCKER_BUILD) throw error;
       }
     }
   };

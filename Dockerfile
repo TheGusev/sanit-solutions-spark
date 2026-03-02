@@ -13,6 +13,7 @@ RUN npm ci --legacy-peer-deps
 COPY . .
 
 # Собираем приложение
+ENV DOCKER_BUILD=true
 RUN npm run build
 
 # Этап 2: Production с Nginx
