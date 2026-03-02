@@ -1,47 +1,52 @@
 
 
-## Diagnosis: SSG routes ARE correctly configured
+## Diagnosis: Stale image on server (digest mismatch confirmed)
 
-After thorough investigation, here is what I found:
+### What I verified
 
-### What's already correct (no changes needed)
-1. **`vite-plugin-ssg.ts`** (line 76-78): `dezinsekciyaPestSlugs` includes `klopy`, `blohi`, and all other pests. Routes are generated at lines 255-261.
-2. **`seoRoutes.ts`** (line 54-66): Same slugs present.
-3. **`AppSSR.tsx`**: Route `/uslugi/:parentSlug/:subSlug` matches and routes through `ServiceRouteResolver` → `ServicePestPage`.
-4. **`ServicePestPage.tsx`**: Correctly reads `parentSlug`/`subSlug` params from SSR context.
-5. **`pests.ts`**: Both `klopy` (line 86) and `blohi` (line 186) exist with full data.
-6. **`Dockerfile`**: Correctly runs `npm run build` and copies `dist/` to nginx.
-7. **`package.json`**: `"build": "vite build"` -- fix from previous session is applied.
+1. **Code is correct** -- All SSG fixes (`vite-plugin-ssg.ts` with `.env` parsing + Supabase fallbacks, `LazySection.tsx` SSR rendering) are present in the current codebase. Routes for `/rajony/:slug` and `/uslugi/dezinsekciya/:pestSlug` are correctly defined in both `AppSSR.tsx` and the SSG route generator.
 
-### Root cause hypothesis
+2. **Build #440 IS the fix commit** -- From your screenshot: "Improve SSR rendering for SSG", Build and Push Docker Image #440, commit `5810f50`, green checkmark, branch `main`. This is exactly the commit with the SSG fixes.
 
-The SSG configuration is correct. The most likely explanation for missing `klopy/blohi` HTML files is one of:
+3. **Docker Hub `latest` contains the fix** -- I checked Docker Hub API directly: `thegusev/sanit-solutions:latest` was pushed at `2026-03-02T01:16:06Z` (matches Build #440 completion time). Manifest digest: `sha256:613d546d634ef6a0583bbd1e6ad829e7e04078eef78448e126aea9526abee45f`.
 
-1. **The latest Docker image hasn't been built yet** -- the `package.json` fix (removing `verify-build.js` from build) was the blocker. If this was just recently published, GitHub Actions may still be running or hasn't been triggered yet.
+4. **You confirmed digest mismatch** -- Your server has a different image than what's on Docker Hub. This means your `docker pull` grabbed an older version (likely from Build #439 "Save plan in Lovable", which only had the `package.json` fix but NOT the SSG fixes).
 
-2. **SSG rendering silently fails for some pages** -- the plugin catches errors (line 708) and skips pages with validation errors (line 662). The Docker build logs would show `❌ /uslugi/dezinsekciya/klopy: [error message]` if this happened.
+### What to do now (no code changes needed)
 
-### No code changes required
+Run these commands on the server:
 
-The SSG route generation already includes every pest page. There is nothing to add to any configuration file. The pages `/uslugi/dezinsekciya/klopy` and `/uslugi/dezinsekciya/blohi` are already in the SSG route list and will be generated when the build runs successfully.
+```bash
+# 1. Force re-pull (bypass any local cache)
+docker pull thegusev/sanit-solutions:latest
 
-### What to verify on your end
+# 2. Verify the digest matches Docker Hub
+docker inspect thegusev/sanit-solutions:latest --format='{{index .RepoDigests 0}}'
+# Expected: sha256:613d546d634ef6a0583bbd1e6ad829e7e04078eef78448e126aea9526abee45f
 
-1. Check GitHub Actions -- has a new run completed successfully after the `package.json` fix?
-2. If the run is green, pull the new image and redeploy:
-   ```bash
-   docker pull thegusev/sanit-solutions:latest
-   docker compose up -d
-   ```
-3. Then verify the files exist:
-   ```bash
-   docker exec goruslugimsk ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy/index.html
-   docker exec goruslugimsk ls /usr/share/nginx/html/uslugi/dezinsekciya/blohi/index.html
-   ```
-4. If the files still don't exist, check the Docker build logs for SSG errors:
-   ```bash
-   docker build . 2>&1 | grep -E "klopy|blohi|❌"
-   ```
+# 3. Recreate container from new image
+docker compose down && docker compose up -d
 
-The problem is not missing SSG configuration -- it's that a fresh Docker image with the working build hasn't been deployed yet.
+# 4. Wait 5 seconds, then check SSG files
+docker exec goruslugimsk ls /usr/share/nginx/html/rajony/arbat/index.html
+docker exec goruslugimsk ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy/index.html
+
+# 5. If files still missing, check SSG output in build logs:
+docker logs goruslugimsk 2>&1 | head -50
+```
+
+### If files are STILL missing after confirmed correct digest
+
+That would mean SSG is silently failing during Docker build. In that case, rebuild locally to see logs:
+
+```bash
+docker build --no-cache . 2>&1 | tee build.log
+grep -E "rajony/arbat|klopy|❌|error" build.log
+```
+
+This will show whether SSG pages are being generated or skipped with validation errors. Share the output and I will fix the root cause.
+
+### Summary
+
+No code changes. The fix is already in Docker Hub as `latest`. You just need to re-pull because your server has a stale image (confirmed by digest mismatch).
 
