@@ -1,48 +1,54 @@
 
 
-## Fix: Strip quotes from `.env` values in SSG build
+## Diagnosis: SSG output path is correct
 
-### Root Cause
-`vite-plugin-ssg.ts` line 582 parses `.env` values but keeps wrapping `"..."` quotes. The `.env` file contains:
+The SSG plugin writes files directly into `dist/` (line 738-745 of `vite-plugin-ssg.ts`):
 ```
-VITE_SUPABASE_URL="https://gimkzlozhwwgetlgtgvj.supabase.co"
-```
-The parser produces `"https://..."` (with literal `"` chars). Then `JSON.stringify(val)` produces `"\"https://...\""`. At runtime, `import.meta.env.VITE_SUPABASE_URL` evaluates to `"https://..."` — with quote characters inside the string. `createClient()` rejects this as an invalid URL.
-
-The fallback on line 593 never triggers because the key IS present (just contains garbage quotes).
-
-### Fix (1 file, 1 spot)
-
-**`vite-plugin-ssg.ts` line 582** — strip wrapping quotes before `JSON.stringify`:
-
-```typescript
-// Current (broken):
-const val = trimmed.substring(eqIndex + 1).trim();
-
-// Fixed:
-let val = trimmed.substring(eqIndex + 1).trim();
-if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-  val = val.slice(1, -1);
-}
+const outputPath = resolve(distDir, route.outputPath);
+// e.g. dist/uslugi/dezinsekciya/klopy/index.html
 ```
 
-That's the entire fix. After this:
-- `val` = `https://gimkzlozhwwgetlgtgvj.supabase.co` (no quotes)
-- `JSON.stringify(val)` = `"https://gimkzlozhwwgetlgtgvj.supabase.co"` (valid JS string literal)
-- `createClient(url, key)` receives a valid URL
-- SSR bundle imports without crashing
-- SSG renders all routes
-- Docker build succeeds
-- Site stops being 404
+The Dockerfile copies exactly that directory:
+```dockerfile
+COPY --from=builder /app/dist /usr/share/nginx/html
+```
 
-### Why we don't need to touch `supabase/client.ts`
-- It's auto-generated (cannot edit)
-- The real `.env` has valid values — the parser just corrupts them with extra quotes
-- Once the parser is fixed, `createClient` gets a valid URL and works fine
-- No SSR pages make actual Supabase requests (all calls are in `useEffect`, which doesn't run during `renderToString`)
+So `dist/uslugi/dezinsekciya/klopy/index.html` → `/usr/share/nginx/html/uslugi/dezinsekciya/klopy/index.html`. The paths are correct.
 
-### Technical Details
-| File | Line | Change |
-|------|------|--------|
-| `vite-plugin-ssg.ts` | 582 | Strip wrapping `"` or `'` from env values before `JSON.stringify` |
+### What to verify
+
+The `.env` quote-stripping fix was pushed and the build showed **861/861 pages OK** in logs. If the Docker push also completed, then the `latest` image on Docker Hub should contain all SSG pages.
+
+You need to verify on **your server**:
+
+```bash
+# 1. Pull the NEW image (force, don't use cache)
+docker pull thegusev/sanit-solutions:latest
+
+# 2. Check if SSG pages exist inside the image
+docker run --rm thegusev/sanit-solutions:latest ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy/
+
+# 3. Check root contents
+docker run --rm thegusev/sanit-solutions:latest ls /usr/share/nginx/html/ | head -20
+
+# 4. If files exist, restart the container
+docker compose down && docker compose up -d
+```
+
+### If files are missing in the image
+
+That means either:
+1. The Docker push didn't complete (the build log showed it was slow) — check GitHub Actions for the final status
+2. You're still running the **old** cached image — `docker pull` should fix this
+
+### If files ARE present but site still 404
+
+Check nginx config — `nginx.conf` uses `try_files $uri $uri/index.html =404`. This should work. Verify with:
+```bash
+curl -I http://localhost:5173/uslugi/dezinsekciya/klopy/
+```
+
+### No code changes needed
+
+The SSG output directory and the Dockerfile COPY path are already aligned. The fix was the `.env` quote-stripping (already applied). The issue is confirming the new image was pushed and deployed.
 
