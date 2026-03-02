@@ -563,8 +563,39 @@ export function ssgPlugin(): Plugin {
         
         console.log('📦 Building SSR bundle...');
         
+        // Load .env file manually for SSR build (configFile: false doesn't auto-load it)
+        let envDefines: Record<string, string> = {};
+        try {
+          const envPath = resolve('.env');
+          if (existsSync(envPath)) {
+            const envContent = readFileSync(envPath, 'utf-8');
+            for (const line of envContent.split('\n')) {
+              const trimmed = line.trim();
+              if (!trimmed || trimmed.startsWith('#')) continue;
+              const eqIndex = trimmed.indexOf('=');
+              if (eqIndex === -1) continue;
+              const key = trimmed.substring(0, eqIndex).trim();
+              const val = trimmed.substring(eqIndex + 1).trim();
+              if (key.startsWith('VITE_')) {
+                envDefines[`import.meta.env.${key}`] = JSON.stringify(val);
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('⚠️  Could not read .env file for SSR build');
+        }
+        
+        // Fallback placeholders so supabase client doesn't crash with undefined URL/key
+        if (!envDefines['import.meta.env.VITE_SUPABASE_URL']) {
+          envDefines['import.meta.env.VITE_SUPABASE_URL'] = JSON.stringify('https://placeholder.supabase.co');
+        }
+        if (!envDefines['import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY']) {
+          envDefines['import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY'] = JSON.stringify('placeholder-key');
+        }
+        
         await build({
           configFile: false,
+          define: envDefines,
           build: {
             ssr: true,
             outDir: resolve(distDir, 'server'),
