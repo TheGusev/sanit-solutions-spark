@@ -1,45 +1,47 @@
 
 
-## Diagnosis: No code changes needed
+## Diagnosis: SSG routes ARE correctly configured
 
-### The Dockerfile is correct
+After thorough investigation, here is what I found:
 
-The current Dockerfile works exactly right:
-- Line 16: `RUN npm run build` → creates `/app/dist` in the builder stage
-- Line 22: `COPY --from=builder /app/dist /usr/share/nginx/html` → copies to nginx root
+### What's already correct (no changes needed)
+1. **`vite-plugin-ssg.ts`** (line 76-78): `dezinsekciyaPestSlugs` includes `klopy`, `blohi`, and all other pests. Routes are generated at lines 255-261.
+2. **`seoRoutes.ts`** (line 54-66): Same slugs present.
+3. **`AppSSR.tsx`**: Route `/uslugi/:parentSlug/:subSlug` matches and routes through `ServiceRouteResolver` → `ServicePestPage`.
+4. **`ServicePestPage.tsx`**: Correctly reads `parentSlug`/`subSlug` params from SSR context.
+5. **`pests.ts`**: Both `klopy` (line 86) and `blohi` (line 186) exist with full data.
+6. **`Dockerfile`**: Correctly runs `npm run build` and copies `dist/` to nginx.
+7. **`package.json`**: `"build": "vite build"` -- fix from previous session is applied.
 
-The command `docker exec goruslugimsk find /app/dist` returns "No such file or directory" because **this is expected** — the final nginx container has no `/app/dist`. Files live at `/usr/share/nginx/html`. The correct check is:
+### Root cause hypothesis
 
-```
-docker exec goruslugimsk find /usr/share/nginx/html -name "*.html" | head -20
-```
+The SSG configuration is correct. The most likely explanation for missing `klopy/blohi` HTML files is one of:
 
-### Root cause of 404s
+1. **The latest Docker image hasn't been built yet** -- the `package.json` fix (removing `verify-build.js` from build) was the blocker. If this was just recently published, GitHub Actions may still be running or hasn't been triggered yet.
 
-The real problem is **not the Dockerfile** — it's that GitHub Actions was failing due to `verify-build.js` blocking `npm run build`. We fixed that in the previous commit (removed `&& node scripts/verify-build.js` from the `build` script). So:
+2. **SSG rendering silently fails for some pages** -- the plugin catches errors (line 708) and skips pages with validation errors (line 662). The Docker build logs would show `❌ /uslugi/dezinsekciya/klopy: [error message]` if this happened.
 
-1. The Docker Hub image `thegusev/sanit-solutions:latest` is **stale** — it was last built before our SSG fixes
-2. Every Actions run since then has been failing, so no new image was pushed
+### No code changes required
 
-### What to do now (no code changes from Lovable)
+The SSG route generation already includes every pest page. There is nothing to add to any configuration file. The pages `/uslugi/dezinsekciya/klopy` and `/uslugi/dezinsekciya/blohi` are already in the SSG route list and will be generated when the build runs successfully.
 
-1. **Publish** the current state (the `package.json` fix is already committed)
-2. Wait for GitHub Actions to go green — this will push a fresh Docker image with all SSG fixes
-3. On the server, run:
+### What to verify on your end
+
+1. Check GitHub Actions -- has a new run completed successfully after the `package.json` fix?
+2. If the run is green, pull the new image and redeploy:
    ```bash
    docker pull thegusev/sanit-solutions:latest
    docker compose up -d
    ```
-4. Verify with the correct path:
+3. Then verify the files exist:
    ```bash
-   docker exec goruslugimsk ls -la /usr/share/nginx/html/uslugi/dezinsekciya/klopy/
+   docker exec goruslugimsk ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy/index.html
+   docker exec goruslugimsk ls /usr/share/nginx/html/uslugi/dezinsekciya/blohi/index.html
    ```
-5. Then test externally:
+4. If the files still don't exist, check the Docker build logs for SSG errors:
    ```bash
-   curl -o /dev/null -s -w "%{http_code}" https://goruslugimsk.ru/uslugi/dezinsekciya/klopy/
+   docker build . 2>&1 | grep -E "klopy|blohi|❌"
    ```
 
-### Summary
-
-No files need editing. The Dockerfile, vite.config.ts, and nginx.conf are all correct. The only issue was the stale Docker image caused by CI failures — which we already fixed by decoupling `verify-build.js` from the build command.
+The problem is not missing SSG configuration -- it's that a fresh Docker image with the working build hasn't been deployed yet.
 
