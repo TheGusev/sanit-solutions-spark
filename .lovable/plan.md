@@ -1,67 +1,78 @@
 
 
-## SSG/SSR: полный фикс для генерации критичных SEO-страниц в Docker image
+## План: SSG fail-fast для ВСЕХ маршрутов, а не только 3 маячков
 
-### Что будет сделано (4 изменения)
+### Проблема
 
-**A. Выделить SSR-полифилы в отдельный модуль**
+Сейчас fail-fast проверяет только 3 hardcoded файла. Если из ~1000 маршрутов 500 молча упали — билд всё равно зелёный. Нужна полная валидация.
 
-Создать `src/ssr/polyfills.ts` — перенести туда все полифилы из `entry-server.tsx` (window, document, localStorage, sessionStorage, matchMedia, IntersectionObserver, ResizeObserver, MutationObserver).
+### Что будет сделано (2 файла)
 
-В `entry-server.tsx` — убрать инлайн-полифилы (строки 1-92), заменить на один импорт:
+**1. `vite-plugin-ssg.ts` — полная валидация всех маршрутов**
+
+В блоке после рендеринга (строки 860-883) заменить логику на:
+
+- Собирать `failedRoutes[]` во время цикла рендеринга (path + причина ошибки) — уже частично есть через `errorCount`, нужно накапливать список
+- После цикла: если `failedRoutes.length > 0` в Docker CI → вывести полный список проваленных маршрутов и `throw`
+- Оставить 3 маячка как дополнительную проверку файлов на диске (belt-and-suspenders), но основная логика — `failedRoutes.length === 0`
+- Добавить итоговый лог: `SSG: ${successCount}/${totalRoutes} pages OK, ${failedRoutes.length} failed`
+
+Конкретно:
 ```
-import './ssr/polyfills';  // ПЕРВЫЙ импорт — до всего остального
+// Накапливать при рендере каждого маршрута:
+failedRoutes.push({ path: route.path, error: error.message });
+
+// После цикла:
+if (isDockerCI && failedRoutes.length > 0) {
+  const msg = `SSG FAILED: ${failedRoutes.length}/${routes.length} routes failed:\n` +
+    failedRoutes.map(r => `  ✗ ${r.path}: ${r.error}`).join('\n');
+  throw new Error(msg);
+}
 ```
 
-Это решает корневую проблему: сейчас ESM сначала выполняет import-ы (строки 94-97), а потом тело модуля с полифилами. Если любой из этих импортов трогает `localStorage` при инициализации (например, Supabase SDK через `AppSSR` → `client.ts`), он падает раньше полифилов. Вынос в отдельный модуль-импорт гарантирует порядок.
+**2. `.github/workflows/docker-build.yml` — расширенный smoke-check**
 
-**B. Добавить фазовые логи и полные стектрейсы в SSG-плагин**
+Заменить проверку 3 файлов на скрипт, который проверяет выборку из всех категорий:
 
-В `vite-plugin-ssg.ts` добавить логирование ключевых фаз:
-- `📂 SSG Phase: Template read` (после чтения template)
-- `📦 SSG Phase: SSR bundle build` (уже есть)
-- `📥 SSG Phase: SSR bundle import` (перед/после import)
-- `🔄 SSG Phase: Route rendering loop` (перед циклом)
-
-В блоке catch для render(route.path) — логировать полный стектрейс:
-```
-console.error(`❌ ${route.path}:`, error instanceof Error ? error.stack : error);
-```
-
-**C. Политика fail-fast (без изменений)**
-
-Текущая логика уже корректна:
-- `isDockerCI = !!process.env.GITHUB_ACTIONS || !!process.env.DOCKER_BUILD` — throw только в CI/Docker
-- Критичные файлы: `rajony/arbat`, `uslugi/dezinsekciya/klopy`, `uslugi/dezinsekciya/blohi`
-- `successCount === 0` — hard fail в CI
-- В preview — warning only
-
-**D. Smoke-тест в GitHub Actions**
-
-В `.github/workflows/docker-build.yml` после шага `build-and-push` добавить шаг:
 ```yaml
-- name: Smoke check critical SSG files
+- name: Smoke check SSG coverage
   run: |
     docker pull ${{ env.IMAGE_NAME }}:${{ github.sha }}
-    docker run --rm ${{ env.IMAGE_NAME }}:${{ github.sha }} \
-      ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy/index.html \
-         /usr/share/nginx/html/uslugi/dezinsekciya/blohi/index.html \
-         /usr/share/nginx/html/rajony/arbat/index.html
+    docker run --rm ${{ env.IMAGE_NAME }}:${{ github.sha }} sh -c '
+      FAIL=0
+      for f in \
+        uslugi/dezinsekciya/klopy/index.html \
+        uslugi/dezinsekciya/blohi/index.html \
+        rajony/arbat/index.html \
+        uslugi/deratizaciya/krysy/index.html \
+        uslugi/dezinfekciya/arbat/index.html \
+        moscow-oblast/khimki/index.html \
+        blog/klopy-v-kvartire/index.html \
+        uslugi/dezinsekciya/klopov-v-kvartire/index.html \
+        sluzhba-dezinsekcii/index.html \
+        rajony/maryino/index.html; do
+        if [ ! -f "/usr/share/nginx/html/$f" ]; then
+          echo "MISSING: $f"; FAIL=1
+        fi
+      done
+      if [ $FAIL -eq 1 ]; then exit 1; fi
+      echo "All smoke-check files present"
+      TOTAL=$(find /usr/share/nginx/html -name "index.html" | wc -l)
+      echo "Total SSG pages in image: $TOTAL"
+    '
 ```
-Если файлов нет — job падает, не давая сломанному образу остаться в `latest`.
 
-### Технические детали
+Это покрывает: услуги, вредители, районы, МО, блог, подстраницы, статику.
 
-Файлы, которые будут затронуты:
-1. **Новый файл:** `src/ssr/polyfills.ts` — полифилы из entry-server.tsx
-2. **`src/entry-server.tsx`** — удалить inline-полифилы, добавить `import './ssr/polyfills'` первой строкой
-3. **`vite-plugin-ssg.ts`** — добавить фазовые логи и полный стектрейс в catch
-4. **`.github/workflows/docker-build.yml`** — добавить smoke-check шаг
+### Что НЕ меняется
 
-### Acceptance criteria
+- Список маршрутов в `getAllRoutes()` — уже полный
+- Логика рендеринга — без изменений
+- Полифилы — уже вынесены в `src/ssr/polyfills.ts`
 
-- `npm run build` проходит в Docker без exit code 1
-- GitHub Actions зелёный, включая smoke-check
-- В `latest` образе существуют: `klopy/index.html`, `blohi/index.html`, `arbat/index.html`
-- `curl -I` по этим URL на сервере возвращает 200
+### Результат
+
+- Любой упавший маршрут в CI → красный билд с полным списком ошибок
+- Smoke-check в CI проверяет 10 файлов из разных категорий + считает total
+- В preview — по-прежнему только warnings
 
