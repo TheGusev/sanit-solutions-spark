@@ -1,56 +1,48 @@
 
 
-## Проверка завершена: оба файла уже исправлены
+## Plan: Create `scripts/verify-build.js` Build Verification Script
 
-Я проверил текущее состояние обоих файлов — **все правки из предыдущего сообщения уже применены**.
+### What will be created
 
-### `src/AppSSR.tsx` — все роуты на месте
+**One new file:** `scripts/verify-build.js` — a pure Node.js script (no dependencies) that runs 10 verification blocks after each build.
 
-Текущий файл содержит **все 19 публичных роутов** из `App.tsx`:
+**One edit:** `package.json` — update `build` script to chain verification, add `verify` script.
 
-| Роут | Компонент | Статус |
-|------|-----------|--------|
-| `/` | IndexSSR | ✓ |
-| `/blog`, `/blog/:slug` | Blog, BlogPost | ✓ |
-| `/privacy`, `/terms` | Privacy, Terms | ✓ |
-| `/contacts`, `/team` | Contacts, Team | ✓ |
-| `/sluzhba-dezinsekcii` | ServiceSESPage | ✓ |
-| `/otzyvy` | ReviewsPage | ✓ |
-| `/uslugi/po-okrugam-moskvy` | DistrictsOverview | ✓ |
-| `/rajony`, `/rajony/:slug` | NeighborhoodsOverview, NeighborhoodPage | ✓ |
-| `/moscow-oblast`, `/:citySlug`, `/:citySlug/:serviceSlug` | MoscowRegion* | ✓ |
-| `/uslugi/:service/:segment2/:segment3` | ThreeSegmentRouteResolver | ✓ |
-| `/uslugi/obrabotka-uchastkov` | ServiceLandingUchastkiPage | ✓ |
-| `/uslugi/:parentSlug/:subSlug` | ServiceRouteResolver | ✓ |
-| `/uslugi/:slug` | ServicePage | ✓ |
+### Block-by-block implementation
 
-Порядок корректный — статические перед динамическими.
+**Block 1 — File existence:** Check 35+ critical paths via `fs.existsSync`. Any miss = FAIL + exit(1).
 
-### `vite-plugin-ssg.ts` — все массивы синхронизированы
+**Block 2 — File size:** Each HTML from Block 1 checked via `fs.statSync`. Below 15KB = FAIL, below 5KB = CRITICAL.
 
-| Массив | В seoRoutes | В SSG-плагине | Статус |
-|--------|-------------|---------------|--------|
-| dezinsekciyaPestSlugs | 11 | 11 | ✓ |
-| deratizaciyaPestSlugs | 3 | 3 | ✓ |
-| serviceSubpageRoutes | 18 | 18 | ✓ |
-| objectSlugs | 11 | 11 | ✓ |
-| servicesForObjects | 5 | 5 | ✓ |
-| moscowRegionCitySlugs | 14 | 14 | ✓ |
-| neighborhoodSlugs | 130 | 130 | ✓ |
-| blogSlugs | 227 | 227 | ✓ |
-| staticRoutes | 8 (вкл. СЭС, Отзывы, Участки, Terms) | 8 | ✓ |
-| Дезинфекция по районам | 130 маршрутов | 130 маршрутов | ✓ |
+**Block 3 — SEO audit:** Read each HTML, regex-check for `<title>`, `<meta name="description"`, `<link rel="canonical"`, single `<h1>`, `window.ym`, `schema.org`. Also check for forbidden strings (`undefined`, `lovable.app`, `localhost`, bad grammar, old guarantee text, dev artifacts).
 
-### Что нужно сделать
+**Block 4 — Metrika & goals:** Read source files `src/lib/analytics.ts`, `src/components/ServiceQuiz.tsx`, `src/components/LeadFormModal.tsx` and verify presence of `getYmGoalPrefix`, counter ID constant, `calc_lead_`, `quiz_lead_`, `sticky_quiz_lead_`, `quiz_source` sessionStorage check. No `lead_all` check (it doesn't exist in current code — will skip that sub-check).
 
-**Код уже исправлен. Осталось пересобрать Docker-контейнер:**
+**Block 5 — Sitemap:** Check `dist/sitemap-index.xml` existence, count `<sitemap>` tags (min 5 sub-sitemaps). Also check individual sitemap files for `<url>` count (min 700 total). Verify no `lovable.app`/`localhost`, verify critical URLs present.
 
-```text
-docker build -t goruslugimsk .
-docker compose up -d
+**Block 6 — Robots.txt:** Check `dist/robots.txt`, verify `Sitemap:` line with correct domain, no full `Disallow: /` for `*`, has `Disallow: /admin/`.
+
+**Block 7 — Internal links:** Read `src/components/Footer.tsx`, check for `/otzyvy`, `/sluzhba-dezinsekcii`, `/uslugi/obrabotka-uchastkov` links. Read `src/components/InternalLinks.tsx`, verify it generates related links.
+
+**Block 8 — Code security:** Recursive scan of `src/` for `debugger` (FAIL), API key patterns (CRITICAL), `console.log`/`TODO`/`FIXME` (WARN).
+
+**Block 9 — Image accessibility:** Scan `.tsx` files in `src/pages/` for `<img` tags without `alt=` (FAIL) or `loading=` (WARN).
+
+**Block 10 — Summary:** Print totals, exit(1) if any FAIL/CRITICAL.
+
+### package.json changes
+
+```json
+"verify": "node scripts/verify-build.js",
+"build": "vite build && node scripts/verify-build.js"
 ```
 
-После пересборки SSG сгенерирует ~900-1000 HTML-файлов в `dist/`, включая `dist/uslugi/dezinsekciya/klopy/index.html`, и 404 при F5 исчезнет.
+### Technical notes
 
-Если после пересборки 404 всё ещё появляется — нужно проверить логи билда (`docker build` output) на строки `❌` — это покажет, какие конкретно страницы не прошли валидацию SSG.
+- Script uses only `fs`, `path` — zero external deps
+- All checks are synchronous for simplicity
+- Output format: colored terminal output with PASS/FAIL/WARN per check
+- The sitemap plugin generates `sitemap-index.xml` (not `sitemap.xml`), so Block 5 accounts for that
+- `lead_all` goal doesn't exist in current code — Block 4 will not check for it to avoid false negatives
+- Canonical check uses regex to extract href and verify `https://goruslugimsk.ru` prefix
 
