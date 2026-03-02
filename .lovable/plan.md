@@ -1,62 +1,67 @@
 
 
-## Problem
+## SSG/SSR: полный фикс для генерации критичных SEO-страниц в Docker image
 
-Build #443 fails because the SSG fail-fast guard correctly detects that critical pages are missing and throws an error. But the `throw` also crashes the **Lovable preview build**, which doesn't need SSG at all (preview serves as SPA).
+### Что будет сделано (4 изменения)
 
-Two distinct issues need fixing:
+**A. Выделить SSR-полифилы в отдельный модуль**
 
-### Issue 1: `replaceHeadTags` line 483 still uses the old regex
+Создать `src/ssr/polyfills.ts` — перенести туда все полифилы из `entry-server.tsx` (window, document, localStorage, sessionStorage, matchMedia, IntersectionObserver, ResizeObserver, MutationObserver).
 
-```js
-html = html.replace(/<title>.*?<\/title>/, helmet.title);
+В `entry-server.tsx` — убрать инлайн-полифилы (строки 1-92), заменить на один импорт:
+```
+import './ssr/polyfills';  // ПЕРВЫЙ импорт — до всего остального
 ```
 
-After the first page is processed, `helmet.title` outputs `<title data-rh="true">...</title>`. On the next page, the regex `/<title>.*?<\/title>/` won't match because the title tag now has attributes. This means head replacement silently fails for subsequent pages.
+Это решает корневую проблему: сейчас ESM сначала выполняет import-ы (строки 94-97), а потом тело модуля с полифилами. Если любой из этих импортов трогает `localStorage` при инициализации (например, Supabase SDK через `AppSSR` → `client.ts`), он падает раньше полифилов. Вынос в отдельный модуль-импорт гарантирует порядок.
 
-### Issue 2: SSG `throw` crashes Lovable preview builds
+**B. Добавить фазовые логи и полные стектрейсы в SSG-плагин**
 
-The `throw error` at line 875 crashes any production build, including Lovable's own build where SSG is not expected to work (no proper SSR environment). SSG should only hard-fail in CI (Docker/GitHub Actions), not in Lovable preview.
+В `vite-plugin-ssg.ts` добавить логирование ключевых фаз:
+- `📂 SSG Phase: Template read` (после чтения template)
+- `📦 SSG Phase: SSR bundle build` (уже есть)
+- `📥 SSG Phase: SSR bundle import` (перед/после import)
+- `🔄 SSG Phase: Route rendering loop` (перед циклом)
 
-## Fix Plan (2 changes, same file)
-
-**1. `vite-plugin-ssg.ts` line 483 — Fix `replaceHeadTags` title regex**
-
+В блоке catch для render(route.path) — логировать полный стектрейс:
 ```
-- html = html.replace(/<title>.*?<\/title>/, helmet.title);
-+ html = html.replace(/<title[^>]*>.*?<\/title>/, helmet.title);
-```
-
-**2. `vite-plugin-ssg.ts` lines 858-875 — Only throw in CI environments**
-
-Wrap the critical-pages guard and re-throw in a `process.env.CI || process.env.GITHUB_ACTIONS` check. In non-CI (Lovable preview), log a warning instead of crashing the build.
-
-```js
-const isCI = process.env.CI || process.env.GITHUB_ACTIONS;
-
-// Critical pages guard
-const criticalPages = [...];
-const missingCritical = criticalPages.filter(...);
-if (missingCritical.length > 0) {
-  const msg = `SSG CRITICAL: Missing critical pages:\n${...}`;
-  if (isCI) throw new Error(msg);
-  else console.warn(msg);
-}
-
-if (successCount === 0) {
-  const msg = 'SSG CRITICAL: Zero pages were generated.';
-  if (isCI) throw new Error(msg);
-  else console.warn(msg);
-}
-
-// catch block: only re-throw in CI
-} catch (error) {
-  console.error('❌ SSG prerendering failed:', error);
-  if (isCI) throw error;
-}
+console.error(`❌ ${route.path}:`, error instanceof Error ? error.stack : error);
 ```
 
-This way:
-- **Lovable preview**: SSG is best-effort, build succeeds even if SSG fails
-- **Docker CI (GitHub Actions)**: build fails red if critical pages are missing
+**C. Политика fail-fast (без изменений)**
+
+Текущая логика уже корректна:
+- `isDockerCI = !!process.env.GITHUB_ACTIONS || !!process.env.DOCKER_BUILD` — throw только в CI/Docker
+- Критичные файлы: `rajony/arbat`, `uslugi/dezinsekciya/klopy`, `uslugi/dezinsekciya/blohi`
+- `successCount === 0` — hard fail в CI
+- В preview — warning only
+
+**D. Smoke-тест в GitHub Actions**
+
+В `.github/workflows/docker-build.yml` после шага `build-and-push` добавить шаг:
+```yaml
+- name: Smoke check critical SSG files
+  run: |
+    docker pull ${{ env.IMAGE_NAME }}:${{ github.sha }}
+    docker run --rm ${{ env.IMAGE_NAME }}:${{ github.sha }} \
+      ls /usr/share/nginx/html/uslugi/dezinsekciya/klopy/index.html \
+         /usr/share/nginx/html/uslugi/dezinsekciya/blohi/index.html \
+         /usr/share/nginx/html/rajony/arbat/index.html
+```
+Если файлов нет — job падает, не давая сломанному образу остаться в `latest`.
+
+### Технические детали
+
+Файлы, которые будут затронуты:
+1. **Новый файл:** `src/ssr/polyfills.ts` — полифилы из entry-server.tsx
+2. **`src/entry-server.tsx`** — удалить inline-полифилы, добавить `import './ssr/polyfills'` первой строкой
+3. **`vite-plugin-ssg.ts`** — добавить фазовые логи и полный стектрейс в catch
+4. **`.github/workflows/docker-build.yml`** — добавить smoke-check шаг
+
+### Acceptance criteria
+
+- `npm run build` проходит в Docker без exit code 1
+- GitHub Actions зелёный, включая smoke-check
+- В `latest` образе существуют: `klopy/index.html`, `blohi/index.html`, `arbat/index.html`
+- `curl -I` по этим URL на сервере возвращает 200
 
