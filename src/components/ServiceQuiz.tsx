@@ -142,6 +142,9 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle }: Servic
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">
             Рассчитать стоимость
           </h2>
+          <div className="tricolor-underline mx-auto mb-4">
+            <span /><span /><span />
+          </div>
           <p className="text-muted-foreground text-lg">
             Ответьте на {steps.length} {pluralizeQuestion(steps.length)} и получите расчёт
           </p>

@@ -31,7 +31,7 @@ All colors MUST be HSL.
     --success-foreground: 0 0% 100%;
 
     --muted: 207 30% 94%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 215 20% 35%;
 
     --accent: 36 100% 50%;
     --accent-foreground: 0 0% 100%;
@@ -82,7 +82,7 @@ All colors MUST be HSL.
     --success-foreground: 0 0% 100%;
 
     --muted: 240 10% 18%;
-    --muted-foreground: 240 5% 65%;
+    --muted-foreground: 240 5% 75%;
 
     --accent: 260 50% 55%;
     --accent-foreground: 0 0% 100%;

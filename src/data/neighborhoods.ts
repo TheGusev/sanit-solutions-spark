@@ -51,8 +51,8 @@ const genFAQ = (name: string, responseTime: string, surcharge: number, prepositi
   const loc = prepositional || `в ${name}`;
   return [
     {
-      question: `Как быстро вы приедете ${loc}?`,
-      answer: `Среднее время прибытия ${loc} составляет ${responseTime}. Работаем круглосуточно.`
+      question: `Время прибытия мастера ${loc}?`,
+      answer: `Среднее время прибытия мастера ${loc} составляет ${responseTime}. Работаем круглосуточно.`
     },
     {
       question: `Сколько стоит дезинфекция ${loc}?`,
