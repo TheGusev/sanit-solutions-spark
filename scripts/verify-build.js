@@ -24,6 +24,14 @@ function WARN(msg) { total++; warn++; console.log(`  ${YELLOW}⚠ WARN${RESET} $
 function CRITICAL(msg) { total++; critical++; console.log(`  ${RED}✗✗ CRITICAL${RESET} ${msg}`); }
 function header(n, title) { console.log(`\n${CYAN}${BOLD}${'═'.repeat(60)}${RESET}\n${CYAN}${BOLD}БЛОК ${n}: ${title}${RESET}\n${CYAN}${BOLD}${'═'.repeat(60)}${RESET}`); }
 
+// ── hasDist gate ─────────────────────────────────────────────
+const hasDist = fs.existsSync('dist/index.html');
+
+if (!hasDist) {
+  console.log(`\n${YELLOW}${BOLD}⚠ dist/ не найден — пропускаем проверки SSG-файлов (блоки 1-3, 5).${RESET}`);
+  console.log(`${YELLOW}  Эти проверки выполняются только в Docker-сборке.${RESET}\n`);
+}
+
 // ══════════════════════════════════════════════════════════════
 // БЛОК 1: ФИЗИЧЕСКОЕ НАЛИЧИЕ ФАЙЛОВ
 // ══════════════════════════════════════════════════════════════
@@ -80,13 +88,17 @@ const criticalPaths = [
 
 const existingFiles = [];
 
-for (const p of criticalPaths) {
-  if (fs.existsSync(p)) {
-    PASS(p);
-    existingFiles.push(p);
-  } else {
-    FAIL(`Файл не найден: ${p}`);
+if (hasDist) {
+  for (const p of criticalPaths) {
+    if (fs.existsSync(p)) {
+      PASS(p);
+      existingFiles.push(p);
+    } else {
+      FAIL(`Файл не найден: ${p}`);
+    }
   }
+} else {
+  console.log('  ⏭ Пропущено (нет dist/)');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -94,16 +106,20 @@ for (const p of criticalPaths) {
 // ══════════════════════════════════════════════════════════════
 header(2, 'ПРОВЕРКА РАЗМЕРА ФАЙЛОВ');
 
-for (const p of existingFiles) {
-  const size = fs.statSync(p).size;
-  const kb = (size / 1024).toFixed(1);
-  if (size < 5000) {
-    CRITICAL(`${p}: ${kb} KB (< 5 KB — пустой/битый)`);
-  } else if (size < 15000) {
-    FAIL(`${p}: ${kb} KB (< 15 KB — вероятно NotFound)`);
-  } else {
-    PASS(`${p}: ${kb} KB`);
+if (hasDist) {
+  for (const p of existingFiles) {
+    const size = fs.statSync(p).size;
+    const kb = (size / 1024).toFixed(1);
+    if (size < 5000) {
+      CRITICAL(`${p}: ${kb} KB (< 5 KB — пустой/битый)`);
+    } else if (size < 15000) {
+      FAIL(`${p}: ${kb} KB (< 15 KB — вероятно NotFound)`);
+    } else {
+      PASS(`${p}: ${kb} KB`);
+    }
   }
+} else {
+  console.log('  ⏭ Пропущено (нет dist/)');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -126,83 +142,85 @@ const forbiddenStrings = [
   'console.log',
 ];
 
-for (const p of existingFiles) {
-  const html = fs.readFileSync(p, 'utf-8');
-  const label = p.replace('dist/', '');
+if (hasDist) {
+  for (const p of existingFiles) {
+    const html = fs.readFileSync(p, 'utf-8');
+    const label = p.replace('dist/', '');
 
-  // 3.1 — Required tags
-  const titleMatch = html.match(/<title>([^<]*)<\/title>/);
-  if (!titleMatch || titleMatch[1].length < 20) {
-    FAIL(`[${label}] <title> отсутствует или < 20 символов`);
-  } else {
-    PASS(`[${label}] <title> OK (${titleMatch[1].length} символов)`);
-  }
-
-  const descMatch = html.match(/<meta\s+name=["']description["']\s+content=["']([^"']*)["']/i);
-  if (!descMatch || descMatch[1].length < 50) {
-    FAIL(`[${label}] meta description отсутствует или < 50 символов`);
-  } else {
-    PASS(`[${label}] meta description OK`);
-  }
-
-  const canonicalMatch = html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']*)["']/i);
-  if (!canonicalMatch || !canonicalMatch[1]) {
-    FAIL(`[${label}] canonical отсутствует`);
-  } else {
-    PASS(`[${label}] canonical OK`);
-  }
-
-  const h1Matches = html.match(/<h1[\s>]/gi);
-  if (!h1Matches || h1Matches.length === 0) {
-    FAIL(`[${label}] нет <h1>`);
-  } else if (h1Matches.length > 1) {
-    FAIL(`[${label}] найдено ${h1Matches.length} тегов <h1> (должен быть 1)`);
-  } else {
-    PASS(`[${label}] <h1> OK`);
-  }
-
-  if (html.includes('window.ym') || html.includes('ym(')) {
-    PASS(`[${label}] Яндекс.Метрика OK`);
-  } else {
-    FAIL(`[${label}] Яндекс.Метрика не найдена`);
-  }
-
-  if (html.includes('"@context"') && html.includes('schema.org')) {
-    PASS(`[${label}] Schema.org OK`);
-  } else {
-    FAIL(`[${label}] Schema.org не найдена`);
-  }
-
-  // 3.2 — Forbidden strings
-  for (const forbidden of forbiddenStrings) {
-    // Skip console.log check in script tags
-    if (forbidden === 'console.log') {
-      // Only check outside of <script> tags
-      const withoutScripts = html.replace(/<script[\s\S]*?<\/script>/gi, '');
-      if (withoutScripts.includes(forbidden)) {
-        FAIL(`[${label}] Найден "${forbidden}" вне <script>`);
-      }
-    } else if (forbidden === 'TODO' || forbidden === 'FIXME') {
-      const withoutScripts = html.replace(/<script[\s\S]*?<\/script>/gi, '');
-      if (withoutScripts.includes(forbidden)) {
-        FAIL(`[${label}] Найден "${forbidden}" вне <script>`);
-      }
+    // 3.1 — Required tags
+    const titleMatch = html.match(/<title>([^<]*)<\/title>/);
+    if (!titleMatch || titleMatch[1].length < 20) {
+      FAIL(`[${label}] <title> отсутствует или < 20 символов`);
     } else {
-      if (html.includes(forbidden)) {
-        FAIL(`[${label}] Найден запрещённый текст: "${forbidden}"`);
+      PASS(`[${label}] <title> OK (${titleMatch[1].length} символов)`);
+    }
+
+    const descMatch = html.match(/<meta\s+name=["']description["']\s+content=["']([^"']*)["']/i);
+    if (!descMatch || descMatch[1].length < 50) {
+      FAIL(`[${label}] meta description отсутствует или < 50 символов`);
+    } else {
+      PASS(`[${label}] meta description OK`);
+    }
+
+    const canonicalMatch = html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']*)["']/i);
+    if (!canonicalMatch || !canonicalMatch[1]) {
+      FAIL(`[${label}] canonical отсутствует`);
+    } else {
+      PASS(`[${label}] canonical OK`);
+    }
+
+    const h1Matches = html.match(/<h1[\s>]/gi);
+    if (!h1Matches || h1Matches.length === 0) {
+      FAIL(`[${label}] нет <h1>`);
+    } else if (h1Matches.length > 1) {
+      FAIL(`[${label}] найдено ${h1Matches.length} тегов <h1> (должен быть 1)`);
+    } else {
+      PASS(`[${label}] <h1> OK`);
+    }
+
+    if (html.includes('window.ym') || html.includes('ym(')) {
+      PASS(`[${label}] Яндекс.Метрика OK`);
+    } else {
+      FAIL(`[${label}] Яндекс.Метрика не найдена`);
+    }
+
+    if (html.includes('"@context"') && html.includes('schema.org')) {
+      PASS(`[${label}] Schema.org OK`);
+    } else {
+      FAIL(`[${label}] Schema.org не найдена`);
+    }
+
+    // 3.2 — Forbidden strings
+    for (const forbidden of forbiddenStrings) {
+      if (forbidden === 'console.log') {
+        const withoutScripts = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+        if (withoutScripts.includes(forbidden)) {
+          FAIL(`[${label}] Найден "${forbidden}" вне <script>`);
+        }
+      } else if (forbidden === 'TODO' || forbidden === 'FIXME') {
+        const withoutScripts = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+        if (withoutScripts.includes(forbidden)) {
+          FAIL(`[${label}] Найден "${forbidden}" вне <script>`);
+        }
+      } else {
+        if (html.includes(forbidden)) {
+          FAIL(`[${label}] Найден запрещённый текст: "${forbidden}"`);
+        }
+      }
+    }
+
+    // 3.3 — Canonical domain check
+    if (canonicalMatch && canonicalMatch[1]) {
+      const href = canonicalMatch[1];
+      if (!href.startsWith('https://goruslugimsk.ru')) {
+        FAIL(`[${label}] Canonical не начинается с https://goruslugimsk.ru: ${href}`);
+      } else {
+        PASS(`[${label}] Canonical домен OK`);
       }
     }
   }
-
-  // 3.3 — Canonical domain check
-  if (canonicalMatch && canonicalMatch[1]) {
-    const href = canonicalMatch[1];
-    if (!href.startsWith('https://goruslugimsk.ru')) {
-      FAIL(`[${label}] Canonical не начинается с https://goruslugimsk.ru: ${href}`);
-    } else {
-      PASS(`[${label}] Canonical домен OK`);
-    }
-  }
+} else {
+  console.log('  ⏭ Пропущено (нет dist/)');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -262,78 +280,75 @@ checkFileContains('src/components/LeadFormModal.tsx', [
 // ══════════════════════════════════════════════════════════════
 header(5, 'SITEMAP');
 
-const sitemapIndexPath = fs.existsSync('dist/sitemap-index.xml') ? 'dist/sitemap-index.xml' : (fs.existsSync('dist/sitemap.xml') ? 'dist/sitemap.xml' : null);
+if (hasDist) {
+  const sitemapIndexPath = fs.existsSync('dist/sitemap-index.xml') ? 'dist/sitemap-index.xml' : (fs.existsSync('dist/sitemap.xml') ? 'dist/sitemap.xml' : null);
 
-if (!sitemapIndexPath) {
-  FAIL('Sitemap не найден (ни sitemap-index.xml, ни sitemap.xml)');
-} else {
-  PASS(`Sitemap найден: ${sitemapIndexPath}`);
-  const sitemapContent = fs.readFileSync(sitemapIndexPath, 'utf-8');
-
-  // Count sub-sitemaps or URLs
-  const sitemapTags = (sitemapContent.match(/<sitemap>/gi) || []).length;
-  const urlTags = (sitemapContent.match(/<url>/gi) || []).length;
-
-  if (sitemapTags > 0) {
-    PASS(`Sub-sitemaps в индексе: ${sitemapTags}`);
-    // Read each sub-sitemap and count total URLs
-    const locMatches = sitemapContent.match(/<loc>([^<]+)<\/loc>/gi) || [];
-    let totalUrls = 0;
-    for (const locTag of locMatches) {
-      const loc = locTag.replace(/<\/?loc>/g, '');
-      // Convert URL to local path
-      const localPath = loc.replace('https://goruslugimsk.ru/', 'dist/');
-      if (fs.existsSync(localPath)) {
-        const subContent = fs.readFileSync(localPath, 'utf-8');
-        totalUrls += (subContent.match(/<url>/gi) || []).length;
-      }
-    }
-    if (totalUrls >= 700) {
-      PASS(`Всего URL в sub-sitemaps: ${totalUrls} (≥700)`);
-    } else if (totalUrls > 0) {
-      FAIL(`Всего URL в sub-sitemaps: ${totalUrls} (< 700)`);
-    }
-  } else if (urlTags >= 700) {
-    PASS(`URL в sitemap: ${urlTags} (≥700)`);
+  if (!sitemapIndexPath) {
+    FAIL('Sitemap не найден (ни sitemap-index.xml, ни sitemap.xml)');
   } else {
-    FAIL(`URL в sitemap: ${urlTags} (< 700)`);
-  }
+    PASS(`Sitemap найден: ${sitemapIndexPath}`);
+    const sitemapContent = fs.readFileSync(sitemapIndexPath, 'utf-8');
 
-  // Check for bad domains
-  if (sitemapContent.includes('lovable.app') || sitemapContent.includes('localhost')) {
-    FAIL('Sitemap содержит lovable.app или localhost');
-  } else {
-    PASS('Sitemap: нет lovable.app/localhost');
-  }
+    const sitemapTags = (sitemapContent.match(/<sitemap>/gi) || []).length;
+    const urlTags = (sitemapContent.match(/<url>/gi) || []).length;
 
-  // Critical URLs
-  const criticalSitemapUrls = [
-    'https://goruslugimsk.ru/uslugi/dezinsekciya/klopy/',
-    'https://goruslugimsk.ru/sluzhba-dezinsekcii/',
-    'https://goruslugimsk.ru/otzyvy/',
-  ];
-
-  // Check in index or sub-sitemaps
-  let allSitemapText = sitemapContent;
-  // Also load sub-sitemaps if index
-  if (sitemapTags > 0) {
-    const locMatches2 = sitemapContent.match(/<loc>([^<]+)<\/loc>/gi) || [];
-    for (const locTag of locMatches2) {
-      const loc = locTag.replace(/<\/?loc>/g, '');
-      const localPath = loc.replace('https://goruslugimsk.ru/', 'dist/');
-      if (fs.existsSync(localPath)) {
-        allSitemapText += fs.readFileSync(localPath, 'utf-8');
+    if (sitemapTags > 0) {
+      PASS(`Sub-sitemaps в индексе: ${sitemapTags}`);
+      const locMatches = sitemapContent.match(/<loc>([^<]+)<\/loc>/gi) || [];
+      let totalUrls = 0;
+      for (const locTag of locMatches) {
+        const loc = locTag.replace(/<\/?loc>/g, '');
+        const localPath = loc.replace('https://goruslugimsk.ru/', 'dist/');
+        if (fs.existsSync(localPath)) {
+          const subContent = fs.readFileSync(localPath, 'utf-8');
+          totalUrls += (subContent.match(/<url>/gi) || []).length;
+        }
       }
-    }
-  }
-
-  for (const url of criticalSitemapUrls) {
-    if (allSitemapText.includes(url)) {
-      PASS(`Sitemap содержит ${url}`);
+      if (totalUrls >= 700) {
+        PASS(`Всего URL в sub-sitemaps: ${totalUrls} (≥700)`);
+      } else if (totalUrls > 0) {
+        FAIL(`Всего URL в sub-sitemaps: ${totalUrls} (< 700)`);
+      }
+    } else if (urlTags >= 700) {
+      PASS(`URL в sitemap: ${urlTags} (≥700)`);
     } else {
-      FAIL(`Sitemap НЕ содержит ${url}`);
+      FAIL(`URL в sitemap: ${urlTags} (< 700)`);
+    }
+
+    if (sitemapContent.includes('lovable.app') || sitemapContent.includes('localhost')) {
+      FAIL('Sitemap содержит lovable.app или localhost');
+    } else {
+      PASS('Sitemap: нет lovable.app/localhost');
+    }
+
+    const criticalSitemapUrls = [
+      'https://goruslugimsk.ru/uslugi/dezinsekciya/klopy/',
+      'https://goruslugimsk.ru/sluzhba-dezinsekcii/',
+      'https://goruslugimsk.ru/otzyvy/',
+    ];
+
+    let allSitemapText = sitemapContent;
+    if (sitemapTags > 0) {
+      const locMatches2 = sitemapContent.match(/<loc>([^<]+)<\/loc>/gi) || [];
+      for (const locTag of locMatches2) {
+        const loc = locTag.replace(/<\/?loc>/g, '');
+        const localPath = loc.replace('https://goruslugimsk.ru/', 'dist/');
+        if (fs.existsSync(localPath)) {
+          allSitemapText += fs.readFileSync(localPath, 'utf-8');
+        }
+      }
+    }
+
+    for (const url of criticalSitemapUrls) {
+      if (allSitemapText.includes(url)) {
+        PASS(`Sitemap содержит ${url}`);
+      } else {
+        FAIL(`Sitemap НЕ содержит ${url}`);
+      }
     }
   }
+} else {
+  console.log('  ⏭ Пропущено (нет dist/)');
 }
 
 // ══════════════════════════════════════════════════════════════
