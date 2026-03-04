@@ -206,7 +206,7 @@ const ServiceSubpage = () => {
         <section className="py-12 md:py-20">
           <div className="container mx-auto px-4">
             <AnimatedSection animation="fade-up" className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">Стоимость {subpage.title.toLowerCase()}</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">Стоимость {subpage.title.toLowerCase()} в Москве и МО</h2>
             </AnimatedSection>
             
             <div className="overflow-x-auto mb-8">
@@ -314,7 +314,7 @@ const ServiceSubpage = () => {
         <section className="py-12 md:py-20 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Закажите {subpage.title.toLowerCase()} сегодня</h2>
-            <p className="text-lg opacity-90 mb-8">Выезд специалиста за 30 минут. Работаем круглосуточно.</p>
+            <p className="text-lg opacity-90 mb-8">Выезд специалиста за 30 минут по Москве и МО. Работаем круглосуточно.</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" variant="secondary" onClick={handleCalculatorClick}>Рассчитать стоимость</Button>
               <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" asChild>
@@ -351,10 +351,10 @@ const ServiceSubpage = () => {
         <section className="py-12 md:py-16 bg-muted/30">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
-              Услуга по округам Москвы
+              Услуга по округам Москвы и МО
             </h2>
             <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-8">
-              Работаем во всех административных округах столицы с выездом от 15 минут
+              Работаем во всех округах Москвы и городах МО с выездом от 15 минут
             </p>
 
             <div className="flex flex-wrap justify-center gap-3">
