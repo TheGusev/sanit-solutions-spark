@@ -1,56 +1,39 @@
 
 
-## Plan: 4 точечных правки
+## Plan: Обновить статические HTML-файлы услуг — добавить «и МО»
 
-### 1. Карточка «Обработка участков» в MiniPricing + меню Header
+Предыдущие правки затронули только React-компоненты (`src/data/services.ts`, `ServicePage.tsx`). Но в `public/uslugi/` лежат **5 статических HTML-файлов** основных услуг, которые поисковики индексируют напрямую — в них до сих пор написано «в Москве» без «и МО».
 
-**MiniPricing.tsx** (line 13): добавить новый элемент в массив `services`:
-```ts
-{ icon: TreePine, title: "Обработка участков", href: "/uslugi/obrabotka-uchastkov" },
+Дубль цены уже удалён из `ServicePage.tsx`. В статических HTML дубля нет.
+
+### Файлы для правки
+
+| Файл | Что менять |
+|---|---|
+| `public/uslugi/dezinfekciya/index.html` | title, og:title, twitter:title, og:alt, description, h1, JSON-LD — добавить «и МО» |
+| `public/uslugi/dezinsekciya/index.html` | то же самое |
+| `public/uslugi/deratizaciya/index.html` | то же самое |
+| `public/uslugi/ozonirovanie/index.html` | то же самое |
+| `public/uslugi/dezodoraciya/index.html` | то же самое |
+
+### Что НЕ трогаем
+
+- Окружные страницы (`dezinfekciya-cao`, `dezinfekciya-szao` и т.д.) — там «в Москве» используется в контексте «в [округе] Москвы», это корректно
+- React-компоненты — уже обновлены ранее
+- Роутинг, стили, логика — без изменений
+
+### Примеры замен (dezinfekciya)
+
 ```
-Импорт `TreePine` уже есть. Сетка `grid-cols-2` на мобильном покажет 8 карточек (4 ряда по 2).
+"Дезинфекция помещений в Москве — от 1000₽"
+→ "Дезинфекция помещений в Москве и МО — от 1000₽"
 
-**Header.tsx** (line 113): добавить в `servicesMenu` после «Борьба с кротами»:
-```ts
-{ title: "Обработка участков", href: "/uslugi/obrabotka-uchastkov", subItems: [] },
-```
+"дезинфекция в Москве"  (og:image:alt)
+→ "дезинфекция в Москве и МО"
 
-### 2. Раздел «Обработка участков» в PricingByArea (полный прайс)
-
-**PricingByArea.tsx**: добавить строки в `servicePricesData` и новую группу в `groupedServices`:
-- «Обработка участка до 6 соток — от 4 000 ₽»
-- «Обработка участка 6–10 соток — от 5 500 ₽»
-- «Обработка участка 10–20 соток — от 8 000 ₽»
-
-Также добавить «Демеркуризация» и «Борьба с кротами», которых сейчас нет в прайсе:
-- Демеркуризация — квартира от 3 000 ₽
-- Борьба с кротами — участок до 6 соток от 3 000 ₽, 6–15 соток от 5 000 ₽
-
-### 3. «в Москве» → «в Москве и МО» в heroTitle и metaTitle
-
-**src/data/services.ts**: Обновить 6 записей, где `heroTitle` содержит «в Москве» без «и МО»:
-- dezinfekciya: heroTitle, metaTitle
-- dezinsekciya: heroTitle, metaTitle
-- deratizaciya: heroTitle, metaTitle
-- ozonirovanie: heroTitle, metaTitle
-- dezodoraciya: heroTitle, metaTitle
-- demerkurizaciya: heroTitle, metaTitle
-
-Также обновить заголовок таблицы цен в **ServicePage.tsx** (line 507):
-```
-`Стоимость ${service.title.toLowerCase()} в Москве` → `Стоимость ${service.title.toLowerCase()} в Москве и МО`
+JSON-LD description: "...в Москве"
+→ "...в Москве и МО"
 ```
 
-И в **PricingByArea.tsx** (line 60):
-```
-"Цены на услуги в Москве" → "Цены на услуги в Москве и МО"
-```
-
-### 4. Убрать дубль цены на ServicePage
-
-**ServicePage.tsx** (lines 324-339): удалить секцию «Price highlight» — синюю полосу с `от X ₽ за Y`. Цена уже показана в блоке тарифов выше и в таблице цен ниже.
-
----
-
-**Итого**: 4 файла, ~30 строк изменений. Роутинг, логика, стили не затрагиваются.
+Аналогично для остальных 4 файлов. Итого ~30 точечных замен текста в 5 файлах.
 
