@@ -201,7 +201,7 @@ export default function ServicePestPage() {
                 </div>
                 
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                  Уничтожение {pest.genitive} в Москве
+                  Уничтожение {pest.genitive} в Москве и МО
                 </h1>
                 
                 <p className="text-lg md:text-xl text-muted-foreground mb-4">
@@ -300,7 +300,7 @@ export default function ServicePestPage() {
         <AnimatedSection className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto text-center">
-              <h2 className="text-2xl font-bold mb-4">Стоимость уничтожения {pest.genitive}</h2>
+              <h2 className="text-2xl font-bold mb-4">Стоимость уничтожения {pest.genitive} в Москве и МО</h2>
               <div className="bg-background rounded-xl p-6 shadow-sm">
                 <div className="text-4xl font-bold text-primary mb-2">
                   от {pest.priceFrom}₽
@@ -490,7 +490,7 @@ export default function ServicePestPage() {
         <AnimatedSection className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6 text-center">
-              Уничтожение {pest.genitive} по районам Москвы
+              Уничтожение {pest.genitive} по районам Москвы и МО
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
               {topNeighborhoodData.map((neighborhood) => neighborhood && (
@@ -518,7 +518,7 @@ export default function ServicePestPage() {
               Закажите уничтожение {pest.genitive} сейчас
             </h2>
             <p className="text-lg opacity-90 mb-6">
-              Выезд мастера в течение 1 часа. Работаем 24/7.
+              Выезд мастера в течение 1 часа по Москве и МО. Работаем 24/7.
             </p>
             <Button size="lg" variant="secondary" asChild className="whitespace-normal">
               <a href={`tel:${SEO_CONFIG.phoneClean}`}>
