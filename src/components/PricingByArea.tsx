@@ -24,6 +24,12 @@ const servicePricesData = [
   { id: 12, service: "Озонирование", object: "Офис 50-100 м²", price: "от 2000 ₽" },
   { id: 13, service: "Дезодорация", object: "Квартира", price: "от 1200 ₽" },
   { id: 14, service: "Дезодорация", object: "После пожара/затопления", price: "от 2500 ₽" },
+  { id: 15, service: "Демеркуризация", object: "Квартира (разбитый градусник)", price: "от 3000 ₽" },
+  { id: 16, service: "Борьба с кротами", object: "Участок до 6 соток", price: "от 3000 ₽" },
+  { id: 17, service: "Борьба с кротами", object: "Участок 6–15 соток", price: "от 5000 ₽" },
+  { id: 18, service: "Обработка участков", object: "Участок до 6 соток", price: "от 4000 ₽" },
+  { id: 19, service: "Обработка участков", object: "Участок 6–10 соток", price: "от 5500 ₽" },
+  { id: 20, service: "Обработка участков", object: "Участок 10–20 соток", price: "от 8000 ₽" },
 ];
 
 // Группировка услуг по типу для accordion
@@ -33,6 +39,9 @@ const groupedServices = {
   "Дератизация": servicePricesData.filter(s => s.service.startsWith("Дератизация")),
   "Озонирование": servicePricesData.filter(s => s.service.startsWith("Озонирование")),
   "Дезодорация": servicePricesData.filter(s => s.service.startsWith("Дезодорация")),
+  "Демеркуризация": servicePricesData.filter(s => s.service.startsWith("Демеркуризация")),
+  "Борьба с кротами": servicePricesData.filter(s => s.service.startsWith("Борьба с кротами")),
+  "Обработка участков": servicePricesData.filter(s => s.service.startsWith("Обработка участков")),
 };
 
 // Что входит в стоимость (для примечаний)
@@ -57,7 +66,7 @@ const PricingByArea = () => {
       <div className="container mx-auto px-4">
         <SectionHeading
           label="СТОИМОСТЬ"
-          title="Цены на услуги в Москве"
+          title="Цены на услуги в Москве и МО"
           subtitle="Прозрачное ценообразование. Выезд и диагностика в пределах МКАД — бесплатно!"
         />
 

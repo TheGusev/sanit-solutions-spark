@@ -1,4 +1,4 @@
-import { Microscope, Bug, Rat, Sparkles, Wind, AlertTriangle, Mountain, ChevronRight } from "lucide-react";
+import { Microscope, Bug, Rat, Sparkles, Wind, AlertTriangle, Mountain, TreePine, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -11,6 +11,7 @@ const services = [
   { icon: Wind, title: "Удаление запахов", href: "/uslugi/dezodoraciya" },
   { icon: AlertTriangle, title: "Демеркуризация", href: "/uslugi/demerkurizaciya" },
   { icon: Mountain, title: "Борьба с кротами", href: "/uslugi/borba-s-krotami" },
+  { icon: TreePine, title: "Обработка участков", href: "/uslugi/obrabotka-uchastkov" },
 ];
 
 const MiniPricing = ({ citySlug }: { citySlug?: string }) => {

@@ -321,22 +321,6 @@ const ServicePage = () => {
           )}
         </LazySection>
 
-        {/* Price highlight */}
-        <section className="py-6 bg-primary text-primary-foreground">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="text-center md:text-left">
-                <span className="text-lg opacity-90">Стоимость услуги</span>
-                <div className="text-3xl md:text-4xl font-bold">
-                  от {service.priceFrom.toLocaleString('ru-RU')} ₽ <span className="text-lg font-normal opacity-80">за {service.pricePer}</span>
-                </div>
-              </div>
-              <Button size="lg" variant="secondary" onClick={handleCalculatorClick}>
-                Узнать точную цену
-              </Button>
-            </div>
-          </div>
-        </section>
 
         {/* When Needed (NEW) */}
         {service.whenNeeded && (
@@ -504,7 +488,7 @@ const ServicePage = () => {
           <section id="pricing-by-area" className="py-12 md:py-20">
             <div className="container mx-auto px-4">
               <AnimatedSection animation="fade-up">
-                <SectionHeading label="СТОИМОСТЬ" title={`Стоимость ${service.title.toLowerCase()} в Москве`} />
+                <SectionHeading label="СТОИМОСТЬ" title={`Стоимость ${service.title.toLowerCase()} в Москве и МО`} />
               </AnimatedSection>
 
               <div className="max-w-4xl mx-auto">
