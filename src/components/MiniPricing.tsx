@@ -31,7 +31,7 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
         backgroundPosition: "center",
       }}
     >
-      <div className="absolute inset-0 bg-black/55" />
+      <div className="absolute inset-0 bg-black/35" />
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading
           label="НАШИ УСЛУГИ"
@@ -39,7 +39,7 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
           subtitle="Профессиональная санитарная обработка любых объектов"
           className="text-white [&_p]:text-white/80 [&_span]:text-white/60"
         />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-5xl mx-auto mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
@@ -48,11 +48,11 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
                 to={citySlug ? `/goroda/${citySlug}${service.href}` : service.href}
                 className="group"
               >
-                <div className="bg-card rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all card-top-gradient">
-                  <h3 className="text-sm font-medium text-foreground mb-3 leading-tight min-h-[2.5rem]">
+                <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all">
+                  <h3 className="text-sm font-medium text-white mb-3 leading-tight min-h-[2.5rem]">
                     {service.title}
                   </h3>
-                  <span className="text-xs text-muted-foreground flex items-center justify-center">
+                  <span className="text-xs text-white/70 flex items-center justify-center">
                     Подробнее
                     <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   </span>
@@ -66,7 +66,7 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
             onClick={scrollToPricing}
             variant="outline"
             size="lg"
-            className="font-semibold border-white text-white hover:bg-white/20"
+            className="font-semibold border-white text-white bg-white/15 backdrop-blur-sm hover:bg-white/25"
           >
             Смотреть полный прайс
           </Button>
