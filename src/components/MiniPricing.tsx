@@ -23,12 +23,21 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
   };
 
   return (
-    <section className="py-10 md:py-16 bg-muted/30">
-      <div className="container mx-auto px-4">
+    <section
+      className="relative py-10 md:py-16"
+      style={{
+        backgroundImage: "url('/images/services-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="absolute inset-0 bg-black/55" />
+      <div className="container mx-auto px-4 relative z-10">
         <SectionHeading
           label="НАШИ УСЛУГИ"
           title="Основные услуги"
           subtitle="Профессиональная санитарная обработка любых объектов"
+          className="text-white [&_p]:text-white/80 [&_span]:text-white/60"
         />
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-5xl mx-auto mb-8">
           {services.map((service, index) => {
@@ -57,7 +66,7 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
             onClick={scrollToPricing}
             variant="outline"
             size="lg"
-            className="font-semibold"
+            className="font-semibold border-white text-white hover:bg-white/20"
           >
             Смотреть полный прайс
           </Button>
