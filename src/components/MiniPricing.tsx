@@ -39,7 +39,7 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
           subtitle="Профессиональная санитарная обработка любых объектов"
           className="text-white [&_p]:text-white/80 [&_span]:text-white/60 [&_.tricolor-underline]:hidden"
         />
-        <div className="h-[2px] w-24 mx-auto rounded-full bg-gradient-to-r from-sky-400/80 via-cyan-400/80 to-emerald-400/80 -mt-4 mb-8" />
+        <div className="h-[2px] w-32 mx-auto rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 -mt-4 mb-8" />
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
           {services.map((service, index) => {
             const Icon = service.icon;
@@ -49,11 +49,11 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
                 to={citySlug ? `/goroda/${citySlug}${service.href}` : service.href}
                 className="group"
               >
-                <div className="rounded-2xl border border-white/50 bg-white/35 backdrop-blur-xl shadow-[0_18px_40px_rgba(15,23,42,0.25)] p-4 text-center transition hover:border-white/80 hover:bg-white/45 hover:-translate-y-1 hover:shadow-[0_22px_50px_rgba(15,23,42,0.35)] dark:border-white/25 dark:bg-slate-900/35 dark:hover:bg-slate-900/45">
-                  <h3 className="text-sm font-medium text-white mb-3 leading-tight min-h-[2.5rem]">
+                <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-white/35 backdrop-blur-xl shadow-[0_18px_40px_rgba(15,23,42,0.25)] p-4 text-center transition hover:border-white/80 hover:bg-white/45 hover:-translate-y-1 hover:shadow-[0_22px_50px_rgba(15,23,42,0.35)] dark:border-white/25 dark:bg-slate-900/35 dark:hover:bg-slate-900/45 before:absolute before:top-0 before:left-[10%] before:right-[10%] before:h-[2px] before:bg-gradient-to-r before:from-blue-500 before:via-cyan-400 before:to-purple-500 before:rounded-full before:blur-[1px]">
+                  <h3 className="relative z-[1] text-sm font-medium text-white mb-3 leading-tight min-h-[2.5rem]">
                     {service.title}
                   </h3>
-                  <span className="text-xs text-white/70 flex items-center justify-center">
+                  <span className="relative z-[1] text-xs text-white/70 flex items-center justify-center">
                     Подробнее
                     <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   </span>
