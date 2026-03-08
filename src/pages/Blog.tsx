@@ -44,12 +44,22 @@ const topFeaturedSlugs = [
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
   const [visibleCount, setVisibleCount] = useState(30);
+  const [sortBy, setSortBy] = useState<SortMode>('default');
 
   const baseList = selectedCategory === "Все" 
     ? allBlogArticles 
     : allBlogArticles.filter(post => post.category === selectedCategory);
 
   const filteredPosts = [...baseList].sort((a, b) => {
+    if (sortBy === 'newest') {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    }
+    if (sortBy === 'popular') {
+      const aPopular = popularSlugs.includes(a.slug) ? 0 : 1;
+      const bPopular = popularSlugs.includes(b.slug) ? 0 : 1;
+      return aPopular - bPopular;
+    }
+    // default: featured first
     const aIdx = topFeaturedSlugs.indexOf(a.slug);
     const bIdx = topFeaturedSlugs.indexOf(b.slug);
     if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
