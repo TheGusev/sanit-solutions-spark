@@ -141,6 +141,13 @@ const BlogPost = () => {
               { label: post.title }
             ]} 
           />
+          <Link 
+            to="/blog" 
+            className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-primary hover:underline"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Все статьи
+          </Link>
         </div>
       </section>
 

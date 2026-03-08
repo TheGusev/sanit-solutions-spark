@@ -218,7 +218,7 @@ const Blog = () => {
                   <div className="rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs px-2.5 py-0.5 rounded-full border border-border text-muted-foreground font-medium">
+                         <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
                           {post.category}
                         </span>
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
