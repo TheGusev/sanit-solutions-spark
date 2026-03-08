@@ -7,7 +7,6 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import { allBlogArticles, blogCategories } from "@/data/blog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { 
   BookOpen, Sparkles, TrendingUp, LayoutGrid, Bug, FlaskConical,
   FileText, Shield, Lightbulb, Scale, Mouse
