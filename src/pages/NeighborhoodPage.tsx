@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Clock, Phone, ArrowRight, Shield, Award, CheckCircle } from 'lucide-react';
+import { MapPin, Clock, Phone, ArrowRight, Shield, Award, CheckCircle, Home, Building2, UtensilsCrossed, Warehouse, Factory, Bug } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
