@@ -60,8 +60,7 @@ const serviceSubpageRoutes = [
   { parent: 'dezinsekciya', sub: 'postelnyh-klopov' },
   { parent: 'dezinsekciya', sub: 'domashnih-klopov' },
   { parent: 'dezinsekciya', sub: 'tarakanov-v-kvartire' },
-  { parent: 'dezinsekciya', sub: 'klopov-i-tarakanov' },
-  { parent: 'dezinsekciya', sub: 'klopov-i-bloh' },
+  // REMOVED: klopov-i-tarakanov, klopov-i-bloh — combo pages redirected (Issue #5)
   { parent: 'dezinsekciya', sub: 'blokh-ot-zhivotnyh' },
   // Методы обработки
   { parent: 'dezinsekciya', sub: 'holodnym-tumanom' },
