@@ -369,6 +369,18 @@ const moscowRegionEntries: SemanticEntry[] = moCities.flatMap(city =>
   }))
 );
 
+// ===================== КЛАСТЕР: MO city + pest (40 записей = 4 вредителя × 10 городов) =====================
+
+const moPestEntries: SemanticEntry[] = moCities.flatMap(city =>
+  tier1Pests.map(pest => ({
+    query: `уничтожение ${pestNamesGen[pest]} ${city.name}`,
+    canonical: `/moscow-oblast/${city.slug}/dezinsekciya/`,
+    intent: 'commercial' as const,
+    cluster: 'nch' as const,
+    priority: 4 as 1 | 2 | 3 | 4 | 5,
+  }))
+);
+
 // ===================== ОБЪЕДИНЁННОЕ ЯДРО =====================
 
 export const semanticCore: SemanticEntry[] = [
