@@ -13,6 +13,7 @@ import CalculatorModal from '@/components/CalculatorModal';
 import InternalLinks from '@/components/InternalLinks';
 import { ImageGallery } from '@/components/ImageGallery';
 import { getNeighborhoodBySlug, getNeighborhoodsByDistrict } from '@/data/neighborhoods';
+import { allBlogArticles } from '@/data/blog';
 import { getDistrictById } from '@/data/districtPages';
 import { getNeighborhoodContent } from '@/data/neighborhoodContent';
 import { generateNeighborhoodContent } from '@/lib/neighborhoodContentGenerator';
