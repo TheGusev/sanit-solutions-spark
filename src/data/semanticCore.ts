@@ -344,7 +344,7 @@ const blogEntries: SemanticEntry[] = [
   { query: 'аллергия на препараты дезинсекции', canonical: '/blog/allergiya-na-preparaty-dezinsekcii/', intent: 'informational', cluster: 'blog', priority: 3 },
 ];
 
-// ===================== КЛАСТЕР: moscow-region (40 записей = 10 городов × 4 услуги) =====================
+// ===================== КЛАСТЕР: moscow-region (56 записей = 14 городов × 4 услуги) =====================
 
 const moServiceNames: Record<string, string> = {
   dezinsekciya: 'дезинсекция', dezinfekciya: 'дезинфекция',
@@ -356,6 +356,8 @@ const moCities = [
   { slug: 'podolsk', name: 'подольск' }, { slug: 'korolyov', name: 'королёв' },
   { slug: 'lyubertsy', name: 'люберцы' }, { slug: 'odintsovo', name: 'одинцово' },
   { slug: 'dolgoprudny', name: 'долгопрудный' }, { slug: 'shchyolkovo', name: 'щёлково' },
+  { slug: 'klin', name: 'клин' }, { slug: 'ramenskoe', name: 'раменское' },
+  { slug: 'chekhov', name: 'чехов' }, { slug: 'domodedovo', name: 'домодедово' },
 ];
 const moServices = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'] as const;
 
@@ -369,7 +371,7 @@ const moscowRegionEntries: SemanticEntry[] = moCities.flatMap(city =>
   }))
 );
 
-// ===================== КЛАСТЕР: MO city + pest (40 записей = 4 вредителя × 10 городов) =====================
+// ===================== КЛАСТЕР: MO city + pest (56 записей = 4 вредителя × 14 городов) =====================
 
 const moPestEntries: SemanticEntry[] = moCities.flatMap(city =>
   tier1Pests.map(pest => ({
