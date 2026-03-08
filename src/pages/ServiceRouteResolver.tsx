@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import { getSubpageByPath } from '@/data/serviceSubpages';
 import { getPestBySlug } from '@/data/pests';
 import { getObjectBySlug } from '@/data/objects';
-import { neighborhoods } from '@/data/neighborhoods';
+// neighborhoods import removed — geo pages now at /rajony/ only
 
 import ServiceSubpage from './ServiceSubpage';
 import ServicePestPage from './ServicePestPage';
