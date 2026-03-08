@@ -270,7 +270,7 @@ export function getAllSSGRoutes() {
   
   // Обзорная страница округов
   routes.push({
-    path: '/uslugi/po-okrugam-moskvy',
+    path: '/uslugi/po-okrugam-moskvy/',
     outputPath: 'uslugi/po-okrugam-moskvy/index.html',
     priority: '0.85',
     changefreq: 'monthly'
@@ -279,7 +279,7 @@ export function getAllSSGRoutes() {
   // Страницы округов
   districtSlugs.forEach(id => {
     routes.push({
-      path: `/uslugi/dezinfekciya-${id}`,
+      path: `/uslugi/dezinfekciya-${id}/`,
       outputPath: `uslugi/dezinfekciya-${id}/index.html`,
       priority: '0.85',
       changefreq: 'monthly'
