@@ -156,11 +156,20 @@ const neighborhoodSlugs = [
   'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5'
 ];
 
-// Топ-районы для НЧ-страниц
+// Топ-районы для НЧ-страниц — tiered model
 const topNeighborhoods = [
   'arbat', 'tverskoy', 'khamovniki', 'zamoskvorechye', 'presnensky',
   'sokol', 'aeroport', 'babushkinsky', 'izmaylovo', 'sokolniki',
   'maryino', 'lyublino', 'chertanovo-severnoe', 'konkovo', 'strogino'
+];
+
+const tier2Neighborhoods = [
+  ...topNeighborhoods,
+  'basmannyy', 'tagansky', 'yakimanka', 'voykovskiy', 'koptevo',
+  'khovrino', 'otradnoe', 'bibirevo', 'altufyevsky', 'perovo',
+  'novogireevo', 'kuzminki', 'pechatniki', 'tekstilshchiki', 'danilovsky',
+  'zyablikovo', 'tsaritsyno', 'akademichesky', 'cheryomushki', 'yasenevo',
+  'kuntsevo', 'solntsevo', 'mitino', 'kurkino', 'nekrasovka',
 ];
 
 // Типы объектов (синхронизировано с src/data/objects.ts)
