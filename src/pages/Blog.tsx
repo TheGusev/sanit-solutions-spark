@@ -9,7 +9,7 @@ import { allBlogArticles, blogCategories } from "@/data/blog";
 import { Button } from "@/components/ui/button";
 import { 
   TrendingUp, LayoutGrid, Bug, FlaskConical,
-  FileText, Shield, Lightbulb, Scale, Mouse
+  FileText, Shield, Lightbulb, Scale, Mouse, Clock
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
