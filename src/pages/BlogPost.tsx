@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { trackAIReferral, detectDarkAITraffic } from "@/lib/analytics";
 import DOMPurify from "dompurify";
@@ -25,7 +25,7 @@ import { getArticleBySlug, allBlogArticles } from "@/data/blog";
 import { blogAuthors } from "@/data/blog/types";
 import { Button } from "@/components/ui/button";
 import { SEO_CONFIG } from "@/lib/seo";
-import { User, Clock, Calendar, List } from "lucide-react";
+import { User, Clock, Calendar, List, ArrowLeft } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -141,6 +141,13 @@ const BlogPost = () => {
               { label: post.title }
             ]} 
           />
+          <Link 
+            to="/blog" 
+            className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-primary hover:underline"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Все статьи
+          </Link>
         </div>
       </section>
 

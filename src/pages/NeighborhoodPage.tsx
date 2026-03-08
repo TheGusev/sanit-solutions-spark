@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Clock, Phone, ArrowRight, Shield, Award, CheckCircle } from 'lucide-react';
+import { MapPin, Clock, Phone, ArrowRight, Shield, Award, CheckCircle, Home, Building2, UtensilsCrossed, Warehouse, Factory, Bug } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +13,7 @@ import CalculatorModal from '@/components/CalculatorModal';
 import InternalLinks from '@/components/InternalLinks';
 import { ImageGallery } from '@/components/ImageGallery';
 import { getNeighborhoodBySlug, getNeighborhoodsByDistrict } from '@/data/neighborhoods';
+import { allBlogArticles } from '@/data/blog';
 import { getDistrictById } from '@/data/districtPages';
 import { getNeighborhoodContent } from '@/data/neighborhoodContent';
 import { generateNeighborhoodContent } from '@/lib/neighborhoodContentGenerator';
@@ -446,6 +447,78 @@ const NeighborhoodPage = () => {
             </section>
           </>
         )}
+
+        {/* Object Types Grid */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <SectionHeading label="ОБЪЕКТЫ" title={`Выберите тип объекта ${locationText}`} align="left" />
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {[
+                { name: 'Квартира', icon: Home, slug: 'kvartir' },
+                { name: 'Частный дом', icon: Home, slug: 'domov' },
+                { name: 'Офис', icon: Building2, slug: 'ofisov' },
+                { name: 'Ресторан / кафе', icon: UtensilsCrossed, slug: 'restoranov' },
+                { name: 'Склад', icon: Warehouse, slug: 'skladov' },
+                { name: 'Производство', icon: Factory, slug: 'proizvodstv' },
+              ].map((obj) => (
+                <Link key={obj.slug} to={`/uslugi/dezinsekciya/${obj.slug}`}>
+                  <Card className="h-full hover:shadow-md transition-all hover:-translate-y-1">
+                    <CardContent className="p-5 flex flex-col items-center text-center gap-2">
+                      <obj.icon className="w-8 h-8 text-primary" />
+                      <h3 className="font-semibold text-sm">{obj.name}</h3>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Popular Pests */}
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <SectionHeading label="ВРЕДИТЕЛИ" title={`Популярные вредители ${locationText}`} align="left" />
+            <div className="flex flex-wrap gap-3">
+              {[
+                { name: 'Клопы', slug: 'klopy', emoji: '🪳' },
+                { name: 'Тараканы', slug: 'tarakany', emoji: '🪳' },
+                { name: 'Грызуны', slug: 'myshi', emoji: '🐀' },
+                { name: 'Муравьи', slug: 'muravi', emoji: '🐜' },
+                { name: 'Моль', slug: 'mol', emoji: '🦋' },
+              ].map((pest) => (
+                <Link key={pest.slug} to={`/uslugi/dezinsekciya/${pest.slug}`}>
+                  <Badge variant="secondary" className="text-sm py-2.5 px-5 cursor-pointer hover:bg-primary/10 transition-colors">
+                    <span className="mr-1.5">{pest.emoji}</span>
+                    {pest.name}
+                  </Badge>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Related Blog Articles */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <SectionHeading label="ПОЛЕЗНЫЕ МАТЕРИАЛЫ" title={`Статьи для жителей ${locationText}`} align="left" />
+            <div className="grid md:grid-cols-3 gap-4">
+              {allBlogArticles
+                .filter(a => ['Советы', 'Дезинсекция', 'Законы'].includes(a.category))
+                .slice(0, 3)
+                .map((article) => (
+                  <Link key={article.slug} to={`/blog/${article.slug}`}>
+                    <Card className="h-full hover:shadow-md transition-all hover:-translate-y-1">
+                      <CardContent className="p-5">
+                        <Badge variant="secondary" className="mb-2 text-xs">{article.category}</Badge>
+                        <h3 className="font-semibold text-sm leading-snug mb-1">{article.title}</h3>
+                        <p className="text-xs text-muted-foreground line-clamp-2">{article.excerpt}</p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+            </div>
+          </div>
+        </section>
 
         {/* Landmarks */}
         <section className="py-12">

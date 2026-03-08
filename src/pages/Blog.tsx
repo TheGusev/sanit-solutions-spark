@@ -9,26 +9,25 @@ import { allBlogArticles, blogCategories } from "@/data/blog";
 import { Button } from "@/components/ui/button";
 import { 
   TrendingUp, LayoutGrid, Bug, FlaskConical,
-  FileText, Shield, Lightbulb, Scale, Mouse, Clock
+  FileText, Lightbulb, Scale, Mouse, Clock, ArrowDownWideNarrow
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const BASE_URL = "https://goruslugimsk.ru";
 
-// Category icon mapping
+// Category icon mapping — synced with blogCategories from types.ts
 const categoryIcons: Record<string, { icon: LucideIcon; emoji: string }> = {
   "Все": { icon: LayoutGrid, emoji: "📋" },
   "Дезинфекция": { icon: FlaskConical, emoji: "🧪" },
   "Дезинсекция": { icon: Bug, emoji: "🪳" },
   "Дератизация": { icon: Mouse, emoji: "🐀" },
-  "Насекомые": { icon: Bug, emoji: "🪳" },
-  "Грызуны": { icon: Mouse, emoji: "🐀" },
   "Советы": { icon: Lightbulb, emoji: "💡" },
-  "Законодательство": { icon: Scale, emoji: "📜" },
+  "Законы": { icon: Scale, emoji: "⚖️" },
   "Препараты": { icon: FlaskConical, emoji: "🧴" },
-  "Случаи из практики": { icon: FileText, emoji: "📋" },
-  "Безопасность": { icon: Shield, emoji: "🛡️" },
+  "Кейсы": { icon: FileText, emoji: "💼" },
 };
+
+type SortMode = 'default' | 'newest' | 'popular';
 
 // Top featured slugs — guides & legal articles shown first
 const topFeaturedSlugs = [
@@ -45,12 +44,22 @@ const topFeaturedSlugs = [
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
   const [visibleCount, setVisibleCount] = useState(30);
+  const [sortBy, setSortBy] = useState<SortMode>('default');
 
   const baseList = selectedCategory === "Все" 
     ? allBlogArticles 
     : allBlogArticles.filter(post => post.category === selectedCategory);
 
   const filteredPosts = [...baseList].sort((a, b) => {
+    if (sortBy === 'newest') {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    }
+    if (sortBy === 'popular') {
+      const aPopular = popularSlugs.includes(a.slug) ? 0 : 1;
+      const bPopular = popularSlugs.includes(b.slug) ? 0 : 1;
+      return aPopular - bPopular;
+    }
+    // default: featured first
     const aIdx = topFeaturedSlugs.indexOf(a.slug);
     const bIdx = topFeaturedSlugs.indexOf(b.slug);
     if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
@@ -167,6 +176,32 @@ const Blog = () => {
         </div>
       </section>
 
+      {/* Sort Controls */}
+      <section className="py-4 px-3 md:px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="flex items-center gap-2 flex-wrap">
+            <ArrowDownWideNarrow className="w-4 h-4 text-muted-foreground" />
+            {([
+              { key: 'default' as SortMode, label: 'По умолчанию' },
+              { key: 'newest' as SortMode, label: 'Сначала новые' },
+              { key: 'popular' as SortMode, label: 'Популярные' },
+            ]).map(opt => (
+              <button
+                key={opt.key}
+                onClick={() => setSortBy(opt.key)}
+                className={`text-sm px-3 py-1.5 rounded-full transition-colors ${
+                  sortBy === opt.key
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Blog Posts Grid */}
       <section className="py-8 md:py-16 px-2 md:px-4">
         <div className="container mx-auto max-w-6xl">
@@ -183,7 +218,7 @@ const Blog = () => {
                   <div className="rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs px-2.5 py-0.5 rounded-full border border-border text-muted-foreground font-medium">
+                         <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
                           {post.category}
                         </span>
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
