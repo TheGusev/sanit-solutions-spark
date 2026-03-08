@@ -176,6 +176,32 @@ const Blog = () => {
         </div>
       </section>
 
+      {/* Sort Controls */}
+      <section className="py-4 px-3 md:px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="flex items-center gap-2 flex-wrap">
+            <ArrowDownWideNarrow className="w-4 h-4 text-muted-foreground" />
+            {([
+              { key: 'default' as SortMode, label: 'По умолчанию' },
+              { key: 'newest' as SortMode, label: 'Сначала новые' },
+              { key: 'popular' as SortMode, label: 'Популярные' },
+            ]).map(opt => (
+              <button
+                key={opt.key}
+                onClick={() => setSortBy(opt.key)}
+                className={`text-sm px-3 py-1.5 rounded-full transition-colors ${
+                  sortBy === opt.key
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Blog Posts Grid */}
       <section className="py-8 md:py-16 px-2 md:px-4">
         <div className="container mx-auto max-w-6xl">
