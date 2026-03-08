@@ -42,11 +42,7 @@ export default function ThreeSegmentRouteResolver() {
     return <NchPage />;
   }
   
-  // 2. Проверяем объект → ServiceObjectDistrictPage
-  const objectType = getObjectBySlug(segment2);
-  if (objectType) {
-    return <ServiceObjectDistrictPage />;
-  }
+  // REMOVED: Object+Geo pages (thin content competing with /rajony/) — Issue #4
   
   // Ничего не найдено
   return <NotFound />;

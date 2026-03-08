@@ -47,11 +47,7 @@ export default function ServiceRouteResolver() {
     return <ServiceObjectPage />;
   }
   
-  // 4. Районы Москвы (arbat, tverskoy, khamovniki и др.)
-  const neighborhood = neighborhoods.find(n => n.slug === subSlug);
-  if (neighborhood) {
-    return <ServiceDistrictPage />;
-  }
+  // REMOVED: Neighborhoods no longer matched here — all geo pages at /rajony/[slug]/ (Issue #1)
   
   // Ничего не найдено → 404
   return <NotFound />;

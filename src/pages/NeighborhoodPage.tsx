@@ -210,13 +210,13 @@ const NeighborhoodPage = () => {
                   </Link>
                 )}
                 
-                {/* Variable H1 with fallback */}
+                {/* Variable H1 with service keywords for SEO (Issue #12) */}
                 <VariableHeading 
                   slug={variationSlug} 
                   category="hero" 
                   level="h1" 
                   className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
-                  fallback={neighborhood.h1}
+                  fallback={`Дезинфекция и дезинсекция ${locationText}`}
                 />
                 
                 <p className="text-lg md:text-xl text-muted-foreground mb-6">
