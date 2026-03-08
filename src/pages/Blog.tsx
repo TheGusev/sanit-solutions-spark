@@ -157,12 +157,9 @@ const Blog = () => {
                   `}
                 >
                   <span className="text-xl md:text-2xl shrink-0">{catConfig.emoji}</span>
-                  <div className="min-w-0">
-                    <div className="text-sm md:text-base font-semibold truncate">{category}</div>
-                    <div className={`text-xs ${isActive ? 'opacity-80' : 'text-muted-foreground'}`}>
-                      {count} {count === 1 ? 'статья' : count < 5 ? 'статьи' : 'статей'}
-                    </div>
-                  </div>
+                   <span className="text-sm md:text-base font-semibold truncate">
+                     {category} ({count})
+                   </span>
                 </button>
               );
             })}
