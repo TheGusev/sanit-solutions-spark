@@ -174,23 +174,9 @@ const Blog = () => {
       {/* Blog Posts Grid */}
       <section className="py-8 md:py-16 px-2 md:px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+          <div className="flex flex-col gap-3">
             {filteredPosts.slice(0, visibleCount).map((post) => {
-              const redCategories = ['Насекомые', 'Советы', 'Законодательство'];
-              const gradientCategories = ['Грызуны', 'Случаи из практики'];
-              
-              const getCategoryClass = () => {
-                if (redCategories.includes(post.category)) {
-                  return "bg-russia-red/10 text-russia-red border border-russia-red/30";
-                }
-                if (gradientCategories.includes(post.category)) {
-                  return "bg-gradient-to-r from-primary to-russia-red text-white border border-transparent";
-                }
-                return "bg-primary/10 text-primary border border-primary/30";
-              };
-              
               const isPopular = popularSlugs.includes(post.slug);
-              const isNew = isNewArticle(post.date);
               
               return (
                 <Link 
@@ -198,48 +184,29 @@ const Blog = () => {
                   to={`/blog/${post.slug}`}
                   className="group"
                 >
-                  <Card className="h-full relative border-0 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-                    {isNew && (
-                      <span className="absolute top-3 right-3 bg-gradient-to-r from-russia-red to-secondary text-white text-[10px] px-2.5 py-1 rounded-full font-medium shadow-md z-10 flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" /> Новое
-                      </span>
-                    )}
-                    {isPopular && !isNew && (
-                      <span className="absolute top-3 right-3 bg-gradient-to-r from-primary to-russia-red text-white text-[10px] px-2.5 py-1 rounded-full font-medium shadow-md z-10 flex items-center gap-1">
-                        <TrendingUp className="w-3 h-3" /> Популярное
-                      </span>
-                    )}
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className={`text-xs px-3 py-1 rounded-full font-medium ${getCategoryClass()}`}>
+                  <div className="rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs px-2.5 py-0.5 rounded-full border border-border text-muted-foreground font-medium">
                           {post.category}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {post.readTime}
                         </span>
                       </div>
-                      <h3 className="text-lg md:text-xl font-bold group-hover:text-primary transition-colors leading-snug">
-                        {post.title}
-                      </h3>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
-                        {post.excerpt}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(post.date).toLocaleDateString('ru-RU', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                          })}
+                      {isPopular && (
+                        <span className="text-xs text-primary font-medium flex items-center gap-1">
+                          <TrendingUp className="w-3 h-3" /> Популярное
                         </span>
-                        <Button variant="outline" size="sm" className="text-xs h-7 px-3" tabIndex={-1}>
-                          Читать
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      )}
+                    </div>
+                    <h3 className="text-base md:text-lg font-bold leading-snug mb-1 group-hover:text-primary transition-colors">
+                      {post.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {post.excerpt}
+                    </p>
+                  </div>
                 </Link>
               );
             })}
