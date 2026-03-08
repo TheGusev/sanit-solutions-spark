@@ -172,10 +172,10 @@ const tier2Neighborhoods = [
   'kuntsevo', 'solntsevo', 'mitino', 'kurkino', 'nekrasovka',
 ];
 
-// Типы объектов (синхронизировано с src/data/objects.ts)
-const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv'];
+// Типы объектов
+const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv', 'gostinic', 'detskih-sadov', 'hostela', 'magazinov', 'avtomobiley'];
 
-// Услуги для объектов (4 основных)
+// Услуги для объектов
 const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'demerkurizaciya'];
 
 
