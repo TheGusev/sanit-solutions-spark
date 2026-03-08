@@ -31,15 +31,14 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
         backgroundPosition: "center",
       }}
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/65 via-slate-900/45 to-slate-900/35 dark:from-slate-950/70 dark:via-slate-950/55 dark:to-slate-950/40" />
+      <div className="absolute inset-0 bg-black/35" />
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading
           label="НАШИ УСЛУГИ"
           title="Основные услуги"
           subtitle="Профессиональная санитарная обработка любых объектов"
-          className="text-white [&_p]:text-white/80 [&_span]:text-white/60 [&_.tricolor-underline]:hidden"
+          className="text-white [&_p]:text-white/80 [&_span]:text-white/60"
         />
-        <div className="h-[2px] w-32 mx-auto rounded-full bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 -mt-4 mb-8" />
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
           {services.map((service, index) => {
             const Icon = service.icon;
@@ -49,11 +48,11 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
                 to={citySlug ? `/goroda/${citySlug}${service.href}` : service.href}
                 className="group"
               >
-                <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-white/35 backdrop-blur-xl shadow-[0_18px_40px_rgba(15,23,42,0.25)] p-4 text-center transition hover:border-white/80 hover:bg-white/45 hover:-translate-y-1 hover:shadow-[0_22px_50px_rgba(15,23,42,0.35)] dark:border-white/25 dark:bg-slate-900/35 dark:hover:bg-slate-900/45 before:absolute before:top-0 before:left-[10%] before:right-[10%] before:h-[2px] before:bg-gradient-to-r before:from-blue-500 before:via-cyan-400 before:to-purple-500 before:rounded-full before:blur-[1px]">
-                  <h3 className="relative z-[1] text-sm font-medium text-white mb-3 leading-tight min-h-[2.5rem]">
+                <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all">
+                  <h3 className="text-sm font-medium text-white mb-3 leading-tight min-h-[2.5rem]">
                     {service.title}
                   </h3>
-                  <span className="relative z-[1] text-xs text-white/70 flex items-center justify-center">
+                  <span className="text-xs text-white/70 flex items-center justify-center">
                     Подробнее
                     <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   </span>
