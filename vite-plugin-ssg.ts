@@ -254,7 +254,7 @@ function getAllRoutes(): SSGRoute[] {
   // Услуги
   servicesSlugs.forEach(slug => {
     routes.push({
-      path: `/uslugi/${slug}`,
+      path: `/uslugi/${slug}/`,
       outputPath: `uslugi/${slug}/index.html`
     });
   });
@@ -262,7 +262,7 @@ function getAllRoutes(): SSGRoute[] {
   // Подстраницы услуг
   serviceSubpageRoutes.forEach(({ parent, sub }) => {
     routes.push({
-      path: `/uslugi/${parent}/${sub}`,
+      path: `/uslugi/${parent}/${sub}/`,
       outputPath: `uslugi/${parent}/${sub}/index.html`
     });
   });
@@ -270,7 +270,7 @@ function getAllRoutes(): SSGRoute[] {
   // Услуга + Вредитель (ServicePestPage)
   dezinsekciyaPestSlugs.forEach(pestSlug => {
     routes.push({
-      path: `/uslugi/dezinsekciya/${pestSlug}`,
+      path: `/uslugi/dezinsekciya/${pestSlug}/`,
       outputPath: `uslugi/dezinsekciya/${pestSlug}/index.html`,
       priority: '0.85'
     });
@@ -278,7 +278,7 @@ function getAllRoutes(): SSGRoute[] {
   
   deratizaciyaPestSlugs.forEach(pestSlug => {
     routes.push({
-      path: `/uslugi/deratizaciya/${pestSlug}`,
+      path: `/uslugi/deratizaciya/${pestSlug}/`,
       outputPath: `uslugi/deratizaciya/${pestSlug}/index.html`,
       priority: '0.85'
     });
@@ -286,11 +286,12 @@ function getAllRoutes(): SSGRoute[] {
   
   // ======== НОВЫЕ ТИПЫ СТРАНИЦ ========
   
-  // Услуга + Объект
+  // Услуга + Объект (с pruning для демеркуризации)
   servicesForObjects.forEach(serviceSlug => {
-    objectSlugs.forEach(objectSlug => {
+    const objects = serviceSlug === 'demerkurizaciya' ? demerkurizaciyaObjects : objectSlugs;
+    objects.forEach(objectSlug => {
       routes.push({
-        path: `/uslugi/${serviceSlug}/${objectSlug}`,
+        path: `/uslugi/${serviceSlug}/${objectSlug}/`,
         outputPath: `uslugi/${serviceSlug}/${objectSlug}/index.html`,
         priority: '0.8'
       });
