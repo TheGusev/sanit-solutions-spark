@@ -9,7 +9,7 @@ import { allBlogArticles, blogCategories } from "@/data/blog";
 import { Button } from "@/components/ui/button";
 import { 
   TrendingUp, LayoutGrid, Bug, FlaskConical,
-  FileText, Shield, Lightbulb, Scale, Mouse
+  FileText, Shield, Lightbulb, Scale, Mouse, Clock
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -157,12 +157,9 @@ const Blog = () => {
                   `}
                 >
                   <span className="text-xl md:text-2xl shrink-0">{catConfig.emoji}</span>
-                  <div className="min-w-0">
-                    <div className="text-sm md:text-base font-semibold truncate">{category}</div>
-                    <div className={`text-xs ${isActive ? 'opacity-80' : 'text-muted-foreground'}`}>
-                      {count} {count === 1 ? 'статья' : count < 5 ? 'статьи' : 'статей'}
-                    </div>
-                  </div>
+                   <span className="text-sm md:text-base font-semibold truncate">
+                     {category} ({count})
+                   </span>
                 </button>
               );
             })}
@@ -189,8 +186,8 @@ const Blog = () => {
                         <span className="text-xs px-2.5 py-0.5 rounded-full border border-border text-muted-foreground font-medium">
                           {post.category}
                         </span>
-                        <span className="text-xs text-muted-foreground">
-                          {post.readTime}
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {post.readTime}
                         </span>
                       </div>
                       {isPopular && (
