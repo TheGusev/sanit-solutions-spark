@@ -192,15 +192,8 @@ export function getAllSSGRoutes() {
     });
   });
   
-  // Дезинфекция по 130 районам Москвы
-  neighborhoodSlugs.forEach(neighborhoodSlug => {
-    routes.push({
-      path: `/uslugi/dezinfekciya/${neighborhoodSlug}`,
-      outputPath: `uslugi/dezinfekciya/${neighborhoodSlug}/index.html`,
-      priority: '0.75',
-      changefreq: 'monthly'
-    });
-  });
+  // REMOVED: /uslugi/dezinfekciya/[neighborhood] — conflicts with /rajony/[neighborhood]
+  // All geo pages now live at /rajony/[slug]/ (Issue #1 fix)
   
   // НЧ-страницы: Услуга + Вредитель + Топ-15 районов (~105 страниц)
   dezinsekciyaPestSlugs.forEach(pestSlug => {
