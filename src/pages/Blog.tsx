@@ -24,10 +24,23 @@ const categoryIcons: Record<string, { icon: LucideIcon; emoji: string }> = {
   "Насекомые": { icon: Bug, emoji: "🪳" },
   "Грызуны": { icon: Mouse, emoji: "🐀" },
   "Советы": { icon: Lightbulb, emoji: "💡" },
-  "Законодательство": { icon: Scale, emoji: "📜" },
+  "Законы": { icon: Scale, emoji: "⚖️" },
+  "Законодательство": { icon: Scale, emoji: "⚖️" },
   "Препараты": { icon: FlaskConical, emoji: "🧴" },
-  "Случаи из практики": { icon: FileText, emoji: "📋" },
+  "Кейсы": { icon: FileText, emoji: "💼" },
+  "Случаи из практики": { icon: FileText, emoji: "💼" },
   "Безопасность": { icon: Shield, emoji: "🛡️" },
+};
+
+// Thumbnail mapping for article cards
+const categoryThumbnails: Record<string, string> = {
+  "Дезинфекция": "/images/work/fog-generator.jpg",
+  "Дезинсекция": "/images/work/kitchen-treatment.jpg",
+  "Дератизация": "/images/pests/rat.png",
+  "Советы": "/images/work/professional-chemicals.jpg",
+  "Законы": "/images/work/specialist-documents.jpg",
+  "Препараты": "/images/work/professional-chemicals.jpg",
+  "Кейсы": "/images/work/living-room-treatment.png",
 };
 
 // Top featured slugs — guides & legal articles shown first
