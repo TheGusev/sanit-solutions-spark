@@ -124,40 +124,130 @@ const districtEntries: SemanticEntry[] = districtIds.map(id => ({
   priority: (id === 'cao' || id === 'sao' || id === 'vao' || id === 'yao' ? 2 : 3) as 1 | 2 | 3 | 4 | 5,
 }));
 
-// ===================== КЛАСТЕР: nch (105 записей = 7 вредителей × 15 районов) =====================
+// ===================== КЛАСТЕР: nch (расширенный — 14 вредителей × 131 район, тиерированный) =====================
 
 const pestNamesGen: Record<string, string> = {
   tarakany: 'тараканов', klopy: 'клопов', muravyi: 'муравьёв',
   blohi: 'блох', mol: 'моли', krysy: 'крыс', myshi: 'мышей', kroty: 'кротов',
+  komary: 'комаров', muhi: 'мух', 'osy-shershni': 'ос и шершней',
+  cheshuynitsy: 'чешуйниц', kleshchi: 'клещей', mokricy: 'мокриц',
 };
 const pestServiceMap: Record<string, string> = {
   tarakany: 'dezinsekciya', klopy: 'dezinsekciya', muravyi: 'dezinsekciya',
   blohi: 'dezinsekciya', mol: 'dezinsekciya', krysy: 'deratizaciya', myshi: 'deratizaciya', kroty: 'deratizaciya',
+  komary: 'dezinsekciya', muhi: 'dezinsekciya', 'osy-shershni': 'dezinsekciya',
+  cheshuynitsy: 'dezinsekciya', kleshchi: 'dezinsekciya', mokricy: 'dezinsekciya',
 };
-const topNeighborhoods = [
-  'arbat', 'tverskoy', 'khamovniki', 'zamoskvorechye', 'presnensky',
-  'sokol', 'aeroport', 'babushkinsky', 'izmaylovo', 'sokolniki',
-  'maryino', 'lyublino', 'chertanovo-severnoe', 'konkovo', 'strogino',
-];
-const neighborhoodNamesRu: Record<string, string> = {
-  arbat: 'арбат', tverskoy: 'тверской', khamovniki: 'хамовники',
-  zamoskvorechye: 'замоскворечье', presnensky: 'пресненский',
-  sokol: 'сокол', aeroport: 'аэропорт', babushkinsky: 'бабушкинский',
-  izmaylovo: 'измайлово', sokolniki: 'сокольники',
-  maryino: 'марьино', lyublino: 'люблино',
-  'chertanovo-severnoe': 'чертаново северное',
-  konkovo: 'коньково', strogino: 'строгино',
-};
-const topPestSlugs = ['tarakany', 'klopy', 'krysy', 'myshi'];
+
+// Тиерирование: 3 уровня покрытия
+const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi']; // × все 131 район
+const tier2Pests = ['muravyi', 'blohi', 'mol', 'kroty']; // × топ-40 районов
+const tier3Pests = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy']; // × топ-15 районов
+
+const topPestSlugs = tier1Pests;
 const allPestSlugs = Object.keys(pestNamesGen);
 
-const nchEntries: SemanticEntry[] = allPestSlugs.flatMap(pest =>
-  topNeighborhoods.map(nhood => ({
-    query: `уничтожение ${pestNamesGen[pest]} ${neighborhoodNamesRu[nhood]}`,
-    canonical: `/uslugi/${pestServiceMap[pest]}/${pest}/${nhood}/`,
+// Топ-40 районов (расширенный список для tier 2)
+const tier2Neighborhoods = [
+  ...topNeighborhoods,
+  'basmannyy', 'tagansky', 'yakimanka', 'voykovskiy', 'koptevo',
+  'khovrino', 'otradnoe', 'bibirevo', 'altufyevsky', 'perovo',
+  'novogireevo', 'kuzminki', 'pechatniki', 'tekstilshchiki', 'danilovsky',
+  'zyablikovo', 'tsaritsyno', 'akademichesky', 'cheryomushki', 'yasenevo',
+  'kuntsevo', 'solntsevo', 'mitino', 'kurkino', 'nekrasovka',
+];
+
+// Генерация NCH записей по тиерам
+function generateNchEntries(): SemanticEntry[] {
+  const entries: SemanticEntry[] = [];
+  const allNeighborhoods = Object.keys(neighborhoodNamesRu);
+
+  // Tier 1: топ-4 вредителя × все районы с именами
+  tier1Pests.forEach(pest => {
+    allNeighborhoods.forEach(nhood => {
+      entries.push({
+        query: `уничтожение ${pestNamesGen[pest]} ${neighborhoodNamesRu[nhood]}`,
+        canonical: `/uslugi/${pestServiceMap[pest]}/${pest}/${nhood}/`,
+        intent: 'commercial', cluster: 'nch', priority: 3,
+      });
+    });
+  });
+
+  // Tier 2: следующие 4 вредителя × топ-40 районов
+  tier2Pests.forEach(pest => {
+    tier2Neighborhoods.forEach(nhood => {
+      if (neighborhoodNamesRu[nhood]) {
+        entries.push({
+          query: `уничтожение ${pestNamesGen[pest]} ${neighborhoodNamesRu[nhood]}`,
+          canonical: `/uslugi/${pestServiceMap[pest]}/${pest}/${nhood}/`,
+          intent: 'commercial', cluster: 'nch', priority: 4,
+        });
+      }
+    });
+  });
+
+  // Tier 3: оставшиеся 6 вредителей × топ-15 районов
+  tier3Pests.forEach(pest => {
+    topNeighborhoods.forEach(nhood => {
+      entries.push({
+        query: `уничтожение ${pestNamesGen[pest]} ${neighborhoodNamesRu[nhood]}`,
+        canonical: `/uslugi/${pestServiceMap[pest]}/${pest}/${nhood}/`,
+        intent: 'commercial', cluster: 'nch', priority: 5,
+      });
+    });
+  });
+
+  return entries;
+}
+
+const nchEntries = generateNchEntries();
+
+// ===================== КЛАСТЕР: pest+object (48 записей = 8 вредителей × 6 объектов) =====================
+
+const pestObjectPairs = [
+  { pest: 'tarakany', objects: ['квартире', 'доме', 'офисе', 'ресторане', 'складе', 'общежитии'] },
+  { pest: 'klopy', objects: ['квартире', 'доме', 'хостеле', 'гостинице', 'общежитии', 'офисе'] },
+  { pest: 'muravyi', objects: ['квартире', 'доме', 'на участке', 'офисе', 'ресторане', 'складе'] },
+  { pest: 'blohi', objects: ['квартире', 'доме', 'подвале', 'офисе', 'на участке', 'общежитии'] },
+  { pest: 'krysy', objects: ['подвале', 'доме', 'на складе', 'ресторане', 'подъезде', 'офисе'] },
+  { pest: 'myshi', objects: ['доме', 'квартире', 'на даче', 'складе', 'офисе', 'подвале'] },
+  { pest: 'mol', objects: ['квартире', 'на складе', 'в гардеробной', 'офисе', 'доме', 'магазине'] },
+  { pest: 'kroty', objects: ['на участке', 'на даче', 'на газоне', 'в саду', 'в огороде', 'в коттеджном посёлке'] },
+];
+
+const pestObjectEntries: SemanticEntry[] = pestObjectPairs.flatMap(pair =>
+  pair.objects.map(obj => ({
+    query: `уничтожение ${pestNamesGen[pair.pest]} в ${obj}`,
+    canonical: `/uslugi/${pestServiceMap[pair.pest]}/${pair.pest}/`,
+    intent: 'commercial' as const,
+    cluster: 'pest' as const,
+    priority: 3 as 1 | 2 | 3 | 4 | 5,
+  }))
+);
+
+// ===================== КЛАСТЕР: seasonal (сезонные — участки) =====================
+
+const seasonalEntries: SemanticEntry[] = [
+  { query: 'обработка участка от клещей москва', canonical: '/uslugi/obrabotka-uchastkov/', intent: 'commercial', cluster: 'service', priority: 2 },
+  { query: 'обработка от клещей на даче', canonical: '/uslugi/obrabotka-uchastkov/', intent: 'commercial', cluster: 'service', priority: 2 },
+  { query: 'обработка газона от клещей', canonical: '/uslugi/dezinsekciya/kleshchi/', intent: 'commercial', cluster: 'pest', priority: 3 },
+  { query: 'уничтожение ос на участке москва', canonical: '/uslugi/dezinsekciya/osy-shershni/', intent: 'commercial', cluster: 'pest', priority: 2 },
+  { query: 'удаление осиного гнезда москва', canonical: '/uslugi/dezinsekciya/osy-shershni/', intent: 'commercial', cluster: 'pest', priority: 2 },
+  { query: 'обработка от комаров участка', canonical: '/uslugi/dezinsekciya/komary/', intent: 'commercial', cluster: 'pest', priority: 3 },
+  { query: 'дезинсекция от мух в ресторане', canonical: '/uslugi/dezinsekciya/muhi/', intent: 'commercial', cluster: 'pest', priority: 3 },
+  { query: 'чешуйницы в ванной как избавиться', canonical: '/uslugi/dezinsekciya/cheshuynitsy/', intent: 'commercial', cluster: 'pest', priority: 4 },
+  { query: 'мокрицы в квартире уничтожение', canonical: '/uslugi/dezinsekciya/mokricy/', intent: 'commercial', cluster: 'pest', priority: 4 },
+];
+
+// ===================== КЛАСТЕР: MO city + pest (56 записей = 4 вредителя × 14 городов) =====================
+
+const moPestEntries: SemanticEntry[] = moCities.flatMap(city =>
+  tier1Pests.map(pest => ({
+    query: `уничтожение ${pestNamesGen[pest]} ${city.name}`,
+    canonical: `/moscow-oblast/${city.slug}/dezinsekciya/`,
     intent: 'commercial' as const,
     cluster: 'nch' as const,
-    priority: (topPestSlugs.includes(pest) ? 3 : 4) as 1 | 2 | 3 | 4 | 5,
+    priority: 4 as 1 | 2 | 3 | 4 | 5,
   }))
 );
 
