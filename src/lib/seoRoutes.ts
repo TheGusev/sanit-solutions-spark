@@ -234,7 +234,7 @@ export function getAllSSGRoutes() {
     const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
     neighborhoodSlugs.forEach(neighborhoodSlug => {
       routes.push({
-        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`,
+        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}/`,
         outputPath: `uslugi/${service}/${pestSlug}/${neighborhoodSlug}/index.html`,
         priority: '0.7',
         changefreq: 'monthly'
@@ -247,7 +247,7 @@ export function getAllSSGRoutes() {
     const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
     tier2NeighborhoodsLocal.forEach(neighborhoodSlug => {
       routes.push({
-        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`,
+        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}/`,
         outputPath: `uslugi/${service}/${pestSlug}/${neighborhoodSlug}/index.html`,
         priority: '0.65',
         changefreq: 'monthly'
@@ -257,10 +257,10 @@ export function getAllSSGRoutes() {
 
   // Tier 3: remaining 6 pests × top 15 neighborhoods
   tier3PestsLocal.forEach(pestSlug => {
-    const service = 'dezinsekciya'; // all tier 3 are dezinsekciya
+    const service = 'dezinsekciya';
     topNeighborhoods.forEach(neighborhoodSlug => {
       routes.push({
-        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`,
+        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}/`,
         outputPath: `uslugi/${service}/${pestSlug}/${neighborhoodSlug}/index.html`,
         priority: '0.6',
         changefreq: 'monthly'
