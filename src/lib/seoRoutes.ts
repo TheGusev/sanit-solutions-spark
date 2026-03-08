@@ -123,6 +123,21 @@ export const topNeighborhoods = [
   'maryino', 'lyublino', 'chertanovo-severnoe', 'konkovo', 'strogino'
 ];
 
+// Топ-40 районов для tier 2
+export const tier2Neighborhoods = [
+  ...topNeighborhoods,
+  'basmannyy', 'tagansky', 'yakimanka', 'voykovskiy', 'koptevo',
+  'khovrino', 'otradnoe', 'bibirevo', 'altufyevsky', 'perovo',
+  'novogireevo', 'kuzminki', 'pechatniki', 'tekstilshchiki', 'danilovsky',
+  'zyablikovo', 'tsaritsyno', 'akademichesky', 'cheryomushki', 'yasenevo',
+  'kuntsevo', 'solntsevo', 'mitino', 'kurkino', 'nekrasovka',
+];
+
+// Tier pest groups for NCH generation
+export const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi'];
+export const tier2Pests = ['muravyi', 'blohi', 'mol', 'kroty'];
+export const tier3Pests = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
+
 // Типы объектов (синхронизировано с src/data/objects.ts)
 export const objectSlugs = [
   'kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv',
