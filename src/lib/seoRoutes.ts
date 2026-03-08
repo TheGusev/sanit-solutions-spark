@@ -40,8 +40,7 @@ export const serviceSubpageRoutes = [
   { parent: 'dezinsekciya', sub: 'postelnyh-klopov' },
   { parent: 'dezinsekciya', sub: 'domashnih-klopov' },
   { parent: 'dezinsekciya', sub: 'tarakanov-v-kvartire' },
-  { parent: 'dezinsekciya', sub: 'klopov-i-tarakanov' },
-  { parent: 'dezinsekciya', sub: 'klopov-i-bloh' },
+  // REMOVED: klopov-i-tarakanov, klopov-i-bloh — cannibalizes pest clusters (Issue #5)
   { parent: 'dezinsekciya', sub: 'blokh-ot-zhivotnyh' },
   // Методы обработки
   { parent: 'dezinsekciya', sub: 'holodnym-tumanom' },
@@ -192,15 +191,8 @@ export function getAllSSGRoutes() {
     });
   });
   
-  // Дезинфекция по 130 районам Москвы
-  neighborhoodSlugs.forEach(neighborhoodSlug => {
-    routes.push({
-      path: `/uslugi/dezinfekciya/${neighborhoodSlug}`,
-      outputPath: `uslugi/dezinfekciya/${neighborhoodSlug}/index.html`,
-      priority: '0.75',
-      changefreq: 'monthly'
-    });
-  });
+  // REMOVED: /uslugi/dezinfekciya/[neighborhood] — conflicts with /rajony/[neighborhood]
+  // All geo pages now live at /rajony/[slug]/ (Issue #1 fix)
   
   // НЧ-страницы: Услуга + Вредитель + Топ-15 районов (~105 страниц)
   dezinsekciyaPestSlugs.forEach(pestSlug => {

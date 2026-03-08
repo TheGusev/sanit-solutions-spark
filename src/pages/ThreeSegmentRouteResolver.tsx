@@ -12,11 +12,11 @@
 
 import { useParams } from 'react-router-dom';
 import { getPestBySlug } from '@/data/pests';
-import { getObjectBySlug } from '@/data/objects';
+// getObjectBySlug import removed — object+geo pages removed (Issue #4)
 import { neighborhoods } from '@/data/neighborhoods';
 
 import NchPage from './NchPage';
-import ServiceObjectDistrictPage from './ServiceObjectDistrictPage';
+// ServiceObjectDistrictPage import removed — thin content (Issue #4)
 import NotFound from './NotFound';
 
 export default function ThreeSegmentRouteResolver() {
@@ -42,11 +42,7 @@ export default function ThreeSegmentRouteResolver() {
     return <NchPage />;
   }
   
-  // 2. Проверяем объект → ServiceObjectDistrictPage
-  const objectType = getObjectBySlug(segment2);
-  if (objectType) {
-    return <ServiceObjectDistrictPage />;
-  }
+  // REMOVED: Object+Geo pages (thin content competing with /rajony/) — Issue #4
   
   // Ничего не найдено
   return <NotFound />;

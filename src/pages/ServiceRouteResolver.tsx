@@ -11,12 +11,12 @@ import { useParams } from 'react-router-dom';
 import { getSubpageByPath } from '@/data/serviceSubpages';
 import { getPestBySlug } from '@/data/pests';
 import { getObjectBySlug } from '@/data/objects';
-import { neighborhoods } from '@/data/neighborhoods';
+// neighborhoods import removed — geo pages now at /rajony/ only
 
 import ServiceSubpage from './ServiceSubpage';
 import ServicePestPage from './ServicePestPage';
 import ServiceObjectPage from './ServiceObjectPage';
-import ServiceDistrictPage from './ServiceDistrictPage';
+// ServiceDistrictPage import removed — geo pages now at /rajony/ only
 import NotFound from './NotFound';
 
 export default function ServiceRouteResolver() {
@@ -47,11 +47,7 @@ export default function ServiceRouteResolver() {
     return <ServiceObjectPage />;
   }
   
-  // 4. Районы Москвы (arbat, tverskoy, khamovniki и др.)
-  const neighborhood = neighborhoods.find(n => n.slug === subSlug);
-  if (neighborhood) {
-    return <ServiceDistrictPage />;
-  }
+  // REMOVED: Neighborhoods no longer matched here — all geo pages at /rajony/[slug]/ (Issue #1)
   
   // Ничего не найдено → 404
   return <NotFound />;
