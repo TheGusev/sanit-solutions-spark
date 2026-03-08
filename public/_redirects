@@ -23,6 +23,10 @@
 /wp-json/*           /404.html   404
 /wp-cron.php         /404.html   404
 
+# 301 Redirects — combo pages cannibalize pest clusters (Issue #5)
+/uslugi/dezinsekciya/klopov-i-tarakanov/*  /uslugi/dezinsekciya/unichtozhenie-klopov/  301
+/uslugi/dezinsekciya/klopov-i-bloh/*       /uslugi/dezinsekciya/unichtozhenie-klopov/  301
+
 # SPA Fallback только для админки (закрыта от индексации)
 /admin/*             /index.html  200
 

@@ -16,7 +16,7 @@ import { getObjectBySlug } from '@/data/objects';
 import ServiceSubpage from './ServiceSubpage';
 import ServicePestPage from './ServicePestPage';
 import ServiceObjectPage from './ServiceObjectPage';
-import ServiceDistrictPage from './ServiceDistrictPage';
+// ServiceDistrictPage import removed — geo pages now at /rajony/ only
 import NotFound from './NotFound';
 
 export default function ServiceRouteResolver() {

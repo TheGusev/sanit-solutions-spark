@@ -16,7 +16,7 @@ import { getPestBySlug } from '@/data/pests';
 import { neighborhoods } from '@/data/neighborhoods';
 
 import NchPage from './NchPage';
-import ServiceObjectDistrictPage from './ServiceObjectDistrictPage';
+// ServiceObjectDistrictPage import removed — thin content (Issue #4)
 import NotFound from './NotFound';
 
 export default function ThreeSegmentRouteResolver() {
