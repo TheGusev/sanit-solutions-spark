@@ -9,26 +9,25 @@ import { allBlogArticles, blogCategories } from "@/data/blog";
 import { Button } from "@/components/ui/button";
 import { 
   TrendingUp, LayoutGrid, Bug, FlaskConical,
-  FileText, Shield, Lightbulb, Scale, Mouse, Clock
+  FileText, Lightbulb, Scale, Mouse, Clock, ArrowDownWideNarrow
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const BASE_URL = "https://goruslugimsk.ru";
 
-// Category icon mapping
+// Category icon mapping — synced with blogCategories from types.ts
 const categoryIcons: Record<string, { icon: LucideIcon; emoji: string }> = {
   "Все": { icon: LayoutGrid, emoji: "📋" },
   "Дезинфекция": { icon: FlaskConical, emoji: "🧪" },
   "Дезинсекция": { icon: Bug, emoji: "🪳" },
   "Дератизация": { icon: Mouse, emoji: "🐀" },
-  "Насекомые": { icon: Bug, emoji: "🪳" },
-  "Грызуны": { icon: Mouse, emoji: "🐀" },
   "Советы": { icon: Lightbulb, emoji: "💡" },
-  "Законодательство": { icon: Scale, emoji: "📜" },
+  "Законы": { icon: Scale, emoji: "⚖️" },
   "Препараты": { icon: FlaskConical, emoji: "🧴" },
-  "Случаи из практики": { icon: FileText, emoji: "📋" },
-  "Безопасность": { icon: Shield, emoji: "🛡️" },
+  "Кейсы": { icon: FileText, emoji: "💼" },
 };
+
+type SortMode = 'default' | 'newest' | 'popular';
 
 // Top featured slugs — guides & legal articles shown first
 const topFeaturedSlugs = [
