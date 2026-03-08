@@ -46,6 +46,8 @@ const Blog = () => {
   const [visibleCount, setVisibleCount] = useState(30);
   const [sortBy, setSortBy] = useState<SortMode>('default');
 
+  const popularSlugs = allBlogArticles.slice(0, 5).map(a => a.slug);
+
   const baseList = selectedCategory === "Все" 
     ? allBlogArticles 
     : allBlogArticles.filter(post => post.category === selectedCategory);
@@ -74,8 +76,6 @@ const Blog = () => {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     return articleDate > thirtyDaysAgo;
   };
-
-  const popularSlugs = allBlogArticles.slice(0, 5).map(a => a.slug);
 
   const itemListSource = selectedCategory === "Все" ? allBlogArticles : filteredPosts;
   const itemListData = itemListSource.slice(0, 50).map((post, index) => ({
