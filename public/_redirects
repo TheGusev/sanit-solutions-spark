@@ -27,6 +27,18 @@
 /uslugi/dezinsekciya/klopov-i-tarakanov/*  /uslugi/dezinsekciya/unichtozhenie-klopov/  301
 /uslugi/dezinsekciya/klopov-i-bloh/*       /uslugi/dezinsekciya/unichtozhenie-klopov/  301
 
+# 301 Redirects — old geo URLs → new /rajony/ hubs
+/uslugi/dezinfekciya/:slug  /rajony/:slug/  301
+/uslugi/dezinsekciya/:slug  /rajony/:slug/  301
+/uslugi/deratizaciya/:slug  /rajony/:slug/  301
+
+# 301 Redirects — renamed blog articles (commercial → informational)
+/blog/ceny-na-unichtozhenie-tarakany  /blog/skolko-stoit-obrabotka-tarakany/  301
+/blog/ceny-na-unichtozhenie-klopy     /blog/skolko-stoit-obrabotka-klopy/     301
+/blog/ceny-na-unichtozhenie-muravyi   /blog/skolko-stoit-obrabotka-muravyi/   301
+/blog/ceny-na-unichtozhenie-blohi     /blog/skolko-stoit-obrabotka-blohi/     301
+/blog/ceny-na-unichtozhenie-mol       /blog/skolko-stoit-obrabotka-mol/       301
+
 # SPA Fallback только для админки (закрыта от индексации)
 /admin/*             /index.html  200
 

@@ -101,12 +101,12 @@ const App = () => (
                     element={<MoscowRegionServicePage />}
                   />
 
-                  {/* Сложные маршруты услуг */}
+                  {/* Сложные маршруты услуг — статические ПЕРЕД параметрическими */}
+                  <Route path="/uslugi/obrabotka-uchastkov" element={<ServiceLandingUchastkiPage />} />
                   <Route
                     path="/uslugi/:service/:segment2/:segment3"
                     element={<ThreeSegmentRouteResolver />}
                   />
-                  <Route path="/uslugi/obrabotka-uchastkov" element={<ServiceLandingUchastkiPage />} />
                   <Route
                     path="/uslugi/:parentSlug/:subSlug"
                     element={<ServiceRouteResolver />}

@@ -14,9 +14,14 @@ interface SitemapCategory {
   urls: SitemapUrl[];
 }
 
+function normalizeLocWithTrailingSlash(loc: string): string {
+  if (loc === '/') return loc;
+  return loc.endsWith('/') ? loc : `${loc}/`;
+}
+
 function generateSitemapXml(baseUrl: string, urls: SitemapUrl[]): string {
   const urlEntries = urls.map(url => `  <url>
-    <loc>${baseUrl}${url.loc}</loc>
+    <loc>${baseUrl}${normalizeLocWithTrailingSlash(url.loc)}</loc>
     <lastmod>${url.lastmod}</lastmod>
     <changefreq>${url.changefreq}</changefreq>
     <priority>${url.priority}</priority>
@@ -207,7 +212,7 @@ const blogSlugs = [
   'profilaktika-tarakany', 'profilaktika-klopy', 'profilaktika-muravyi', 'profilaktika-blohi', 'profilaktika-mol',
   'chem-opasny-tarakany', 'chem-opasny-klopy', 'chem-opasny-muravyi', 'chem-opasny-blohi', 'chem-opasny-mol',
   'posle-obrabotki-tarakany', 'posle-obrabotki-klopy', 'posle-obrabotki-muravyi', 'posle-obrabotki-blohi', 'posle-obrabotki-mol',
-  'ceny-na-unichtozhenie-tarakany', 'ceny-na-unichtozhenie-klopy', 'ceny-na-unichtozhenie-muravyi', 'ceny-na-unichtozhenie-blohi', 'ceny-na-unichtozhenie-mol',
+  'skolko-stoit-obrabotka-tarakany', 'skolko-stoit-obrabotka-klopy', 'skolko-stoit-obrabotka-muravyi', 'skolko-stoit-obrabotka-blohi', 'skolko-stoit-obrabotka-mol',
   // ===== Pest articles: rodents (10 = 5 templates × 2 pests) =====
   'kak-izbavitsya-ot-krysy', 'kak-izbavitsya-ot-myshi',
   'v-kvartire-krysy', 'v-kvartire-myshi',
