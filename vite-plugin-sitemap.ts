@@ -180,6 +180,9 @@ const tier2Neighborhoods = [
 // Типы объектов
 const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv', 'gostinic', 'detskih-sadov', 'hostela', 'magazinov', 'avtomobiley'];
 
+// Объекты, для которых демеркуризация имеет смысл
+const demerkurizaciyaObjects = ['kvartir', 'domov', 'ofisov', 'skladov', 'proizvodstv'];
+
 // Услуги для объектов
 const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'demerkurizaciya'];
 
