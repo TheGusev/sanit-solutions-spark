@@ -400,7 +400,8 @@ export function sitemapPlugin(): Plugin {
       // ========== SITEMAP-SERVICES-OBJECT.XML (услуга + объект = 24 URL) ==========
       const serviceObjectUrls: SitemapUrl[] = [];
       servicesForObjects.forEach(serviceSlug => {
-        objectSlugs.forEach(objectSlug => {
+        const objects = serviceSlug === 'demerkurizaciya' ? demerkurizaciyaObjects : objectSlugs;
+        objects.forEach(objectSlug => {
           serviceObjectUrls.push({
             loc: `/uslugi/${serviceSlug}/${objectSlug}/`,
             lastmod: currentDate,
