@@ -356,6 +356,8 @@ const moCities = [
   { slug: 'podolsk', name: 'подольск' }, { slug: 'korolyov', name: 'королёв' },
   { slug: 'lyubertsy', name: 'люберцы' }, { slug: 'odintsovo', name: 'одинцово' },
   { slug: 'dolgoprudny', name: 'долгопрудный' }, { slug: 'shchyolkovo', name: 'щёлково' },
+  { slug: 'klin', name: 'клин' }, { slug: 'ramenskoe', name: 'раменское' },
+  { slug: 'chekhov', name: 'чехов' }, { slug: 'domodedovo', name: 'домодедово' },
 ];
 const moServices = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie'] as const;
 
