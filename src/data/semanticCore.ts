@@ -344,7 +344,7 @@ const blogEntries: SemanticEntry[] = [
   { query: 'аллергия на препараты дезинсекции', canonical: '/blog/allergiya-na-preparaty-dezinsekcii/', intent: 'informational', cluster: 'blog', priority: 3 },
 ];
 
-// ===================== КЛАСТЕР: moscow-region (40 записей = 10 городов × 4 услуги) =====================
+// ===================== КЛАСТЕР: moscow-region (56 записей = 14 городов × 4 услуги) =====================
 
 const moServiceNames: Record<string, string> = {
   dezinsekciya: 'дезинсекция', dezinfekciya: 'дезинфекция',
