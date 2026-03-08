@@ -86,12 +86,25 @@ const moscowRegionCitySlugs = [
 ];
 const moscowRegionServices = ['dezinsekciya', 'deratizaciya', 'dezinfekciya', 'ozonirovanie'];
 
-// Топ районов для НЧ-страниц (синхронизировано с seoRoutes.ts)
+// Топ районов для НЧ-страниц — tiered model
 const topNeighborhoods = [
   'arbat', 'tverskoy', 'khamovniki', 'zamoskvorechye', 'presnensky',
   'sokol', 'aeroport', 'babushkinsky', 'izmaylovo', 'sokolniki',
   'maryino', 'lyublino', 'chertanovo-severnoe', 'konkovo', 'strogino'
 ];
+
+const tier2Neighborhoods = [
+  ...topNeighborhoods,
+  'basmannyy', 'tagansky', 'yakimanka', 'voykovskiy', 'koptevo',
+  'khovrino', 'otradnoe', 'bibirevo', 'altufyevsky', 'perovo',
+  'novogireevo', 'kuzminki', 'pechatniki', 'tekstilshchiki', 'danilovsky',
+  'zyablikovo', 'tsaritsyno', 'akademichesky', 'cheryomushki', 'yasenevo',
+  'kuntsevo', 'solntsevo', 'mitino', 'kurkino', 'nekrasovka',
+];
+
+const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi'];
+const tier2Pests = ['muravyi', 'blohi', 'mol', 'kroty'];
+const tier3Pests = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
 
 // Округа Москвы
 const districtSlugs = [
@@ -270,7 +283,7 @@ function getAllRoutes(): SSGRoute[] {
   
   // ======== НОВЫЕ ТИПЫ СТРАНИЦ ========
   
-  // Услуга + Объект (24 страницы: 4 услуги × 6 объектов)
+  // Услуга + Объект
   servicesForObjects.forEach(serviceSlug => {
     objectSlugs.forEach(objectSlug => {
       routes.push({
@@ -281,35 +294,44 @@ function getAllRoutes(): SSGRoute[] {
     });
   });
   
-  // Дезинфекция по 130 районам Москвы (ServiceDistrictPage)
-  neighborhoodSlugs.forEach(neighborhoodSlug => {
-    routes.push({
-      path: `/uslugi/dezinfekciya/${neighborhoodSlug}`,
-      outputPath: `uslugi/dezinfekciya/${neighborhoodSlug}/index.html`,
-      priority: '0.75'
+  // REMOVED: /uslugi/dezinfekciya/[neighborhood] doorway pages
+  
+  // ======== NCH PAGES — TIERED MODEL ========
+  
+  // Tier 1: top 4 pests × all neighborhoods
+  tier1Pests.forEach(pestSlug => {
+    const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
+    neighborhoodSlugs.forEach(nhoodSlug => {
+      routes.push({
+        path: `/uslugi/${service}/${pestSlug}/${nhoodSlug}`,
+        outputPath: `uslugi/${service}/${pestSlug}/${nhoodSlug}/index.html`,
+        priority: '0.7'
+      });
     });
   });
   
-  // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
+  // Tier 2: next 4 pests × top 40 neighborhoods
+  tier2Pests.forEach(pestSlug => {
+    const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
+    tier2Neighborhoods.forEach(nhoodSlug => {
+      routes.push({
+        path: `/uslugi/${service}/${pestSlug}/${nhoodSlug}`,
+        outputPath: `uslugi/${service}/${pestSlug}/${nhoodSlug}/index.html`,
+        priority: '0.65'
+      });
+    });
+  });
   
-  // НЧ-страницы (услуга + вредитель + район) - NСНPage (топ-15 районов)
-        topNeighborhoods.forEach(neighborhoodSlug => {
-    dezinsekciyaPestSlugs.forEach(pestSlug => {
+  // Tier 3: remaining 6 pests × top 15 neighborhoods
+  tier3Pests.forEach(pestSlug => {
+    topNeighborhoods.forEach(nhoodSlug => {
       routes.push({
-        path: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}`,
-        outputPath: `uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}/index.html`,
-        priority: '0.7'
+        path: `/uslugi/dezinsekciya/${pestSlug}/${nhoodSlug}`,
+        outputPath: `uslugi/dezinsekciya/${pestSlug}/${nhoodSlug}/index.html`,
+        priority: '0.6'
       });
     });
-    
-    deratizaciyaPestSlugs.forEach(pestSlug => {
-      routes.push({
-        path: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}`,
-        outputPath: `uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/index.html`,
-        priority: '0.7'
-      });
-    });
-            });
+  });
   
   // Обзорная страница округов
   routes.push({

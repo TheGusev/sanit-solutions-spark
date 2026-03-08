@@ -92,10 +92,18 @@ const serviceSubpageRoutes = [
 ];
 
 // Вредители для дезинсекции
-const dezinsekciyaPestSlugs = ['tarakany', 'klopy', 'muravyi', 'blohi', 'mol'];
+const dezinsekciyaPestSlugs = [
+  'tarakany', 'klopy', 'muravyi', 'blohi', 'mol',
+  'komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'
+];
 
 // Вредители для дератизации
 const deratizaciyaPestSlugs = ['krysy', 'myshi', 'kroty'];
+
+// Tiered pest groups
+const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi'];
+const tier2PestsList = ['muravyi', 'blohi', 'mol', 'kroty'];
+const tier3PestsList = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
 
 // Округа Москвы
 const districtSlugs = [
@@ -148,17 +156,26 @@ const neighborhoodSlugs = [
   'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5'
 ];
 
-// Топ-районы для НЧ-страниц
+// Топ-районы для НЧ-страниц — tiered model
 const topNeighborhoods = [
   'arbat', 'tverskoy', 'khamovniki', 'zamoskvorechye', 'presnensky',
   'sokol', 'aeroport', 'babushkinsky', 'izmaylovo', 'sokolniki',
   'maryino', 'lyublino', 'chertanovo-severnoe', 'konkovo', 'strogino'
 ];
 
-// Типы объектов (синхронизировано с src/data/objects.ts)
-const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv'];
+const tier2Neighborhoods = [
+  ...topNeighborhoods,
+  'basmannyy', 'tagansky', 'yakimanka', 'voykovskiy', 'koptevo',
+  'khovrino', 'otradnoe', 'bibirevo', 'altufyevsky', 'perovo',
+  'novogireevo', 'kuzminki', 'pechatniki', 'tekstilshchiki', 'danilovsky',
+  'zyablikovo', 'tsaritsyno', 'akademichesky', 'cheryomushki', 'yasenevo',
+  'kuntsevo', 'solntsevo', 'mitino', 'kurkino', 'nekrasovka',
+];
 
-// Услуги для объектов (4 основных)
+// Типы объектов
+const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv', 'gostinic', 'detskih-sadov', 'hostela', 'magazinov', 'avtomobiley'];
+
+// Услуги для объектов
 const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'demerkurizaciya'];
 
 
@@ -233,7 +250,8 @@ const blogSlugs = [
 // Города МО
 const moscowRegionCitySlugs = [
   'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 
-  'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo'
+  'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo',
+  'klin', 'ramenskoe', 'chekhov', 'domodedovo'
 ];
 
 // Услуги МО
@@ -330,14 +348,15 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // ========== SITEMAP-NCH.XML (НЧ-страницы: услуга + вредитель + топ-15 районов = ~105 URL) ==========
+      // ========== SITEMAP-NCH.XML (НЧ-страницы: tiered model ~774 URL) ==========
       const nchUrls: SitemapUrl[] = [];
       
-      // Дезинсекция + вредитель + топ-15 районов
-      dezinsekciyaPestSlugs.forEach(pestSlug => {
-        topNeighborhoods.forEach(neighborhoodSlug => {
+      // Tier 1: top 4 pests × all neighborhoods
+      tier1Pests.forEach(pestSlug => {
+        const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
+        neighborhoodSlugs.forEach(nhoodSlug => {
           nchUrls.push({
-            loc: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}/`,
+            loc: `/uslugi/${service}/${pestSlug}/${nhoodSlug}/`,
             lastmod: currentDate,
             changefreq: 'monthly',
             priority: '0.7',
@@ -345,14 +364,27 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // Дератизация + вредитель + топ-15 районов
-      deratizaciyaPestSlugs.forEach(pestSlug => {
-        topNeighborhoods.forEach(neighborhoodSlug => {
+      // Tier 2: next 4 pests × top 40 neighborhoods
+      tier2PestsList.forEach(pestSlug => {
+        const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
+        tier2Neighborhoods.forEach(nhoodSlug => {
           nchUrls.push({
-            loc: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/`,
+            loc: `/uslugi/${service}/${pestSlug}/${nhoodSlug}/`,
             lastmod: currentDate,
             changefreq: 'monthly',
-            priority: '0.7',
+            priority: '0.65',
+          });
+        });
+      });
+      
+      // Tier 3: remaining 6 pests × top 15 neighborhoods
+      tier3PestsList.forEach(pestSlug => {
+        topNeighborhoods.forEach(nhoodSlug => {
+          nchUrls.push({
+            loc: `/uslugi/dezinsekciya/${pestSlug}/${nhoodSlug}/`,
+            lastmod: currentDate,
+            changefreq: 'monthly',
+            priority: '0.6',
           });
         });
       });

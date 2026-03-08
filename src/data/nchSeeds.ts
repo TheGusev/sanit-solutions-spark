@@ -1,46 +1,45 @@
 /**
  * Генератор НЧ-страниц (услуга + вредитель + район).
- * Создаёт первую волну 300-500 низкочастотных страниц.
+ * Тиерированная модель: ~774 страниц.
  * 
- * Логика приоритизации:
- * 1. Топ-вредители × Топ-районы = высший приоритет
- * 2. Все вредители × Топ-районы = средний приоритет
- * 3. Топ-вредители × все районы = низкий приоритет
+ * Tier 1: top 4 pests × all 131 neighborhoods = ~524
+ * Tier 2: next 4 pests × top 40 neighborhoods = ~160
+ * Tier 3: remaining 6 pests × top 15 neighborhoods = ~90
  */
 
-import { pests, dezinsekciyaPestSlugs, deratizaciyaPestSlugs } from './pests';
-import { neighborhoodSlugs, topNeighborhoods } from '@/lib/seoRoutes';
+import { pests } from './pests';
+import { neighborhoodSlugs, topNeighborhoods, tier2Neighborhoods } from '@/lib/seoRoutes';
 
 export interface NchPage {
   id: string;
   service: 'dezinsekciya' | 'deratizaciya';
   pest: string;
   neighborhood: string;
-  priority: 1 | 2 | 3; // 1 = высший, 3 = низший
+  priority: 1 | 2 | 3; // 1 = tier 1 (highest), 3 = tier 3 (lowest)
   keyword: string;
 }
 
-// Топ-15 районов — импортированы из seoRoutes.ts (единый источник истины)
 // Re-export для обратной совместимости
 export { topNeighborhoods } from '@/lib/seoRoutes';
 
-// Топ-вредители по спросу
-export const topPests = ['tarakany', 'klopy', 'krysy', 'myshi'];
+// Tiered pest groups
+export const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi'];
+export const tier2PestsList = ['muravyi', 'blohi', 'mol', 'kroty'];
+export const tier3PestsList = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
+export const topPests = tier1Pests;
 
 /**
- * Генерирует массив НЧ-страниц для SSG.
- * Средний объём: ~300-500 страниц.
+ * Генерирует массив НЧ-страниц для SSG (тиерированная модель).
  */
 export function generateNchSeeds(): NchPage[] {
   const seeds: NchPage[] = [];
   
-  // Волна 1: Топ-вредители × Топ-районы (приоритет 1)
-  // 4 вредителя × 20 районов = 80 страниц
-  topPests.forEach(pestSlug => {
+  // Tier 1: top 4 pests × all neighborhoods
+  tier1Pests.forEach(pestSlug => {
     const pest = pests.find(p => p.slug === pestSlug);
     if (!pest) return;
     
-    topNeighborhoods.forEach(neighborhoodSlug => {
+    neighborhoodSlugs.forEach(neighborhoodSlug => {
       seeds.push({
         id: `${pest.serviceType}-${pestSlug}-${neighborhoodSlug}`,
         service: pest.serviceType,
@@ -52,15 +51,16 @@ export function generateNchSeeds(): NchPage[] {
     });
   });
   
-  // Волна 2: Все вредители × Топ-районы (приоритет 2)
-  // (7 вредителей - 4 топа) × 20 районов = 60 страниц
-  const otherPests = pests.filter(p => !topPests.includes(p.slug));
-  otherPests.forEach(pest => {
-    topNeighborhoods.forEach(neighborhoodSlug => {
+  // Tier 2: next 4 pests × top 40 neighborhoods
+  tier2PestsList.forEach(pestSlug => {
+    const pest = pests.find(p => p.slug === pestSlug);
+    if (!pest) return;
+    
+    tier2Neighborhoods.forEach(neighborhoodSlug => {
       seeds.push({
-        id: `${pest.serviceType}-${pest.slug}-${neighborhoodSlug}`,
+        id: `${pest.serviceType}-${pestSlug}-${neighborhoodSlug}`,
         service: pest.serviceType,
-        pest: pest.slug,
+        pest: pestSlug,
         neighborhood: neighborhoodSlug,
         priority: 2,
         keyword: `уничтожение ${pest.genitive} ${neighborhoodSlug}`
@@ -68,23 +68,18 @@ export function generateNchSeeds(): NchPage[] {
     });
   });
   
-  // Волна 3: Топ-вредители × остальные районы (приоритет 2-3)
-  // 4 вредителя × (125 - 20) районов = 420 страниц (берём первые 40 из оставшихся = 160)
-  const otherNeighborhoods = neighborhoodSlugs
-    .filter(n => !topNeighborhoods.includes(n))
-    .slice(0, 40); // Ограничиваем для средней волны
-  
-  topPests.forEach(pestSlug => {
+  // Tier 3: remaining 6 pests × top 15 neighborhoods
+  tier3PestsList.forEach(pestSlug => {
     const pest = pests.find(p => p.slug === pestSlug);
     if (!pest) return;
     
-    otherNeighborhoods.forEach((neighborhoodSlug, index) => {
+    topNeighborhoods.forEach(neighborhoodSlug => {
       seeds.push({
-        id: `${pest.serviceType}-${pestSlug}-${neighborhoodSlug}`,
-        service: pest.serviceType,
+        id: `dezinsekciya-${pestSlug}-${neighborhoodSlug}`,
+        service: 'dezinsekciya',
         pest: pestSlug,
         neighborhood: neighborhoodSlug,
-        priority: index < 20 ? 2 : 3,
+        priority: 3,
         keyword: `уничтожение ${pest.genitive} ${neighborhoodSlug}`
       });
     });

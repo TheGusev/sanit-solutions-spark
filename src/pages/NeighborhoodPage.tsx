@@ -474,19 +474,45 @@ const NeighborhoodPage = () => {
           </div>
         </section>
 
-        {/* Popular Pests */}
+        {/* Popular Pests — all 14 pests grouped */}
         <section className="py-12">
           <div className="container mx-auto px-4">
             <SectionHeading label="ВРЕДИТЕЛИ" title={`Популярные вредители ${locationText}`} align="left" />
+            
+            {/* Насекомые */}
+            <p className="text-sm font-medium text-muted-foreground mb-3">Насекомые</p>
+            <div className="flex flex-wrap gap-3 mb-6">
+              {[
+                { name: 'Клопы', slug: 'klopy', emoji: '🛏️', service: 'dezinsekciya' },
+                { name: 'Тараканы', slug: 'tarakany', emoji: '🪳', service: 'dezinsekciya' },
+                { name: 'Муравьи', slug: 'muravyi', emoji: '🐜', service: 'dezinsekciya' },
+                { name: 'Блохи', slug: 'blohi', emoji: '🦟', service: 'dezinsekciya' },
+                { name: 'Моль', slug: 'mol', emoji: '🦋', service: 'dezinsekciya' },
+                { name: 'Комары', slug: 'komary', emoji: '🦟', service: 'dezinsekciya' },
+                { name: 'Мухи', slug: 'muhi', emoji: '🪰', service: 'dezinsekciya' },
+                { name: 'Осы/шершни', slug: 'osy-shershni', emoji: '🐝', service: 'dezinsekciya' },
+                { name: 'Чешуйницы', slug: 'cheshuynitsy', emoji: '🦗', service: 'dezinsekciya' },
+                { name: 'Клещи', slug: 'kleshchi', emoji: '🕷️', service: 'dezinsekciya' },
+                { name: 'Мокрицы', slug: 'mokricy', emoji: '🦂', service: 'dezinsekciya' },
+              ].map((pest) => (
+                <Link key={pest.slug} to={`/uslugi/${pest.service}/${pest.slug}`}>
+                  <Badge variant="secondary" className="text-sm py-2.5 px-5 cursor-pointer hover:bg-primary/10 transition-colors">
+                    <span className="mr-1.5">{pest.emoji}</span>
+                    {pest.name}
+                  </Badge>
+                </Link>
+              ))}
+            </div>
+
+            {/* Грызуны */}
+            <p className="text-sm font-medium text-muted-foreground mb-3">Грызуны</p>
             <div className="flex flex-wrap gap-3">
               {[
-                { name: 'Клопы', slug: 'klopy', emoji: '🪳' },
-                { name: 'Тараканы', slug: 'tarakany', emoji: '🪳' },
-                { name: 'Грызуны', slug: 'myshi', emoji: '🐀' },
-                { name: 'Муравьи', slug: 'muravi', emoji: '🐜' },
-                { name: 'Моль', slug: 'mol', emoji: '🦋' },
+                { name: 'Крысы', slug: 'krysy', emoji: '🐀', service: 'deratizaciya' },
+                { name: 'Мыши', slug: 'myshi', emoji: '🐁', service: 'deratizaciya' },
+                { name: 'Кроты', slug: 'kroty', emoji: '🦫', service: 'deratizaciya' },
               ].map((pest) => (
-                <Link key={pest.slug} to={`/uslugi/dezinsekciya/${pest.slug}`}>
+                <Link key={pest.slug} to={`/uslugi/${pest.service}/${pest.slug}`}>
                   <Badge variant="secondary" className="text-sm py-2.5 px-5 cursor-pointer hover:bg-primary/10 transition-colors">
                     <span className="mr-1.5">{pest.emoji}</span>
                     {pest.name}

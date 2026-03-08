@@ -123,6 +123,21 @@ export const topNeighborhoods = [
   'maryino', 'lyublino', 'chertanovo-severnoe', 'konkovo', 'strogino'
 ];
 
+// Топ-40 районов для tier 2
+export const tier2Neighborhoods = [
+  ...topNeighborhoods,
+  'basmannyy', 'tagansky', 'yakimanka', 'voykovskiy', 'koptevo',
+  'khovrino', 'otradnoe', 'bibirevo', 'altufyevsky', 'perovo',
+  'novogireevo', 'kuzminki', 'pechatniki', 'tekstilshchiki', 'danilovsky',
+  'zyablikovo', 'tsaritsyno', 'akademichesky', 'cheryomushki', 'yasenevo',
+  'kuntsevo', 'solntsevo', 'mitino', 'kurkino', 'nekrasovka',
+];
+
+// Tier pest groups for NCH generation
+export const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi'];
+export const tier2Pests = ['muravyi', 'blohi', 'mol', 'kroty'];
+export const tier3Pests = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
+
 // Типы объектов (синхронизировано с src/data/objects.ts)
 export const objectSlugs = [
   'kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv',
@@ -194,24 +209,56 @@ export function getAllSSGRoutes() {
   // REMOVED: /uslugi/dezinfekciya/[neighborhood] — conflicts with /rajony/[neighborhood]
   // All geo pages now live at /rajony/[slug]/ (Issue #1 fix)
   
-  // НЧ-страницы: Услуга + Вредитель + Топ-15 районов (~105 страниц)
-  dezinsekciyaPestSlugs.forEach(pestSlug => {
-    topNeighborhoods.forEach(neighborhoodSlug => {
+  // НЧ-страницы: Tiered expansion
+  // Tier 1: top 4 pests × all 131 neighborhoods (~524 pages)
+  const allPestSlugs = [...dezinsekciyaPestSlugs, ...deratizaciyaPestSlugs];
+  const tier1PestsLocal = ['tarakany', 'klopy', 'krysy', 'myshi'];
+  const tier2PestsLocal = ['muravyi', 'blohi', 'mol', 'kroty'];
+  const tier3PestsLocal = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
+  
+  const tier2NeighborhoodsLocal = [
+    ...topNeighborhoods,
+    'basmannyy', 'tagansky', 'yakimanka', 'voykovskiy', 'koptevo',
+    'khovrino', 'otradnoe', 'bibirevo', 'altufyevsky', 'perovo',
+    'novogireevo', 'kuzminki', 'pechatniki', 'tekstilshchiki', 'danilovsky',
+    'zyablikovo', 'tsaritsyno', 'akademichesky', 'cheryomushki', 'yasenevo',
+    'kuntsevo', 'solntsevo', 'mitino', 'kurkino', 'nekrasovka',
+  ];
+
+  // Tier 1: top 4 pests × all neighborhoods
+  tier1PestsLocal.forEach(pestSlug => {
+    const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
+    neighborhoodSlugs.forEach(neighborhoodSlug => {
       routes.push({
-        path: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}`,
-        outputPath: `uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}/index.html`,
+        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`,
+        outputPath: `uslugi/${service}/${pestSlug}/${neighborhoodSlug}/index.html`,
         priority: '0.7',
         changefreq: 'monthly'
       });
     });
   });
-  
-  deratizaciyaPestSlugs.forEach(pestSlug => {
+
+  // Tier 2: next 4 pests × top 40 neighborhoods
+  tier2PestsLocal.forEach(pestSlug => {
+    const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
+    tier2NeighborhoodsLocal.forEach(neighborhoodSlug => {
+      routes.push({
+        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`,
+        outputPath: `uslugi/${service}/${pestSlug}/${neighborhoodSlug}/index.html`,
+        priority: '0.65',
+        changefreq: 'monthly'
+      });
+    });
+  });
+
+  // Tier 3: remaining 6 pests × top 15 neighborhoods
+  tier3PestsLocal.forEach(pestSlug => {
+    const service = 'dezinsekciya'; // all tier 3 are dezinsekciya
     topNeighborhoods.forEach(neighborhoodSlug => {
       routes.push({
-        path: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}`,
-        outputPath: `uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/index.html`,
-        priority: '0.7',
+        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`,
+        outputPath: `uslugi/${service}/${pestSlug}/${neighborhoodSlug}/index.html`,
+        priority: '0.6',
         changefreq: 'monthly'
       });
     });
