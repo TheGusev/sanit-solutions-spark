@@ -250,7 +250,8 @@ const blogSlugs = [
 // Города МО
 const moscowRegionCitySlugs = [
   'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 
-  'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo'
+  'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo',
+  'klin', 'ramenskoe', 'chekhov', 'domodedovo'
 ];
 
 // Услуги МО
