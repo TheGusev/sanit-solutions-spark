@@ -1,17 +1,30 @@
 
 
-## Plan: Исправить секцию «Наши услуги»
+## Plan: Fix All Remaining Audit Issues
 
-### Проблемы
-1. Desktop: карточки стоят 6 в ряд — нужно 4+4 (2 ряда по 4, отцентрированные)
-2. Оверлей слишком тёмный (bg-black/55) — фон не видно
-3. Кнопка «Смотреть полный прайс» — текст не виден
-4. Мобильная версия: по референсу карточки должны быть стеклянными (glassmorphism) с полупрозрачным фоном и рамкой, а не белыми solid
+### Remaining issues (5 items):
 
-### Изменения в `src/components/MiniPricing.tsx`
+| # | Issue | Severity | File | Fix |
+|---|-------|----------|------|-----|
+| H1 | "гарантия 1 год" still in pests.ts:949 | HIGH | `src/data/blog/llm/pests.ts` | Replace with "гарантию до 3 лет" |
+| M4 | `seoRoutes.ts` paths lack trailing slashes | MEDIUM | `src/lib/seoRoutes.ts` | Add `/` to all generated paths in `getAllSSGRoutes()` |
+| L1 | Nonsensical service+object combos | LOW | `src/lib/seoRoutes.ts` | Prune `demerkurizaciya` from impractical objects (avtomobiley, detskih-sadov, hostela, magazinov, gostinic) |
+| L3 | Duplicate relatedServices entry | LOW | `src/data/serviceSubpages.ts:865-866` | Remove duplicate "Уничтожение клопов" link |
+| — | `verify-build.js` checks for "Гарантия 1 год" | OK | `scripts/verify-build.js` | This is a BUILD GUARD that catches the issue — keep it |
 
-1. **Grid**: `lg:grid-cols-6` → `lg:grid-cols-4`, убрать `max-w-5xl` → `max-w-4xl` для ровного центрирования 4x2
-2. **Оверлей**: `bg-black/55` → `bg-black/35` — фоновая картинка будет проглядывать сильнее
-3. **Карточки**: заменить `bg-card` на glassmorphism-стиль: `bg-white/20 backdrop-blur-md border border-white/30` — полупрозрачные стеклянные карточки как на референсе. Текст — белый.
-4. **Кнопка**: добавить `bg-white/15 backdrop-blur-sm` чтобы текст был читаем на любом фоне
+### Changes
+
+**File 1: `src/data/blog/llm/pests.ts` line 949**
+- Replace `гарантию 1 год` → `гарантию до 3 лет`
+
+**File 2: `src/lib/seoRoutes.ts` — `getAllSSGRoutes()`**
+- All `path` values in push calls: append trailing slash (e.g., `` `/uslugi/${slug}/` ``)
+- Affects ~10 `routes.push()` blocks (services, subpages, pests, objects, districts, neighborhoods, MO cities, blog, NCH tiers)
+
+**File 3: `src/data/serviceSubpages.ts` line 865-866**
+- Remove duplicate relatedServices entry (two identical "Уничтожение клопов" links)
+
+**File 4: `src/lib/seoRoutes.ts` — prune nonsensical combos**
+- Filter out impractical `demerkurizaciya` + object combos by limiting `demerkurizaciya` to only `['kvartir', 'domov', 'ofisov', 'skladov', 'proizvodstv']`
+- This removes ~6 nonsensical pages (gostinic, detskih-sadov, hostela, magazinov, avtomobiley for demerkurizaciya)
 
