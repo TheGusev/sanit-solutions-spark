@@ -863,7 +863,6 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     relatedServices: [
       { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🛏️" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🪲" },
       { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция", price: "от 1000₽", icon: "🦠" }
     ],
     priceFrom: 1200,

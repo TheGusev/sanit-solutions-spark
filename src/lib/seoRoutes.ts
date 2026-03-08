@@ -352,7 +352,7 @@ export function getAllSSGRoutes() {
   
   blogArticleSlugs.forEach(slug => {
     routes.push({
-      path: `/blog/${slug}`,
+      path: `/blog/${slug}/`,
       outputPath: `blog/${slug}/index.html`,
       priority: '0.6',
       changefreq: 'monthly'
@@ -361,7 +361,7 @@ export function getAllSSGRoutes() {
   
   // Обзорная страница районов
   routes.push({
-    path: '/rajony',
+    path: '/rajony/',
     outputPath: 'rajony/index.html',
     priority: '0.8',
     changefreq: 'monthly'
@@ -370,7 +370,7 @@ export function getAllSSGRoutes() {
   // Страницы районов
   neighborhoodSlugs.forEach(slug => {
     routes.push({
-      path: `/rajony/${slug}`,
+      path: `/rajony/${slug}/`,
       outputPath: `rajony/${slug}/index.html`,
       priority: '0.75',
       changefreq: 'monthly'
@@ -379,7 +379,7 @@ export function getAllSSGRoutes() {
   
   // Московская область - обзор
   routes.push({
-    path: '/moscow-oblast',
+    path: '/moscow-oblast/',
     outputPath: 'moscow-oblast/index.html',
     priority: '0.8',
     changefreq: 'monthly'
@@ -388,7 +388,7 @@ export function getAllSSGRoutes() {
   // Города Московской области
   moscowRegionCitySlugs.forEach(citySlug => {
     routes.push({
-      path: `/moscow-oblast/${citySlug}`,
+      path: `/moscow-oblast/${citySlug}/`,
       outputPath: `moscow-oblast/${citySlug}/index.html`,
       priority: '0.8',
       changefreq: 'monthly'
@@ -397,7 +397,7 @@ export function getAllSSGRoutes() {
     // Услуги в городах МО
     moscowRegionServices.forEach(serviceSlug => {
       routes.push({
-        path: `/moscow-oblast/${citySlug}/${serviceSlug}`,
+        path: `/moscow-oblast/${citySlug}/${serviceSlug}/`,
         outputPath: `moscow-oblast/${citySlug}/${serviceSlug}/index.html`,
         priority: '0.75',
         changefreq: 'monthly'
