@@ -27,14 +27,14 @@ interface ValidationResult {
 // Статические страницы
 const staticRoutes: SSGRoute[] = [
   { path: '/', outputPath: 'index.html' },
-  { path: '/contacts', outputPath: 'contacts/index.html' },
-  { path: '/blog', outputPath: 'blog/index.html' },
-  { path: '/privacy', outputPath: 'privacy/index.html' },
-  { path: '/sluzhba-dezinsekcii', outputPath: 'sluzhba-dezinsekcii/index.html' },
-  { path: '/otzyvy', outputPath: 'otzyvy/index.html' },
-  { path: '/uslugi/obrabotka-uchastkov', outputPath: 'uslugi/obrabotka-uchastkov/index.html' },
-  { path: '/terms', outputPath: 'terms/index.html' },
-  { path: '/team', outputPath: 'team/index.html' },
+  { path: '/contacts/', outputPath: 'contacts/index.html' },
+  { path: '/blog/', outputPath: 'blog/index.html' },
+  { path: '/privacy/', outputPath: 'privacy/index.html' },
+  { path: '/sluzhba-dezinsekcii/', outputPath: 'sluzhba-dezinsekcii/index.html' },
+  { path: '/otzyvy/', outputPath: 'otzyvy/index.html' },
+  { path: '/uslugi/obrabotka-uchastkov/', outputPath: 'uslugi/obrabotka-uchastkov/index.html' },
+  { path: '/terms/', outputPath: 'terms/index.html' },
+  { path: '/team/', outputPath: 'team/index.html' },
 ];
 
 // Услуги
