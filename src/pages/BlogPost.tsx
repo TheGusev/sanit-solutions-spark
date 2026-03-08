@@ -25,7 +25,7 @@ import { getArticleBySlug, allBlogArticles } from "@/data/blog";
 import { blogAuthors } from "@/data/blog/types";
 import { Button } from "@/components/ui/button";
 import { SEO_CONFIG } from "@/lib/seo";
-import { User, Clock, Calendar, List } from "lucide-react";
+import { User, Clock, Calendar, List, ArrowLeft } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
