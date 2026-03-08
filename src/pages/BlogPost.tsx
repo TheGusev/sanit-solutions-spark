@@ -132,9 +132,15 @@ const BlogPost = () => {
       
       <Header />
 
-      {/* Breadcrumbs */}
+      {/* Breadcrumbs + Back */}
       <section className="pt-28 pb-4 px-4 border-b">
         <div className="container mx-auto max-w-4xl">
+          <div className="flex items-center gap-3 mb-2">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/blog')} className="gap-1.5 -ml-2 text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">К статьям</span>
+            </Button>
+          </div>
           <Breadcrumbs 
             items={[
               { label: "Блог", href: "/blog" },

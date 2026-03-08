@@ -194,27 +194,39 @@ const Blog = () => {
                   className="group"
                 >
                   <div className="rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs px-2.5 py-0.5 rounded-full border border-border text-muted-foreground font-medium">
-                          {post.category}
-                        </span>
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {post.readTime}
-                        </span>
+                    <div className="flex gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                              {post.category}
+                            </span>
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Clock className="w-3 h-3" /> {post.readTime}
+                            </span>
+                          </div>
+                          {isPopular && (
+                            <span className="text-xs text-primary font-medium flex items-center gap-1">
+                              <TrendingUp className="w-3 h-3" /> Популярное
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-base md:text-lg font-bold leading-snug mb-1 group-hover:text-primary transition-colors">
+                          {post.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {post.excerpt}
+                        </p>
                       </div>
-                      {isPopular && (
-                        <span className="text-xs text-primary font-medium flex items-center gap-1">
-                          <TrendingUp className="w-3 h-3" /> Популярное
-                        </span>
+                      {categoryThumbnails[post.category] && (
+                        <img
+                          src={categoryThumbnails[post.category]}
+                          alt=""
+                          className="w-16 h-16 rounded-xl object-cover shrink-0 self-center"
+                          loading="lazy"
+                        />
                       )}
                     </div>
-                    <h3 className="text-base md:text-lg font-bold leading-snug mb-1 group-hover:text-primary transition-colors">
-                      {post.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {post.excerpt}
-                    </p>
                   </div>
                 </Link>
               );
