@@ -142,26 +142,36 @@ const Blog = () => {
         </div>
       </section>
 
-      {/* Category Swipe Carousel */}
-      <section className="py-4 md:py-6 px-2 md:px-4 border-b">
+      {/* Category Book/Folder Cards */}
+      <section className="py-6 md:py-8 px-3 md:px-4 border-b">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-wrap gap-1.5 md:gap-3 justify-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 md:gap-3">
             {blogCategories.map((category) => {
               const catConfig = categoryIcons[category] || { icon: FileText, emoji: "📄" };
-              const IconComp = catConfig.icon;
+              const isActive = selectedCategory === category;
               const count = category === "Все" ? allBlogArticles.length : allBlogArticles.filter(p => p.category === category).length;
               
               return (
-                <Button
+                <button
                   key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
                   onClick={() => { setSelectedCategory(category); setVisibleCount(30); }}
-                  className="rounded-full text-[11px] md:text-sm px-2.5 md:px-4 py-1.5 md:py-2 h-auto whitespace-nowrap gap-1"
+                  className={`
+                    flex items-center gap-3 rounded-xl px-4 py-3.5 md:py-4 text-left
+                    transition-colors duration-200 border
+                    ${isActive
+                      ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                      : 'bg-card text-card-foreground border-border hover:bg-muted'
+                    }
+                  `}
                 >
-                  <IconComp className="w-4 h-4" />
-                  {category}
-                  <span className="opacity-60 text-[10px] md:text-xs">({count})</span>
-                </Button>
+                  <span className="text-xl md:text-2xl shrink-0">{catConfig.emoji}</span>
+                  <div className="min-w-0">
+                    <div className="text-sm md:text-base font-semibold truncate">{category}</div>
+                    <div className={`text-xs ${isActive ? 'opacity-80' : 'text-muted-foreground'}`}>
+                      {count} {count === 1 ? 'статья' : count < 5 ? 'статьи' : 'статей'}
+                    </div>
+                  </div>
+                </button>
               );
             })}
           </div>
