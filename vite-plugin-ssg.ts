@@ -34,6 +34,7 @@ const staticRoutes: SSGRoute[] = [
   { path: '/otzyvy', outputPath: 'otzyvy/index.html' },
   { path: '/uslugi/obrabotka-uchastkov', outputPath: 'uslugi/obrabotka-uchastkov/index.html' },
   { path: '/terms', outputPath: 'terms/index.html' },
+  { path: '/team', outputPath: 'team/index.html' },
 ];
 
 // Услуги
@@ -60,8 +61,7 @@ const serviceSubpageRoutes = [
   { parent: 'dezinsekciya', sub: 'postelnyh-klopov' },
   { parent: 'dezinsekciya', sub: 'domashnih-klopov' },
   { parent: 'dezinsekciya', sub: 'tarakanov-v-kvartire' },
-  { parent: 'dezinsekciya', sub: 'klopov-i-tarakanov' },
-  { parent: 'dezinsekciya', sub: 'klopov-i-bloh' },
+  // REMOVED: klopov-i-tarakanov, klopov-i-bloh — combo pages redirected (Issue #5)
   { parent: 'dezinsekciya', sub: 'blokh-ot-zhivotnyh' },
   // Методы обработки
   { parent: 'dezinsekciya', sub: 'holodnym-tumanom' },

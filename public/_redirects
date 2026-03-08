@@ -28,9 +28,10 @@
 /uslugi/dezinsekciya/klopov-i-bloh/*       /uslugi/dezinsekciya/unichtozhenie-klopov/  301
 
 # 301 Redirects — old geo URLs → new /rajony/ hubs
-/uslugi/dezinfekciya/:slug  /rajony/:slug/  301
-/uslugi/dezinsekciya/:slug  /rajony/:slug/  301
-/uslugi/deratizaciya/:slug  /rajony/:slug/  301
+# NOTE: Cannot use wildcard /:slug here — it would catch valid pest/object URLs
+# (e.g., /uslugi/dezinsekciya/tarakany → /rajony/tarakany/ = 404!)
+# Old neighborhood URLs were already deindexed; _redirects left intentionally empty.
+# If specific old neighborhood slugs need 301s, enumerate them explicitly here.
 
 # 301 Redirects — renamed blog articles (commercial → informational)
 /blog/ceny-na-unichtozhenie-tarakany  /blog/skolko-stoit-obrabotka-tarakany/  301
