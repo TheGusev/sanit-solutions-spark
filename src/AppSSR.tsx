@@ -60,9 +60,9 @@ const AppSSR = () => (
         <Route path="/moscow-oblast/:citySlug" element={<MoscowRegionCityPage />} />
         <Route path="/moscow-oblast/:citySlug/:serviceSlug" element={<MoscowRegionServicePage />} />
 
-        {/* Сложные маршруты услуг (порядок как в App.tsx) */}
-        <Route path="/uslugi/:service/:segment2/:segment3" element={<ThreeSegmentRouteResolver />} />
+        {/* Сложные маршруты услуг — статические ПЕРЕД параметрическими */}
         <Route path="/uslugi/obrabotka-uchastkov" element={<ServiceLandingUchastkiPage />} />
+        <Route path="/uslugi/:service/:segment2/:segment3" element={<ThreeSegmentRouteResolver />} />
         <Route path="/uslugi/:parentSlug/:subSlug" element={<ServiceRouteResolver />} />
         {/* Универсальный роут для всех услуг и округов */}
         <Route path="/uslugi/:slug" element={<ServicePage />} />

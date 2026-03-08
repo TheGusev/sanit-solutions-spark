@@ -447,9 +447,9 @@ ${pest.shortDescription}
     ]
   },
   {
-    slugPrefix: 'ceny-na-unichtozhenie',
-    titleTemplate: 'Цены на уничтожение {genitive} в Москве 2026',
-    excerptTemplate: 'Актуальные цены на дезинсекцию от {genitive} в Москве. От чего зависит стоимость обработки?',
+    slugPrefix: 'skolko-stoit-obrabotka',
+    titleTemplate: 'Сколько стоит обработка от {genitive} в Москве: разбор цен 2026',
+    excerptTemplate: 'Разбираем, из чего складывается стоимость обработки от {genitive} в Москве. Примеры цен по площади.',
     category: 'Дезинсекция' as const,
     icon: Banknote,
     readTime: '4 мин',

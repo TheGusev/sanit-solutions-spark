@@ -204,7 +204,7 @@ const blogSlugs = [
   'profilaktika-tarakany', 'profilaktika-klopy', 'profilaktika-muravyi', 'profilaktika-blohi', 'profilaktika-mol',
   'chem-opasny-tarakany', 'chem-opasny-klopy', 'chem-opasny-muravyi', 'chem-opasny-blohi', 'chem-opasny-mol',
   'posle-obrabotki-tarakany', 'posle-obrabotki-klopy', 'posle-obrabotki-muravyi', 'posle-obrabotki-blohi', 'posle-obrabotki-mol',
-  'ceny-na-unichtozhenie-tarakany', 'ceny-na-unichtozhenie-klopy', 'ceny-na-unichtozhenie-muravyi', 'ceny-na-unichtozhenie-blohi', 'ceny-na-unichtozhenie-mol',
+  'skolko-stoit-obrabotka-tarakany', 'skolko-stoit-obrabotka-klopy', 'skolko-stoit-obrabotka-muravyi', 'skolko-stoit-obrabotka-blohi', 'skolko-stoit-obrabotka-mol',
   // ===== Pest articles: rodents (10 = 5 templates × 2 pests, без кротов) =====
   'kak-izbavitsya-ot-krysy', 'kak-izbavitsya-ot-myshi',
   'v-kvartire-krysy', 'v-kvartire-myshi',
