@@ -92,10 +92,18 @@ const serviceSubpageRoutes = [
 ];
 
 // Вредители для дезинсекции
-const dezinsekciyaPestSlugs = ['tarakany', 'klopy', 'muravyi', 'blohi', 'mol'];
+const dezinsekciyaPestSlugs = [
+  'tarakany', 'klopy', 'muravyi', 'blohi', 'mol',
+  'komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'
+];
 
 // Вредители для дератизации
 const deratizaciyaPestSlugs = ['krysy', 'myshi', 'kroty'];
+
+// Tiered pest groups
+const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi'];
+const tier2PestsList = ['muravyi', 'blohi', 'mol', 'kroty'];
+const tier3PestsList = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
 
 // Округа Москвы
 const districtSlugs = [
