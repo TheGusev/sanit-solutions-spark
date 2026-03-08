@@ -186,8 +186,8 @@ const Blog = () => {
                         <span className="text-xs px-2.5 py-0.5 rounded-full border border-border text-muted-foreground font-medium">
                           {post.category}
                         </span>
-                        <span className="text-xs text-muted-foreground">
-                          {post.readTime}
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {post.readTime}
                         </span>
                       </div>
                       {isPopular && (
