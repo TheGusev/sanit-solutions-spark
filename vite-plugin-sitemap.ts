@@ -347,14 +347,15 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // ========== SITEMAP-NCH.XML (НЧ-страницы: услуга + вредитель + топ-15 районов = ~105 URL) ==========
+      // ========== SITEMAP-NCH.XML (НЧ-страницы: tiered model ~774 URL) ==========
       const nchUrls: SitemapUrl[] = [];
       
-      // Дезинсекция + вредитель + топ-15 районов
-      dezinsekciyaPestSlugs.forEach(pestSlug => {
-        topNeighborhoods.forEach(neighborhoodSlug => {
+      // Tier 1: top 4 pests × all neighborhoods
+      tier1Pests.forEach(pestSlug => {
+        const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
+        neighborhoodSlugs.forEach(nhoodSlug => {
           nchUrls.push({
-            loc: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}/`,
+            loc: `/uslugi/${service}/${pestSlug}/${nhoodSlug}/`,
             lastmod: currentDate,
             changefreq: 'monthly',
             priority: '0.7',
@@ -362,14 +363,27 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // Дератизация + вредитель + топ-15 районов
-      deratizaciyaPestSlugs.forEach(pestSlug => {
-        topNeighborhoods.forEach(neighborhoodSlug => {
+      // Tier 2: next 4 pests × top 40 neighborhoods
+      tier2PestsList.forEach(pestSlug => {
+        const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
+        tier2Neighborhoods.forEach(nhoodSlug => {
           nchUrls.push({
-            loc: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/`,
+            loc: `/uslugi/${service}/${pestSlug}/${nhoodSlug}/`,
             lastmod: currentDate,
             changefreq: 'monthly',
-            priority: '0.7',
+            priority: '0.65',
+          });
+        });
+      });
+      
+      // Tier 3: remaining 6 pests × top 15 neighborhoods
+      tier3PestsList.forEach(pestSlug => {
+        topNeighborhoods.forEach(nhoodSlug => {
+          nchUrls.push({
+            loc: `/uslugi/dezinsekciya/${pestSlug}/${nhoodSlug}/`,
+            lastmod: currentDate,
+            changefreq: 'monthly',
+            priority: '0.6',
           });
         });
       });
