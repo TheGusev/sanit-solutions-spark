@@ -27,14 +27,14 @@ interface ValidationResult {
 // Статические страницы
 const staticRoutes: SSGRoute[] = [
   { path: '/', outputPath: 'index.html' },
-  { path: '/contacts', outputPath: 'contacts/index.html' },
-  { path: '/blog', outputPath: 'blog/index.html' },
-  { path: '/privacy', outputPath: 'privacy/index.html' },
-  { path: '/sluzhba-dezinsekcii', outputPath: 'sluzhba-dezinsekcii/index.html' },
-  { path: '/otzyvy', outputPath: 'otzyvy/index.html' },
-  { path: '/uslugi/obrabotka-uchastkov', outputPath: 'uslugi/obrabotka-uchastkov/index.html' },
-  { path: '/terms', outputPath: 'terms/index.html' },
-  { path: '/team', outputPath: 'team/index.html' },
+  { path: '/contacts/', outputPath: 'contacts/index.html' },
+  { path: '/blog/', outputPath: 'blog/index.html' },
+  { path: '/privacy/', outputPath: 'privacy/index.html' },
+  { path: '/sluzhba-dezinsekcii/', outputPath: 'sluzhba-dezinsekcii/index.html' },
+  { path: '/otzyvy/', outputPath: 'otzyvy/index.html' },
+  { path: '/uslugi/obrabotka-uchastkov/', outputPath: 'uslugi/obrabotka-uchastkov/index.html' },
+  { path: '/terms/', outputPath: 'terms/index.html' },
+  { path: '/team/', outputPath: 'team/index.html' },
 ];
 
 // Услуги
@@ -137,6 +137,9 @@ const neighborhoodSlugs = [
 
 // Типы объектов (синхронизировано с seoRoutes.ts)
 const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv', 'gostinic', 'detskih-sadov', 'hostela', 'magazinov', 'avtomobiley'];
+
+// Объекты, для которых демеркуризация имеет смысл
+const demerkurizaciyaObjects = ['kvartir', 'domov', 'ofisov', 'skladov', 'proizvodstv'];
 
 // Услуги для объектов
 const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'demerkurizaciya'];
@@ -251,7 +254,7 @@ function getAllRoutes(): SSGRoute[] {
   // Услуги
   servicesSlugs.forEach(slug => {
     routes.push({
-      path: `/uslugi/${slug}`,
+      path: `/uslugi/${slug}/`,
       outputPath: `uslugi/${slug}/index.html`
     });
   });
@@ -259,7 +262,7 @@ function getAllRoutes(): SSGRoute[] {
   // Подстраницы услуг
   serviceSubpageRoutes.forEach(({ parent, sub }) => {
     routes.push({
-      path: `/uslugi/${parent}/${sub}`,
+      path: `/uslugi/${parent}/${sub}/`,
       outputPath: `uslugi/${parent}/${sub}/index.html`
     });
   });
@@ -267,7 +270,7 @@ function getAllRoutes(): SSGRoute[] {
   // Услуга + Вредитель (ServicePestPage)
   dezinsekciyaPestSlugs.forEach(pestSlug => {
     routes.push({
-      path: `/uslugi/dezinsekciya/${pestSlug}`,
+      path: `/uslugi/dezinsekciya/${pestSlug}/`,
       outputPath: `uslugi/dezinsekciya/${pestSlug}/index.html`,
       priority: '0.85'
     });
@@ -275,7 +278,7 @@ function getAllRoutes(): SSGRoute[] {
   
   deratizaciyaPestSlugs.forEach(pestSlug => {
     routes.push({
-      path: `/uslugi/deratizaciya/${pestSlug}`,
+      path: `/uslugi/deratizaciya/${pestSlug}/`,
       outputPath: `uslugi/deratizaciya/${pestSlug}/index.html`,
       priority: '0.85'
     });
@@ -283,11 +286,12 @@ function getAllRoutes(): SSGRoute[] {
   
   // ======== НОВЫЕ ТИПЫ СТРАНИЦ ========
   
-  // Услуга + Объект
+  // Услуга + Объект (с pruning для демеркуризации)
   servicesForObjects.forEach(serviceSlug => {
-    objectSlugs.forEach(objectSlug => {
+    const objects = serviceSlug === 'demerkurizaciya' ? demerkurizaciyaObjects : objectSlugs;
+    objects.forEach(objectSlug => {
       routes.push({
-        path: `/uslugi/${serviceSlug}/${objectSlug}`,
+        path: `/uslugi/${serviceSlug}/${objectSlug}/`,
         outputPath: `uslugi/${serviceSlug}/${objectSlug}/index.html`,
         priority: '0.8'
       });
@@ -303,7 +307,7 @@ function getAllRoutes(): SSGRoute[] {
     const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
     neighborhoodSlugs.forEach(nhoodSlug => {
       routes.push({
-        path: `/uslugi/${service}/${pestSlug}/${nhoodSlug}`,
+        path: `/uslugi/${service}/${pestSlug}/${nhoodSlug}/`,
         outputPath: `uslugi/${service}/${pestSlug}/${nhoodSlug}/index.html`,
         priority: '0.7'
       });
@@ -315,7 +319,7 @@ function getAllRoutes(): SSGRoute[] {
     const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
     tier2Neighborhoods.forEach(nhoodSlug => {
       routes.push({
-        path: `/uslugi/${service}/${pestSlug}/${nhoodSlug}`,
+        path: `/uslugi/${service}/${pestSlug}/${nhoodSlug}/`,
         outputPath: `uslugi/${service}/${pestSlug}/${nhoodSlug}/index.html`,
         priority: '0.65'
       });
@@ -326,7 +330,7 @@ function getAllRoutes(): SSGRoute[] {
   tier3Pests.forEach(pestSlug => {
     topNeighborhoods.forEach(nhoodSlug => {
       routes.push({
-        path: `/uslugi/dezinsekciya/${pestSlug}/${nhoodSlug}`,
+        path: `/uslugi/dezinsekciya/${pestSlug}/${nhoodSlug}/`,
         outputPath: `uslugi/dezinsekciya/${pestSlug}/${nhoodSlug}/index.html`,
         priority: '0.6'
       });
@@ -335,14 +339,14 @@ function getAllRoutes(): SSGRoute[] {
   
   // Обзорная страница округов
   routes.push({
-    path: '/uslugi/po-okrugam-moskvy',
+    path: '/uslugi/po-okrugam-moskvy/',
     outputPath: 'uslugi/po-okrugam-moskvy/index.html'
   });
   
   // Страницы округов
   districtSlugs.forEach(id => {
     routes.push({
-      path: `/uslugi/dezinfekciya-${id}`,
+      path: `/uslugi/dezinfekciya-${id}/`,
       outputPath: `uslugi/dezinfekciya-${id}/index.html`
     });
   });
@@ -350,28 +354,28 @@ function getAllRoutes(): SSGRoute[] {
   // Блог
   blogSlugs.forEach(slug => {
     routes.push({
-      path: `/blog/${slug}`,
+      path: `/blog/${slug}/`,
       outputPath: `blog/${slug}/index.html`
     });
   });
   
   // Обзорная страница районов
   routes.push({
-    path: '/rajony',
+    path: '/rajony/',
     outputPath: 'rajony/index.html'
   });
   
   // Страницы районов (130 страниц)
   neighborhoodSlugs.forEach(slug => {
     routes.push({
-      path: `/rajony/${slug}`,
+      path: `/rajony/${slug}/`,
       outputPath: `rajony/${slug}/index.html`
     });
   });
   
   // Московская область - обзор
   routes.push({
-    path: '/moscow-oblast',
+    path: '/moscow-oblast/',
     outputPath: 'moscow-oblast/index.html',
     priority: '0.8'
   });
@@ -379,7 +383,7 @@ function getAllRoutes(): SSGRoute[] {
   // Города МО
   moscowRegionCitySlugs.forEach(citySlug => {
     routes.push({
-      path: `/moscow-oblast/${citySlug}`,
+      path: `/moscow-oblast/${citySlug}/`,
       outputPath: `moscow-oblast/${citySlug}/index.html`,
       priority: '0.8'
     });
@@ -387,7 +391,7 @@ function getAllRoutes(): SSGRoute[] {
     // Услуги в городах МО
     moscowRegionServices.forEach(serviceSlug => {
       routes.push({
-        path: `/moscow-oblast/${citySlug}/${serviceSlug}`,
+        path: `/moscow-oblast/${citySlug}/${serviceSlug}/`,
         outputPath: `moscow-oblast/${citySlug}/${serviceSlug}/index.html`,
         priority: '0.75'
       });

@@ -152,40 +152,43 @@ export const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya
 export function getAllSSGRoutes() {
   const routes = [...staticRoutes];
   
-  // Услуги (6 страниц)
+  // Объекты, для которых демеркуризация имеет смысл
+  const demerkurizaciyaObjects = ['kvartir', 'domov', 'ofisov', 'skladov', 'proizvodstv'];
+
+  // Услуги (7 страниц)
   servicesSlugs.forEach(slug => {
     routes.push({
-      path: `/uslugi/${slug}`,
+      path: `/uslugi/${slug}/`,
       outputPath: `uslugi/${slug}/index.html`,
       priority: '0.9',
       changefreq: 'monthly'
     });
   });
   
-  // Подстраницы услуг (6 страниц)
+  // Подстраницы услуг
   serviceSubpageRoutes.forEach(({ parent, sub }) => {
     routes.push({
-      path: `/uslugi/${parent}/${sub}`,
+      path: `/uslugi/${parent}/${sub}/`,
       outputPath: `uslugi/${parent}/${sub}/index.html`,
       priority: '0.85',
       changefreq: 'monthly'
     });
   });
   
-  // Услуга + Вредитель (Дезинсекция) - 5 страниц
+  // Услуга + Вредитель (Дезинсекция)
   dezinsekciyaPestSlugs.forEach(pestSlug => {
     routes.push({
-      path: `/uslugi/dezinsekciya/${pestSlug}`,
+      path: `/uslugi/dezinsekciya/${pestSlug}/`,
       outputPath: `uslugi/dezinsekciya/${pestSlug}/index.html`,
       priority: '0.85',
       changefreq: 'monthly'
     });
   });
   
-  // Услуга + Вредитель (Дератизация) - 2 страницы
+  // Услуга + Вредитель (Дератизация)
   deratizaciyaPestSlugs.forEach(pestSlug => {
     routes.push({
-      path: `/uslugi/deratizaciya/${pestSlug}`,
+      path: `/uslugi/deratizaciya/${pestSlug}/`,
       outputPath: `uslugi/deratizaciya/${pestSlug}/index.html`,
       priority: '0.85',
       changefreq: 'monthly'
@@ -194,11 +197,12 @@ export function getAllSSGRoutes() {
   
   // ======== НОВЫЕ ТИПЫ СТРАНИЦ ========
   
-  // Услуга + Объект (24 страницы: 4 услуги × 6 объектов)
+  // Услуга + Объект (с pruning для демеркуризации)
   servicesForObjects.forEach(serviceSlug => {
-    objectSlugs.forEach(objectSlug => {
+    const objects = serviceSlug === 'demerkurizaciya' ? demerkurizaciyaObjects : objectSlugs;
+    objects.forEach(objectSlug => {
       routes.push({
-        path: `/uslugi/${serviceSlug}/${objectSlug}`,
+        path: `/uslugi/${serviceSlug}/${objectSlug}/`,
         outputPath: `uslugi/${serviceSlug}/${objectSlug}/index.html`,
         priority: '0.8',
         changefreq: 'monthly'
@@ -230,7 +234,7 @@ export function getAllSSGRoutes() {
     const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
     neighborhoodSlugs.forEach(neighborhoodSlug => {
       routes.push({
-        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`,
+        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}/`,
         outputPath: `uslugi/${service}/${pestSlug}/${neighborhoodSlug}/index.html`,
         priority: '0.7',
         changefreq: 'monthly'
@@ -243,7 +247,7 @@ export function getAllSSGRoutes() {
     const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
     tier2NeighborhoodsLocal.forEach(neighborhoodSlug => {
       routes.push({
-        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`,
+        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}/`,
         outputPath: `uslugi/${service}/${pestSlug}/${neighborhoodSlug}/index.html`,
         priority: '0.65',
         changefreq: 'monthly'
@@ -253,10 +257,10 @@ export function getAllSSGRoutes() {
 
   // Tier 3: remaining 6 pests × top 15 neighborhoods
   tier3PestsLocal.forEach(pestSlug => {
-    const service = 'dezinsekciya'; // all tier 3 are dezinsekciya
+    const service = 'dezinsekciya';
     topNeighborhoods.forEach(neighborhoodSlug => {
       routes.push({
-        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`,
+        path: `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}/`,
         outputPath: `uslugi/${service}/${pestSlug}/${neighborhoodSlug}/index.html`,
         priority: '0.6',
         changefreq: 'monthly'
@@ -266,7 +270,7 @@ export function getAllSSGRoutes() {
   
   // Обзорная страница округов
   routes.push({
-    path: '/uslugi/po-okrugam-moskvy',
+    path: '/uslugi/po-okrugam-moskvy/',
     outputPath: 'uslugi/po-okrugam-moskvy/index.html',
     priority: '0.85',
     changefreq: 'monthly'
@@ -275,7 +279,7 @@ export function getAllSSGRoutes() {
   // Страницы округов
   districtSlugs.forEach(id => {
     routes.push({
-      path: `/uslugi/dezinfekciya-${id}`,
+      path: `/uslugi/dezinfekciya-${id}/`,
       outputPath: `uslugi/dezinfekciya-${id}/index.html`,
       priority: '0.85',
       changefreq: 'monthly'
