@@ -371,7 +371,7 @@ const moscowRegionEntries: SemanticEntry[] = moCities.flatMap(city =>
   }))
 );
 
-// ===================== КЛАСТЕР: MO city + pest (40 записей = 4 вредителя × 10 городов) =====================
+// ===================== КЛАСТЕР: MO city + pest (56 записей = 4 вредителя × 14 городов) =====================
 
 const moPestEntries: SemanticEntry[] = moCities.flatMap(city =>
   tier1Pests.map(pest => ({
