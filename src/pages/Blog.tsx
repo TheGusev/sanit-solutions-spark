@@ -124,21 +124,14 @@ const Blog = () => {
 
       {/* Clean Hero — no background image */}
       <section className="py-8 md:py-12 px-3 md:px-4">
-        <div className="container mx-auto max-w-6xl text-center">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 text-foreground flex items-center justify-center gap-3">
-            <BookOpen className="w-8 h-8 md:w-10 md:h-10 text-primary" />
+        <div className="container mx-auto max-w-6xl">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 text-foreground">
             Полезные статьи
           </h1>
-          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Экспертные советы о дезинфекции и борьбе с вредителями.
-            <span className="font-medium text-foreground"> {allBlogArticles.length} статей</span> от профессионалов.
+          <p className="text-base md:text-lg text-muted-foreground max-w-2xl">
+            Экспертные советы о дезинфекции и защите от вредителей.
+            В блоге собрано <span className="font-medium text-foreground">{allBlogArticles.length} статей</span> от наших профессионалов.
           </p>
-          
-          <div className="h-1 w-32 mx-auto flex rounded-full overflow-hidden mt-4">
-            <div className="flex-1 bg-white border-y border-l border-border dark:border-transparent"></div>
-            <div className="flex-1 bg-primary"></div>
-            <div className="flex-1 bg-russia-red"></div>
-          </div>
         </div>
       </section>
 
