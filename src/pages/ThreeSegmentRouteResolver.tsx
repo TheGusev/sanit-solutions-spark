@@ -1,22 +1,15 @@
 /**
- * Умный роутер для 3-сегментных URL /uslugi/:service/:segment2/:segment3
+ * Роутер для 3-сегментных URL /uslugi/:service/:segment2/:segment3
  * 
- * Определяет тип страницы по второму сегменту:
- * - Если segment2 = вредитель (pest) → NchPage
- * - Если segment2 = объект (object) → ServiceObjectDistrictPage
- * 
- * Примеры:
- * /uslugi/dezinsekciya/tarakany/arbat → NchPage (tarakany = вредитель)
- * /uslugi/dezinsekciya/kvartir/arbat → ServiceObjectDistrictPage (kvartir = объект)
+ * Проверяет что segment2 = вредитель (pest) и segment3 = район → NchPage
+ * Пример: /uslugi/dezinsekciya/tarakany/arbat → NchPage
  */
 
 import { useParams } from 'react-router-dom';
 import { getPestBySlug } from '@/data/pests';
-// getObjectBySlug import removed — object+geo pages removed (Issue #4)
 import { neighborhoods } from '@/data/neighborhoods';
 
 import NchPage from './NchPage';
-// ServiceObjectDistrictPage import removed — thin content (Issue #4)
 import NotFound from './NotFound';
 
 export default function ThreeSegmentRouteResolver() {
