@@ -14,9 +14,14 @@ interface SitemapCategory {
   urls: SitemapUrl[];
 }
 
+function normalizeLocWithTrailingSlash(loc: string): string {
+  if (loc === '/') return loc;
+  return loc.endsWith('/') ? loc : `${loc}/`;
+}
+
 function generateSitemapXml(baseUrl: string, urls: SitemapUrl[]): string {
   const urlEntries = urls.map(url => `  <url>
-    <loc>${baseUrl}${url.loc}</loc>
+    <loc>${baseUrl}${normalizeLocWithTrailingSlash(url.loc)}</loc>
     <lastmod>${url.lastmod}</lastmod>
     <changefreq>${url.changefreq}</changefreq>
     <priority>${url.priority}</priority>
