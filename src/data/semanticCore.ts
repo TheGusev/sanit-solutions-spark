@@ -324,12 +324,15 @@ const moscowRegionEntries: SemanticEntry[] = moCities.flatMap(city =>
 export const semanticCore: SemanticEntry[] = [
   ...serviceEntries,
   ...pestEntries,
+  ...pestObjectEntries,
+  ...seasonalEntries,
   ...objectEntries,
   ...districtEntries,
   ...nchEntries,
   ...blogEntries,
   ...moleGeoBlogEntries,
   ...moscowRegionEntries,
+  ...moPestEntries,
 ];
 
 // ===================== ФУНКЦИИ =====================
