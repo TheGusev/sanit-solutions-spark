@@ -862,7 +862,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия?", answer: "До 3 лет. При возвращении блох — бесплатная повторная обработка." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/klopov-i-bloh", title: "Клопы и блохи", price: "от 1800₽", icon: "🛏️" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🛏️" },
       { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🪲" },
       { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция", price: "от 1000₽", icon: "🦠" }
     ],
