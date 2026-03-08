@@ -24,7 +24,7 @@ const ServiceRouteResolver = lazy(() => import("./pages/ServiceRouteResolver"));
 const ThreeSegmentRouteResolver = lazy(
   () => import("./pages/ThreeSegmentRouteResolver")
 );
-const NchPage = lazy(() => import("./pages/NchPage"));
+
 const Contacts = lazy(() => import("./pages/Contacts"));
 const Team = lazy(() => import("./pages/Team"));
 const DistrictsOverview = lazy(() => import("./pages/DistrictsOverview"));

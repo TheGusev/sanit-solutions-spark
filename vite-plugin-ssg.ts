@@ -34,6 +34,7 @@ const staticRoutes: SSGRoute[] = [
   { path: '/otzyvy', outputPath: 'otzyvy/index.html' },
   { path: '/uslugi/obrabotka-uchastkov', outputPath: 'uslugi/obrabotka-uchastkov/index.html' },
   { path: '/terms', outputPath: 'terms/index.html' },
+  { path: '/team', outputPath: 'team/index.html' },
 ];
 
 // Услуги

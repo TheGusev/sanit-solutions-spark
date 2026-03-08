@@ -35,8 +35,6 @@ export default function ThreeSegmentRouteResolver() {
     return <NchPage />;
   }
   
-  // REMOVED: Object+Geo pages (thin content competing with /rajony/) — Issue #4
-  
-  // Ничего не найдено
+  // Не вредитель — 404
   return <NotFound />;
 }
