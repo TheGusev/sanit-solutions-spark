@@ -38,6 +38,7 @@ const Index = () => {
   
   // Track scroll depth goals
   useScrollDepth();
+  useHomepageGoals();
 
   useEffect(() => {
     // Toggle debug panel with Ctrl+Shift+D
