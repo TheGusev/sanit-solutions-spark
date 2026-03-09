@@ -1,17 +1,49 @@
 
 
-## Plan: Исправить секцию «Наши услуги»
+## Plan: Full Rewrite of Monitoring System
 
-### Проблемы
-1. Desktop: карточки стоят 6 в ряд — нужно 4+4 (2 ряда по 4, отцентрированные)
-2. Оверлей слишком тёмный (bg-black/55) — фон не видно
-3. Кнопка «Смотреть полный прайс» — текст не виден
-4. Мобильная версия: по референсу карточки должны быть стеклянными (glassmorphism) с полупрозрачным фоном и рамкой, а не белыми solid
+### Problem
+Current `monitor.py` is stripped down — no SSL check, no Telegram sending, no content/indexation/PageSpeed/tasks sections, incomplete `update_monitoring_md`. The MONITORING.md is also minimal. The workflow is fine but the script it runs does almost nothing useful.
 
-### Изменения в `src/components/MiniPricing.tsx`
+### Changes
 
-1. **Grid**: `lg:grid-cols-6` → `lg:grid-cols-4`, убрать `max-w-5xl` → `max-w-4xl` для ровного центрирования 4x2
-2. **Оверлей**: `bg-black/55` → `bg-black/35` — фоновая картинка будет проглядывать сильнее
-3. **Карточки**: заменить `bg-card` на glassmorphism-стиль: `bg-white/20 backdrop-blur-md border border-white/30` — полупрозрачные стеклянные карточки как на референсе. Текст — белый.
-4. **Кнопка**: добавить `bg-white/15 backdrop-blur-sm` чтобы текст был читаем на любом фоне
+#### 1. `scripts/monitor.py` — Full rewrite
+Replace entirely with the expanded script that includes all sections:
+
+- **URL health checks** with average response time
+- **SSL certificate check** with expiry warning (< 30 days)
+- **Content stats** (547 SSG pages breakdown: blog, districts, MO cities, services, NCH)
+- **Indexation** (Yandex 419, Google 23, target 500+ with progress bar)
+- **PageSpeed** (Desktop 95, Mobile 88, LCP, CLS, target Mobile 95+)
+- **Yandex Metrika traffic** (30-day: visits, users, views, bounce, duration) with fallback if no token
+- **Tasks March 2026** (8 items with checkboxes)
+- **Tasks March-April 2026** (8 next-stage items)
+- **Alerts** block for failed URLs and SSL warnings
+- **Telegram sending** with HTML parse_mode, chunked for 4000-char limit
+- **MONITORING.md auto-update** — rewrites the file completely each run with all sections as markdown tables
+- Footer with clickable links to MONITORING.md and Actions
+
+#### 2. `MONITORING.md` — Full rewrite
+Expand to include all sections matching the Telegram report:
+
+- Table of Contents
+- Indexation (Yandex/Google tables with KPI target)
+- Search positions (manual keyword tracking table)
+- Traffic & Audience (Metrika monthly table)
+- Conversions & Funnel (leads, CR, sources table)
+- PageSpeed technical metrics
+- Competitors table
+- Content & Structure breakdown
+- External factors (SSL, robots.txt, sitemap, verifications)
+- Alerts & Problems log
+- Tasks March 2026 (checkboxes)
+- Tasks March-April 2026 (next stage)
+- Results tracking
+
+#### 3. `.github/workflows/monitoring.yml` — Minor fix
+- Add `permissions: contents: write` so the bot can push commits
+- Keep `beautifulsoup4` in pip install (harmless, may be used later)
+
+### Summary
+Three files changed. Script goes from ~96 lines to ~300 lines with full monitoring. MONITORING.md goes from 46 lines to a comprehensive dashboard. Workflow gets write permissions fix.
 
