@@ -1,29 +1,17 @@
 
 
-## Plan: Two Yandex Metrika Goals for Homepage
+## Plan: Исправить секцию «Наши услуги»
 
-### Goals to create
+### Проблемы
+1. Desktop: карточки стоят 6 в ряд — нужно 4+4 (2 ряда по 4, отцентрированные)
+2. Оверлей слишком тёмный (bg-black/55) — фон не видно
+3. Кнопка «Смотреть полный прайс» — текст не виден
+4. Мобильная версия: по референсу карточки должны быть стеклянными (glassmorphism) с полупрозрачным фоном и рамкой, а не белыми solid
 
-1. **`main_scroll_75`** — fires when user scrolls 75% of the homepage
-2. **`main_time_2min`** — fires when user spends 2 minutes with the page **actively visible** (uses `document.visibilitychange` API to pause/resume timer when tab is hidden)
+### Изменения в `src/components/MiniPricing.tsx`
 
-### Implementation
-
-**File: `src/hooks/useHomepageGoals.ts`** (new)
-- Custom hook that combines both goals
-- Scroll 75%: listens to `scroll` event, calculates percent, fires `trackGoal('main_scroll_75')` once
-- Active 2 min: uses `setInterval` + `document.visibilityState` to accumulate only visible time, fires `trackGoal('main_time_2min')` once at 120s
-- Both goals fire only once per session (guarded by refs)
-
-**File: `src/pages/Index.tsx`**
-- Import and call `useHomepageGoals()` (one line addition, replaces or supplements existing `useScrollDepth()`)
-
-### Yandex Metrika setup
-
-You'll need to add these two goals in Yandex Metrika (counter 105828040):
-
-| Goal name | Identifier | Type |
-|---|---|---|
-| Скролл 75% главной | `main_scroll_75` | JavaScript-событие |
-| 2 мин на главной | `main_time_2min` | JavaScript-событие |
+1. **Grid**: `lg:grid-cols-6` → `lg:grid-cols-4`, убрать `max-w-5xl` → `max-w-4xl` для ровного центрирования 4x2
+2. **Оверлей**: `bg-black/55` → `bg-black/35` — фоновая картинка будет проглядывать сильнее
+3. **Карточки**: заменить `bg-card` на glassmorphism-стиль: `bg-white/20 backdrop-blur-md border border-white/30` — полупрозрачные стеклянные карточки как на референсе. Текст — белый.
+4. **Кнопка**: добавить `bg-white/15 backdrop-blur-sm` чтобы текст был читаем на любом фоне
 
