@@ -1,17 +1,21 @@
 
 
-## Plan: Исправить секцию «Наши услуги»
+## Plan: Remove Duplicate Price Display on Service Landing Pages
 
-### Проблемы
-1. Desktop: карточки стоят 6 в ряд — нужно 4+4 (2 ряда по 4, отцентрированные)
-2. Оверлей слишком тёмный (bg-black/55) — фон не видно
-3. Кнопка «Смотреть полный прайс» — текст не виден
-4. Мобильная версия: по референсу карточки должны быть стеклянными (glassmorphism) с полупрозрачным фоном и рамкой, а не белыми solid
+### Problem
+On service landing pages, the minimum price is shown twice — once in the tariff cards (`ServiceTariffs`) and again in a separate price block below. The screenshot shows this duplication clearly.
 
-### Изменения в `src/components/MiniPricing.tsx`
+### Pages Affected
 
-1. **Grid**: `lg:grid-cols-6` → `lg:grid-cols-4`, убрать `max-w-5xl` → `max-w-4xl` для ровного центрирования 4x2
-2. **Оверлей**: `bg-black/55` → `bg-black/35` — фоновая картинка будет проглядывать сильнее
-3. **Карточки**: заменить `bg-card` на glassmorphism-стиль: `bg-white/20 backdrop-blur-md border border-white/30` — полупрозрачные стеклянные карточки как на референсе. Текст — белый.
-4. **Кнопка**: добавить `bg-white/15 backdrop-blur-sm` чтобы текст был читаем на любом фоне
+1. **ServicePestPage.tsx** (lines 299-321) — has a "Price Block" (`от {pest.priceFrom}₽`) right after `ServiceTariffs`. This is the main culprit visible in the screenshot. **Remove this block entirely.**
+
+2. **ServicePage.tsx** — has `ServiceTariffs` (line 311-315) AND a detailed `Pricing Table` (lines 486-559). These are NOT duplicates — tariffs show packages (Стандарт/Премиум/VIP) while the pricing table shows detailed per-object prices. **Keep both.**
+
+### Changes
+
+**File: `src/pages/ServicePestPage.tsx`**
+- Remove lines 299-321 (the "Price Block" section with `от {pest.priceFrom}₽`, methods badges, and "Включено: выезд, диагностика..." text)
+- This eliminates the duplicate since `ServiceTariffs` already displays pricing with more detail
+
+One file, one deletion. The tariff cards remain as the single source of pricing info on pest pages.
 
