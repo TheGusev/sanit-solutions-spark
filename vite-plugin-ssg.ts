@@ -678,25 +678,36 @@ export function ssgPlugin(): Plugin {
         // Phase 4: Render all routes
         console.log(`🔄 SSG Phase: Route rendering loop (${routes.length} pages)\n`);
         
+        // Prepare a clean template for non-homepage routes:
+        // Strip the homepage JSON-LD block so each page only carries its own schema
+        const homepageJsonLdStart = template.indexOf('<!-- Schema.org JSON-LD разметка -->');
+        const homepageJsonLdEnd = template.indexOf('</script>', template.indexOf('<script type="application/ld+json">', homepageJsonLdStart));
+        const templateWithoutHomepageSchema = (homepageJsonLdStart !== -1 && homepageJsonLdEnd !== -1)
+          ? template.substring(0, homepageJsonLdStart) + template.substring(homepageJsonLdEnd + '</script>'.length)
+          : template;
+        
         for (const route of routes) {
           try {
             // Log BEFORE render so if process crashes we know which route killed it
             console.log(`⏳ Rendering ${route.path}...`);
             const result = render(route.path);
             
+            // Use full template (with homepage schema) only for homepage, stripped for all others
+            const activeTemplate = route.path === '/' ? template : templateWithoutHomepageSchema;
+            
             // Replace entire root div content using indexOf for reliability
             // The regex /<div id="root">[\s\S]*?<\/div>/ can be greedy with nested divs
             const rootStartTag = '<div id="root">';
-            const rootStartIndex = template.indexOf(rootStartTag);
+            const rootStartIndex = activeTemplate.indexOf(rootStartTag);
             
             // Find the matching closing </div> by counting nesting
             let depth = 1;
             let searchIndex = rootStartIndex + rootStartTag.length;
             let rootEndIndex = -1;
             
-            while (depth > 0 && searchIndex < template.length) {
-              const nextOpen = template.indexOf('<div', searchIndex);
-              const nextClose = template.indexOf('</div>', searchIndex);
+            while (depth > 0 && searchIndex < activeTemplate.length) {
+              const nextOpen = activeTemplate.indexOf('<div', searchIndex);
+              const nextClose = activeTemplate.indexOf('</div>', searchIndex);
               
               if (nextClose === -1) break;
               
@@ -714,12 +725,12 @@ export function ssgPlugin(): Plugin {
             
             let html: string;
             if (rootStartIndex !== -1 && rootEndIndex !== -1) {
-              html = template.substring(0, rootStartIndex) + 
+              html = activeTemplate.substring(0, rootStartIndex) + 
                      `<div id="root">${result.html}</div>` + 
-                     template.substring(rootEndIndex);
+                     activeTemplate.substring(rootEndIndex);
             } else {
               // Fallback to regex if parsing fails
-              html = template.replace(
+              html = activeTemplate.replace(
                 /<div id="root">[\s\S]*?<\/div>/,
                 `<div id="root">${result.html}</div>`
               );
