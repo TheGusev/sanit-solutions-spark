@@ -678,11 +678,22 @@ export function ssgPlugin(): Plugin {
         // Phase 4: Render all routes
         console.log(`🔄 SSG Phase: Route rendering loop (${routes.length} pages)\n`);
         
+        // Prepare a clean template for non-homepage routes:
+        // Strip the homepage JSON-LD block so each page only carries its own schema
+        const homepageJsonLdStart = template.indexOf('<!-- Schema.org JSON-LD разметка -->');
+        const homepageJsonLdEnd = template.indexOf('</script>', template.indexOf('<script type="application/ld+json">', homepageJsonLdStart));
+        const templateWithoutHomepageSchema = (homepageJsonLdStart !== -1 && homepageJsonLdEnd !== -1)
+          ? template.substring(0, homepageJsonLdStart) + template.substring(homepageJsonLdEnd + '</script>'.length)
+          : template;
+        
         for (const route of routes) {
           try {
             // Log BEFORE render so if process crashes we know which route killed it
             console.log(`⏳ Rendering ${route.path}...`);
             const result = render(route.path);
+            
+            // Use full template (with homepage schema) only for homepage, stripped for all others
+            const activeTemplate = route.path === '/' ? template : templateWithoutHomepageSchema;
             
             // Replace entire root div content using indexOf for reliability
             // The regex /<div id="root">[\s\S]*?<\/div>/ can be greedy with nested divs
