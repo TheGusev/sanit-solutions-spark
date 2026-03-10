@@ -725,12 +725,12 @@ export function ssgPlugin(): Plugin {
             
             let html: string;
             if (rootStartIndex !== -1 && rootEndIndex !== -1) {
-              html = template.substring(0, rootStartIndex) + 
+              html = activeTemplate.substring(0, rootStartIndex) + 
                      `<div id="root">${result.html}</div>` + 
-                     template.substring(rootEndIndex);
+                     activeTemplate.substring(rootEndIndex);
             } else {
               // Fallback to regex if parsing fails
-              html = template.replace(
+              html = activeTemplate.replace(
                 /<div id="root">[\s\S]*?<\/div>/,
                 `<div id="root">${result.html}</div>`
               );
