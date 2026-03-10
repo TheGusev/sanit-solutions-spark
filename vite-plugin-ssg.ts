@@ -705,9 +705,9 @@ export function ssgPlugin(): Plugin {
             let searchIndex = rootStartIndex + rootStartTag.length;
             let rootEndIndex = -1;
             
-            while (depth > 0 && searchIndex < template.length) {
-              const nextOpen = template.indexOf('<div', searchIndex);
-              const nextClose = template.indexOf('</div>', searchIndex);
+            while (depth > 0 && searchIndex < activeTemplate.length) {
+              const nextOpen = activeTemplate.indexOf('<div', searchIndex);
+              const nextClose = activeTemplate.indexOf('</div>', searchIndex);
               
               if (nextClose === -1) break;
               
