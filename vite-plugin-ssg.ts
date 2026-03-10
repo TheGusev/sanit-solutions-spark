@@ -698,7 +698,7 @@ export function ssgPlugin(): Plugin {
             // Replace entire root div content using indexOf for reliability
             // The regex /<div id="root">[\s\S]*?<\/div>/ can be greedy with nested divs
             const rootStartTag = '<div id="root">';
-            const rootStartIndex = template.indexOf(rootStartTag);
+            const rootStartIndex = activeTemplate.indexOf(rootStartTag);
             
             // Find the matching closing </div> by counting nesting
             let depth = 1;
