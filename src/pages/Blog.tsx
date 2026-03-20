@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
@@ -8,28 +8,27 @@ import StructuredData from "@/components/StructuredData";
 import { allBlogArticles, blogCategories } from "@/data/blog";
 import { Button } from "@/components/ui/button";
 import { 
-  TrendingUp, LayoutGrid, Bug, FlaskConical,
-  FileText, Lightbulb, Scale, Mouse, Clock, ArrowDownWideNarrow
+  TrendingUp, FolderOpen, Bug, FlaskConical,
+  ShieldCheck, Lightbulb, Scale, Mouse, Clock, Briefcase,
+  FileText
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const BASE_URL = "https://goruslugimsk.ru";
 
-// Category icon mapping — synced with blogCategories from types.ts
-const categoryIcons: Record<string, { icon: LucideIcon; emoji: string }> = {
-  "Все": { icon: LayoutGrid, emoji: "📋" },
-  "Дезинфекция": { icon: FlaskConical, emoji: "🧪" },
-  "Дезинсекция": { icon: Bug, emoji: "🪳" },
-  "Дератизация": { icon: Mouse, emoji: "🐀" },
-  "Советы": { icon: Lightbulb, emoji: "💡" },
-  "Законы": { icon: Scale, emoji: "⚖️" },
-  "Препараты": { icon: FlaskConical, emoji: "🧴" },
-  "Кейсы": { icon: FileText, emoji: "💼" },
+const categoryIcons: Record<string, LucideIcon> = {
+  "Все": FolderOpen,
+  "Дезинфекция": ShieldCheck,
+  "Дезинсекция": Bug,
+  "Дератизация": Mouse,
+  "Советы": Lightbulb,
+  "Законы": Scale,
+  "Препараты": FlaskConical,
+  "Кейсы": Briefcase,
 };
 
 type SortMode = 'default' | 'newest' | 'popular';
 
-// Top featured slugs — guides & legal articles shown first
 const topFeaturedSlugs = [
   'vidy-dezinfekcii',
   'borba-s-tarakanami',
@@ -41,41 +40,35 @@ const topFeaturedSlugs = [
   'sezonnost-vreditelej',
 ];
 
+const popularSlugs = allBlogArticles.slice(0, 5).map(a => a.slug);
+
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
   const [visibleCount, setVisibleCount] = useState(30);
   const [sortBy, setSortBy] = useState<SortMode>('default');
 
-  const popularSlugs = allBlogArticles.slice(0, 5).map(a => a.slug);
+  const filteredPosts = useMemo(() => {
+    const baseList = selectedCategory === "Все" 
+      ? allBlogArticles 
+      : allBlogArticles.filter(post => post.category === selectedCategory);
 
-  const baseList = selectedCategory === "Все" 
-    ? allBlogArticles 
-    : allBlogArticles.filter(post => post.category === selectedCategory);
-
-  const filteredPosts = [...baseList].sort((a, b) => {
-    if (sortBy === 'newest') {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    }
-    if (sortBy === 'popular') {
-      const aPopular = popularSlugs.includes(a.slug) ? 0 : 1;
-      const bPopular = popularSlugs.includes(b.slug) ? 0 : 1;
-      return aPopular - bPopular;
-    }
-    // default: featured first
-    const aIdx = topFeaturedSlugs.indexOf(a.slug);
-    const bIdx = topFeaturedSlugs.indexOf(b.slug);
-    if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
-    if (aIdx !== -1) return -1;
-    if (bIdx !== -1) return 1;
-    return 0;
-  });
-
-  const isNewArticle = (dateString: string) => {
-    const articleDate = new Date(dateString);
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    return articleDate > thirtyDaysAgo;
-  };
+    return [...baseList].sort((a, b) => {
+      if (sortBy === 'newest') {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      }
+      if (sortBy === 'popular') {
+        const aPopular = popularSlugs.includes(a.slug) ? 0 : 1;
+        const bPopular = popularSlugs.includes(b.slug) ? 0 : 1;
+        return aPopular - bPopular;
+      }
+      const aIdx = topFeaturedSlugs.indexOf(a.slug);
+      const bIdx = topFeaturedSlugs.indexOf(b.slug);
+      if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+      if (aIdx !== -1) return -1;
+      if (bIdx !== -1) return 1;
+      return 0;
+    });
+  }, [selectedCategory, sortBy]);
 
   const itemListSource = selectedCategory === "Все" ? allBlogArticles : filteredPosts;
   const itemListData = itemListSource.slice(0, 50).map((post, index) => ({
@@ -91,6 +84,12 @@ const Blog = () => {
   const itemListDesc = selectedCategory === "Все"
     ? "Полезные статьи о дезинфекции, борьбе с вредителями и поддержании здоровой среды от экспертов ООО Санитарные Решения"
     : `Экспертные статьи в категории «${selectedCategory}» от специалистов ООО Санитарные Решения`;
+
+  const sortOptions: { key: SortMode; label: string }[] = [
+    { key: 'default', label: 'По умолчанию' },
+    { key: 'newest', label: 'Сначала новые' },
+    { key: 'popular', label: 'Популярные' },
+  ];
 
   return (
     <div className="min-h-screen">
@@ -130,7 +129,7 @@ const Blog = () => {
         </div>
       </section>
 
-      {/* Clean Hero — no background image */}
+      {/* Hero */}
       <section className="py-8 md:py-12 px-3 md:px-4">
         <div className="container mx-auto max-w-6xl">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 text-foreground">
@@ -143,32 +142,41 @@ const Blog = () => {
         </div>
       </section>
 
-      {/* Category Book/Folder Cards */}
+      {/* Category Folder Cards */}
       <section className="py-6 md:py-8 px-3 md:px-4 border-b">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 md:gap-3">
+          <div
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 md:gap-3"
+            role="tablist"
+            aria-label="Категории статей"
+          >
             {blogCategories.map((category) => {
-              const catConfig = categoryIcons[category] || { icon: FileText, emoji: "📄" };
+              const IconComp = categoryIcons[category] || FileText;
               const isActive = selectedCategory === category;
-              const count = category === "Все" ? allBlogArticles.length : allBlogArticles.filter(p => p.category === category).length;
+              const count = category === "Все"
+                ? allBlogArticles.length
+                : allBlogArticles.filter(p => p.category === category).length;
               
               return (
                 <button
                   key={category}
+                  role="tab"
+                  aria-selected={isActive}
                   onClick={() => { setSelectedCategory(category); setVisibleCount(30); }}
                   className={`
                     flex items-center gap-3 rounded-xl px-4 py-3.5 md:py-4 text-left
-                    transition-colors duration-200 border
+                    transition-all duration-200 border
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
                     ${isActive
-                      ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                      : 'bg-card text-card-foreground border-border hover:bg-muted'
+                      ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
+                      : 'bg-card text-card-foreground border-border hover:border-primary/30 hover:shadow-sm'
                     }
                   `}
                 >
-                  <span className="text-xl md:text-2xl shrink-0">{catConfig.emoji}</span>
-                   <span className="text-sm md:text-base font-semibold truncate">
-                     {category} ({count})
-                   </span>
+                  <IconComp className="shrink-0" size={20} />
+                  <span className="text-sm md:text-base font-semibold leading-snug">
+                    {category} ({count})
+                  </span>
                 </button>
               );
             })}
@@ -176,24 +184,21 @@ const Blog = () => {
         </div>
       </section>
 
-      {/* Sort Controls */}
+      {/* Sort Controls — segmented pills */}
       <section className="py-4 px-3 md:px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex items-center gap-2 flex-wrap">
-            <ArrowDownWideNarrow className="w-4 h-4 text-muted-foreground" />
-            {([
-              { key: 'default' as SortMode, label: 'По умолчанию' },
-              { key: 'newest' as SortMode, label: 'Сначала новые' },
-              { key: 'popular' as SortMode, label: 'Популярные' },
-            ]).map(opt => (
+          <div className="inline-flex items-center gap-0.5 bg-muted/40 rounded-xl p-1">
+            {sortOptions.map(opt => (
               <button
                 key={opt.key}
                 onClick={() => setSortBy(opt.key)}
-                className={`text-sm px-3 py-1.5 rounded-full transition-colors ${
-                  sortBy === opt.key
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                }`}
+                aria-label={`Сортировка: ${opt.label}`}
+                className={`text-sm px-3.5 py-1.5 rounded-lg transition-all duration-150 font-medium
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
+                  ${sortBy === opt.key
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                  }`}
               >
                 {opt.label}
               </button>
@@ -202,46 +207,53 @@ const Blog = () => {
         </div>
       </section>
 
-      {/* Blog Posts Grid */}
+      {/* Blog Posts — document cards */}
       <section className="py-8 md:py-16 px-2 md:px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col gap-3">
-            {filteredPosts.slice(0, visibleCount).map((post) => {
-              const isPopular = popularSlugs.includes(post.slug);
-              
-              return (
-                <Link 
-                  key={post.id} 
-                  to={`/blog/${post.slug}`}
-                  className="group"
-                >
-                  <div className="rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                         <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
-                          {post.category}
-                        </span>
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {post.readTime}
-                        </span>
+          {filteredPosts.length === 0 ? (
+            <div className="text-center py-16">
+              <FileText className="mx-auto mb-4 text-muted-foreground/40" size={48} />
+              <p className="text-lg text-muted-foreground">Нет статей в этой категории</p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {filteredPosts.slice(0, visibleCount).map((post) => {
+                const isPopular = popularSlugs.includes(post.slug);
+                
+                return (
+                  <Link 
+                    key={post.id} 
+                    to={`/blog/${post.slug}`}
+                    className="group"
+                  >
+                    <div className="rounded-xl border border-border bg-card p-4 border-l-2 border-l-primary/15 transition-all duration-200 hover:shadow-md hover:border-border/80 hover:-translate-y-0.5 hover:border-l-primary">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                            {post.category}
+                          </span>
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Clock className="w-3 h-3" /> {post.readTime}
+                          </span>
+                        </div>
+                        {isPopular && (
+                          <span className="text-xs text-primary font-medium flex items-center gap-1">
+                            <TrendingUp className="w-3 h-3" /> Популярное
+                          </span>
+                        )}
                       </div>
-                      {isPopular && (
-                        <span className="text-xs text-primary font-medium flex items-center gap-1">
-                          <TrendingUp className="w-3 h-3" /> Популярное
-                        </span>
-                      )}
+                      <h3 className="text-base md:text-lg font-bold leading-snug mb-1 group-hover:text-primary transition-colors">
+                        {post.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {post.excerpt}
+                      </p>
                     </div>
-                    <h3 className="text-base md:text-lg font-bold leading-snug mb-1 group-hover:text-primary transition-colors">
-                      {post.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {post.excerpt}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
           {visibleCount < filteredPosts.length && (
             <div className="text-center mt-8">
               <Button variant="outline" size="lg" onClick={() => setVisibleCount(c => c + 30)}>
