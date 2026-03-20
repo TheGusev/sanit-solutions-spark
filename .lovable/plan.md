@@ -1,22 +1,14 @@
 
 
-## Plan: Dark Theme Article Cards Enhancement
+## Plan: Dark Theme Sort Controls
 
 ### Change
-**One line edit** in `src/pages/Blog.tsx` (line 225) — update the article card container classes to use a darker elevated surface in dark mode with a soft shadow, matching the folder card aesthetic.
+Update sort control container (line 186) and inactive pill styles (line 196) to use the same elevated dark surface as folders and article cards.
 
-Current:
-```
-bg-card p-4 border-l-2 border-l-primary/15
-```
+**Container** (line 186): Add `dark:bg-[hsl(240,10%,16%)] dark:border dark:border-border/50`
 
-Updated:
-```
-dark:bg-[hsl(240,10%,16%)] bg-card p-4 border-l-2 border-l-primary/15 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] dark:border-border/50
-```
+**Inactive pills** (line 196): Add `dark:hover:bg-white/5` for subtle hover feedback on dark backgrounds
 
-This uses the same elevated dark surface (`hsl(240,10%,16%)`) as the folder cards, adds a soft dark shadow, and slightly tones down the border for cohesion. Light mode stays unchanged.
-
-### Files
-1. `src/pages/Blog.tsx` — line 225, card `className` update only
+### File
+`src/pages/Blog.tsx` — lines 186 and 196, class additions only
 
