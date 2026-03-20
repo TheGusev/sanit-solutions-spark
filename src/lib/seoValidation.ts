@@ -233,13 +233,14 @@ export function validateRouteIntegrity(path: string, neighborhoodSet?: Set<strin
  * Validates an entire array of routes for integrity and uniqueness.
  * Call this at the end of getAllSSGRoutes().
  */
-export function validateAllRoutes(routes: Array<{ path: string }>): void {
+export function validateAllRoutes(routes: Array<{ path: string }>, neighborhoodSlugsArr?: string[]): void {
   const seen = new Set<string>();
   const duplicates: string[] = [];
+  const nSet = neighborhoodSlugsArr ? new Set(neighborhoodSlugsArr) : undefined;
   
   for (const route of routes) {
     // Check forbidden patterns
-    validateRouteIntegrity(route.path);
+    validateRouteIntegrity(route.path, nSet);
     
     // Check duplicates
     if (seen.has(route.path)) {
