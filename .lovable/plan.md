@@ -1,57 +1,56 @@
 
 
-## Plan: Blog Page UI/UX Refactor — "Document/Folder" Style
+## Plan: Folder-Style Category Cards — Matching iPhone Reference
 
-### What changes
-**One file**: `src/pages/Blog.tsx` — pure visual refactor of the blog listing page.
+### Approach
+The reference shows **skeuomorphic folder cards** with a distinctive "tab" on the top-left corner, dark elevated backgrounds, and a blue glow on the active folder. The current implementation uses flat `bg-card` buttons — no folder shape, no depth.
 
-BlogPost.tsx stays untouched (it already has clean editorial layout with prose styles, TOC, breadcrumbs, tricolor accent).
+To achieve the folder look with pure CSS (no images), each category button gets:
+1. **A folder "tab"** — a `::before` pseudo-element positioned at top-left, smaller width, slightly different background, rounded top corners — simulating the classic folder tab
+2. **Elevated dark surface** — in dark mode: `bg-[hsl(240,10%,16%)]` (lighter than page bg `8%`); in light mode: `bg-card` with a subtle inner shadow
+3. **Active state glow** — `box-shadow: 0 0 20px hsl(primary/0.4)` + `bg-primary` fill
+4. **Soft inner shadow** for depth — `shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]`
 
-### Changes in Blog.tsx
+Since Tailwind alone can't do `::before` pseudo-elements inline, I'll add a small CSS class `.folder-card` in `index.css` with the tab shape, then apply Tailwind utilities for colors/states.
 
-#### 1. Category folder cards
-- Replace emoji-based icons with Lucide icons: `FolderOpen` (Все), `ShieldCheck` (Дезинфекция), `Bug` (Дезинсекция), `Mouse` (Дератизация), `Lightbulb` (Советы), `Scale` (Законы), `FlaskConical` (Препараты), `Briefcase` (Кейсы)
-- Remove `truncate` class → allow 2-line wrap with proper padding
-- Active state: `bg-primary text-primary-foreground` with `shadow-md shadow-primary/20` glow
-- Inactive: `bg-card border-border` with `hover:border-primary/30 hover:shadow-sm` transition
-- Add `focus-visible:ring-2 focus-visible:ring-primary` for accessibility
-- Grid stays `grid-cols-2 md:grid-cols-3 lg:grid-cols-4`
-- Icon rendered as Lucide component (size 20) instead of emoji text
+### File Changes
 
-#### 2. Sort controls
-- Wrap in a `bg-muted/30 rounded-xl p-1 inline-flex` container (segmented control look)
-- Active pill: `bg-primary text-primary-foreground shadow-sm`
-- Inactive pill: `text-muted-foreground hover:text-foreground`
-- Remove the standalone `ArrowDownWideNarrow` icon — clean segmented look
+#### 1. `src/index.css` — Add `.folder-card` styles (~20 lines)
+```css
+.folder-card {
+  position: relative;
+  border-radius: 0 0.75rem 0.75rem 0.75rem;
+  padding-top: 1.25rem;
+}
+.folder-card::before {
+  content: '';
+  position: absolute;
+  top: -0.5rem;
+  left: 0;
+  width: 45%;
+  height: 0.5rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background: inherit;
+  border: inherit;
+  border-bottom: none;
+}
+```
+Plus dark/light variants for the tab highlight, active glow, and hover states.
 
-#### 3. Article cards — "document" style
-- Add subtle left border accent: `border-l-2 border-l-primary/20` on hover → `border-l-primary`
-- Keep existing structure (category chip, clock, title, excerpt)
-- Add `transition-all duration-200` for smooth hover
-- Hover: `hover:shadow-md hover:border-border/80 hover:-translate-y-0.5`
-- Category chip: keep `bg-primary/10 text-primary` (already good)
-- Excerpt: keep `line-clamp-2` with `text-sm text-muted-foreground`
+#### 2. `src/pages/Blog.tsx` — Update category button markup
+- Add `folder-card` class to each button
+- Active: `bg-primary` + glow shadow + bright text
+- Inactive dark: elevated dark surface (`bg-muted/60` or custom), subtle border
+- Inactive light: soft card surface with border
+- Keep all existing logic: `role="tablist"`, `aria-selected`, `onClick`, icon mapping, counts
 
-#### 4. Performance
-- Wrap `filteredPosts` computation in `useMemo` with deps `[selectedCategory, sortBy]`
-- Wrap `popularSlugs` in module-level const (it's static data)
-- No new components, no extra re-renders
+Article cards and sort controls remain as-is (already clean from previous refactor).
 
-#### 5. Empty state
-- Add a simple "Нет статей в этой категории" block if `filteredPosts.length === 0`
-
-#### 6. Accessibility
-- Add `role="tablist"` on category grid, `role="tab"` + `aria-selected` on each button
-- Add `aria-label` on sort buttons
-
-### What is preserved
-- All SEO: Helmet, StructuredData, canonical, OG tags — untouched
-- All routing: Link to `/blog/${post.slug}` — untouched
-- All data: `allBlogArticles`, `blogCategories`, counts — untouched
-- Breadcrumbs, Header, Footer, CTA section — untouched
-- Load-more pagination (`visibleCount` + Button) — untouched
-- Sort/filter logic — only wrapped in useMemo, logic identical
-
-### Files
-1. `src/pages/Blog.tsx` — visual refactor only
+### What stays untouched
+- All SEO (Helmet, StructuredData, canonical, OG)
+- Routing (`Link to="/blog/${post.slug}"`)
+- Data contracts (`allBlogArticles`, `blogCategories`)
+- Filter/sort logic (`useMemo`, `selectedCategory`, `sortBy`)
+- Breadcrumbs, Header, Footer, CTA, load-more button
+- Article card markup and sort pill controls
 
