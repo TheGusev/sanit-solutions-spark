@@ -139,7 +139,7 @@ const BlogPost = () => {
         <meta property="og:locale" content={SEO_CONFIG.locale} />
         <meta property="og:site_name" content={SEO_CONFIG.companyName} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${post.title} | ${SEO_CONFIG.companyName}`} />
+        <meta name="twitter:title" content={`${safeTitle} | ${SEO_CONFIG.companyName}`} />
         <meta name="twitter:description" content={post.excerpt} />
         <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
       </Helmet>
