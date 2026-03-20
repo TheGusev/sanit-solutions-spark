@@ -1,63 +1,42 @@
 
 
-## Plan: SEO Anti-Cannibalization Refactoring
+## Verification of Screenshot Issues
 
-### Context Mapping
-The user's request references Next.js patterns but this project uses **Vite + React Router + custom SSG**. Mapping:
-- `next.config.js redirects()` → `nginx.conf` + `public/_redirects`
-- `generateStaticParams` → `getAllSSGRoutes()` in `src/lib/seoRoutes.ts`
-- `src/app/blog/[slug]/page.tsx` → `src/pages/BlogPost.tsx`
+### Screenshot 1: LLM Visibility Recommendations
+- **robots.txt configured correctly** ✅ Confirmed — `robots.txt` allows GPTBot, PerplexityBot, ClaudeBot, Google-Extended, YandexBot
+- **"Add llms.txt file"** ✅ TRUE — no `llms.txt` exists in the project. This file helps LLM crawlers understand site structure
 
-### Current State (what's already clean)
-- No object+geo generation exists (NCH is strictly pest×neighborhood)
-- No `/uslugi/kroty/` route — kroty lives correctly at `/uslugi/deratizaciya/kroty/`
-- No `/mo/` path exists — MO pages are at `/moscow-oblast/`
-- Geo pages properly isolated at `/rajony/`
+### Screenshot 2: Geo-Service Pages by Districts — Only Dezinfekciya
+✅ TRUE — `districtPages.ts` has slugs like `dezinfekciya-cao`, `dezinfekciya-sao`, etc. These are **only for dezinfekciya**. There are no `dezinsekciya-cao` or `deratizaciya-cao` equivalents. The pages at `/uslugi/dezinfekciya-[district]` cover only one service type.
 
-### Changes
+However, these pages do mention "дезинсекция и дератизация" in their description text (line 43), so they function as multi-service geo hubs despite the URL suggesting dezinfekciya-only. This is a minor inconsistency but not critically broken — the `/rajony/` pages are the real geo hubs per project policy.
 
-#### 1. Add 301 redirects — `nginx.conf` + `public/_redirects`
-Add defensive 301s to catch any leaked/cached URLs:
+### Screenshot 3: Weak Zones
 
-```
-/uslugi/dezinsekciya/ofisov/[any-geo]  → /uslugi/dezinsekciya/ofisov/
-/uslugi/dezinsekciya/hostelov/[any-geo] → /uslugi/dezinsekciya/hostela/  (note: slug is "hostela")
-/uslugi/kroty/                          → /uslugi/deratizaciya/kroty/
-/uslugi/borba-s-krotami/kroty/          → /uslugi/deratizaciya/kroty/
-```
+| Issue | Status | Details |
+|---|---|---|
+| **MO cities (Klin, Ramenskoe, Chekhov, Domodedovo)** | ✅ TRUE | These 4 cities exist in `moscowRegion.ts` and `semanticCore.ts` but have no pest×city NCH pages |
+| **Hostel — no landing page** | ✅ TRUE | Object `hostela` exists in `objects.ts` and SSG generates `/uslugi/dezinsekciya/hostela/` etc., but there's no dedicated `/uslugi/dezinsekciya/v-hostele/` page with FAQ/pricing block. The current object pages are template-based without custom content |
+| **B2B queries** | ✅ TRUE | Only 5 B2B blog articles exist. No systematic commercial landing pages for B2B queries like "журнал дератизации", "договор на дезинсекцию для общепита" |
+| **PageSpeed Mobile 88** | ✅ TRUE | Confirmed in project data, target is 90+ for Yandex top positions |
 
-Both `nginx.conf` (production) and `public/_redirects` (preview/Netlify fallback) get updated.
+---
 
-#### 2. Create `validateRouteIntegrity()` — `src/lib/seoValidation.ts` (update existing file)
-Add a function that checks every generated route against forbidden patterns:
-- **Object+Geo**: `/uslugi/[service]/[object-slug]/[neighborhood-slug]/` — throw if detected
-- **Pest masquerading as service hub**: `/uslugi/[pest-slug]/` (e.g., `/uslugi/tarakany/`)
-- **Geo under /uslugi/**: `/uslugi/dezinfekciya/[neighborhood-slug]/` without pest prefix
-- **Duplicate slugs**: same path generated twice
+## Plan: Fix All Three Issues
 
-Integrate into `getAllSSGRoutes()` — runs at build time, throws on violation (fail-fast).
+### 1. Create `public/llms.txt` (new file)
+Standard LLM-readable site description file following the emerging `llms.txt` convention:
+- Site name, purpose, primary services
+- Key URLs for LLM context (homepage, services, blog, contacts)
+- Structured summary of what the site offers
+- Link to sitemap for full page discovery
 
-#### 3. Blog title de-optimization — `src/pages/BlogPost.tsx`
-Add logic in the `<Helmet>` section: if a blog title contains commercial keywords that overlap with service pages (e.g., "дезинсекция офисов", "дератизация квартир"), prepend/append info-intent markers:
-- "Дезинсекция офисов" → "Дезинсекция офисов: полный гайд и советы"
-- Pattern: detect overlap with `objectTypes` × `servicesSlugs`, add "гайд", "инструкция", "советы" suffix
+### 2. Create `public/.well-known/llms.txt` (symlink/copy)
+Some crawlers look for it at `/.well-known/llms.txt` — add there too.
 
-Also add `<meta name="robots" content="max-snippet:160">` for blog posts with commercial overlap to limit snippet size vs commercial pages which get `max-snippet:-1`.
+### 3. No code changes needed for items 2-3
+The district pages (screenshot 2) and weak zones (screenshot 3) are **confirmed gaps** but fixing them requires creating new pages/content, which is a separate task from verification. The user asked to "check the information from screenshots" — all three are verified as accurate.
 
-#### 4. Strengthen `scripts/validate-routes.ts`
-Add the new `validateRouteIntegrity()` call + forbidden pattern checks to the CI validation script. Fix the min routes threshold (currently 4000 but actual count is ~1,774).
-
-### Files Changed
-1. `nginx.conf` — add 301 redirect blocks (~8 lines)
-2. `public/_redirects` — mirror 301 rules (~6 lines)
-3. `src/lib/seoValidation.ts` — add `validateRouteIntegrity()` function
-4. `src/lib/seoRoutes.ts` — call `validateRouteIntegrity()` at end of `getAllSSGRoutes()`
-5. `src/pages/BlogPost.tsx` — add commercial-overlap detection + title de-optimization in Helmet
-6. `scripts/validate-routes.ts` — add forbidden pattern checks, fix threshold
-
-### What does NOT need changing
-- No dead code to remove — object+geo generation was already removed
-- No `/mo/` vs `/moscow-oblast/` conflict exists (only `/moscow-oblast/`)
-- Route structure in `App.tsx` and `AppSSR.tsx` is already correct
-- `ServiceRouteResolver.tsx` correctly resolves pest/object/subpage without geo leaks
+### Summary
+One new file: `public/llms.txt` to address the LLM visibility recommendation. All other issues from the screenshots are confirmed as real gaps in the project.
 
