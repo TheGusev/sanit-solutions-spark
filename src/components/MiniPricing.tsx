@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import SectionHeading from "@/components/ui/SectionHeading";
 
 const services = [
-  { icon: Microscope, title: "Дезинфекция квартиры", href: "/uslugi/dezinfekciya" },
+  { icon: Microscope, title: "Дезинфекция квартиры", href: "/uslugi/dezinfekciya", bgImage: "/images/services/dezinfekciya-kvartiry-bg.jpg" },
   { icon: Bug, title: "Дезинсекция (тараканы, клопы)", href: "/uslugi/dezinsekciya" },
   { icon: Rat, title: "Дератизация", href: "/uslugi/deratizaciya" },
   { icon: Sparkles, title: "Озонирование", href: "/uslugi/ozonirovanie" },
