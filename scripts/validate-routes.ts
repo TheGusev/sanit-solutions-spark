@@ -6,6 +6,7 @@
  */
 
 import { getAllSSGRoutes } from '../src/lib/seoRoutes';
+import { neighborhoodSlugs } from '../src/lib/seoRoutes';
 
 interface ValidationResult {
   passed: boolean;
