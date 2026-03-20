@@ -7,11 +7,11 @@ const services = [
   { icon: Microscope, title: "Дезинфекция квартиры", href: "/uslugi/dezinfekciya", bgImage: "/images/services/dezinfekciya-kvartiry-bg.jpg" },
   { icon: Bug, title: "Дезинсекция (тараканы, клопы)", href: "/uslugi/dezinsekciya", bgImage: "/images/services/dezinsekciya-bg.jpg" },
   { icon: Rat, title: "Дератизация", href: "/uslugi/deratizaciya", bgImage: "/images/services/deratizaciya-bg.jpg" },
-  { icon: Sparkles, title: "Озонирование", href: "/uslugi/ozonirovanie" },
+  { icon: Sparkles, title: "Озонирование", href: "/uslugi/ozonirovanie", bgImage: "/images/services/ozonirovanie-bg.jpg" },
   { icon: Wind, title: "Удаление запахов", href: "/uslugi/dezodoraciya", bgImage: "/images/services/dezodoraciya-bg.jpg" },
-  { icon: AlertTriangle, title: "Демеркуризация", href: "/uslugi/demerkurizaciya" },
+  { icon: AlertTriangle, title: "Демеркуризация", href: "/uslugi/demerkurizaciya", bgImage: "/images/services/demerkurizaciya-bg.jpg" },
   { icon: Mountain, title: "Борьба с кротами", href: "/uslugi/borba-s-krotami", bgImage: "/images/services/borba-s-krotami-bg.jpg" },
-  { icon: TreePine, title: "Обработка участков", href: "/uslugi/obrabotka-uchastkov" },
+  { icon: TreePine, title: "Обработка участков", href: "/uslugi/obrabotka-uchastkov", bgImage: "/images/services/obrabotka-uchastkov-bg.jpg" },
 ];
 
 const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
