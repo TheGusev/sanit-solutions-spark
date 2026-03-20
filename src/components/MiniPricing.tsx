@@ -10,7 +10,7 @@ const services = [
   { icon: Sparkles, title: "Озонирование", href: "/uslugi/ozonirovanie" },
   { icon: Wind, title: "Удаление запахов", href: "/uslugi/dezodoraciya", bgImage: "/images/services/dezodoraciya-bg.jpg" },
   { icon: AlertTriangle, title: "Демеркуризация", href: "/uslugi/demerkurizaciya" },
-  { icon: Mountain, title: "Борьба с кротами", href: "/uslugi/borba-s-krotami" },
+  { icon: Mountain, title: "Борьба с кротами", href: "/uslugi/borba-s-krotami", bgImage: "/images/services/borba-s-krotami-bg.jpg" },
   { icon: TreePine, title: "Обработка участков", href: "/uslugi/obrabotka-uchastkov" },
 ];
 
