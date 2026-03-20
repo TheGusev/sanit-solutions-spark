@@ -6,7 +6,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 const services = [
   { icon: Microscope, title: "Дезинфекция квартиры", href: "/uslugi/dezinfekciya", bgImage: "/images/services/dezinfekciya-kvartiry-bg.jpg" },
   { icon: Bug, title: "Дезинсекция (тараканы, клопы)", href: "/uslugi/dezinsekciya" },
-  { icon: Rat, title: "Дератизация", href: "/uslugi/deratizaciya" },
+  { icon: Rat, title: "Дератизация", href: "/uslugi/deratizaciya", bgImage: "/images/services/deratizaciya-bg.jpg" },
   { icon: Sparkles, title: "Озонирование", href: "/uslugi/ozonirovanie" },
   { icon: Wind, title: "Удаление запахов", href: "/uslugi/dezodoraciya" },
   { icon: AlertTriangle, title: "Демеркуризация", href: "/uslugi/demerkurizaciya" },
