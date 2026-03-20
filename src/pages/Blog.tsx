@@ -183,7 +183,7 @@ const Blog = () => {
       {/* Sort Controls — segmented pills */}
       <section className="py-4 px-3 md:px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="inline-flex items-center gap-0.5 bg-muted/40 rounded-xl p-1">
+          <div className="inline-flex items-center gap-0.5 bg-muted/40 dark:bg-[hsl(240,10%,16%)] dark:border dark:border-border/50 rounded-xl p-1">
             {sortOptions.map(opt => (
               <button
                 key={opt.key}
@@ -193,7 +193,7 @@ const Blog = () => {
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
                   ${sortBy === opt.key
                     ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
+                    : 'text-muted-foreground hover:text-foreground dark:hover:bg-white/5'
                   }`}
               >
                 {opt.label}
