@@ -1,12 +1,12 @@
 
 
-## Plan: Add background image to "Дератизация" card in MiniPricing
+## Plan: Add background image to "Удаление запахов" card in MiniPricing
 
 ### Steps
 
-1. **Copy image** to `public/images/services/deratizaciya-bg.jpg`
+1. **Copy image** to `public/images/services/dezodoraciya-bg.jpg`
 
-2. **Update `src/components/MiniPricing.tsx`** — add `bgImage: '/images/services/deratizaciya-bg.jpg'` to the "Дератизация" service object (3rd item in array)
+2. **Update `src/components/MiniPricing.tsx`** — add `bgImage: '/images/services/dezodoraciya-bg.jpg'` to the "Удаление запахов" service object (5th item in array, line 11)
 
-The card rendering logic already handles `bgImage` (dark overlay + `relative z-10` content) from the previous edit — no template changes needed.
+Existing card rendering logic handles `bgImage` automatically — no template changes needed.
 
