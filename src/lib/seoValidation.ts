@@ -5,6 +5,10 @@
  * H1 (20-80 символов), и минимальное количество слов (500-650).
  */
 
+// NOTE: neighborhoodSlugs is NOT imported here to avoid circular dependency
+// (seoRoutes.ts imports from this file). Instead, validateRouteIntegrity
+// accepts an optional Set<string> of neighborhoods passed by the caller.
+
 export const SEO_LIMITS = {
   title: { min: 40, max: 65, optimalMax: 60 },
   description: { min: 140, max: 165, optimalMax: 160 },
@@ -162,4 +166,98 @@ export function formatDescriptionForLimit(description: string, maxLength: number
   }
   
   return truncated;
+}
+
+
+// ============================================================
+// Route Integrity Validator (build-time fail-fast)
+// ============================================================
+
+/** Forbidden patterns that indicate route cannibalization */
+const FORBIDDEN_PATTERNS: Array<{ regex: RegExp; reason: string }> = [
+  // Object+Geo: /uslugi/[service]/[object]/[neighborhood]/ — must never exist
+  {
+    regex: /^\/uslugi\/[a-z-]+\/(?:kvartir|domov|ofisov|restoranov|skladov|proizvodstv|gostinic|detskih-sadov|hostela|magazinov|avtomobiley)\/[a-z-]+\/$/,
+    reason: 'Object+Geo cannibalization — geo slugs must NOT appear under object pages',
+  },
+  // Geo slug directly under /uslugi/dezinfekciya/ (doorway page pattern)
+  // Allowed: pest slugs, object slugs, subpage slugs. Blocked: neighborhood slugs.
+  {
+    regex: /^\/uslugi\/dezinfekciya\/[a-z-]+\/$/,
+    reason: 'Potential geo slug under /uslugi/dezinfekciya/ — check against neighborhood list',
+  },
+  // Pest masquerading as service hub: /uslugi/[pest-slug]/
+  {
+    regex: /^\/uslugi\/(?:tarakany|klopy|muravyi|blohi|mol|komary|muhi|osy-shershni|cheshuynitsy|kleshchi|mokricy|krysy|myshi|kroty)\/$/,
+    reason: 'Pest slug at service level — must be under /uslugi/[service]/[pest]/',
+  },
+  // Duplicate geo: /uslugi/kroty/ (should be /uslugi/deratizaciya/kroty/)
+  {
+    regex: /^\/uslugi\/kroty\//,
+    reason: 'Kroty leak — must live at /uslugi/deratizaciya/kroty/',
+  },
+];
+
+/**
+ * Validates a single route path against forbidden patterns.
+ * Throws an Error in CI/Docker (fail-fast), logs warning otherwise.
+ */
+export function validateRouteIntegrity(path: string, neighborhoodSet?: Set<string>): void {
+  
+  for (const { regex, reason } of FORBIDDEN_PATTERNS) {
+    if (!regex.test(path)) continue;
+    
+    // Special case: /uslugi/dezinfekciya/[slug]/ — only block if slug is a neighborhood
+    if (reason.includes('check against neighborhood list')) {
+      const match = path.match(/^\/uslugi\/dezinfekciya\/([a-z-]+)\/$/);
+      if (match && (!neighborhoodSet || !neighborhoodSet.has(match[1]))) continue;
+    }
+    
+    const isCI = typeof process !== 'undefined' && (
+      process.env.GITHUB_ACTIONS === 'true' || 
+      process.env.DOCKER_BUILD === 'true' ||
+      process.env.CI === 'true'
+    );
+    
+    const msg = `[SEO] Forbidden route detected: ${path}\n  Reason: ${reason}`;
+    
+    if (isCI) {
+      throw new Error(msg);
+    } else {
+      console.warn(`⚠️ ${msg}`);
+    }
+  }
+}
+
+/**
+ * Validates an entire array of routes for integrity and uniqueness.
+ * Call this at the end of getAllSSGRoutes().
+ */
+export function validateAllRoutes(routes: Array<{ path: string }>, neighborhoodSlugsArr?: string[]): void {
+  const seen = new Set<string>();
+  const duplicates: string[] = [];
+  const nSet = neighborhoodSlugsArr ? new Set(neighborhoodSlugsArr) : undefined;
+  
+  for (const route of routes) {
+    // Check forbidden patterns
+    validateRouteIntegrity(route.path, nSet);
+    
+    // Check duplicates
+    if (seen.has(route.path)) {
+      duplicates.push(route.path);
+    } else {
+      seen.add(route.path);
+    }
+  }
+  
+  if (duplicates.length > 0) {
+    const msg = `[SEO] Duplicate routes detected (${duplicates.length}):\n${duplicates.slice(0, 10).join('\n')}`;
+    const isCI = typeof process !== 'undefined' && (
+      process.env.GITHUB_ACTIONS === 'true' || 
+      process.env.DOCKER_BUILD === 'true' ||
+      process.env.CI === 'true'
+    );
+    if (isCI) throw new Error(msg);
+    else console.warn(`⚠️ ${msg}`);
+  }
 }

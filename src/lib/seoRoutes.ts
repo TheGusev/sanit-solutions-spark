@@ -2,6 +2,7 @@
  * Единый источник истины для всех индексируемых маршрутов.
  * Используется в SSG (vite-plugin-ssg.ts) и Sitemap (vite-plugin-sitemap.ts).
  */
+import { validateAllRoutes } from '@/lib/seoValidation';
 
 // Статические страницы
 export const staticRoutes = [
@@ -408,6 +409,9 @@ export function getAllSSGRoutes() {
       });
     });
   });
+  
+  // Run integrity checks (fail-fast in CI)
+  validateAllRoutes(routes, neighborhoodSlugs);
   
   return routes;
 }

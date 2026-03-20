@@ -27,11 +27,17 @@
 /uslugi/dezinsekciya/klopov-i-tarakanov/*  /uslugi/dezinsekciya/unichtozhenie-klopov/  301
 /uslugi/dezinsekciya/klopov-i-bloh/*       /uslugi/dezinsekciya/unichtozhenie-klopov/  301
 
+# 301 Redirects — Anti-cannibalization: Object+Geo leaks
+/uslugi/dezinsekciya/ofisov/:slug    /uslugi/dezinsekciya/ofisov/   301
+/uslugi/dezinfekciya/ofisov/:slug    /uslugi/dezinfekciya/ofisov/   301
+/uslugi/dezinsekciya/hostelov/:slug  /uslugi/dezinsekciya/hostela/  301
+/uslugi/dezinfekciya/hostelov/:slug  /uslugi/dezinfekciya/hostela/  301
+/uslugi/kroty                        /uslugi/deratizaciya/kroty/    301
+/uslugi/kroty/*                      /uslugi/deratizaciya/kroty/    301
+/uslugi/borba-s-krotami/kroty        /uslugi/deratizaciya/kroty/    301
+/uslugi/borba-s-krotami/kroty/*      /uslugi/deratizaciya/kroty/    301
+
 # 301 Redirects — old geo URLs → new /rajony/ hubs
-# NOTE: Cannot use wildcard /:slug here — it would catch valid pest/object URLs
-# (e.g., /uslugi/dezinsekciya/tarakany → /rajony/tarakany/ = 404!)
-# Old neighborhood URLs were already deindexed; _redirects left intentionally empty.
-# If specific old neighborhood slugs need 301s, enumerate them explicitly here.
 
 # 301 Redirects — renamed blog articles (commercial → informational)
 /blog/ceny-na-unichtozhenie-tarakany  /blog/skolko-stoit-obrabotka-tarakany/  301
