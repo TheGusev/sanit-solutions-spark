@@ -164,13 +164,12 @@ export function formatDescriptionForLimit(description: string, maxLength: number
   }
   
   return truncated;
+}
 
 
 // ============================================================
 // Route Integrity Validator (build-time fail-fast)
 // ============================================================
-
-import { neighborhoodSlugs, objectSlugs } from '@/lib/seoRoutes';
 
 /** Forbidden patterns that indicate route cannibalization */
 const FORBIDDEN_PATTERNS: Array<{ regex: RegExp; reason: string }> = [
