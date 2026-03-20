@@ -8,7 +8,7 @@ const services = [
   { icon: Bug, title: "Дезинсекция (тараканы, клопы)", href: "/uslugi/dezinsekciya" },
   { icon: Rat, title: "Дератизация", href: "/uslugi/deratizaciya", bgImage: "/images/services/deratizaciya-bg.jpg" },
   { icon: Sparkles, title: "Озонирование", href: "/uslugi/ozonirovanie" },
-  { icon: Wind, title: "Удаление запахов", href: "/uslugi/dezodoraciya" },
+  { icon: Wind, title: "Удаление запахов", href: "/uslugi/dezodoraciya", bgImage: "/images/services/dezodoraciya-bg.jpg" },
   { icon: AlertTriangle, title: "Демеркуризация", href: "/uslugi/demerkurizaciya" },
   { icon: Mountain, title: "Борьба с кротами", href: "/uslugi/borba-s-krotami" },
   { icon: TreePine, title: "Обработка участков", href: "/uslugi/obrabotka-uchastkov" },
