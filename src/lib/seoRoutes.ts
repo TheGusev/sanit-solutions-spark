@@ -410,6 +410,9 @@ export function getAllSSGRoutes() {
     });
   });
   
+  // Run integrity checks (fail-fast in CI)
+  validateAllRoutes(routes);
+  
   return routes;
 }
 
