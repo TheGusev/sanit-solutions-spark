@@ -33,6 +33,51 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+// Commercial keywords that blog titles must NOT compete for
+const COMMERCIAL_MARKERS = [
+  'dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'dezodoraciya',
+];
+const OBJECT_MARKERS = [
+  'ofis', 'kvartr', 'domo', 'restoran', 'sklad', 'proizvodstv', 'gostinic', 'hostel', 'magazin',
+];
+const INFO_SUFFIX_OPTIONS = [
+  ': полный гайд и советы',
+  ': подробная инструкция',
+  ': что нужно знать',
+];
+
+/**
+ * Detects if a blog title overlaps with commercial service pages
+ * and appends an informational marker to disambiguate intent.
+ */
+function deOptimizeBlogTitle(title: string, slug: string): string {
+  const lower = title.toLowerCase();
+  const slugLower = slug.toLowerCase();
+  
+  // Check if title or slug contains both a service AND an object keyword
+  const hasService = COMMERCIAL_MARKERS.some(m => lower.includes(m) || slugLower.includes(m));
+  const hasObject = OBJECT_MARKERS.some(m => lower.includes(m) || slugLower.includes(m));
+  
+  if (hasService && hasObject) {
+    // Already has info markers? Skip.
+    if (/гайд|инструкция|советы|правила|что нужно знать/i.test(title)) return title;
+    // Deterministic suffix based on slug hash
+    const idx = slug.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % INFO_SUFFIX_OPTIONS.length;
+    return title + INFO_SUFFIX_OPTIONS[idx];
+  }
+  
+  return title;
+}
+
+/** Whether this blog post overlaps with commercial pages (used for robots meta) */
+function hasCommercialOverlap(title: string, slug: string): boolean {
+  const lower = title.toLowerCase();
+  const slugLower = slug.toLowerCase();
+  const hasService = COMMERCIAL_MARKERS.some(m => lower.includes(m) || slugLower.includes(m));
+  const hasObject = OBJECT_MARKERS.some(m => lower.includes(m) || slugLower.includes(m));
+  return hasService && hasObject;
+}
+
 const BlogPost = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -43,7 +88,7 @@ const BlogPost = () => {
   
   useEffect(() => {
     if (post) {
-      document.title = `${post.title} | Санитарные Решения`;
+      document.title = `${deOptimizeBlogTitle(post.title, post.slug)} | Санитарные Решения`;
       trackAIReferral();
       detectDarkAITraffic();
     }
