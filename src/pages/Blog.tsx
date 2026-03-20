@@ -222,7 +222,7 @@ const Blog = () => {
                     to={`/blog/${post.slug}`}
                     className="group"
                   >
-                    <div className="rounded-xl border border-border bg-card p-4 border-l-2 border-l-primary/15 transition-all duration-200 hover:shadow-md hover:border-border/80 hover:-translate-y-0.5 hover:border-l-primary">
+                    <div className="rounded-xl border border-border bg-card dark:bg-[hsl(240,10%,16%)] p-4 border-l-2 border-l-primary/15 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] dark:border-border/50 transition-all duration-200 hover:shadow-md hover:border-border/80 hover:-translate-y-0.5 hover:border-l-primary">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
