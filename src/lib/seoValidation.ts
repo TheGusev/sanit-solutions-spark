@@ -5,6 +5,8 @@
  * H1 (20-80 символов), и минимальное количество слов (500-650).
  */
 
+import { neighborhoodSlugs } from '@/lib/seoRoutes';
+
 export const SEO_LIMITS = {
   title: { min: 40, max: 65, optimalMax: 60 },
   description: { min: 140, max: 165, optimalMax: 160 },
