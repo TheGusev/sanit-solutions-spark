@@ -193,7 +193,7 @@ const Blog = () => {
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
                   ${sortBy === opt.key
                     ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
+                    : 'text-muted-foreground hover:text-foreground dark:hover:bg-white/5'
                   }`}
               >
                 {opt.label}
