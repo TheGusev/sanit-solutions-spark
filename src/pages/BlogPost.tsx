@@ -133,7 +133,7 @@ const BlogPost = () => {
         <link rel="alternate" hrefLang="x-default" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}/`} />
         <meta property="og:type" content="article" />
         <meta property="og:url" content={`${SEO_CONFIG.baseUrl}/blog/${post.slug}/`} />
-        <meta property="og:title" content={`${post.title} | ${SEO_CONFIG.companyName}`} />
+        <meta property="og:title" content={`${safeTitle} | ${SEO_CONFIG.companyName}`} />
         <meta property="og:description" content={post.excerpt} />
         <meta property="og:image" content={SEO_CONFIG.ogImage} />
         <meta property="og:locale" content={SEO_CONFIG.locale} />
