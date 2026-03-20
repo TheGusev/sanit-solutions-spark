@@ -210,7 +210,7 @@ export function validateRouteIntegrity(path: string, neighborhoodSet?: Set<strin
     // Special case: /uslugi/dezinfekciya/[slug]/ — only block if slug is a neighborhood
     if (reason.includes('check against neighborhood list')) {
       const match = path.match(/^\/uslugi\/dezinfekciya\/([a-z-]+)\/$/);
-      if (match && !neighborhoodSet.has(match[1])) continue; // legitimate pest/object/subpage
+      if (match && (!neighborhoodSet || !neighborhoodSet.has(match[1]))) continue;
     }
     
     const isCI = typeof process !== 'undefined' && (
