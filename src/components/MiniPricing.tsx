@@ -48,14 +48,24 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
                 to={citySlug ? `/goroda/${citySlug}${service.href}` : service.href}
                 className="group"
               >
-                <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all">
-                  <h3 className="text-sm font-medium text-white mb-3 leading-tight min-h-[2.5rem]">
-                    {service.title}
-                  </h3>
-                  <span className="text-xs text-white/70 flex items-center justify-center">
-                    Подробнее
-                    <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                  </span>
+                <div
+                  className={`rounded-xl p-4 text-center shadow-sm hover:shadow-lg transition-all relative overflow-hidden ${
+                    service.bgImage
+                      ? "bg-cover bg-center"
+                      : "bg-white/20 backdrop-blur-md border border-white/30"
+                  }`}
+                  style={service.bgImage ? { backgroundImage: `url('${service.bgImage}')` } : undefined}
+                >
+                  {service.bgImage && <div className="absolute inset-0 bg-black/45" />}
+                  <div className="relative z-10">
+                    <h3 className="text-sm font-medium text-white mb-3 leading-tight min-h-[2.5rem]">
+                      {service.title}
+                    </h3>
+                    <span className="text-xs text-white/70 flex items-center justify-center">
+                      Подробнее
+                      <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    </span>
+                  </div>
                 </div>
               </Link>
             );
