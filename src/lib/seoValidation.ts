@@ -202,8 +202,7 @@ const FORBIDDEN_PATTERNS: Array<{ regex: RegExp; reason: string }> = [
  * Validates a single route path against forbidden patterns.
  * Throws an Error in CI/Docker (fail-fast), logs warning otherwise.
  */
-export function validateRouteIntegrity(path: string): void {
-  const neighborhoodSet = new Set(neighborhoodSlugs);
+export function validateRouteIntegrity(path: string, neighborhoodSet?: Set<string>): void {
   
   for (const { regex, reason } of FORBIDDEN_PATTERNS) {
     if (!regex.test(path)) continue;
