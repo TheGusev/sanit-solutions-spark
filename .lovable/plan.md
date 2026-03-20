@@ -1,42 +1,57 @@
 
 
-## Verification of Screenshot Issues
+## Plan: Blog Page UI/UX Refactor — "Document/Folder" Style
 
-### Screenshot 1: LLM Visibility Recommendations
-- **robots.txt configured correctly** ✅ Confirmed — `robots.txt` allows GPTBot, PerplexityBot, ClaudeBot, Google-Extended, YandexBot
-- **"Add llms.txt file"** ✅ TRUE — no `llms.txt` exists in the project. This file helps LLM crawlers understand site structure
+### What changes
+**One file**: `src/pages/Blog.tsx` — pure visual refactor of the blog listing page.
 
-### Screenshot 2: Geo-Service Pages by Districts — Only Dezinfekciya
-✅ TRUE — `districtPages.ts` has slugs like `dezinfekciya-cao`, `dezinfekciya-sao`, etc. These are **only for dezinfekciya**. There are no `dezinsekciya-cao` or `deratizaciya-cao` equivalents. The pages at `/uslugi/dezinfekciya-[district]` cover only one service type.
+BlogPost.tsx stays untouched (it already has clean editorial layout with prose styles, TOC, breadcrumbs, tricolor accent).
 
-However, these pages do mention "дезинсекция и дератизация" in their description text (line 43), so they function as multi-service geo hubs despite the URL suggesting dezinfekciya-only. This is a minor inconsistency but not critically broken — the `/rajony/` pages are the real geo hubs per project policy.
+### Changes in Blog.tsx
 
-### Screenshot 3: Weak Zones
+#### 1. Category folder cards
+- Replace emoji-based icons with Lucide icons: `FolderOpen` (Все), `ShieldCheck` (Дезинфекция), `Bug` (Дезинсекция), `Mouse` (Дератизация), `Lightbulb` (Советы), `Scale` (Законы), `FlaskConical` (Препараты), `Briefcase` (Кейсы)
+- Remove `truncate` class → allow 2-line wrap with proper padding
+- Active state: `bg-primary text-primary-foreground` with `shadow-md shadow-primary/20` glow
+- Inactive: `bg-card border-border` with `hover:border-primary/30 hover:shadow-sm` transition
+- Add `focus-visible:ring-2 focus-visible:ring-primary` for accessibility
+- Grid stays `grid-cols-2 md:grid-cols-3 lg:grid-cols-4`
+- Icon rendered as Lucide component (size 20) instead of emoji text
 
-| Issue | Status | Details |
-|---|---|---|
-| **MO cities (Klin, Ramenskoe, Chekhov, Domodedovo)** | ✅ TRUE | These 4 cities exist in `moscowRegion.ts` and `semanticCore.ts` but have no pest×city NCH pages |
-| **Hostel — no landing page** | ✅ TRUE | Object `hostela` exists in `objects.ts` and SSG generates `/uslugi/dezinsekciya/hostela/` etc., but there's no dedicated `/uslugi/dezinsekciya/v-hostele/` page with FAQ/pricing block. The current object pages are template-based without custom content |
-| **B2B queries** | ✅ TRUE | Only 5 B2B blog articles exist. No systematic commercial landing pages for B2B queries like "журнал дератизации", "договор на дезинсекцию для общепита" |
-| **PageSpeed Mobile 88** | ✅ TRUE | Confirmed in project data, target is 90+ for Yandex top positions |
+#### 2. Sort controls
+- Wrap in a `bg-muted/30 rounded-xl p-1 inline-flex` container (segmented control look)
+- Active pill: `bg-primary text-primary-foreground shadow-sm`
+- Inactive pill: `text-muted-foreground hover:text-foreground`
+- Remove the standalone `ArrowDownWideNarrow` icon — clean segmented look
 
----
+#### 3. Article cards — "document" style
+- Add subtle left border accent: `border-l-2 border-l-primary/20` on hover → `border-l-primary`
+- Keep existing structure (category chip, clock, title, excerpt)
+- Add `transition-all duration-200` for smooth hover
+- Hover: `hover:shadow-md hover:border-border/80 hover:-translate-y-0.5`
+- Category chip: keep `bg-primary/10 text-primary` (already good)
+- Excerpt: keep `line-clamp-2` with `text-sm text-muted-foreground`
 
-## Plan: Fix All Three Issues
+#### 4. Performance
+- Wrap `filteredPosts` computation in `useMemo` with deps `[selectedCategory, sortBy]`
+- Wrap `popularSlugs` in module-level const (it's static data)
+- No new components, no extra re-renders
 
-### 1. Create `public/llms.txt` (new file)
-Standard LLM-readable site description file following the emerging `llms.txt` convention:
-- Site name, purpose, primary services
-- Key URLs for LLM context (homepage, services, blog, contacts)
-- Structured summary of what the site offers
-- Link to sitemap for full page discovery
+#### 5. Empty state
+- Add a simple "Нет статей в этой категории" block if `filteredPosts.length === 0`
 
-### 2. Create `public/.well-known/llms.txt` (symlink/copy)
-Some crawlers look for it at `/.well-known/llms.txt` — add there too.
+#### 6. Accessibility
+- Add `role="tablist"` on category grid, `role="tab"` + `aria-selected` on each button
+- Add `aria-label` on sort buttons
 
-### 3. No code changes needed for items 2-3
-The district pages (screenshot 2) and weak zones (screenshot 3) are **confirmed gaps** but fixing them requires creating new pages/content, which is a separate task from verification. The user asked to "check the information from screenshots" — all three are verified as accurate.
+### What is preserved
+- All SEO: Helmet, StructuredData, canonical, OG tags — untouched
+- All routing: Link to `/blog/${post.slug}` — untouched
+- All data: `allBlogArticles`, `blogCategories`, counts — untouched
+- Breadcrumbs, Header, Footer, CTA section — untouched
+- Load-more pagination (`visibleCount` + Button) — untouched
+- Sort/filter logic — only wrapped in useMemo, logic identical
 
-### Summary
-One new file: `public/llms.txt` to address the LLM visibility recommendation. All other issues from the screenshots are confirmed as real gaps in the project.
+### Files
+1. `src/pages/Blog.tsx` — visual refactor only
 
