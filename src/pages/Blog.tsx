@@ -143,10 +143,10 @@ const Blog = () => {
       </section>
 
       {/* Category Folder Cards */}
-      <section className="py-6 md:py-8 px-3 md:px-4 border-b">
+      <section className="py-6 md:py-8 px-3 md:px-4 border-b border-border">
         <div className="container mx-auto max-w-6xl">
           <div
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 md:gap-3"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-5 md:gap-x-4 md:gap-y-6"
             role="tablist"
             aria-label="Категории статей"
           >
@@ -164,17 +164,13 @@ const Blog = () => {
                   aria-selected={isActive}
                   onClick={() => { setSelectedCategory(category); setVisibleCount(30); }}
                   className={`
-                    flex items-center gap-3 rounded-xl px-4 py-3.5 md:py-4 text-left
-                    transition-all duration-200 border
+                    folder-card flex items-center gap-3 px-4 py-3 md:py-3.5 text-left cursor-pointer
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
-                    ${isActive
-                      ? 'bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20'
-                      : 'bg-card text-card-foreground border-border hover:border-primary/30 hover:shadow-sm'
-                    }
+                    ${isActive ? 'folder-card--active' : 'folder-card--inactive'}
                   `}
                 >
-                  <IconComp className="shrink-0" size={20} />
-                  <span className="text-sm md:text-base font-semibold leading-snug">
+                  <IconComp className="shrink-0 opacity-90" size={20} />
+                  <span className="text-sm md:text-base font-semibold leading-snug line-clamp-2">
                     {category} ({count})
                   </span>
                 </button>
