@@ -5,7 +5,9 @@
  * H1 (20-80 символов), и минимальное количество слов (500-650).
  */
 
-import { neighborhoodSlugs } from '@/lib/seoRoutes';
+// NOTE: neighborhoodSlugs is NOT imported here to avoid circular dependency
+// (seoRoutes.ts imports from this file). Instead, validateRouteIntegrity
+// accepts an optional Set<string> of neighborhoods passed by the caller.
 
 export const SEO_LIMITS = {
   title: { min: 40, max: 65, optimalMax: 60 },
