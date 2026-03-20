@@ -31,11 +31,36 @@ function validateRoutes(): ValidationResult {
     console.log(`📊 Найдено маршрутов: ${routes.length}`);
 
     // 2. Проверяем минимальное количество маршрутов
-    const EXPECTED_MIN_ROUTES = 4000;
+    const EXPECTED_MIN_ROUTES = 1500;
     if (routes.length < EXPECTED_MIN_ROUTES) {
       result.errors.push(
         `Количество маршрутов (${routes.length}) меньше ожидаемого минимума (${EXPECTED_MIN_ROUTES})`
       );
+      result.passed = false;
+    }
+
+    // 2b. Проверяем запрещенные паттерны (каннибализация)
+    const neighborhoodSet = new Set(neighborhoodSlugs);
+    const forbiddenFound: string[] = [];
+    
+    for (const route of routes) {
+      // Object+Geo leak
+      if (/^\/uslugi\/[a-z-]+\/(?:kvartir|domov|ofisov|restoranov|skladov|proizvodstv|gostinic|detskih-sadov|hostela|magazinov|avtomobiley)\/[a-z-]+\/$/.test(route.path)) {
+        forbiddenFound.push(`Object+Geo: ${route.path}`);
+      }
+      // Pest at service level
+      if (/^\/uslugi\/(?:tarakany|klopy|muravyi|blohi|mol|komary|muhi|osy-shershni|cheshuynitsy|kleshchi|mokricy|krysy|myshi|kroty)\/$/.test(route.path)) {
+        forbiddenFound.push(`Pest@service: ${route.path}`);
+      }
+      // Geo under /uslugi/dezinfekciya/
+      const geoMatch = route.path.match(/^\/uslugi\/dezinfekciya\/([a-z-]+)\/$/);
+      if (geoMatch && neighborhoodSet.has(geoMatch[1])) {
+        forbiddenFound.push(`Geo@dezinfekciya: ${route.path}`);
+      }
+    }
+    
+    if (forbiddenFound.length > 0) {
+      result.errors.push(`Запрещенные паттерны (${forbiddenFound.length}): ${forbiddenFound.slice(0, 5).join(', ')}`);
       result.passed = false;
     }
 

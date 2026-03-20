@@ -116,12 +116,18 @@ const BlogPost = () => {
   const showToc = headings.length >= 3;
   const hasFaq = post.faq && post.faq.length > 0;
 
+  const safeTitle = deOptimizeBlogTitle(post.title, post.slug);
+  const isCommercialOverlap = hasCommercialOverlap(post.title, post.slug);
+
   return (
     <div className="min-h-screen">
       <Helmet>
-        <title>{`${post.title} | Санитарные Решения`}</title>
+        <title>{`${safeTitle} | Санитарные Решения`}</title>
         <meta name="description" content={post.excerpt} />
-        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <meta name="robots" content={isCommercialOverlap 
+          ? "index, follow, max-snippet:160, max-image-preview:large" 
+          : "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+        } />
         <link rel="canonical" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}/`} />
         <link rel="alternate" hrefLang="ru" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}/`} />
         <link rel="alternate" hrefLang="x-default" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}/`} />
