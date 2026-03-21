@@ -21,6 +21,7 @@ interface InternalLinksProps {
   currentPest?: string;
   currentNeighborhood?: string;
   currentCity?: string;
+  currentDistrict?: string;
   variant?: 'grid' | 'list' | 'compact';
   maxLinks?: number;
   title?: string;
@@ -29,7 +30,7 @@ interface InternalLinksProps {
 interface InternalLink {
   url: string;
   text: string;
-  type: 'service' | 'pest' | 'neighborhood' | 'city';
+  type: 'service' | 'pest' | 'neighborhood' | 'city' | 'district';
 }
 
 
@@ -39,11 +40,17 @@ function getDistance(a: [number, number], b: [number, number]): number {
   return Math.sqrt(dlat * dlat + dlng * dlng);
 }
 
+const okrugIds = ['cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao'];
+const serviceKeys = ['dezinfekciya', 'dezinsekciya', 'deratizaciya'] as const;
+const serviceNames: Record<string, string> = { dezinfekciya: 'Дезинфекция', dezinsekciya: 'Дезинсекция', deratizaciya: 'Дератизация' };
+const okrugNames: Record<string, string> = { cao: 'ЦАО', sao: 'САО', svao: 'СВАО', vao: 'ВАО', yuvao: 'ЮВАО', yao: 'ЮАО', yzao: 'ЮЗАО', zao: 'ЗАО', szao: 'СЗАО' };
+
 export function InternalLinks({
   currentService,
   currentPest,
   currentNeighborhood,
   currentCity,
+  currentDistrict,
   variant = 'grid',
   maxLinks = 12,
   title = 'Смотрите также'
@@ -128,12 +135,27 @@ export function InternalLinks({
       });
     });
   
+  // 3.5 Услуги по округам (2-3 ссылки)
+  if (currentService) {
+    const otherServices = serviceKeys.filter(s => s !== currentService);
+    otherServices.slice(0, 2).forEach((s, i) => {
+      const okrug = currentDistrict && okrugIds.includes(currentDistrict)
+        ? currentDistrict
+        : okrugIds[i % okrugIds.length];
+      links.push({
+        url: `/uslugi/${s}-${okrug}`,
+        text: `${serviceNames[s]} в ${okrugNames[okrug] || okrug.toUpperCase()}`,
+        type: 'district'
+      });
+    });
+  }
+
   // 4. Города МО (1-2 ссылки)
   if (!currentCity && currentService) {
     moscowRegionCities.slice(0, 2).forEach(city => {
       links.push({
         url: `/moscow-oblast/${city.slug}/${currentService}`,
-        text: `${currentService === 'dezinsekciya' ? 'Дезинсекция' : 'Дератизация'} ${city.prepositional}`,
+        text: `${serviceNames[currentService] || 'Дезинфекция'} ${city.prepositional}`,
         type: 'city'
       });
     });
