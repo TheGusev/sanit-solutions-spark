@@ -193,7 +193,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
 
         <DistrictHero district={district} serviceType={serviceType} onCalculatorOpen={() => setIsCalculatorOpen(true)} />
 
-        <DistrictSpecifics district={district} />
+        <DistrictSpecifics district={district} serviceType={serviceType} />
 
         <section className="py-12">
           <div className="container mx-auto px-4">
