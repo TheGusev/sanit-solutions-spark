@@ -157,6 +157,17 @@ const ServiceLandingUchastkiPage = () => {
           </section>
         </AnimatedSection>
 
+        {/* Quiz */}
+        <ServiceQuiz
+          serviceSlug="obrabotka-uchastkov"
+          serviceTitle="Обработка участков"
+          steps={[
+            { question: "Что беспокоит?", options: ["Клещи", "Комары", "Борщевик", "Несколько вредителей"] },
+            { question: "Площадь участка?", options: ["до 6 соток", "6–10 соток", "10–20 соток", "более 20 соток"] },
+            { question: "Тип территории?", options: ["Дачный участок", "Коттеджный посёлок", "Парк / сквер", "Коммерческая территория"] },
+          ]}
+        />
+
         {/* FAQ */}
         <AnimatedSection>
           <section className="py-16">
