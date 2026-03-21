@@ -46,6 +46,7 @@ const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
   const [visibleCount, setVisibleCount] = useState(30);
   const [sortBy, setSortBy] = useState<SortMode>('default');
+  const sortRef = useRef<HTMLDivElement>(null);
 
   const filteredPosts = useMemo(() => {
     const baseList = selectedCategory === "Все" 
