@@ -333,7 +333,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
             <SectionHeading label="ОКРУГА" title="Другие округа Москвы" align="left" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {otherDistricts.map((d) => (
-                <Link key={d.id} to={`/uslugi/${d.slug}`}>
+                <Link key={d.id} to={`/uslugi/${serviceType}-${d.id}`}>
                   <Card className="hover:shadow-md transition-shadow hover:-translate-y-1">
                     <CardContent className="p-4 text-center">
                       <h3 className="font-bold text-primary">{d.name}</h3>
