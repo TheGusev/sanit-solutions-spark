@@ -170,13 +170,13 @@ export default function ServiceObjectPage() {
         {/* Почему мы */}
         <AnimatedSection className="py-10 bg-muted/30">
           <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-xl font-bold mb-6 text-center">Почему выбирают нас для {serviceName.toLowerCase()} {objectType.genitive}</h2>
+            <h2 className="text-xl font-bold mb-6 text-center">Почему выбирают нас для {serviceGen} {objectType.genitive}</h2>
             <div className="grid md:grid-cols-2 gap-4">
               {[
-                { title: 'Опыт с 2012 года', desc: `Более 10 лет специализируемся на ${serviceName.toLowerCase()} ${objectType.genitive}. Обработали 15 000+ объектов в Москве.` },
+                { title: 'Опыт с 2012 года', desc: `Более 10 лет специализируемся в области ${serviceGen} ${objectType.genitive}. Обработали 15 000+ объектов в Москве.` },
                 { title: 'Безопасные препараты', desc: `Используем сертифицированные средства IV класса опасности. Безопасны для людей и домашних животных после проветривания.` },
                 { title: 'Гарантия до 3 лет', desc: `Даём письменную гарантию. Если проблема вернётся — повторная обработка бесплатно, без доплат.` },
-                { title: 'Документы для проверок', desc: `Выдаём полный пакет документов: акт дезинфекции, сертификаты на препараты, договор. Для СЭС и Роспотребнадзора.` },
+                { title: 'Документы для проверок', desc: `Выдаём полный пакет документов: акт ${serviceGen}, сертификаты на препараты, договор. Для СЭС и Роспотребнадзора.` },
               ].map((item, i) => (
                 <Card key={i}>
                   <CardContent className="p-4">
