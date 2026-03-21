@@ -82,7 +82,7 @@ export default function MoscowRegionCityPage() {
     return service ? {
       slug,
       title: service.title,
-      priceFrom: service.priceFrom + city.surcharge,
+      priceFrom: service.priceFrom,
       description: service.heroSubtitle
     } : null;
   }).filter(Boolean);
