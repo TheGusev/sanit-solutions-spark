@@ -41,10 +41,13 @@ export default function ServiceObjectPage() {
   }
   
   const serviceName = service.title;
+  const serviceGen = service.nameGenitive || serviceName.toLowerCase();
+  const serviceAcc = service.nameAccusative || serviceName.toLowerCase();
   const priceFrom = Math.round((service.priceFrom || 1500) * objectType.priceMultiplier);
+  const genderAdj = serviceName.endsWith('ие') ? 'Профессиональное' : 'Профессиональная';
   
   const pageTitle = `${serviceName} ${objectType.genitive} в Москве — от ${priceFrom}₽ | Выезд 30 мин`;
-  const pageDescription = `Профессиональная ${serviceName.toLowerCase()} ${objectType.genitive} в Москве от ${priceFrom}₽. Гарантия до 3 лет. ☎️ ${SEO_CONFIG.phone}`;
+  const pageDescription = `${genderAdj} ${serviceName.toLowerCase()} ${objectType.genitive} в Москве от ${priceFrom}₽. Гарантия до 3 лет. ☎️ ${SEO_CONFIG.phone}`;
   const seoMeta = generateSEOMeta(`/uslugi/${serviceSlug}/${objectSlug}`, pageTitle, pageDescription);
   
   const breadcrumbItems = [
