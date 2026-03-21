@@ -1,6 +1,14 @@
 import { Building2, Landmark, UtensilsCrossed, Car, Hotel, Briefcase, Factory, TreePine, Users, Home, Warehouse, ShieldCheck } from 'lucide-react';
 import { DistrictPage } from '@/data/districtPages';
 
+type ServiceType = 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya';
+
+const SERVICE_SPECIFICS_LABELS: Record<ServiceType, string> = {
+  dezinfekciya: 'дезинфекции',
+  dezinsekciya: 'дезинсекции',
+  deratizaciya: 'дератизации',
+};
+
 // Icon mapping for specifics
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   'building': Building2,
@@ -21,7 +29,6 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 const getDefaultSpecifics = (district: DistrictPage) => {
   const specifics = [];
   
-  // Based on district ID, generate relevant specifics
   if (district.id === 'cao') {
     specifics.push(
       { icon: 'building', title: 'Много бизнес-центров', description: 'В ЦАО расположены крупнейшие офисные здания Москвы. Работаем в нерабочее время.' },
@@ -103,6 +110,27 @@ const getDefaultSpecifics = (district: DistrictPage) => {
       { icon: 'shield', title: 'Экологичные средства', description: 'Безопасные препараты для заповедных зон.' },
       { icon: 'car', title: 'Выезд в Строгино', description: 'Добираемся за 40 минут.' }
     );
+  } else if (district.id === 'nao') {
+    specifics.push(
+      { icon: 'home', title: 'Новая Москва', description: 'Активная застройка — много новостроек и коттеджных посёлков.' },
+      { icon: 'park', title: 'Природные зоны', description: 'Леса и поля — специфика загородных вредителей.' },
+      { icon: 'residential', title: 'ЖК и таунхаусы', description: 'Современные жилые комплексы и малоэтажная застройка.' },
+      { icon: 'car', title: 'Выезд в НАО', description: 'Добираемся за 45-60 минут.' }
+    );
+  } else if (district.id === 'tao') {
+    specifics.push(
+      { icon: 'home', title: 'Троицк и окрестности', description: 'Научный городок и частный сектор.' },
+      { icon: 'park', title: 'Лесные массивы', description: 'Обработка от клещей и лесных вредителей.' },
+      { icon: 'factory', title: 'Научные институты', description: 'Опыт работы с лабораториями и НИИ.' },
+      { icon: 'car', title: 'Выезд в ТАО', description: 'Добираемся за 50-70 минут.' }
+    );
+  } else if (district.id === 'zelao') {
+    specifics.push(
+      { icon: 'home', title: 'Зеленоград', description: 'Город-спутник с развитой инфраструктурой.' },
+      { icon: 'factory', title: 'Технополис', description: 'Электронная промышленность и IT-кластер.' },
+      { icon: 'residential', title: 'Микрорайоны', description: 'Классическая советская застройка и новостройки.' },
+      { icon: 'car', title: 'Выезд в Зеленоград', description: 'Добираемся за 50-60 минут по Ленинградке.' }
+    );
   }
   
   return specifics;
@@ -110,16 +138,17 @@ const getDefaultSpecifics = (district: DistrictPage) => {
 
 interface DistrictSpecificsProps {
   district: DistrictPage;
+  serviceType?: ServiceType;
 }
 
-const DistrictSpecifics = ({ district }: DistrictSpecificsProps) => {
+const DistrictSpecifics = ({ district, serviceType = 'dezinfekciya' }: DistrictSpecificsProps) => {
   const specifics = getDefaultSpecifics(district);
 
   return (
     <section className="py-12 bg-muted/30">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl md:text-3xl font-bold mb-8">
-          Особенности дезинфекции в {district.name}
+          Особенности {SERVICE_SPECIFICS_LABELS[serviceType]} в {district.name}
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

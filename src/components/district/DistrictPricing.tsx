@@ -3,14 +3,24 @@ import { Check, FileText, Info, Sparkles } from 'lucide-react';
 import { DistrictPage } from '@/data/districtPages';
 import { cn } from '@/lib/utils';
 
+type ServiceType = 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya';
+
+const SERVICE_PRICING: Record<ServiceType, { name: string; nameGenitive: string; baseMultiplier: number }> = {
+  dezinfekciya: { name: 'дезинфекцию', nameGenitive: 'дезинфекции', baseMultiplier: 1.0 },
+  dezinsekciya: { name: 'дезинсекцию', nameGenitive: 'дезинсекции', baseMultiplier: 1.2 },
+  deratizaciya: { name: 'дератизацию', nameGenitive: 'дератизации', baseMultiplier: 1.4 },
+};
+
 interface DistrictPricingProps {
   district: DistrictPage;
+  serviceType?: ServiceType;
 }
 
 type TabType = 'apartments' | 'offices' | 'cafes';
 
-const DistrictPricing = ({ district }: DistrictPricingProps) => {
+const DistrictPricing = ({ district, serviceType = 'dezinfekciya' }: DistrictPricingProps) => {
   const [activeTab, setActiveTab] = useState<TabType>('apartments');
+  const svc = SERVICE_PRICING[serviceType];
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'apartments', label: 'Квартиры' },
@@ -19,26 +29,27 @@ const DistrictPricing = ({ district }: DistrictPricingProps) => {
   ];
 
   const surcharge = district.surcharge;
+  const base = (price: number) => Math.round(price * svc.baseMultiplier) + surcharge;
 
   const apartmentPrices = [
-    { type: '1-комнатная', area: '30-40 м²', price: 1000 + surcharge, time: '1-1.5 ч' },
-    { type: '2-комнатная', area: '45-60 м²', price: 1500 + surcharge, time: '1.5-2 ч', highlighted: true },
-    { type: '3-комнатная', area: '60-80 м²', price: 2000 + surcharge, time: '2-2.5 ч' },
-    { type: '4-комнатная', area: '80-100 м²', price: 2800 + surcharge, time: '2.5-3 ч' },
+    { type: '1-комнатная', area: '30-40 м²', price: base(1000), time: '1-1.5 ч' },
+    { type: '2-комнатная', area: '45-60 м²', price: base(1500), time: '1.5-2 ч', highlighted: true },
+    { type: '3-комнатная', area: '60-80 м²', price: base(2000), time: '2-2.5 ч' },
+    { type: '4-комнатная', area: '80-100 м²', price: base(2800), time: '2.5-3 ч' },
     { type: 'Более 100 м²', area: '100+ м²', price: null, time: 'от 3 ч' },
   ];
 
   const officePrices = [
-    { type: 'До 100 м²', price: 2500 + surcharge, time: '2-3 ч' },
-    { type: '100-300 м²', price: 6000 + surcharge, time: '4-5 ч', highlighted: true },
-    { type: '300-500 м²', price: 10000 + surcharge, time: '6-7 ч' },
+    { type: 'До 100 м²', price: base(2500), time: '2-3 ч' },
+    { type: '100-300 м²', price: base(6000), time: '4-5 ч', highlighted: true },
+    { type: '300-500 м²', price: base(10000), time: '6-7 ч' },
     { type: 'Более 500 м²', price: null, time: 'от 8 ч' },
   ];
 
   const cafePrices = [
-    { type: 'Кафе / кофейня (до 50 м²)', price: 2000 + surcharge, period: 'Раз в месяц' },
-    { type: 'Ресторан (50-150 м²)', price: 4000 + surcharge, period: 'Раз в месяц', highlighted: true },
-    { type: 'Крупный ресторан (150+ м²)', price: 6000 + surcharge, period: 'Раз в 2 недели' },
+    { type: 'Кафе / кофейня (до 50 м²)', price: base(2000), period: 'Раз в месяц' },
+    { type: 'Ресторан (50-150 м²)', price: base(4000), period: 'Раз в месяц', highlighted: true },
+    { type: 'Крупный ресторан (150+ м²)', price: base(6000), period: 'Раз в 2 недели' },
     { type: 'Фудкорт / столовая', price: null, period: 'По требованию СЭС' },
   ];
 
@@ -72,7 +83,7 @@ const DistrictPricing = ({ district }: DistrictPricingProps) => {
     <section className="py-12">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">
-          Цены на дезинфекцию в {district.fullName}
+          Цены на {svc.name} в {district.fullName}
         </h2>
         
         <div className="flex items-center gap-2 mb-6">

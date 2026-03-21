@@ -5,49 +5,57 @@ import { DistrictPage } from '@/data/districtPages';
 import { getDistrictImage } from '@/data/districtImages';
 import HeroBackground from '@/components/HeroBackground';
 
+type ServiceType = 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya';
+
+const SERVICE_LABELS: Record<ServiceType, { name: string; nameGenitive: string; verb: string }> = {
+  dezinfekciya: { name: 'Дезинфекция', nameGenitive: 'дезинфекции', verb: 'Проведём дезинфекцию' },
+  dezinsekciya: { name: 'Дезинсекция', nameGenitive: 'дезинсекции', verb: 'Проведём дезинсекцию' },
+  deratizaciya: { name: 'Дератизация', nameGenitive: 'дератизации', verb: 'Проведём дератизацию' },
+};
+
 interface DistrictHeroProps {
   district: DistrictPage;
+  serviceType?: ServiceType;
   onCalculatorOpen?: () => void;
 }
 
-const DistrictHero = ({ district, onCalculatorOpen }: DistrictHeroProps) => {
+const DistrictHero = ({ district, serviceType = 'dezinfekciya', onCalculatorOpen }: DistrictHeroProps) => {
   const heroImage = getDistrictImage(district.id);
+  const svc = SERVICE_LABELS[serviceType];
+  
+  // Адаптивный H1: используем название услуги вместо захардкоженного district.h1
+  const adaptedH1 = serviceType === 'dezinfekciya'
+    ? district.h1
+    : `${svc.name} в ${district.name} Москвы — выезд за ${district.responseTime}`;
   
   return (
     <section className="relative min-h-[50vh] overflow-hidden">
-      {/* Фоновое изображение с blur */}
       <HeroBackground 
         image={heroImage}
         blur={1}
         opacity={0.60}
         overlay="none"
-        altText={`Санитарная обработка помещений в ${district.fullName}`}
+        altText={`${svc.name} помещений в ${district.fullName}`}
       />
       
-      {/* Gradient overlay для читаемости текста */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/70 to-green-600/75" />
       
-      {/* Content */}
       <div className="relative container mx-auto px-4 py-16 md:py-20 text-white">
-        {/* H1 */}
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 max-w-3xl">
-          {district.h1}
+          {adaptedH1}
         </h1>
         
-        {/* Триколор-линия под H1 */}
         <div className="h-1 w-48 flex rounded-full overflow-hidden mb-6">
           <div className="flex-1 bg-white/90"></div>
           <div className="flex-1 bg-blue-400"></div>
           <div className="flex-1 bg-russia-red"></div>
         </div>
 
-        {/* Subtitle with districts */}
         <p className="text-lg md:text-xl text-white/90 max-w-2xl mb-8">
-          Обслуживаем все районы {district.fullName}: {district.neighborhoods.slice(0, 4).join(', ')} и другие. 
+          {svc.verb} во всех районах {district.fullName}: {district.neighborhoods.slice(0, 4).join(', ')} и другие. 
           Быстрый выезд в любую точку округа.
         </p>
 
-        {/* USP Badges */}
         <div className="flex flex-wrap gap-3 mb-8">
           <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 px-4 py-2 text-sm">
             <Clock className="w-4 h-4 mr-2" />
@@ -63,7 +71,6 @@ const DistrictHero = ({ district, onCalculatorOpen }: DistrictHeroProps) => {
           </Badge>
         </div>
 
-        {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <Button 
             size="lg" 
@@ -86,7 +93,6 @@ const DistrictHero = ({ district, onCalculatorOpen }: DistrictHeroProps) => {
           </Button>
         </div>
 
-        {/* Rating */}
         <div className="flex items-center gap-2 text-white/90">
           <div className="flex">
             {[1, 2, 3, 4, 5].map((star) => (
