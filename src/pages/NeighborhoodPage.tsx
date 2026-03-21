@@ -64,10 +64,10 @@ const NeighborhoodPage = () => {
 
   // Services with prices
   const services: { title: string; href: string; price: number; iconKey: IconKey }[] = [
-    { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: 1000 + neighborhood.surcharge, iconKey: "virus" },
-    { title: "Дезинсекция", href: "/uslugi/dezinsekciya", price: 1200 + neighborhood.surcharge, iconKey: "bug" },
-    { title: "Дератизация", href: "/uslugi/deratizaciya", price: 1400 + neighborhood.surcharge, iconKey: "mouse" },
-    { title: "Озонирование", href: "/uslugi/ozonirovanie", price: 1500 + neighborhood.surcharge, iconKey: "wind" },
+    { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: 1000, iconKey: "virus" },
+    { title: "Дезинсекция", href: "/uslugi/dezinsekciya", price: 1200, iconKey: "bug" },
+    { title: "Дератизация", href: "/uslugi/deratizaciya", price: 1400, iconKey: "mouse" },
+    { title: "Озонирование", href: "/uslugi/ozonirovanie", price: 1500, iconKey: "wind" },
   ];
 
   // ========== JSON-LD SCHEMAS (NEW!) ==========
