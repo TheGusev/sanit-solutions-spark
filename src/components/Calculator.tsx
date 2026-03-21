@@ -465,7 +465,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
                       value={area}
                       onChange={(e) => handleAreaChange(Number(e.target.value))}
                       className={`w-24 ${areaError ? 'border-destructive' : ''}`}
-                      min={10}
+                      min={30}
                       max={5000}
                     />
                     <span className="text-sm text-muted-foreground">м²</span>

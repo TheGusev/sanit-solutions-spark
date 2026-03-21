@@ -320,9 +320,22 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
 
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
-            <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title={`Частые вопросы про ${district.name}`} align="left" />
+            <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title={`Частые вопросы о ${svc.nameGenitive} в ${district.name}`} align="left" />
             <Accordion type="single" collapsible className="max-w-3xl">
-              {district.faq.map((item, idx) => (
+              {/* Service-adapted FAQ */}
+              <AccordionItem value="faq-svc-0">
+                <AccordionTrigger className="text-left">Сколько стоит {svc.nameGenitive.replace('ии', 'ия').replace('ции', 'ция').toLowerCase()} в {district.name}?</AccordionTrigger>
+                <AccordionContent>Стоимость {svc.nameGenitive} в {district.name} начинается от {svc.basePrice + district.surcharge}₽. Точная цена зависит от площади, типа объекта и степени заражения. Выезд и диагностика бесплатно.</AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-svc-1">
+                <AccordionTrigger className="text-left">Как быстро приедет специалист по {svc.nameGenitive} в {district.name}?</AccordionTrigger>
+                <AccordionContent>Среднее время выезда в {district.name} — {district.responseTime}. Работаем круглосуточно, без выходных.</AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-svc-2">
+                <AccordionTrigger className="text-left">Даёте ли гарантию на {svc.nameGenitive.replace('ии', 'ию').replace('ции', 'цию').toLowerCase()}?</AccordionTrigger>
+                <AccordionContent>Да, гарантия до 3 лет. Если проблема вернётся в гарантийный период — повторная обработка бесплатно.</AccordionContent>
+              </AccordionItem>
+              {district.faq.slice(0, 3).map((item, idx) => (
                 <AccordionItem key={idx} value={`faq-${idx}`}>
                   <AccordionTrigger className="text-left">{item.question}</AccordionTrigger>
                   <AccordionContent>{item.answer}</AccordionContent>

@@ -176,7 +176,7 @@ interface DistrictSpecificsProps {
 }
 
 const DistrictSpecifics = ({ district, serviceType = 'dezinfekciya' }: DistrictSpecificsProps) => {
-  const specifics = getDefaultSpecifics(district);
+  const specifics = getDefaultSpecifics(district, serviceType);
 
   return (
     <section className="py-12 bg-muted/30">
