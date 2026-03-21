@@ -1,43 +1,29 @@
 
 
-# Исправление фото городов МО и удаление суммы выезда
+# Автоскролл к статьям при выборе категории на мобильном
 
-## Проблема 1: Одинаковые фото
+## Проблема
 
-В `src/data/districtImages.ts` отсутствуют записи для 4 городов: `klin`, `ramenskoe`, `chekhov`, `domodedovo`. Все они получают `default` — одно и то же фото `moscow-panorama-sunset.jpg`.
+На мобильном (390px) при нажатии на категорию (например, «Законы») контент фильтруется, но страница остаётся внизу — пользователь не видит, что что-то изменилось. Нужно прокручивать страницу к блоку сортировки/статей.
 
-**Решение**: Назначить каждому уникальное изображение из доступных в `/images/front/`:
+## Решение
 
-| Город | Новое изображение | Почему подходит |
-|-------|-------------------|-----------------|
-| klin | `classical-estate-pond.png` | Исторический город, усадебная тематика |
-| ramenskoe | `logistics-center.png` | Промышленный город, сочетание промзон и жилья |
-| chekhov | `dacha-house.png` | Много СНТ и дачных посёлков |
-| domodedovo | `night-towers.jpg` | Крупный город с аэропортом |
+### Файл: `src/pages/Blog.tsx`
 
-**Файл**: `src/data/districtImages.ts` — добавить 4 записи в `cityImages`.
+1. Добавить `useRef` на секцию сортировки (строка 183-184)
+2. В `onClick` категории (строка 165) добавить `scrollIntoView` к этому ref с небольшой задержкой (setTimeout 100ms чтобы рендер успел пройти)
+3. Аналогично при смене сортировки (строка 190) — тоже скроллить к началу статей
 
-## Проблема 2: Отображение суммы выезда
+```typescript
+const sortRef = useRef<HTMLDivElement>(null);
 
-Надписи `+500₽`, `+{city.surcharge}₽ за выезд`, `Базовая цена + выезд` отпугивают клиентов. Нужно убрать surcharge из UI, но оставить в данных (может понадобиться для внутренней логики). Цены показывать только базовые, без наценки.
+// В onClick категории:
+onClick={() => { 
+  setSelectedCategory(category); 
+  setVisibleCount(30);
+  setTimeout(() => sortRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}}
+```
 
-**Файлы и изменения:**
-
-1. **`src/pages/MoscowRegionOverview.tsx`** (строки 134-138) — убрать блок `<Car> +{city.surcharge}₽`
-
-2. **`src/pages/MoscowRegionCityPage.tsx`**:
-   - Строка 85: `priceFrom: service.priceFrom` (убрать `+ city.surcharge`)
-   - Строки 159-162: убрать блок `+{city.surcharge}₽ за выезд`
-
-3. **`src/pages/MoscowRegionServicePage.tsx`**:
-   - Строка 57: `const priceWithSurcharge = serviceData.priceFrom` (убрать `+ city.surcharge`)
-   - Строки 109-112: убрать FAQ вопрос про наценку за выезд
-   - Строка 215: убрать текст `Базовая цена ... + выезд ...`, заменить на просто описание услуги
-   - Строка 269: `pest.priceFrom` без `+ city.surcharge`
-
-4. **`src/components/ServiceAreaMap.tsx`** (строки 95, 268) — убрать отображение `selectedArea.surcharge` (или заменить на нейтральный текст)
-
-5. **`src/pages/NeighborhoodPage.tsx`** (строки 67-70) — убрать `+ neighborhood.surcharge` из цен
-
-### Итого: 6 файлов, ~15 точечных правок
+Ref вешается на `<section>` с сортировкой (строка 184) — это оптимальная точка: пользователь видит и пилюли сортировки, и первые статьи сразу.
 
