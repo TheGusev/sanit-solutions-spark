@@ -455,8 +455,8 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
                     <Slider
                       value={[area]}
                       onValueChange={(values) => handleAreaChange(values[0])}
-                      min={10}
-                      max={1000}
+                      min={30}
+                      max={200}
                       step={10}
                       className="flex-1"
                     />
