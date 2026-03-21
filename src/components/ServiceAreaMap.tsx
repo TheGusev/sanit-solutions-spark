@@ -345,3 +345,5 @@ const ServiceAreaMap = () => {
   );
 };
 
+export default ServiceAreaMap;
+
