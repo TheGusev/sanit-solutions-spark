@@ -212,7 +212,7 @@ export default function MoscowRegionServicePage() {
                   от {priceWithSurcharge}₽
                 </div>
                 <p className="text-muted-foreground mb-4">
-                  Базовая цена {serviceData.priceFrom}₽ + выезд {city.surcharge}₽
+                  {serviceData.title} {city.prepositional} с гарантией результата
                 </p>
                 <ul className="space-y-2 text-left max-w-sm mx-auto">
                   <li className="flex items-center gap-2">
