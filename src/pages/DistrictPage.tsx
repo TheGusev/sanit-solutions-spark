@@ -113,10 +113,18 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
     },
   };
 
+  const serviceSpecificFaqs = [
+    { question: `Сколько стоит ${svc.nameGenitive.replace('ии', 'ия').replace('ции', 'ция').toLowerCase()} в ${district.name}?`, answer: `Стоимость ${svc.nameGenitive} в ${district.name} начинается от ${svc.basePrice + district.surcharge}₽. Точная цена зависит от площади, типа объекта и степени заражения. Выезд и диагностика бесплатно.` },
+    { question: `Как быстро приедет специалист по ${svc.nameGenitive} в ${district.name}?`, answer: `Среднее время выезда в ${district.name} — ${district.responseTime}. Работаем круглосуточно, без выходных.` },
+    { question: `Даёте ли гарантию на ${svc.nameGenitive.replace('ии', 'ию').replace('ции', 'цию').toLowerCase()}?`, answer: `Да, гарантия до 3 лет. Если проблема вернётся в гарантийный период — повторная обработка бесплатно.` },
+  ];
+
+  const allFaqItems = [...serviceSpecificFaqs, ...district.faq.slice(0, 3)];
+
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: district.faq.map((item) => ({
+    mainEntity: allFaqItems.map((item) => ({
       '@type': 'Question',
       name: item.question,
       acceptedAnswer: {
