@@ -305,7 +305,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
             <div className="bg-muted/50 rounded-2xl p-6 md:p-8">
               <h2 className="text-2xl font-bold mb-4">Мы уже работали на этих улицах</h2>
               <p className="text-muted-foreground mb-4">
-                Вот некоторые адреса в {district.name}, где мы успешно провели обработку:
+                Вот некоторые адреса в {district.name}, где мы успешно провели {svc.nameGenitive.replace('ии', 'ию').replace('ции', 'цию')}:
               </p>
               <div className="flex flex-wrap gap-2">
                 {district.workedStreets.map((street, idx) => (
