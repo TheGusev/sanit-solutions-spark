@@ -192,7 +192,7 @@ export default function ServiceObjectPage() {
         {/* Типичные проблемы */}
         <AnimatedSection className="py-10">
           <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-xl font-bold mb-6 text-center">Типичные проблемы {objectType.genitive}</h2>
+            <h2 className="text-xl font-bold mb-6 text-center">Типичные проблемы при обработке {objectType.genitive}</h2>
             <div className="grid md:grid-cols-3 gap-4">
               {[
                 { title: 'Самостоятельная обработка', desc: 'Бытовые аэрозоли дают временный эффект. Вредители вырабатывают устойчивость к слабым дозам и возвращаются.' },
