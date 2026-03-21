@@ -191,7 +191,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
           <Breadcrumbs items={breadcrumbItems} />
         </div>
 
-        <DistrictHero district={district} onCalculatorOpen={() => setIsCalculatorOpen(true)} />
+        <DistrictHero district={district} serviceType={serviceType} onCalculatorOpen={() => setIsCalculatorOpen(true)} />
 
         <DistrictSpecifics district={district} />
 
