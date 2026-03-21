@@ -107,8 +107,8 @@ export default function MoscowRegionServicePage() {
       answer: item.answer
     })),
     {
-      question: `Есть ли наценка за выезд ${city.prepositional}?`,
-      answer: `Да, наценка за выезд ${city.prepositional} составляет ${city.surcharge}₽. Это связано с расстоянием от МКАД (${city.distance} км) и временем в пути (${city.responseTime}).`
+      question: `Как быстро приедет специалист ${city.prepositional}?`,
+      answer: `Время выезда специалиста ${city.prepositional} составляет ${city.responseTime}. Работаем без выходных, выезд возможен в день обращения.`
     }
   ];
   
