@@ -22,18 +22,26 @@ import DistrictReviews from '@/components/district/DistrictReviews';
 import DistrictCTA from '@/components/district/DistrictCTA';
 import SectionHeading from '@/components/ui/SectionHeading';
 
+type ServiceType = 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya';
+
+const SERVICE_CONFIG: Record<ServiceType, { name: string; nameGenitive: string; basePrice: number; currentService: string }> = {
+  dezinfekciya: { name: 'Дезинфекция', nameGenitive: 'дезинфекции', basePrice: 1000, currentService: 'dezinfekciya' },
+  dezinsekciya: { name: 'Дезинсекция', nameGenitive: 'дезинсекции', basePrice: 1200, currentService: 'dezinsekciya' },
+  deratizaciya: { name: 'Дератизация', nameGenitive: 'дератизации', basePrice: 1400, currentService: 'deratizaciya' },
+};
+
 interface DistrictPageProps {
   districtId?: string;
+  serviceType?: ServiceType;
 }
 
-const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
+const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya' }: DistrictPageProps) => {
   const params = useParams<{ districtId: string }>();
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
-  // Используем districtId из пропсов или из URL params
   const districtId = propDistrictId || params.districtId;
-  
   const district = districtId ? getDistrictById(districtId) : undefined;
+  const svc = SERVICE_CONFIG[serviceType];
 
   // Если округ не найден по id — уводим на список округов
   if (!district) {
