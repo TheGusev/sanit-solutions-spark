@@ -128,9 +128,11 @@ const Index = () => {
       </section>
       
       {/* Work Gallery */}
-      <Suspense fallback={<SectionLoader />}>
-        <WorkGallery />
-      </Suspense>
+      <div data-section="gallery">
+        <Suspense fallback={<SectionLoader />}>
+          <WorkGallery />
+        </Suspense>
+      </div>
       
       {/* FAQ */}
       <Suspense fallback={<SectionLoader />}>
