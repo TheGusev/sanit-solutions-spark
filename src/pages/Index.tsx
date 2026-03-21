@@ -83,9 +83,11 @@ const Index = () => {
       </section>
       
       {/* Mini pricing - immediately after hero */}
-      <Suspense fallback={<SectionLoader />}>
-        <MiniPricing />
-      </Suspense>
+      <div data-section="pricing">
+        <Suspense fallback={<SectionLoader />}>
+          <MiniPricing />
+        </Suspense>
+      </div>
       
       {/* Short "Why Us" block */}
       <Suspense fallback={<SectionLoader />}>
