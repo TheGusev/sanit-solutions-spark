@@ -1,61 +1,110 @@
 
 
-# Максимальная автоматизация мониторинга
+# Максимизация микроконверсий для обучения рекламных кампаний
 
-## Проблема
+## Глубокий анализ текущих целей
 
-Скрипт `monitor.py` содержит массу **захардкоженных данных**, которые никогда не меняются автоматически:
-- `CONTENT_STATS` — статичные числа (547, 176, 145...)
-- `INDEXATION` — вручную вбитые 419/23
-- `PAGESPEED` — замер от 05.03.2026, не обновляется
-- `KEYWORDS_TRACKING` — все позиции "—"
-- `COMPETITORS` — все позиции "—"
-- `Конверсии и воронка` — все "—"
-- Задачи — статичные списки, никогда не меняют статус
+### Что УЖЕ трекается (Яндекс.Метрика)
 
-## Что уберем (неавтоматизируемое, засоряет отчёт)
+| Цель | Где срабатывает | Тип |
+|------|----------------|-----|
+| `main_scroll_75` | Главная, скролл 75% | Микро |
+| `main_time_2min` | Главная, 2 мин на странице | Микро |
+| `scroll_25/50/75/100` | Любая страница | Микро |
+| `phone_click` | Шапка, футер, плавающие, CTA | Макро |
+| `max_click` | Плавающая кнопка Max | Макро |
+| `messenger_click` | Футер | Микро |
+| `calculator_click` | Кнопки "Рассчитать" | Микро |
+| `calc_lead_{prefix}` | Отправка заявки из калькулятора | Макро |
+| `quiz_lead_{prefix}` | Отправка заявки из квиза | Макро |
+| `sticky_quiz_lead_{prefix}` | Квиз из sticky-бара | Макро |
+| `hero_callback_submit` | Форма обратного звонка в Hero | Макро |
+| `callback_{prefix}` | То же, с prefix | Макро |
+| `quick_call_submit` | QuickCallForm | Макро |
+| `lead_submit` | QuickCallForm (дубль) | Макро |
+| `exit_intent_shown` | Попап при уходе | Микро |
+| `exit_intent_submit` | Отправка из exit-попапа | Макро |
+| `flash_badge_shown` | Бейдж скидки | Микро |
+| `flash_badge_click` | Клик на бейдж скидки | Микро |
+| `desktop_sticky_view` | Десктоп сайдбар показан | Микро |
+| `desktop_sticky_click` | Клик по сайдбару | Микро |
+| `sticky_cta_view/click/call` | StickyCTA (мобильный) | Микро |
+| `service_sticky_call` | ServiceStickyBar звонок | Макро |
+| `calc_calculate` | ServiceStickyBar цена | Микро |
+| `ai_referral` | Переход из AI-систем | Микро |
 
-| Секция | Причина удаления |
-|--------|-----------------|
-| Позиции в поиске | Все "—", требует платный API (Serpstat) |
-| Конкуренты | Все "—", требует платный API |
-| Конверсии и воронка | Все "—", требует CRM |
-| Задачи (оба блока) | Статичный текст, не мониторинг |
-| Результаты периода | Дубль данных из других секций |
+### Что НЕ трекается (упущенные конверсии)
 
-## Что автоматизируем
+| Действие | Компонент | Важность |
+|----------|----------|----------|
+| Открытие калькулятора (модал) | CalculatorModal open | Высокая — воронка |
+| Взаимодействие с калькулятором (изменение параметров) | Calculator hasInteracted | Высокая — вовлечённость |
+| Прокрутка до калькулятора | Calculator scrollIntoView | Средняя |
+| Клик «Позвонить» в FinalCTA | FinalCTA handleCall | Высокая — макро |
+| Клик «Рассчитать» в FinalCTA | FinalCTA onOpenCalculator | Высокая |
+| Просмотр блока отзывов | Reviews section | Средняя |
+| Просмотр блока FAQ | FAQ section | Средняя |
+| Просмотр цен (MiniPricing) | MiniPricing section | Высокая |
+| Просмотр WorkProcess | WorkProcess section | Средняя |
+| Клик по номеру в MobileQuickCTA | Уже есть phone_click | — |
+| Скролл 25% / 50% на главной | Есть scroll_25/50 общий, нет main_ | Средняя |
+| Время 30 сек / 60 сек на сайте | Нет промежуточных | Высокая |
+| Открытие формы обратного звонка (начало заполнения) | HeroCallbackForm focus | Средняя |
+| Просмотр галереи работ | WorkGallery section | Средняя |
+| Копирование номера телефона | Нигде | Средняя |
 
-### 1. Подсчёт SSG-страниц из sitemap
-Вместо хардкода — парсим `sitemap-index.xml` и вложенные sitemap'ы, считаем URL по категориям (услуги, блог, районы, города МО, НЧ).
+## План реализации
 
-### 2. PageSpeed через Google API
-Бесплатный API `pagespeedonline.googleapis.com` — запрашиваем desktop + mobile для главной, получаем performance score, LCP, CLS. Данные обновляются каждый день.
+### 1. Расширить `useHomepageGoals.ts` — максимум микроцелей
 
-### 3. Индексация Яндекс (site: запрос)
-Парсим `site:goruslugimsk.ru` через Яндекс XML или оценку из метатега. Как fallback — оставляем ручной ввод через env `YANDEX_INDEXED_PAGES`.
+Добавить:
+- `main_scroll_25`, `main_scroll_50` — промежуточные скроллы
+- `main_time_30s`, `main_time_60s` — промежуточное время
+- `main_section_pricing` — скролл до блока цен (IntersectionObserver)
+- `main_section_reviews` — скролл до отзывов
+- `main_section_faq` — скролл до FAQ
+- `main_section_gallery` — скролл до галереи работ
+- `main_section_process` — скролл до «Как мы работаем»
 
-## Файлы и правки
+### 2. Добавить цели в `FinalCTA.tsx`
 
-### `scripts/monitor.py` — переписать
-1. Удалить: `CONTENT_STATS`, `PAGESPEED`, `TASKS_MARCH`, `TASKS_NEXT`, `COMPETITORS`, `KEYWORDS_TRACKING`
-2. Добавить: `fetch_sitemap_stats()` — парсит sitemap-index.xml, считает URL по паттернам
-3. Добавить: `fetch_pagespeed(url, strategy)` — вызывает Google PageSpeed Insights API
-4. Индексация: читать из env `YANDEX_INDEXED` / `GOOGLE_INDEXED` (обновлять вручную в GitHub Secrets, но хотя бы не в коде)
-5. Упростить Telegram-сообщение и MONITORING.md — только автоматические данные
+- `final_cta_call` — клик «Позвонить»
+- `final_cta_calculator` — клик «Рассчитать»
 
-### `MONITORING.md` — генерируется автоматически
-Убрать все секции с "—". Оставить:
-- Статус сайта (авто)
-- SSL (авто)
-- Контент/SSG из sitemap (авто)
-- PageSpeed (авто)
-- Трафик из Метрики (авто при наличии токена)
-- Алерты (авто)
+### 3. Добавить цели в `Calculator.tsx`
 
-### `.github/workflows/monitoring.yml` — без изменений
-Структура workflow остаётся прежней, добавим `pip install lxml` для парсинга XML.
+- `calc_open` — открытие калькулятора (CalculatorModal)
+- `calc_interact` — первое взаимодействие (выбор типа/услуги)
+- `calc_price_view` — пользователь увидел цену (результат расчёта)
 
-## Результат
+### 4. Добавить цели формы
 
-Из ~15 секций с "—" останется 6 секций с **реальными данными**, обновляющимися каждый день. Мониторинг станет компактным и полезным.
+- `form_focus` — фокус на поле телефона в HeroCallbackForm (начало заполнения)
+
+### 5. Копирование телефона
+
+- `phone_copy` — при копировании номера через Clipboard API
+
+### Все новые цели для Яндекс.Метрики (итого ~15 новых):
+
+```
+main_scroll_25, main_scroll_50
+main_time_30s, main_time_60s
+main_section_pricing, main_section_reviews, main_section_faq, main_section_gallery, main_section_process
+calc_open, calc_interact, calc_price_view
+final_cta_call, final_cta_calculator
+form_focus
+```
+
+### Файлы для правок
+
+| Файл | Правки |
+|------|--------|
+| `src/hooks/useHomepageGoals.ts` | +scroll 25/50, +time 30s/60s, +section observers |
+| `src/components/FinalCTA.tsx` | +trackGoal для 2 кнопок |
+| `src/components/CalculatorModal.tsx` | +trackGoal при открытии |
+| `src/components/Calculator.tsx` | +calc_interact, +calc_price_view |
+| `src/components/HeroCallbackForm.tsx` | +form_focus на инпуте |
+
+Все цели автоматически попадут в Яндекс.Метрику через существующую функцию `trackGoal()`. После этого в Метрике можно будет создать составную цель из всех микроконверсий для обучения рекламной кампании.
 
