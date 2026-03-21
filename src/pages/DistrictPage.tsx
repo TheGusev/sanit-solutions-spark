@@ -248,7 +248,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
 
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <SectionHeading label="УСЛУГИ" title={`Услуги дезинфекции в ${district.name}`} align="left" />
+            <SectionHeading label="УСЛУГИ" title={`Услуги ${svc.nameGenitive} в ${district.name}`} align="left" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {services.map((service) => (
                 <Link key={service.href} to={service.href}>
