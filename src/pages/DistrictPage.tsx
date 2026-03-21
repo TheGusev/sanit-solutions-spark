@@ -60,7 +60,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
 
   const otherDistricts = districtPages.filter((d) => d.id !== district.id).slice(0, 4);
   const canonicalUrl = `${SEO_CONFIG.baseUrl}/uslugi/${serviceType}-${district.id}/`;
-  const pageTitle = `${svc.name} в ${district.name} Москвы — выезд за ${district.responseTime} | от ${svc.basePrice + district.surcharge}₽`;
+  const pageTitle = `${svc.name} в ${district.name} Москвы — выезд за ${district.responseTime} | от ${svc.basePrice}₽`;
   const pageDescription = `Профессиональная ${svc.nameGenitive} в ${district.fullName} Москвы. Выезд ${district.responseTime}. Гарантия результата.`;
 
   // ---------------------------------------------------------------------------
