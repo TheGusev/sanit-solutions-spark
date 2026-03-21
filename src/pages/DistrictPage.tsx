@@ -283,27 +283,35 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
 
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
-            <SectionHeading label="ОБЪЕКТЫ" title={`Популярные объекты в ${district.name}`} align="left" />
+            <SectionHeading label="ОБЪЕКТЫ" title={`${svc.name}: популярные объекты в ${district.name}`} align="left" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {district.popularObjects.map((obj, idx) => (
-                <Card key={idx}>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                      {idx === 0 && <Home className="w-5 h-5 text-primary" />}
-                      {idx === 1 && <Building className="w-5 h-5 text-primary" />}
-                      {idx === 2 && <Utensils className="w-5 h-5 text-primary" />}
-                      {obj.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-1 text-sm text-muted-foreground">
-                      {obj.items.map((item, i) => (
-                        <li key={i}>• {item}</li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              ))}
+              {district.popularObjects.map((obj, idx) => {
+                const SERVICE_OBJECT_NOTES: Record<ServiceType, string[]> = {
+                  dezinfekciya: ['Обработка от вирусов и бактерий', 'Профилактическая дезинфекция помещений', 'Сертифицированные антисептики'],
+                  dezinsekciya: ['Уничтожение тараканов и клопов', 'Обработка от муравьёв и блох', 'Барьерная защита от насекомых'],
+                  deratizaciya: ['Уничтожение крыс и мышей', 'Установка приманочных станций', 'Мониторинг и профилактика грызунов'],
+                };
+                return (
+                  <Card key={idx}>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        {idx === 0 && <Home className="w-5 h-5 text-primary" />}
+                        {idx === 1 && <Building className="w-5 h-5 text-primary" />}
+                        {idx === 2 && <Utensils className="w-5 h-5 text-primary" />}
+                        {obj.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-1 text-sm text-muted-foreground">
+                        {obj.items.map((item, i) => (
+                          <li key={i}>• {item}</li>
+                        ))}
+                      </ul>
+                      <p className="text-xs text-primary/80 mt-3 font-medium">{SERVICE_OBJECT_NOTES[serviceType][idx % 3]}</p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>
