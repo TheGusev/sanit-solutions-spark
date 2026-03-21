@@ -95,9 +95,11 @@ const Index = () => {
       </Suspense>
 
       {/* Work Process - how we work */}
-      <Suspense fallback={<SectionLoader />}>
-        <WorkProcess />
-      </Suspense>
+      <div data-section="work-process">
+        <Suspense fallback={<SectionLoader />}>
+          <WorkProcess />
+        </Suspense>
+      </div>
       
       {/* Full pricing tables with surcharges */}
       <Suspense fallback={<SectionLoader />}>
