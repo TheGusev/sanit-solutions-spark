@@ -52,25 +52,24 @@ const Reviews = () => {
   };
 
   return (
-    <section id="reviews" className="py-8 md:py-16 bg-background">
-      <div className="container mx-auto px-4">
-        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-          <CollapsibleTrigger className="w-full flex items-center justify-between bg-card rounded-xl p-4 md:p-6 border border-border hover:bg-muted/50 transition-all shadow-sm hover:shadow-md group cursor-pointer">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <MessageCircle className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-              </div>
-              <div className="text-left">
-                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold">
-                  Отзывы наших клиентов
-                </h2>
-                <p className="text-muted-foreground text-sm md:text-base hidden sm:block">
-                  {reviews.length > 0 ? `${reviews.length} отзывов от реальных клиентов` : 'Более 1000 довольных клиентов'}
-                </p>
-              </div>
-            </div>
-            <ChevronDown className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180" />
-          </CollapsibleTrigger>
+    <>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger className="w-full flex items-center justify-between bg-card rounded-xl p-4 md:p-6 border border-border hover:bg-muted/50 transition-all shadow-sm hover:shadow-md group cursor-pointer min-h-[72px] md:min-h-[88px]">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+            <MessageCircle className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+          </div>
+          <div className="text-left">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold">
+              Отзывы наших клиентов
+            </h2>
+            <p className="text-muted-foreground text-sm md:text-base hidden sm:block">
+              {reviews.length > 0 ? `${reviews.length} отзывов от реальных клиентов` : 'Более 1000 довольных клиентов'}
+            </p>
+          </div>
+        </div>
+        <ChevronDown className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground transition-transform duration-300 group-data-[state=open]:rotate-180" />
+      </CollapsibleTrigger>
           
           <CollapsibleContent className="mt-4 md:mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-5xl mx-auto">
@@ -121,13 +120,12 @@ const Reviews = () => {
             </div>
           </CollapsibleContent>
         </Collapsible>
-      </div>
 
       <ReviewFormModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
       />
-    </section>
+    </>
   );
 };
 

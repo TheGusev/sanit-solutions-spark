@@ -18,6 +18,7 @@ const WhyUsExtended = lazy(() => import("@/components/WhyUsExtended"));
 const WorkProcess = lazy(() => import("@/components/WorkProcess"));
 const PricingByArea = lazy(() => import("@/components/PricingByArea"));
 const ServiceAreaMap = lazy(() => import("@/components/ServiceAreaMap"));
+const ServiceAreaCollapsible = lazy(() => import("@/components/ServiceAreaCollapsible"));
 const Reviews = lazy(() => import("@/components/Reviews"));
 const WorkGallery = lazy(() => import("@/components/WorkGallery"));
 const FAQ = lazy(() => import("@/components/FAQ"));
@@ -106,10 +107,19 @@ const Index = () => {
         <ServiceAreaMap />
       </Suspense>
       
-      {/* Reviews */}
-      <Suspense fallback={<SectionLoader />}>
-        <Reviews />
-      </Suspense>
+      {/* Districts + Reviews — side by side on desktop */}
+      <section className="py-4 md:py-8 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            <Suspense fallback={<SectionLoader />}>
+              <ServiceAreaCollapsible />
+            </Suspense>
+            <Suspense fallback={<SectionLoader />}>
+              <Reviews />
+            </Suspense>
+          </div>
+        </div>
+      </section>
       
       {/* Work Gallery */}
       <Suspense fallback={<SectionLoader />}>
