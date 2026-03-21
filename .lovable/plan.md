@@ -1,12 +1,16 @@
 
 
-## Plan: Regenerate "Озонирование" background image
+## Plan: Auto-detect device theme on mobile
+
+### Problem
+Currently the site defaults to `light` theme regardless of user's device settings. On mobile, users expect the site to match their system theme (dark/light).
+
+### Solution
+Change the `ThemeProvider` in `App.tsx` from `defaultTheme="light"` to `defaultTheme="system"` — this will use the device's preferred color scheme via `prefers-color-scheme` media query. This applies to both mobile and desktop on first visit, which is standard UX behavior.
 
 ### Steps
 
-1. **Generate a new image** using AI image generation with a prompt focused on professional ozone treatment: an ozone generator machine running in a clean indoor room, blue-tinted misty atmosphere, realistic photography style matching the other service card backgrounds.
+1. **Update `src/App.tsx`** — change `defaultTheme="light"` to `defaultTheme="system"` in the `ThemeProvider` component.
 
-2. **Overwrite** `public/images/services/ozonirovanie-bg.jpg` with the new image.
-
-No code changes needed — the component already references this file path.
+One-line change, no other files affected.
 
