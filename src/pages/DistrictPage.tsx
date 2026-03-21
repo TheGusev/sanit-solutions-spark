@@ -351,12 +351,15 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
                 <AccordionTrigger className="text-left">Даёте ли гарантию на {svc.nameGenitive.replace('ии', 'ию').replace('ции', 'цию').toLowerCase()}?</AccordionTrigger>
                 <AccordionContent>Да, гарантия до 3 лет. Если проблема вернётся в гарантийный период — повторная обработка бесплатно.</AccordionContent>
               </AccordionItem>
-              {district.faq.slice(0, 3).map((item, idx) => (
-                <AccordionItem key={idx} value={`faq-${idx}`}>
-                  <AccordionTrigger className="text-left">{item.question}</AccordionTrigger>
-                  <AccordionContent>{item.answer}</AccordionContent>
-                </AccordionItem>
-              ))}
+              {district.faq.slice(0, 3).map((item, idx) => {
+                const adaptedQuestion = item.question.replace(/обработк/gi, svc.nameGenitive.replace('ии', 'ки').replace('ции', 'ки'));
+                return (
+                  <AccordionItem key={idx} value={`faq-${idx}`}>
+                    <AccordionTrigger className="text-left">{adaptedQuestion}</AccordionTrigger>
+                    <AccordionContent>{item.answer}</AccordionContent>
+                  </AccordionItem>
+                );
+              })}
             </Accordion>
           </div>
         </section>

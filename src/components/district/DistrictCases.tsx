@@ -94,7 +94,7 @@ const DistrictCases = ({ district, serviceType = 'dezinfekciya' }: DistrictCases
 
                   <div className="mt-4 pt-4 border-t">
                     <span className="text-xs text-muted-foreground">
-                      {['Март', 'Февраль', 'Январь', 'Декабрь'][idx % 4]} {idx % 4 === 3 ? '2025' : '2026'}
+                      {['Март', 'Февраль', 'Январь', 'Декабрь'][idx % 4]} {idx % 4 === 3 ? new Date().getFullYear() - 1 : new Date().getFullYear()}
                     </span>
                   </div>
                 </div>
