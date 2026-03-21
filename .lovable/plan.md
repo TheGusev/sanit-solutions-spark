@@ -1,29 +1,31 @@
 
 
-# Автоскролл к статьям при выборе категории на мобильном
+# Исправление замечаний в DistrictPage
 
-## Проблема
+## Найденные проблемы
 
-На мобильном (390px) при нажатии на категорию (например, «Законы») контент фильтруется, но страница остаётся внизу — пользователь не видит, что что-то изменилось. Нужно прокручивать страницу к блоку сортировки/статей.
+### 1. Surcharge в ценах (не убран при предыдущей правке)
+- **L55-58**: `price: 1000 + district.surcharge` — убрать surcharge из всех 4 услуг
+- **L63**: `от ${svc.basePrice + district.surcharge}₽` в pageTitle — убрать surcharge
+- **L91**: `priceRange: от ${svc.basePrice + district.surcharge}₽` в JSON-LD — убрать
+- **L107**: `price: svc.basePrice + district.surcharge` в serviceSchema — убрать
+- **L272-274**: `{!isCurrentService && district.surcharge > 0 && ...}` блок «включая выезд» — удалить
 
-## Решение
+### 2. Surcharge в DistrictPricing.tsx
+- **L31-32**: `const surcharge = district.surcharge; const base = ... + surcharge` — убрать surcharge из расчёта
 
-### Файл: `src/pages/Blog.tsx`
+### 3. popularObjects не адаптированы под serviceType
+- **L290-315**: Секция «Популярные объекты» показывает одинаковые `district.popularObjects` для всех услуг. `SERVICE_OBJECT_NOTES` уже даёт разные подписи, но заголовок секции использует `svc.name` — это корректно. Объекты сами по себе (квартиры, офисы, рестораны) универсальны для всех услуг — **это нормально**, дополнительная адаптация не нужна.
 
-1. Добавить `useRef` на секцию сортировки (строка 183-184)
-2. В `onClick` категории (строка 165) добавить `scrollIntoView` к этому ref с небольшой задержкой (setTimeout 100ms чтобы рендер успел пройти)
-3. Аналогично при смене сортировки (строка 190) — тоже скроллить к началу статей
+## Файлы и правки
 
-```typescript
-const sortRef = useRef<HTMLDivElement>(null);
+### `src/pages/DistrictPage.tsx` (5 точечных правок)
+1. L55-58: убрать `+ district.surcharge` из 4 цен
+2. L63: убрать `+ district.surcharge` из pageTitle
+3. L91: убрать `+ district.surcharge` из priceRange
+4. L107: убрать `+ district.surcharge` из serviceSchema offers
+5. L272-274: удалить блок «включая выезд»
 
-// В onClick категории:
-onClick={() => { 
-  setSelectedCategory(category); 
-  setVisibleCount(30);
-  setTimeout(() => sortRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-}}
-```
-
-Ref вешается на `<section>` с сортировкой (строка 184) — это оптимальная точка: пользователь видит и пилюли сортировки, и первые статьи сразу.
+### `src/components/district/DistrictPricing.tsx` (1 правка)
+1. L31-32: убрать surcharge из функции `base()`
 
