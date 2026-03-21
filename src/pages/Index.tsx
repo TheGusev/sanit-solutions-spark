@@ -118,9 +118,11 @@ const Index = () => {
             <Suspense fallback={<SectionLoader />}>
               <ServiceAreaCollapsible />
             </Suspense>
-            <Suspense fallback={<SectionLoader />}>
-              <Reviews />
-            </Suspense>
+            <div data-section="reviews">
+              <Suspense fallback={<SectionLoader />}>
+                <Reviews />
+              </Suspense>
+            </div>
           </div>
         </div>
       </section>
