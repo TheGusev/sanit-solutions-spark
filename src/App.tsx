@@ -73,6 +73,7 @@ const App = () => (
               <ScrollToTop />
               <CookieBanner />
               <Suspense fallback={<PageLoader />}>
+              <ErrorBoundary>
                 <Routes>
                   {/* Главная и статичные */}
                   <Route path="/" element={<Index />} />
