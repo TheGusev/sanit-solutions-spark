@@ -16,6 +16,15 @@ interface CalculatorModalProps {
 }
 
 export const CalculatorModal = ({ open, onOpenChange }: CalculatorModalProps) => {
+  const calcOpenFired = useRef(false);
+
+  useEffect(() => {
+    if (open && !calcOpenFired.current) {
+      calcOpenFired.current = true;
+      trackGoal("calc_open");
+    }
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">

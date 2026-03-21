@@ -49,7 +49,7 @@ const FinalCTA = ({ onOpenCalculator }: FinalCTAProps) => {
           </Button>
 
           <Button
-            onClick={onOpenCalculator}
+            onClick={handleCalc}
             size="lg"
             variant="outline"
             className="font-bold text-lg px-8 py-6 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
