@@ -52,10 +52,10 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
   // 2. Сервисы, другие округа, канонический URL
   // ---------------------------------------------------------------------------
   const services = [
-    { title: 'Дезинфекция', href: '/uslugi/dezinfekciya', price: 1000 + district.surcharge },
-    { title: 'Дезинсекция', href: '/uslugi/dezinsekciya', price: 1200 + district.surcharge },
-    { title: 'Дератизация', href: '/uslugi/deratizaciya', price: 1400 + district.surcharge },
-    { title: 'Озонирование', href: '/uslugi/ozonirovanie', price: 1500 + district.surcharge },
+    { title: 'Дезинфекция', href: '/uslugi/dezinfekciya', price: 1000 },
+    { title: 'Дезинсекция', href: '/uslugi/dezinsekciya', price: 1200 },
+    { title: 'Дератизация', href: '/uslugi/deratizaciya', price: 1400 },
+    { title: 'Озонирование', href: '/uslugi/ozonirovanie', price: 1500 },
   ];
 
   const otherDistricts = districtPages.filter((d) => d.id !== district.id).slice(0, 4);
