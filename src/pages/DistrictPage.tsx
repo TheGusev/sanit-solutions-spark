@@ -88,7 +88,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
       '@type': 'AdministrativeArea',
       name: `${district.fullName}, Москва`,
     },
-    priceRange: `от ${svc.basePrice + district.surcharge}₽`,
+    priceRange: `от ${svc.basePrice}₽`,
     openingHours: 'Mo-Su 00:00-23:59',
   };
 
