@@ -163,7 +163,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
           property="og:title"
           content={`${svc.name} в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
         />
-        <meta property="og:description" content={district.metaDescription} />
+        <meta property="og:description" content={pageDescription} />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:image" content={SEO_CONFIG.ogImage} />
