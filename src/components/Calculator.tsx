@@ -230,8 +230,8 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
   const handleAreaChange = (value: number) => {
     setArea(value);
     setHasInteracted(true);
-    if (value < 10 || value > 5000) {
-      setAreaError('Допустимый диапазон 10–5000 м²');
+    if (value < 30 || value > 5000) {
+      setAreaError('Допустимый диапазон 30–5000 м²');
       setAreaValid(false);
     } else {
       setAreaError(null);
