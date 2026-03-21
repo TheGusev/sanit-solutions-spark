@@ -1,5 +1,6 @@
 import { Phone, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackGoal } from "@/lib/analytics";
 
 interface FinalCTAProps {
   onOpenCalculator: () => void;
