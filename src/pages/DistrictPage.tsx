@@ -173,7 +173,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
+          content={`${svc.name} в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
         />
         <meta name="twitter:description" content={pageDescription} />
         <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
