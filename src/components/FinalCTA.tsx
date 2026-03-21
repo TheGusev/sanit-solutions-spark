@@ -8,7 +8,13 @@ interface FinalCTAProps {
 
 const FinalCTA = ({ onOpenCalculator }: FinalCTAProps) => {
   const handleCall = () => {
+    trackGoal("final_cta_call");
     window.location.href = "tel:84950181817";
+  };
+
+  const handleCalc = () => {
+    trackGoal("final_cta_calculator");
+    onOpenCalculator();
   };
 
   return (

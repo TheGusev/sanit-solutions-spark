@@ -30,6 +30,7 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
   const [phone, setPhone] = useState('+7');
   const [agreed, setAgreed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const focusFired = useRef(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

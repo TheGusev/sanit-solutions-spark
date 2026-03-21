@@ -1,4 +1,5 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
+import { trackGoal } from "@/lib/analytics";
 import {
   Dialog,
   DialogContent,
