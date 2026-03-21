@@ -301,9 +301,6 @@ const NeighborhoodPage = () => {
                       </div>
                       <h3 className="font-bold text-lg mb-2">{service.title}</h3>
                       <p className="text-2xl font-bold text-primary">от {service.price}₽</p>
-                      {neighborhood.surcharge > 0 && (
-                        <p className="text-xs text-muted-foreground mt-1">включая выезд</p>
-                      )}
                     </CardContent>
                   </Card>
                 </Link>
