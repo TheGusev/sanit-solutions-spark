@@ -92,12 +92,16 @@ const WhyUsExtended = () => {
         <div className="hidden md:grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left: Feature image - hidden on mobile, visible on desktop */}
           <div className="relative rounded-2xl overflow-hidden shadow-lg h-full min-h-[400px]">
-            <img 
-              src="/images/work/office-cleaning.png" 
-              alt="Специалист проводит дезинфекцию офиса"
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
+            {WHY_US_IMAGES.map((src, i) => (
+              <img
+                key={src}
+                src={src}
+                alt="Специалист проводит дезинфекцию офиса"
+                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+                style={{ opacity: i === bgIndex ? 1 : 0 }}
+                loading="lazy"
+              />
+            ))}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 text-white">
               <p className="font-bold text-lg">Профессиональный подход</p>
