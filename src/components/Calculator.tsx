@@ -433,6 +433,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
                         key={type.key}
                         onClick={() => {
                           setPremiseType(type.key);
+                          if (!interactFired.current) { interactFired.current = true; trackGoal("calc_interact"); }
                           setHasInteracted(true);
                         }}
                         className={`px-3 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
