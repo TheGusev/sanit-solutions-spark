@@ -50,6 +50,9 @@ const okrugs = [
   { id: 'yzao', name: 'ЮЗАО', fullName: 'Юго-Западный' },
   { id: 'zao', name: 'ЗАО', fullName: 'Западный' },
   { id: 'szao', name: 'СЗАО', fullName: 'Северо-Западный' },
+  { id: 'nao', name: 'НАО', fullName: 'Новомосковский' },
+  { id: 'tao', name: 'ТАО', fullName: 'Троицкий' },
+  { id: 'zelao', name: 'ЗелАО', fullName: 'Зеленоградский' },
 ];
 
 const serviceTabs = [
