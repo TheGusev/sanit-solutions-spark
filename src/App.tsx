@@ -10,6 +10,7 @@ import { TrafficProvider } from "@/contexts/TrafficContext";
 import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
 import { CookieBanner } from "@/components/CookieBanner";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Главная загружается сразу
 import Index from "./pages/Index";
