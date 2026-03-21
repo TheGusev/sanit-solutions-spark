@@ -42,6 +42,15 @@ const sections = [
 ];
 
 const WhyUsExtended = () => {
+  const [bgIndex, setBgIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setBgIndex(prev => (prev + 1) % WHY_US_IMAGES.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="py-10 md:py-16 bg-background">
       <div className="container mx-auto px-4">
