@@ -54,7 +54,7 @@ export default function MoscowRegionServicePage() {
   const variation = getPageVariation(slug);
   
   // Цена с наценкой за выезд
-  const priceWithSurcharge = serviceData.priceFrom + city.surcharge;
+  const priceWithSurcharge = serviceData.priceFrom;
   
   // SEO - оптимизированные лимиты
   const pageTitle = `${serviceData.title} ${city.prepositional} от ${priceWithSurcharge}₽ — ${SEO_CONFIG.companyName}`;
