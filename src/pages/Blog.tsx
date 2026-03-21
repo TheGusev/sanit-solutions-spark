@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
@@ -46,6 +46,7 @@ const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
   const [visibleCount, setVisibleCount] = useState(30);
   const [sortBy, setSortBy] = useState<SortMode>('default');
+  const sortRef = useRef<HTMLDivElement>(null);
 
   const filteredPosts = useMemo(() => {
     const baseList = selectedCategory === "Все" 
@@ -162,7 +163,7 @@ const Blog = () => {
                   key={category}
                   role="tab"
                   aria-selected={isActive}
-                  onClick={() => { setSelectedCategory(category); setVisibleCount(30); }}
+                  onClick={() => { setSelectedCategory(category); setVisibleCount(30); setTimeout(() => sortRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}
                   className={`
                     folder-card flex items-center gap-3 px-4 py-3 md:py-3.5 text-left cursor-pointer
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
@@ -181,7 +182,7 @@ const Blog = () => {
       </section>
 
       {/* Sort Controls — segmented pills */}
-      <section className="py-4 px-3 md:px-4">
+      <section ref={sortRef} className="py-4 px-3 md:px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="inline-flex items-center gap-0.5 bg-muted/40 dark:bg-[hsl(240,10%,16%)] dark:border dark:border-border/50 rounded-xl p-1">
             {sortOptions.map(opt => (
