@@ -269,9 +269,6 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
                         {isCurrentService && (
                           <p className="text-xs text-primary font-medium mt-1">Текущая услуга</p>
                         )}
-                        {!isCurrentService && district.surcharge > 0 && (
-                          <p className="text-xs text-muted-foreground mt-1">включая выезд</p>
-                        )}
                       </CardContent>
                     </Card>
                   </Link>
