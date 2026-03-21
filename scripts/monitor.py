@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Расширенный мониторинг goruslugimsk.ru
-- Проверка доступности ключевых URL + среднее время отклика
-- SSL-сертификат (дни до истечения)
-- Контент-статистика (SSG-страницы по типам)
-- Индексация Яндекс / Google (с прогресс-баром к цели)
-- PageSpeed Desktop / Mobile / LCP / CLS
-- Яндекс.Метрика (визиты, посетители, просмотры, отказы, время)
-- Задачи (март 2026) + следующий этап (март–апрель 2026)
-- Алерты (недоступные URL, SSL < 30 дней)
-- Telegram-отправка (HTML, чанки 4000 символов)
-- Авто-обновление MONITORING.md
+Автоматизированный мониторинг goruslugimsk.ru
+Все данные получаются динамически:
+- URL доступность + время отклика
+- SSL сертификат
+- SSG страницы из sitemap-index.xml
+- PageSpeed через Google API
+- Трафик из Яндекс.Метрики
+- Индексация из env (GitHub Secrets)
 """
 
 import os
@@ -20,6 +17,7 @@ import ssl
 import socket
 import requests
 from datetime import datetime, timezone, timedelta
+from xml.etree import ElementTree as ET
 
 # ─── ENV ──────────────────────────────────────────────────────
 SITE_URL             = os.getenv("SITE_URL", "https://goruslugimsk.ru")
@@ -27,80 +25,28 @@ TELEGRAM_BOT_TOKEN   = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID     = os.getenv("TELEGRAM_CHAT_ID")
 YANDEX_METRIKA_TOKEN = os.getenv("YANDEX_METRIKA_TOKEN")
 METRIKA_ID           = os.getenv("METRIKA_ID", "105828040")
+YANDEX_INDEXED       = os.getenv("YANDEX_INDEXED", "")
+GOOGLE_INDEXED       = os.getenv("GOOGLE_INDEXED", "")
 
 KEY_URLS = [
     "/",
     "/uslugi/dezinfekciya/",
     "/uslugi/dezinsekciya/",
+    "/uslugi/deratizaciya/",
     "/blog/",
     "/contacts/",
     "/rajony/arbat/",
     "/moscow-oblast/khimki/",
 ]
 
-# ─── Статические данные (обновлять вручную при изменениях) ────
-CONTENT_STATS = {
-    "total_ssg": 547,
-    "blog":      176,
-    "districts": 145,
-    "mo_cities":  51,
-    "services":   51,
-    "nch_pages": 120,
+# Паттерны для категоризации URL из sitemap
+SITEMAP_CATEGORIES = {
+    "services":  "/uslugi/",
+    "blog":      "/blog/",
+    "districts": "/rajony/",
+    "mo_cities": "/moscow-oblast/",
+    "nch":       "/nch/",
 }
-
-INDEXATION = {
-    "yandex": 419,
-    "google":  23,
-    "target": 500,
-}
-
-PAGESPEED = {
-    "desktop": 95,
-    "mobile":  88,
-    "lcp":  "0.95 с",
-    "cls":  "0.04",
-    "date": "05.03.2026",
-}
-
-TASKS_MARCH = [
-    ("⬜", "Добавить 130 страниц дезинфекция+районы"),
-    ("⬜", "Расширить страницы озонирование (объекты+районы)"),
-    ("⬜", "Перенести гео-статьи кроты в коммерческие страницы"),
-    ("⬜", "Добавить демеркуризация+объекты (квартиры, офисы, школы)"),
-    ("⬜", "Внутренняя перелинковка блога → коммерческие страницы"),
-    ("⬜", "Отправить sitemap-index.xml на переобход Яндекс/Google"),
-    ("⬜", "Разбить рекламу на 4 группы (клопы/тараканы/крысы/дезинфекция)"),
-    ("⬜", "Проверить позиции ТОП-10 через Serpstat/Яндекс.Вебмастер"),
-]
-
-TASKS_NEXT = [
-    "НЧ-масштаб: +200 комбинаций дезинсекция+районы",
-    "Страницы объектов: FAQ + блоки стоимости (офис, хостел)",
-    "PageSpeed Mobile → 95+ (сейчас 88), lazy load + оптимизация CP",
-    "Контент B2B: 10 лонгридов (СЭС, Роспотребнадзор, журналы дезучёта)",
-    "A/B тесты лид-форм: 2 варианта квиза на страницах услуг",
-    "Линкбилдинг: крауд-ссылки на коммерческие разделы",
-    "Яндекс.Карты: новые фото, описание, 5-10 отзывов",
-    "Авто-экспорт позиций из Яндекс.Вебмастера → Google Sheets",
-]
-
-COMPETITORS = [
-    ("dezstation.ru",     "~300", "—"),
-    ("procdez.ru",        "~200", "—"),
-    ("eco-stolica.ru",    "~150", "—"),
-    ("sanitexpert.ru",    "~180", "—"),
-]
-
-KEYWORDS_TRACKING = [
-    ("уничтожение тараканов москва",       "/uslugi/dezinsekciya/", "—"),
-    ("дезинфекция квартиры москва",        "/uslugi/dezinfekciya/", "—"),
-    ("уничтожение клопов москва",          "/uslugi/dezinsekciya/", "—"),
-    ("дератизация москва",                 "/uslugi/deratizaciya/", "—"),
-    ("обработка от тараканов цена",        "/uslugi/dezinsekciya/", "—"),
-    ("санитарная обработка помещений",     "/uslugi/dezinfekciya/", "—"),
-    ("озонирование помещений москва",      "/uslugi/ozonirovanie/", "—"),
-    ("уничтожение крыс в доме",           "/uslugi/deratizaciya/", "—"),
-]
 
 
 # ─── Функции проверки ─────────────────────────────────────────
@@ -132,6 +78,77 @@ def check_ssl(hostname: str) -> dict:
         return {"ok": False, "days_left": 0, "expire_date": "—", "error": str(e)}
 
 
+def fetch_sitemap_stats() -> dict:
+    """Парсит sitemap-index.xml и считает URL по категориям."""
+    stats = {"total": 0, "services": 0, "blog": 0, "districts": 0, "mo_cities": 0, "nch": 0, "other": 0}
+    ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+
+    try:
+        index_url = f"{SITE_URL}/sitemap-index.xml"
+        resp = requests.get(index_url, timeout=15)
+        resp.raise_for_status()
+        root = ET.fromstring(resp.content)
+
+        sitemap_urls = [loc.text for loc in root.findall(".//sm:loc", ns) if loc.text]
+        if not sitemap_urls:
+            sitemap_urls = [loc.text for loc in root.findall(".//loc") if loc.text]
+
+        for sm_url in sitemap_urls:
+            try:
+                sm_resp = requests.get(sm_url, timeout=15)
+                sm_resp.raise_for_status()
+                sm_root = ET.fromstring(sm_resp.content)
+
+                locs = [loc.text for loc in sm_root.findall(".//sm:loc", ns) if loc.text]
+                if not locs:
+                    locs = [loc.text for loc in sm_root.findall(".//loc") if loc.text]
+
+                for loc in locs:
+                    stats["total"] += 1
+                    categorized = False
+                    for cat, pattern in SITEMAP_CATEGORIES.items():
+                        if pattern in loc:
+                            stats[cat] += 1
+                            categorized = True
+                            break
+                    if not categorized:
+                        stats["other"] += 1
+            except Exception as e:
+                print(f"  Sitemap parse error ({sm_url}): {e}")
+    except Exception as e:
+        print(f"  Sitemap index error: {e}")
+
+    return stats
+
+
+def fetch_pagespeed(url: str, strategy: str = "desktop") -> dict:
+    """Вызывает Google PageSpeed Insights API (бесплатный)."""
+    api = (
+        f"https://www.googleapis.com/pagespeedonline/v5/runPagespeed"
+        f"?url={url}&strategy={strategy}&category=performance"
+    )
+    try:
+        resp = requests.get(api, timeout=60)
+        resp.raise_for_status()
+        data = resp.json()
+        lhr = data.get("lighthouseResult", {})
+        cats = lhr.get("categories", {})
+        audits = lhr.get("audits", {})
+
+        score = round((cats.get("performance", {}).get("score", 0)) * 100)
+        lcp_ms = audits.get("largest-contentful-paint", {}).get("numericValue", 0)
+        cls_val = audits.get("cumulative-layout-shift", {}).get("numericValue", 0)
+
+        return {
+            "score": score,
+            "lcp": round(lcp_ms / 1000, 2),
+            "cls": round(cls_val, 3),
+        }
+    except Exception as e:
+        print(f"  PageSpeed error ({strategy}): {e}")
+        return {"score": 0, "lcp": 0, "cls": 0}
+
+
 def fetch_metrika() -> dict | None:
     if not YANDEX_METRIKA_TOKEN:
         return None
@@ -161,22 +178,25 @@ def fmt_num(n: int) -> str:
 
 # ─── Telegram-сообщение ──────────────────────────────────────
 
-def build_telegram_message(url_results: list, ssl_info: dict, metrika: dict | None) -> str:
+def build_telegram_message(
+    url_results: list, ssl_info: dict, sitemap: dict,
+    ps_desktop: dict, ps_mobile: dict, metrika: dict | None,
+    idx_yandex: str, idx_google: str,
+) -> str:
     msk = timezone(timedelta(hours=3))
     now = datetime.now(msk).strftime("%d.%m.%Y %H:%M MSK")
     lines = []
 
-    # Шапка
     all_ok = all(r["ok"] for r in url_results)
     ok_list = [r for r in url_results if r["ok"]]
     avg_rt = round(sum(r["response_time"] for r in ok_list) / len(ok_list)) if ok_list else 0
 
     lines += [
-        "📊 Ежедневный мониторинг goruslugimsk.ru",
+        "📊 Мониторинг goruslugimsk.ru",
         f"🕐 {now}",
         "━━━━━━━━━━━━━━━━━━━━",
         "",
-        f"{'🟢' if all_ok else '🔴'} Статус сайта (ср. отклик {avg_rt} мс)",
+        f"{'🟢' if all_ok else '🔴'} Статус (ср. отклик {avg_rt} мс)",
     ]
     for r in url_results:
         path = r["url"].replace(SITE_URL, "") or "/"
@@ -184,100 +204,74 @@ def build_telegram_message(url_results: list, ssl_info: dict, metrika: dict | No
             lines.append(f"✅ {path} — {r['response_time']} мс")
         else:
             err = r.get("error", f"HTTP {r['status_code']}")
-            lines.append(f"❌ {path} — ОШИБКА ({err[:50]})")
+            lines.append(f"❌ {path} — ({err[:50]})")
 
     # SSL
-    lines += ["", "🔐 Сертификат"]
+    lines += ["", "🔐 SSL"]
     if ssl_info["ok"]:
-        warn = " ⚠️ СКОРО ИСТЕКАЕТ!" if ssl_info["days_left"] < 30 else ""
-        lines.append(f"• ✅ SSL до {ssl_info['expire_date']} ({ssl_info['days_left']} дн.){warn}")
+        warn = " ⚠️ СКОРО!" if ssl_info["days_left"] < 30 else ""
+        lines.append(f"• До {ssl_info['expire_date']} ({ssl_info['days_left']} дн.){warn}")
     else:
-        lines.append("• ❌ SSL — ОШИБКА ПРОВЕРКИ")
+        lines.append("• ❌ ОШИБКА")
 
-    # Контент
-    cs = CONTENT_STATS
+    # Контент из sitemap
     lines += [
-        "", "━━━━━━━━━━━━━━━━━━━━", "",
-        "📄 Контент",
-        f"• Всего страниц в SSG: ~{cs['total_ssg']}",
-        f"• Блог (уникальных статей): {cs['blog']}",
-        f"• Районы + округа: {cs['districts']}",
-        f"• Города МО: {cs['mo_cities']}",
-        f"• Услуги + подстраницы: {cs['services']}",
-        f"• НЧ-страницы: {cs['nch_pages']}",
+        "", "📄 Контент (sitemap)",
+        f"• Всего URL: {sitemap['total']}",
+        f"• Услуги: {sitemap['services']} | Блог: {sitemap['blog']}",
+        f"• Районы: {sitemap['districts']} | МО: {sitemap['mo_cities']}",
+        f"• НЧ: {sitemap['nch']} | Прочее: {sitemap['other']}",
     ]
 
     # Индексация
-    idx = INDEXATION
-    pct = round(idx["yandex"] / idx["target"] * 100)
-    bar = "█" * (pct // 10) + "░" * (10 - pct // 10)
-    lines += [
-        "", "🔍 Индексация",
-        f"• Цель: {idx['target']}+ стр. в Яндексе (к апрелю 2026)",
-        f"• Яндекс: {idx['yandex']} стр. ({pct}%) [{bar}]",
-        f"• Google: {idx['google']} стр.",
-        "• Яндекс Вебмастер / GSC — проверить вручную",
-    ]
+    if idx_yandex or idx_google:
+        lines += ["", "🔍 Индексация"]
+        if idx_yandex:
+            lines.append(f"• Яндекс: {idx_yandex} стр.")
+        if idx_google:
+            lines.append(f"• Google: {idx_google} стр.")
 
     # PageSpeed
-    ps = PAGESPEED
-    mob_ico = "✅" if ps["mobile"] >= 95 else "⚠️"
     lines += [
-        "", f"⚙️ PageSpeed (замер {ps['date']})",
-        f"• Desktop: {ps['desktop']} ✅ | Mobile: {ps['mobile']} {mob_ico}",
-        f"• LCP: {ps['lcp']} | CLS: {ps['cls']}",
+        "", "⚙️ PageSpeed (сегодня)",
+        f"• Desktop: {ps_desktop['score']} | Mobile: {ps_mobile['score']}",
+        f"• LCP: {ps_desktop['lcp']}с / {ps_mobile['lcp']}с",
+        f"• CLS: {ps_desktop['cls']} / {ps_mobile['cls']}",
     ]
-    if ps["mobile"] < 95:
-        lines.append(f"• 🎯 Цель Mobile 95+ (нужно +{95 - ps['mobile']} очков)")
 
     # Трафик
-    lines += ["", "━━━━━━━━━━━━━━━━━━━━", "", "📈 Трафик (Яндекс.Метрика, 30 дней)"]
     if metrika:
         lines += [
-            f"• Визиты:     {fmt_num(metrika['visits'])}",
-            f"• Посетители: {fmt_num(metrika['users'])}",
-            f"• Просмотры:  {fmt_num(metrika['views'])}",
-            f"• Отказы:     {metrika['bounce']}%",
-            f"• Время:      {metrika['duration']}",
+            "", "📈 Трафик (30 дн.)",
+            f"• Визиты: {fmt_num(metrika['visits'])} | Посетители: {fmt_num(metrika['users'])}",
+            f"• Отказы: {metrika['bounce']}% | Время: {metrika['duration']}",
         ]
-    else:
-        lines.append("• ℹ️ YANDEX_METRIKA_TOKEN не задан — данные недоступны")
-
-    # Задачи март
-    lines += ["", "━━━━━━━━━━━━━━━━━━━━", "", "✅ Задачи (Март 2026)"]
-    for i, (status, task) in enumerate(TASKS_MARCH, 1):
-        lines.append(f"{i}️⃣ {status} {task}")
-
-    # Задачи март-апрель
-    lines += ["", "🎯 Следующий этап (Март–Апрель 2026)"]
-    for i, task in enumerate(TASKS_NEXT, 1):
-        lines.append(f"{i}. {task}")
 
     # Алерты
     alerts = []
     for r in url_results:
         if not r["ok"]:
             path = r["url"].replace(SITE_URL, "") or "/"
-            alerts.append(f"❌ {path} — HTTP {r['status_code']}")
+            alerts.append(f"❌ {path}")
     if ssl_info.get("days_left", 99) < 30 and ssl_info["ok"]:
-        alerts.append(f"⚠️ SSL истекает через {ssl_info['days_left']} дней!")
+        alerts.append(f"⚠️ SSL через {ssl_info['days_left']} дн.")
+    if ps_mobile["score"] > 0 and ps_mobile["score"] < 90:
+        alerts.append(f"⚠️ Mobile PageSpeed: {ps_mobile['score']}")
     if alerts:
-        lines += ["", "━━━━━━━━━━━━━━━━━━━━", "", "🚨 Алерты"]
+        lines += ["", "🚨 Алерты"]
         for a in alerts:
             lines.append(f"• {a}")
 
-    # Футер
-    lines += [
-        "", "━━━━━━━━━━━━━━━━━━━━",
-        "📝 <a href='https://github.com/TheGusev/sanit-solutions-spark/blob/main/MONITORING.md'>MONITORING.md</a>",
-        "🤖 <a href='https://github.com/TheGusev/sanit-solutions-spark/actions'>Workflows</a>",
-    ]
     return "\n".join(lines)
 
 
 # ─── MONITORING.md ────────────────────────────────────────────
 
-def update_monitoring_md(url_results: list, ssl_info: dict, metrika: dict | None):
+def update_monitoring_md(
+    url_results: list, ssl_info: dict, sitemap: dict,
+    ps_desktop: dict, ps_mobile: dict, metrika: dict | None,
+    idx_yandex: str, idx_google: str,
+):
     msk = timezone(timedelta(hours=3))
     now_date = datetime.now(msk).strftime("%d.%m.%Y")
     now_full = datetime.now(msk).strftime("%d.%m.%Y %H:%M MSK")
@@ -286,33 +280,10 @@ def update_monitoring_md(url_results: list, ssl_info: dict, metrika: dict | None
     ok_list = [r for r in url_results if r["ok"]]
     avg_rt = round(sum(r["response_time"] for r in ok_list) / len(ok_list)) if ok_list else 0
 
-    cs = CONTENT_STATS
-    idx = INDEXATION
-    ps = PAGESPEED
-    pct = round(idx["yandex"] / idx["target"] * 100)
-
-    md = f"""Контекст: автоматизированный мониторинг goruslugimsk.ru. Данные обновляются ежедневно через GitHub Actions.
+    md = f"""Контекст: автоматизированный мониторинг goruslugimsk.ru. Все данные обновляются ежедневно через GitHub Actions.
 
 # 🤖 MONITORING.md — Авто-мониторинг goruslugimsk.ru
-**Дата последнего обновления:** {now_date} **Статус системы:** {'🟢 ONLINE' if all_ok else '🔴 ЕСТЬ ПРОБЛЕМЫ'}
-**Ответственный:** Comet (Auto-bot) **Проект:** Санитарные Решения
-**Средний отклик:** {avg_rt} мс
-
-## 📊 Оглавление
-- [Статус сайта](#-статус-сайта)
-- [SSL-сертификат](#-ssl-сертификат)
-- [Индексация](#-индексация)
-- [Позиции в поиске](#-позиции-в-поиске-яндекс)
-- [Трафик и аудитория](#-трафик-и-аудитория)
-- [Конверсии и воронка](#-конверсии-и-воронка)
-- [Технические показатели](#-технические-показатели-pagespeed)
-- [Конкуренты](#-конкуренты)
-- [Контент и структура](#-контент-и-структура)
-- [Внешние факторы](#-внешние-факторы)
-- [Алерты и проблемы](#-алерты-и-проблемы)
-- [Задачи Март 2026](#-задачи-март-2026)
-- [Задачи Март-Апрель 2026](#-задачи-март-апрель-2026)
-- [Результаты периода](#-результаты-периода)
+**Дата:** {now_date} | **Статус:** {'🟢 ONLINE' if all_ok else '🔴 ЕСТЬ ПРОБЛЕМЫ'} | **Средний отклик:** {avg_rt} мс
 
 ---
 
@@ -337,156 +308,75 @@ def update_monitoring_md(url_results: list, ssl_info: dict, metrika: dict | None
 | Дней до истечения | {ssl_info['days_left']} |
 | Предупреждение | {'⚠️ Менее 30 дней!' if ssl_info['days_left'] < 30 and ssl_info['ok'] else '—'} |
 
+## 📄 Контент (из sitemap)
+
+| Категория | Количество URL |
+|---|---|
+| Услуги | {sitemap['services']} |
+| Блог | {sitemap['blog']} |
+| Районы Москвы | {sitemap['districts']} |
+| Города МО | {sitemap['mo_cities']} |
+| НЧ-страницы | {sitemap['nch']} |
+| Прочее | {sitemap['other']} |
+| **Всего** | **{sitemap['total']}** |
+
 ## 🔍 Индексация
 
-| Поисковик | Страниц в индексе | Цель | Прогресс |
-|---|---|---|---|
-| Яндекс | {idx['yandex']} | {idx['target']}+ | {pct}% |
-| Google | {idx['google']} | — | — |
+| Поисковик | Страниц в индексе |
+|---|---|
+| Яндекс | {idx_yandex if idx_yandex else '— (задайте YANDEX_INDEXED в Secrets)'} |
+| Google | {idx_google if idx_google else '— (задайте GOOGLE_INDEXED в Secrets)'} |
 
-**KPI:** {idx['target']}+ страниц в Яндексе к апрелю 2026 ({pct}% выполнено)
+> Обновляйте `YANDEX_INDEXED` и `GOOGLE_INDEXED` в GitHub Secrets по данным Вебмастера / GSC.
 
-### Детализация индексации (Яндекс)
-| Тип | Всего | В индексе | Примечание |
-|---|---|---|---|
-| Главная | 1 | ✅ | — |
-| Услуги + подстраницы | {cs['services']} | ✅ | — |
-| Блог | {cs['blog']} | ✅ | — |
-| Районы + округа | {cs['districts']} | ✅ | — |
-| Города МО | {cs['mo_cities']} | ⚠️ Частично | Проверить в Вебмастере |
-| НЧ-страницы | {cs['nch_pages']} | ⚠️ Частично | Новые, ждут индексации |
+## ⚙️ PageSpeed (автозамер)
 
-## 📈 Позиции в поиске (Яндекс)
+| Метрика | Desktop | Mobile |
+|---|---|---|
+| Performance Score | {ps_desktop['score']} | {ps_mobile['score']} |
+| LCP | {ps_desktop['lcp']} с | {ps_mobile['lcp']} с |
+| CLS | {ps_desktop['cls']} | {ps_mobile['cls']} |
 
-| Запрос | Целевая страница | Позиция | Изменение |
-|---|---|---|---|
 """
-    for kw, page, pos in KEYWORDS_TRACKING:
-        md += f"| {kw} | {page} | {pos} | — |\n"
 
-    md += """
-> Позиции обновляются вручную через Яндекс.Вебмастер / Serpstat
-
-## 👥 Трафик и аудитория
-
-| Период | Визиты | Посетители | Просмотры | Отказы | Время |
-|---|---|---|---|---|---|
-"""
+    # Трафик
+    md += "## 📈 Трафик (Яндекс.Метрика, 30 дней)\n\n"
     if metrika:
-        month_label = datetime.now(msk).strftime("%B %Y")
-        md += f"| {month_label} | {fmt_num(metrika['visits'])} | {fmt_num(metrika['users'])} | {fmt_num(metrika['views'])} | {metrika['bounce']}% | {metrika['duration']} |\n"
+        md += f"""| Метрика | Значение |
+|---|---|
+| Визиты | {fmt_num(metrika['visits'])} |
+| Посетители | {fmt_num(metrika['users'])} |
+| Просмотры | {fmt_num(metrika['views'])} |
+| Отказы | {metrika['bounce']}% |
+| Ср. время | {metrika['duration']} |
+"""
     else:
-        md += "| — | — | — | — | — | — |\n"
-        md += "\n> ℹ️ Для автоматического обновления добавьте `YANDEX_METRIKA_TOKEN` в GitHub Secrets\n"
+        md += "> ℹ️ Для автоматического обновления добавьте `YANDEX_METRIKA_TOKEN` в GitHub Secrets\n"
 
-    md += f"""
-## 📊 Конверсии и воронка
-
-| Точка входа | Лиды | CR | Примечание |
-|---|---|---|---|
-| Квиз (ServiceQuiz) | — | — | Основная форма |
-| Калькулятор (Calculator) | — | — | Расчёт стоимости |
-| Sticky-бар (StickyCTA) | — | — | Мобильный CTA |
-| Быстрый звонок (QuickCallForm) | — | — | Форма обратного звонка |
-| Мессенджеры (WhatsApp/Telegram) | — | — | Внешние каналы |
-| Прямой звонок | — | — | По номеру телефона |
-
-> Данные обновлять вручную из CRM / Яндекс.Метрики
-
-## ⚙️ Технические показатели (PageSpeed)
-
-| Страница | Desktop | Mobile | LCP | CLS | Дата замера |
-|---|---|---|---|---|---|
-| Главная (/) | {ps['desktop']} | {ps['mobile']} | {ps['lcp']} | {ps['cls']} | {ps['date']} |
-
-**Цели:** Desktop 95+ ✅ | Mobile 95+ {'✅' if ps['mobile'] >= 95 else f"⚠️ (сейчас {ps['mobile']}, нужно +{95 - ps['mobile']})"} | LCP < 2.5с ✅ | CLS < 0.1 ✅
-
-## 🏆 Конкуренты
-
-| Домен | Страниц в индексе (оценка) | Позиции ВЧ |
-|---|---|---|
-"""
-    for domain, pages, positions in COMPETITORS:
-        md += f"| {domain} | {pages} | {positions} |\n"
-
-    md += f"""
-> Обновлять данные конкурентов ежемесячно через Serpstat / Ahrefs
-
-## 📄 Контент и структура
-
-| Тип страниц | Количество | SSG | Sitemap | Статус |
-|---|---|---|---|---|
-| Главная | 1 | ✅ | ✅ | ✅ |
-| Услуги (основные) | 8 | ✅ | ✅ | ✅ |
-| Подстраницы услуг | {cs['services'] - 8} | ✅ | ✅ | ✅ |
-| Блог | {cs['blog']} | ✅ | ✅ | ✅ |
-| Районы Москвы | {cs['districts']} | ✅ | ✅ | ✅ |
-| Города МО | {cs['mo_cities']} | ✅ | ✅ | ✅ |
-| НЧ-комбинации | {cs['nch_pages']} | ✅ | ✅ | ⚠️ Новые |
-| Контакты | 1 | ✅ | ✅ | ✅ |
-| Политика / Условия | 2 | ✅ | ✅ | ✅ |
-| **ИТОГО** | **~{cs['total_ssg']}** | | | |
-
-## 🌐 Внешние факторы
-
-| Фактор | Статус | Примечание |
-|---|---|---|
-| SSL-сертификат | {'✅ Активен' if ssl_info['ok'] else '❌ Ошибка'} | До {ssl_info['expire_date']} ({ssl_info['days_left']} дн.) |
-| robots.txt | ✅ Актуален | /robots.txt |
-| sitemap-index.xml | ✅ Актуален | Автогенерация через Vite |
-| Яндекс.Вебмастер | ✅ Подключен | Верификация пройдена |
-| Google Search Console | ✅ Подключен | Верификация пройдена |
-| Яндекс.Метрика | ✅ Счётчик {METRIKA_ID} | Работает |
-
-## 🚨 Алерты и проблемы
-
-| Проблема | Обнаружена | Приоритет | Статус |
-|---|---|---|---|
-"""
+    # Алерты
+    md += "\n## 🚨 Алерты\n\n"
     has_alerts = False
+    alert_rows = ""
     for r in url_results:
         if not r["ok"]:
             has_alerts = True
             path = r["url"].replace(SITE_URL, "") or "/"
-            md += f"| URL {path} недоступен (HTTP {r['status_code']}) | {now_date} | ⚠️ Высокий | 🔴 Активна |\n"
+            alert_rows += f"| URL {path} недоступен | ⚠️ Высокий | 🔴 |\n"
     if ssl_info.get("days_left", 99) < 30 and ssl_info["ok"]:
         has_alerts = True
-        md += f"| SSL истекает через {ssl_info['days_left']} дней | {now_date} | 🔴 Критический | 🔴 Активна |\n"
-    if not has_alerts:
-        md += "| Нет активных проблем | — | — | 🟢 |\n"
+        alert_rows += f"| SSL истекает через {ssl_info['days_left']} дней | 🔴 Критический | 🔴 |\n"
+    if ps_mobile["score"] > 0 and ps_mobile["score"] < 90:
+        has_alerts = True
+        alert_rows += f"| Mobile PageSpeed {ps_mobile['score']} (цель 90+) | ⚠️ Средний | 🟡 |\n"
 
-    md += """
-## ✅ Задачи (Март 2026)
-
-| # | Задача | Статус |
-|---|---|---|
-"""
-    for i, (status, task) in enumerate(TASKS_MARCH, 1):
-        label = "✅ Выполнено" if status == "✅" else "⬜ В работе"
-        md += f"| {i} | {task} | {label} |\n"
-
-    md += """
-## 🎯 Задачи (Март–Апрель 2026)
-
-| # | Задача |
-|---|---|
-"""
-    for i, task in enumerate(TASKS_NEXT, 1):
-        md += f"| {i} | {task} |\n"
+    if has_alerts:
+        md += "| Проблема | Приоритет | Статус |\n|---|---|---|\n" + alert_rows
+    else:
+        md += "✅ Нет активных проблем\n"
 
     md += f"""
-## 📋 Результаты периода
-
-| Метрика | Значение | Период |
-|---|---|---|
-| Страниц в индексе (Яндекс) | {idx['yandex']} | Март 2026 |
-| Страниц в индексе (Google) | {idx['google']} | Март 2026 |
-| Desktop PageSpeed | {ps['desktop']} | {ps['date']} |
-| Mobile PageSpeed | {ps['mobile']} | {ps['date']} |
-| SSG страниц всего | ~{cs['total_ssg']} | Март 2026 |
-
 ---
-**Последнее автоматическое обновление:** {now_full}
+**Последнее обновление:** {now_full}
 """
 
     with open("MONITORING.md", "w", encoding="utf-8") as f:
@@ -510,7 +400,7 @@ def send_telegram(message: str):
                 "disable_web_page_preview": True,
             }, timeout=10)
             resp.raise_for_status()
-            print("Telegram: chunk sent OK")
+            print("Telegram: sent OK")
         except Exception as e:
             print(f"Telegram error: {e}")
 
@@ -526,24 +416,49 @@ def main():
     for r in url_results:
         print(f"  {'OK' if r['ok'] else 'FAIL'} {r['url']} {r['response_time']}ms")
 
-    # 2. SSL check
+    # 2. SSL
     hostname = SITE_URL.replace("https://", "").replace("http://", "").split("/")[0]
     ssl_info = check_ssl(hostname)
     print(f"  SSL: {ssl_info}")
 
-    # 3. Metrika
+    # 3. Sitemap stats
+    print("  Fetching sitemap stats...")
+    sitemap = fetch_sitemap_stats()
+    print(f"  Sitemap: {sitemap}")
+
+    # 4. PageSpeed
+    print("  Fetching PageSpeed Desktop...")
+    ps_desktop = fetch_pagespeed(SITE_URL, "desktop")
+    print(f"  Desktop: {ps_desktop}")
+    print("  Fetching PageSpeed Mobile...")
+    ps_mobile = fetch_pagespeed(SITE_URL, "mobile")
+    print(f"  Mobile: {ps_mobile}")
+
+    # 5. Metrika
     metrika = fetch_metrika()
     print(f"  Metrika: {metrika}")
 
-    # 4. Build & send Telegram
-    message = build_telegram_message(url_results, ssl_info, metrika)
-    print("\n--- TELEGRAM PREVIEW ---")
+    # 6. Indexation from env
+    idx_yandex = YANDEX_INDEXED
+    idx_google = GOOGLE_INDEXED
+
+    # 7. Telegram
+    message = build_telegram_message(
+        url_results, ssl_info, sitemap,
+        ps_desktop, ps_mobile, metrika,
+        idx_yandex, idx_google,
+    )
+    print("\n--- TELEGRAM ---")
     print(message)
     print("--- END ---\n")
     send_telegram(message)
 
-    # 5. Update MONITORING.md
-    update_monitoring_md(url_results, ssl_info, metrika)
+    # 8. MONITORING.md
+    update_monitoring_md(
+        url_results, ssl_info, sitemap,
+        ps_desktop, ps_mobile, metrika,
+        idx_yandex, idx_google,
+    )
 
     print("[monitor] Done.")
 

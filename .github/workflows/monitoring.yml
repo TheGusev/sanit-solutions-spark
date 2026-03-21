@@ -35,6 +35,8 @@ jobs:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         SITE_URL: "https://goruslugimsk.ru"
         METRIKA_ID: "105828040"
+        YANDEX_INDEXED: ${{ secrets.YANDEX_INDEXED }}
+        GOOGLE_INDEXED: ${{ secrets.GOOGLE_INDEXED }}
       run: |
         python scripts/monitor.py
 
