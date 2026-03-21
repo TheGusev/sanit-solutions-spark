@@ -1,197 +1,110 @@
 
 
-# Комплексный аудит goruslugimsk.ru — отчёт
+# Полный аудит goruslugimsk.ru — повторная проверка после исправлений
 
-## Краткий обзор
+## Что было исправлено с прошлого аудита (74/100)
 
-Сайт представляет собой зрелый SEO-проект с продуманной архитектурой: ~1,800+ SSG-страниц, 3-уровневая NCH-модель, строгие валидаторы маршрутов, fail-fast SSG, de-optimization блога. Недавно добавлены 24 гео-страницы дезинсекции/дератизации по округам, табы в ServiceDistricts, ссылки в Footer и InternalLinks. Общее качество высокое, но есть ряд точечных проблем.
-
----
-
-## БЛОК 1. КАРТА РОУТОВ
-
-```text
-Route                                          Pattern                           DataSource                  Render
-──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-/                                              Static                            Index.tsx                   CSR (eager)
-/blog/                                         Static                            allBlogArticles             CSR (lazy) + SSG
-/blog/:slug/                                   Dynamic                           allBlogArticles (227+)      CSR + SSG
-/privacy/                                      Static                            -                           CSR + SSG
-/terms/                                        Static                            -                           CSR + SSG
-/contacts/                                     Static                            -                           CSR + SSG
-/team/                                         Static                            -                           CSR + SSG
-/sluzhba-dezinsekcii/                          Static                            -                           CSR + SSG
-/otzyvy/                                       Static                            -                           CSR + SSG
-/uslugi/po-okrugam-moskvy/                     Static                            districtPages               CSR + SSG
-/uslugi/obrabotka-uchastkov/                   Static                            -                           CSR + SSG
-/uslugi/:slug/                                 Dynamic (ServicePage)             servicePages + districtMatch CSR + SSG
-  → dezinfekciya, dezinsekciya, deratizaciya, ozonirovanie, dezodoraciya, demerkurizaciya, borba-s-krotami
-  → dezinfekciya-{cao..zelao}, dezinsekciya-{id}, deratizaciya-{id}  (36 district pages)
-/uslugi/:parentSlug/:subSlug/                  Dynamic (ServiceRouteResolver)    subpages/pests/objects       CSR + SSG
-  → subpages (17), pests (14), objects (11×5 services)
-/uslugi/:service/:segment2/:segment3/          Dynamic (ThreeSegmentRouteResolver) pests×neighborhoods       CSR + SSG
-  → NCH: ~1,774 pages
-/rajony/                                       Static                            -                           CSR + SSG
-/rajony/:slug/                                 Dynamic                           neighborhoods (130+)        CSR + SSG
-/moscow-oblast/                                Static                            -                           CSR + SSG
-/moscow-oblast/:citySlug/                      Dynamic                           moscowRegionCities (14)     CSR + SSG
-/moscow-oblast/:citySlug/:serviceSlug/         Dynamic                           cities×services (56)        CSR + SSG
-/admin/*                                       Static (nested)                   -                           CSR only
-```
-
-**Итого SSG-страниц**: ~2,300+ (9 static + 7 services + 36 districts + 17 subpages + 14 pests + 55 objects + ~1,774 NCH + 130 neighborhoods + 15 MO + 56 MO-services + 227 blog)
+1. **DistrictHero.tsx** — H1 теперь адаптируется к serviceType (дезинсекция/дератизация). ✅
+2. **DistrictPricing.tsx** — цены умножаются на baseMultiplier по услуге. ✅
+3. **DistrictCases.tsx** — заголовок секции адаптирован к serviceType. ✅
+4. **DistrictReviews.tsx** — уникальные отзывы для каждого serviceType. ✅
+5. **DistrictCTA.tsx** — CTA адаптирован к услуге. ✅
+6. **DistrictSpecifics.tsx** — заголовок адаптирован + добавлены НАО/ТАО/ЗелАО. ✅
+7. **ServiceDistricts.tsx** — 12 округов + 3 таба. ✅
+8. **Footer.tsx** — ссылки ведут на /uslugi/po-okrugam-moskvy (обзорная). ✅
+9. **InternalLinks.tsx** — currentDistrict prop + district cross-links. ✅
+10. **DistrictPage.tsx** — передаёт serviceType во все компоненты + currentDistrict в InternalLinks. ✅
+11. **ErrorBoundary** — добавлен и обёрнут вокруг Routes. ✅
+12. **Slider** — h-4 mobile, h-8 thumb, range 30-200. ✅
 
 ---
 
-## БЛОК 2. СЕМАНТИКА И LLM-РАЗВЕСОВКА ИНТЕНТОВ
+## БЛОК 1-6: ДЕТАЛЬНЫЙ ПОВТОРНЫЙ АУДИТ
 
-| Класс | Примеры URL | Целевые запросы | LLM-confidence | Замечания |
-|-------|-------------|-----------------|----------------|-----------|
-| service-hub | /uslugi/dezinsekciya/ | ВЧ коммерческие: "дезинсекция Москва" | 95 | Чёткий интент, H1 + title + CTA |
-| pest-page | /uslugi/dezinsekciya/tarakany/ | СЧ: "уничтожение тараканов" | 92 | Quiz + tariffs + heroBullets → коммерция |
-| object-page | /uslugi/dezinsekciya/kvartir/ | СЧ: "дезинсекция квартиры" | 90 | Цены + FAQ = коммерческий |
-| geo-hub | /rajony/arbat/ | СЧ/НЧ гео: "дезинсекция Арбат" | 85 | Multi-service hub — чуть размытый (3 услуги) |
-| district-page | /uslugi/dezinsekciya-cao/ | СЧ гео: "дезинсекция ЦАО" | 88 | Привязка к округу, JSON-LD LocalBusiness |
-| pest+geo NCH | /uslugi/dezinsekciya/tarakany/arbat/ | НЧ: "уничтожение тараканов Арбат" | 90 | Генерированный контент, FAQ |
-| blog/info | /blog/kak-izbavitsya-ot-tarakany/ | Инфо: "как избавиться от тараканов" | 88 | deOptimizeBlogTitle работает |
-| B2B blog | /blog/haccp-pest-kontrol-restoran/ | B2B инфо | 85 | ServiceCTA ведёт на услуги |
-| tech pages | /privacy/, /terms/ | Вспомогательные | 95 | Нет ambiguity |
+### Семантика и LLM-развесовка — было 72, теперь:
+- DistrictHero H1 уникален для 3 услуг ✅ (+8)
+- DistrictReviews уникальны по serviceType ✅ (+3)
+- DistrictCases заголовок адаптирован ✅ (+2)
+- DistrictPricing цены уникальны ✅ (+3)
+- **Остаточная проблема**: DistrictSpecifics описания (getDefaultSpecifics) одинаковые для всех 3 услуг — "Много бизнес-центров" одинаково для дезинфекции/дезинсекции/дератизации. Нужно адаптировать описания под услугу (например, "Дератизация бизнес-центров" vs "Дезинфекция бизнес-центров").
+- **Остаточная проблема**: FAQ в DistrictPage — `district.faq` одинаковый для всех 3 URL (dezinfekciya-cao, dezinsekciya-cao, deratizaciya-cao). Нужно генерировать FAQ с учётом serviceType.
+- **Остаточная проблема**: Секция "Мы уже работали на этих улицах" — одинаковый текст "провели обработку" для всех услуг. Нужно "провели дезинсекцию" / "провели дератизацию".
+- **Остаточная проблема**: ServiceObjectPage контент ~400 слов — thin content.
+- **Оценка: 85/100** (было 72)
 
-**Проблемы семантики:**
-1. **DistrictHero не адаптируется к serviceType** — компонент показывает `district.h1` из данных, который захардкожен как "Дезинфекция в ЦАО..." для всех 3 услуг. Dezinsekciya-cao и deratizaciya-cao показывают H1 про дезинфекцию. **Критичная проблема — каннибализация H1**.
-2. **DistrictPricing одинаковый** — цены (1000+surcharge) не адаптируются к serviceType, хотя в SERVICE_CONFIG basePrice разный.
-3. **DistrictCases, DistrictReviews, DistrictCTA** — не получают serviceType, показывают одинаковый контент для 3 разных URL. Thin content / duplicate content risk.
+### SEO-онпейдж — было 75, теперь:
+- H1 дубли на district pages устранены ✅ (+5)
+- Цены уникальны ✅ (+3)
+- OG/canonical/robots — без изменений, были корректны ✅
+- **Остаточная проблема**: ServiceObjectPage — мало контента (<600 слов), нет секции "Как мы работаем", "Этапы обработки" и т.д.
+- **Остаточная проблема**: B2B blog articles <1500 слов.
+- **Остаточная проблема**: DistrictPage FAQ не адаптирован к serviceType — дубль контента.
+- **Оценка: 86/100** (было 75)
 
-**Оценка семантики: 72/100**
+### GEO-слой — было 68, теперь:
+- ServiceDistricts покрывает все 12 округов ✅ (+6)
+- Footer ведёт на обзорную страницу ✅ (+3)
+- InternalLinks передаёт currentDistrict ✅ (+4)
+- DistrictHero H1/subtitle адаптированы ✅ (+5)
+- **Остаточная проблема**: DistrictReviews строка 190: `Math.random()` в рендере — SSR/hydration mismatch, непредсказуемое число отзывов.
+- **Остаточная проблема**: DistrictSpecifics описания не адаптированы к serviceType.
+- **Оценка: 88/100** (было 68)
 
----
+### UX — было 82, теперь:
+- Slider mobile — thicker track/thumb ✅ (+2)
+- ErrorBoundary защищает от white screen ✅ (+3)
+- **Остаточная проблема**: Calculator slider 30-200 vs input 10-5000 — рассинхрон (minor).
+- **Оценка: 88/100** (было 82)
 
-## БЛОК 3. SEO-АУДИТ
-
-### 3.1 Мета-данные
-- **H1**: DistrictPage формирует корректный `pageTitle` в `<title>` с учётом serviceType, но **H1 в DistrictHero берётся из `district.h1`** (не адаптируется). Дубликат H1 для 3 URL.
-- **Title**: корректный, с ценой и временем выезда. Длина ~65-80 символов — чуть длиннее оптимума.
-- **Description**: корректный, адаптируется к serviceType.
-- **Canonical**: ✅ корректный self-referencing с trailing slash.
-- **OG/Twitter**: ✅ полный набор.
-- **robots**: ✅ index, follow, max-snippet:-1.
-
-### 3.2 Контент
-- **NCH pest+geo**: ~650-800 слов (генератор) — ✅ норма.
-- **Object pages**: ~400-500 слов — ⚠️ ниже порога 600 слов. FAQ есть, цены есть, но текст короткий.
-- **Blog longreads**: ~800-2000 слов — большинство норма, но B2B articles ~600-800 слов — ⚠️ ниже 1500.
-- **District pages**: контент не уникален между dezinfekciya-cao / dezinsekciya-cao / deratizaciya-cao — **дубликат контента** (DistrictCases, DistrictReviews, DistrictSpecifics, DistrictHero.h1 одинаковые).
-
-### 3.3 Внутренняя перелинковка
-- ✅ InternalLinks: service → pest → pest+geo → district cross-links — работает.
-- ✅ Footer: ссылки на 3 вида услуг по округам, МО, блог.
-- ✅ ServiceDistricts: табы дезинфекция/дезинсекция/дератизация.
-- ⚠️ DistrictPage InternalLinks не передаёт `currentDistrict` — ссылки ведут на ЦАО/САО вместо текущего округа.
-
-### 3.4 Технически
-- ✅ `<html lang="ru">` — в index.html.
-- ✅ robots.txt — корректный, sitemap-index.
-- ✅ 404 page — noindex, nofollow.
-- ✅ Trailing slash в canonicals.
-- ⚠️ Blog пагинация — кнопка "Показать ещё" (JS, не URL-based) — нет duplicate URL issues, но нет rel="next/prev".
-
-**Оценка SEO: 75/100**
-
----
-
-## БЛОК 4. GEO-СЛОЙ
-
-### Согласованность
-- ✅ `/rajony/{slug}/` — 130+ районов с prepositional формами.
-- ✅ NCH pest+geo — корректная подстановка района в H1/title/description.
-- ✅ `/moscow-oblast/` → 14 городов × 4 услуги.
-- ✅ Breadcrumbs для гео-слоёв корректные.
-
-### Проблемы
-1. **Район-страницы округов (dezinsekciya-cao)**: DistrictHero.h1 НЕ адаптирован к serviceType — все 3 варианта показывают одинаковый H1 из `district.h1` (например, "Дезинфекция в ЦАО"). H1 про дезинсекцию и дератизацию отсутствует.
-2. **DistrictHero subtitle**: "Обслуживаем все районы..." — одинаковый текст для всех 3 услуг.
-3. **ServiceDistricts tabs**: 9 округов (без НАО, ТАО, ЗелАО), но seoRoutes генерит 12 × 3 = 36 страниц. Табы не покрывают все округа.
-4. **Footer links**: "Дезинсекция по округам" ведёт на `/uslugi/dezinsekciya-cao` — один конкретный округ, а не обзорную страницу. Пользователь может ожидать список.
-
-**Оценка GEO: 68/100**
-
----
-
-## БЛОК 5. UX / ФОРМЫ / НАВИГАЦИЯ
-
-### Формы
-- ✅ HeroCallbackForm: телефонная маска +7, валидация 11 цифр, согласие с privacy, toast ошибки/успех.
-- ✅ ServiceQuiz: пошаговый квиз, progress bar, финальная форма с телефоном.
-- ✅ Calculator: валидация площади, ошибки отображаются.
-- ✅ ReviewFormModal: отдельная форма отзывов.
-- ⚠️ Calculator slider range 30-200, но input позволяет 10-5000 — рассинхрон (minor).
-
-### Пагинация
-- Blog: "Показать ещё" кнопка (visibleCount += 30). Нет URL-based пагинации — нет risk дублей. ✅
-
-### Навигация
-- ✅ Header: dropdown для услуг, районов, МО.
-- ✅ Breadcrumbs: корректная иерархия на всех типах страниц.
-- ✅ 404: noindex + ссылки на популярные услуги.
-- ⚠️ Footer "Дезинсекция по округам" → ведёт на конкретный округ (cao), а не обзорную страницу.
-
-**Оценка UX: 82/100**
-
----
-
-## БЛОК 6. SSG / РЕНДЕР-БЕЗОПАСНОСТЬ
-
-### generateStaticParams (seoRoutes.ts)
-- ✅ `validateAllRoutes()` — fail-fast в CI (forbidden patterns + duplicates).
-- ✅ `validateRouteIntegrity()` — блокирует Object+Geo, pest-as-service, kroty leak.
-- ✅ Duplicate detection.
-- ✅ Dockerfile: test -f checks для marker pages, порог 500+ страниц.
-
-### Алёрты и защита
-- ✅ SSG schema isolation (homepage LD stripped for subpages).
-- ✅ deOptimizeBlogTitle — anti-cannibalization.
-- ⚠️ Нет централизованного error boundary компонента (ErrorBoundary) — runtime crash → белый экран.
-- ⚠️ ThreeSegmentRouteResolver проверяет только pest + neighborhood — если добавить новый тип (object+geo), нужен explicit block.
-
-**Оценка техники: 85/100**
+### Техническая устойчивость — было 85, теперь:
+- ErrorBoundary добавлен ✅ (+3)
+- **Остаточная проблема**: DistrictReviews `Math.random()` в JSX — hydration mismatch при SSG.
+- **Остаточная проблема**: DistrictCases дата `['Ноябрь', 'Октябрь', 'Сентябрь', 'Декабрь'][idx % 4] 2025` — hardcoded 2025, уже 2026.
+- **Оценка: 90/100** (было 85)
 
 ---
 
 ## БЛОК 7. СВОДНАЯ ОЦЕНКА
 
-| Направление | Оценка |
-|-------------|--------|
-| Семантика и LLM-однозначность | 72 |
-| SEO-онпейдж | 75 |
-| GEO-слой | 68 |
-| UX (формы, навигация, пагинация) | 82 |
-| Техническая устойчивость | 85 |
+| Направление | Прошлая | Текущая |
+|-------------|---------|---------|
+| Семантика и LLM-однозначность | 72 | 85 |
+| SEO-онпейдж | 75 | 86 |
+| GEO-слой | 68 | 88 |
+| UX | 82 | 88 |
+| Техническая устойчивость | 85 | 90 |
 
-**Формула**: `0.3 × 72 + 0.3 × 75 + 0.2 × 68 + 0.1 × 82 + 0.1 × 85`
-= `21.6 + 22.5 + 13.6 + 8.2 + 8.5` = **74**
+**Формула**: `0.3 × 85 + 0.3 × 86 + 0.2 × 88 + 0.1 × 88 + 0.1 × 90`
+= `25.5 + 25.8 + 17.6 + 8.8 + 9.0` = **86.7 ≈ 87**
 
-### **Оценка сайта: 74 из 100**
-
----
-
-## TOP-10 ПОПРАВОК (по убыванию эффекта)
-
-| # | Где | Что изменить | Зачем | Эффект |
-|---|-----|-------------|-------|--------|
-| 1 | `DistrictHero.tsx` | Передать `serviceType` prop, адаптировать H1 под "Дезинсекция в ЦАО" / "Дератизация в ЦАО" | Сейчас 36 страниц с 12 уникальными H1 вместо 36. Каннибализация. | **High** — убирает дубли H1, +15-20% к гео-SEO |
-| 2 | `DistrictPricing.tsx` | Принять serviceType, адаптировать базовые цены (1200 дезинсекция, 1400 дератизация vs 1000 дезинфекция) | Цены не соответствуют услуге. Дублирующийся контент. | **High** — уникализация 36 страниц |
-| 3 | `DistrictCases.tsx`, `DistrictReviews.tsx` | Адаптировать кейсы/отзывы к serviceType (фильтровать по типу услуги) | Одинаковый контент на 3 URL → thin content risk | **High** — уникализация контента |
-| 4 | `ServiceObjectPage.tsx` | Добавить больше текстового контента (600+ слов): секции "Как мы работаем", "Почему мы" | Object pages < 600 слов — thin content | **Medium** — SEO для СЧ запросов |
-| 5 | `DistrictPage.tsx` строка 354 | Передать `currentDistrict={district.id}` в InternalLinks | Ссылки ведут на ЦАО/САО вместо текущего округа | **Medium** — правильная перелинковка |
-| 6 | `ServiceDistricts.tsx` | Добавить НАО, ТАО, ЗелАО в табы округов (сейчас только 9 из 12) | 3 округа без ссылок из tabs — хуже индексация | **Medium** — полнота GEO покрытия |
-| 7 | `Footer.tsx` строки 70-71 | Изменить ссылки "Дезинсекция по округам" / "Дератизация по округам" на обзорную страницу или создать фильтрованные обзоры | Ведут на конкретный ЦАО, а не на список | **Low-Medium** — UX + SEO |
-| 8 | `App.tsx` | Добавить React Error Boundary вокруг Routes | Runtime crash = белый экран без fallback | **Medium** — устойчивость |
-| 9 | B2B blog articles | Наращивать контент до 1500+ слов | B2B статьи ~600-800 слов — thin content для longreads | **Low** — quality signal |
-| 10 | `DistrictHero.tsx` subtitle | Адаптировать "Обслуживаем все районы..." к конкретной услуге: "Проведём дезинсекцию во всех районах..." | Дублирующийся подзаголовок на 3 URL | **Low** — уникализация |
+### **Оценка сайта: 87 из 100** (было 74)
 
 ---
 
-### Резюме
+## Оставшиеся проблемы до 100/100 — TOP-10 поправок
 
-Архитектура сайта мощная: fail-fast SSG, route integrity validation, anti-cannibalization blog de-optimization, 3-tier NCH модель. Основная проблема — **24 новые страницы дезинсекции/дератизации по округам получают неадаптированный контент** (H1, цены, кейсы одинаковые с дезинфекцией). Исправление пунктов 1-3 поднимет оценку до ~82-85.
+| # | Где | Что | Зачем | Баллы |
+|---|-----|-----|-------|-------|
+| 1 | `DistrictSpecifics.tsx` | Адаптировать описания specifics к serviceType (добавить SERVICE_SPECIFIC_DESCRIPTIONS для каждой услуги) | Сейчас описания "бизнес-центров", "парков" одинаковы для 3 URL — дубль контента | +3 |
+| 2 | `DistrictPage.tsx` строки 297-312 | Адаптировать секцию "Мы уже работали" — текст "провели обработку" → "провели {svc.nameGenitive}" | Дубль текста на 3 URL | +1 |
+| 3 | `DistrictPage.tsx` строки 315-327 | Адаптировать FAQ к serviceType — генерировать вопросы с упоминанием конкретной услуги | FAQ одинаковый для 3 URL — значительный дубль контента | +3 |
+| 4 | `DistrictReviews.tsx` строка 190 | Заменить `Math.random()` на детерминированное значение (напр. `district.cases.length * 7 + 47`) | SSR hydration mismatch + непредсказуемый UI | +2 |
+| 5 | `DistrictCases.tsx` строка 97 | Заменить `2025` на `2026` или dynamic year | Устаревшая дата | +1 |
+| 6 | `ServiceObjectPage.tsx` | Добавить секции "Этапы обработки" (5 шагов), "Почему мы" (4 преимущества), "Типичные проблемы" — довести до 600+ слов | Thin content risk | +3 |
+| 7 | B2B blog articles | Нарастить контент до 1500+ слов | Thin content для longreads | +1 |
+| 8 | `Calculator.tsx` | Синхронизировать input min с slider min (30) | Рассинхрон slider/input | +0.5 |
+| 9 | `DistrictPage.tsx` строки 270-295 | Адаптировать секцию "Популярные объекты" к serviceType — разные объекты для дезинсекции vs дератизации | Одинаковые объекты для 3 URL | +1 |
+| 10 | `DistrictPage.tsx` строки 249-268 | Адаптировать "Услуги в {district}" — подсветить текущую услугу, изменить формулировку | Minor UX improvement | +0.5 |
+
+### Реализация для достижения 100/100
+
+Исправления 1-5 дают **+10 баллов** (87→97). Исправления 6-10 дают оставшиеся **+3 балла**.
+
+**Файлы для изменения:**
+1. `src/components/district/DistrictSpecifics.tsx` — добавить serviceType-aware описания
+2. `src/pages/DistrictPage.tsx` — адаптировать "Работали на улицах", FAQ, объекты к serviceType
+3. `src/components/district/DistrictReviews.tsx` — убрать Math.random(), обновить год
+4. `src/components/district/DistrictCases.tsx` — обновить год 2025→2026
+5. `src/pages/ServiceObjectPage.tsx` — добавить секции для увеличения контента
+6. `src/components/Calculator.tsx` — синхронизировать min input=30
 
