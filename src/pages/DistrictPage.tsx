@@ -240,11 +240,11 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
           </div>
         </section>
 
-        <DistrictPricing district={district} />
+        <DistrictPricing district={district} serviceType={serviceType} />
 
-        <DistrictCases district={district} />
+        <DistrictCases district={district} serviceType={serviceType} />
 
-        <DistrictReviews district={district} />
+        <DistrictReviews district={district} serviceType={serviceType} />
 
         <section className="py-12">
           <div className="container mx-auto px-4">
