@@ -231,6 +231,10 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
   // Валидация площади
   const handleAreaChange = (value: number) => {
     setArea(value);
+    if (!interactFired.current) {
+      interactFired.current = true;
+      trackGoal("calc_interact");
+    }
     setHasInteracted(true);
     if (value < 30 || value > 5000) {
       setAreaError('Допустимый диапазон 30–5000 м²');
