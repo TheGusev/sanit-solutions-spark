@@ -149,8 +149,8 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
   return (
     <>
       <Helmet>
-        <title>{district.metaTitle}</title>
-        <meta name="description" content={district.metaDescription} />
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
         <link rel="canonical" href={canonicalUrl} />
         <link rel="alternate" hrefLang="ru" href={canonicalUrl} />
         <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
@@ -161,7 +161,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
 
         <meta
           property="og:title"
-          content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
+          content={`${svc.name} в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
         />
         <meta property="og:description" content={district.metaDescription} />
         <meta property="og:url" content={canonicalUrl} />
