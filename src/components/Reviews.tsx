@@ -119,13 +119,12 @@ const Reviews = () => {
             </div>
           </CollapsibleContent>
         </Collapsible>
-      </div>
 
       <ReviewFormModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
       />
-    </section>
+    </>
   );
 };
 
