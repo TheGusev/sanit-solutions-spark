@@ -40,11 +40,17 @@ function getDistance(a: [number, number], b: [number, number]): number {
   return Math.sqrt(dlat * dlat + dlng * dlng);
 }
 
+const okrugIds = ['cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao'];
+const serviceKeys = ['dezinfekciya', 'dezinsekciya', 'deratizaciya'] as const;
+const serviceNames: Record<string, string> = { dezinfekciya: 'Дезинфекция', dezinsekciya: 'Дезинсекция', deratizaciya: 'Дератизация' };
+const okrugNames: Record<string, string> = { cao: 'ЦАО', sao: 'САО', svao: 'СВАО', vao: 'ВАО', yuvao: 'ЮВАО', yao: 'ЮАО', yzao: 'ЮЗАО', zao: 'ЗАО', szao: 'СЗАО' };
+
 export function InternalLinks({
   currentService,
   currentPest,
   currentNeighborhood,
   currentCity,
+  currentDistrict,
   variant = 'grid',
   maxLinks = 12,
   title = 'Смотрите также'
