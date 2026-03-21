@@ -95,9 +95,9 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
   const serviceSchema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    serviceType: 'Дезинфекция',
-    name: `Дезинфекция в ${district.name} Москвы`,
-    description: district.metaDescription,
+    serviceType: svc.name,
+    name: `${svc.name} в ${district.name} Москвы`,
+    description: pageDescription,
     provider: {
       '@type': 'LocalBusiness',
       name: SEO_CONFIG.companyName,
@@ -108,7 +108,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
     },
     offers: {
       '@type': 'Offer',
-      price: 1000 + district.surcharge,
+      price: svc.basePrice + district.surcharge,
       priceCurrency: 'RUB',
     },
   };
