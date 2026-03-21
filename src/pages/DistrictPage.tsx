@@ -248,21 +248,27 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
 
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <SectionHeading label="УСЛУГИ" title={`Услуги ${svc.nameGenitive} в ${district.name}`} align="left" />
+            <SectionHeading label="УСЛУГИ" title={`Все услуги в ${district.name}`} align="left" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {services.map((service) => (
-                <Link key={service.href} to={service.href}>
-                  <Card className="h-full hover:shadow-md transition-shadow hover:-translate-y-1">
-                    <CardContent className="p-6 text-center">
-                      <h3 className="font-bold text-lg mb-2">{service.title}</h3>
-                      <p className="text-2xl font-bold text-primary">от {service.price}₽</p>
-                      {district.surcharge > 0 && (
-                        <p className="text-xs text-muted-foreground mt-1">включая выезд</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+              {services.map((service) => {
+                const isCurrentService = service.href.includes(serviceType);
+                return (
+                  <Link key={service.href} to={isCurrentService ? service.href : service.href}>
+                    <Card className={`h-full hover:shadow-md transition-shadow hover:-translate-y-1 ${isCurrentService ? 'ring-2 ring-primary' : ''}`}>
+                      <CardContent className="p-6 text-center">
+                        <h3 className="font-bold text-lg mb-2">{service.title}</h3>
+                        <p className="text-2xl font-bold text-primary">от {service.price}₽</p>
+                        {isCurrentService && (
+                          <p className="text-xs text-primary font-medium mt-1">Текущая услуга</p>
+                        )}
+                        {!isCurrentService && district.surcharge > 0 && (
+                          <p className="text-xs text-muted-foreground mt-1">включая выезд</p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -299,7 +305,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
             <div className="bg-muted/50 rounded-2xl p-6 md:p-8">
               <h2 className="text-2xl font-bold mb-4">Мы уже работали на этих улицах</h2>
               <p className="text-muted-foreground mb-4">
-                Вот некоторые адреса в {district.name}, где мы успешно провели обработку:
+                Вот некоторые адреса в {district.name}, где мы успешно провели {svc.nameGenitive.replace('ии', 'ию').replace('ции', 'цию')}:
               </p>
               <div className="flex flex-wrap gap-2">
                 {district.workedStreets.map((street, idx) => (
@@ -314,9 +320,22 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
 
         <section className="py-12 bg-muted/30">
           <div className="container mx-auto px-4">
-            <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title={`Частые вопросы про ${district.name}`} align="left" />
+            <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title={`Частые вопросы о ${svc.nameGenitive} в ${district.name}`} align="left" />
             <Accordion type="single" collapsible className="max-w-3xl">
-              {district.faq.map((item, idx) => (
+              {/* Service-adapted FAQ */}
+              <AccordionItem value="faq-svc-0">
+                <AccordionTrigger className="text-left">Сколько стоит {svc.nameGenitive.replace('ии', 'ия').replace('ции', 'ция').toLowerCase()} в {district.name}?</AccordionTrigger>
+                <AccordionContent>Стоимость {svc.nameGenitive} в {district.name} начинается от {svc.basePrice + district.surcharge}₽. Точная цена зависит от площади, типа объекта и степени заражения. Выезд и диагностика бесплатно.</AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-svc-1">
+                <AccordionTrigger className="text-left">Как быстро приедет специалист по {svc.nameGenitive} в {district.name}?</AccordionTrigger>
+                <AccordionContent>Среднее время выезда в {district.name} — {district.responseTime}. Работаем круглосуточно, без выходных.</AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="faq-svc-2">
+                <AccordionTrigger className="text-left">Даёте ли гарантию на {svc.nameGenitive.replace('ии', 'ию').replace('ции', 'цию').toLowerCase()}?</AccordionTrigger>
+                <AccordionContent>Да, гарантия до 3 лет. Если проблема вернётся в гарантийный период — повторная обработка бесплатно.</AccordionContent>
+              </AccordionItem>
+              {district.faq.slice(0, 3).map((item, idx) => (
                 <AccordionItem key={idx} value={`faq-${idx}`}>
                   <AccordionTrigger className="text-left">{item.question}</AccordionTrigger>
                   <AccordionContent>{item.answer}</AccordionContent>

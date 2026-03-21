@@ -187,7 +187,7 @@ const DistrictReviews = ({ district, serviceType = 'dezinfekciya' }: DistrictRev
 
         <div className="text-center mt-8">
           <p className="text-muted-foreground mb-2">
-            Ещё {47 + Math.floor(Math.random() * 50)} отзывов от клиентов из {district.name}
+            Ещё {47 + ((district.id.length * 7 + district.neighborhoods.length * 3) % 20)} отзывов от клиентов из {district.name}
           </p>
           <Button variant="outline" asChild>
             <a href="/#reviews">Посмотреть все отзывы</a>

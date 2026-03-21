@@ -230,8 +230,8 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
   const handleAreaChange = (value: number) => {
     setArea(value);
     setHasInteracted(true);
-    if (value < 10 || value > 5000) {
-      setAreaError('Допустимый диапазон 10–5000 м²');
+    if (value < 30 || value > 5000) {
+      setAreaError('Допустимый диапазон 30–5000 м²');
       setAreaValid(false);
     } else {
       setAreaError(null);
@@ -465,7 +465,7 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
                       value={area}
                       onChange={(e) => handleAreaChange(Number(e.target.value))}
                       className={`w-24 ${areaError ? 'border-destructive' : ''}`}
-                      min={10}
+                      min={30}
                       max={5000}
                     />
                     <span className="text-sm text-muted-foreground">м²</span>
