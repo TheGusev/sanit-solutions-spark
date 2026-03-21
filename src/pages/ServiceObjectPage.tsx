@@ -228,7 +228,7 @@ export default function ServiceObjectPage() {
         
         <AnimatedSection className="py-10 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-xl md:text-2xl font-bold mb-3">Закажите {serviceName.toLowerCase()} {objectType.genitive}</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-3">Закажите {serviceAcc} {objectType.genitive}</h2>
             <p className="opacity-90 mb-4">Выезд за 30 минут. Гарантия до 3 лет.</p>
             <Button size="lg" variant="secondary" asChild><a href={`tel:${SEO_CONFIG.phoneClean}`}><Phone className="w-5 h-5 mr-2" />{SEO_CONFIG.phone}</a></Button>
           </div>
