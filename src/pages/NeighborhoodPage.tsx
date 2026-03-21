@@ -98,7 +98,7 @@ const NeighborhoodPage = () => {
     name: `Дезинфекция ${locationText}`,
     description: neighborhood.metaDescription,
     url: `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`,
-    price: 1000 + neighborhood.surcharge
+    price: 1000
   });
 
   // Breadcrumb items for component
