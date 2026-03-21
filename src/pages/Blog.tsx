@@ -182,7 +182,7 @@ const Blog = () => {
       </section>
 
       {/* Sort Controls — segmented pills */}
-      <section className="py-4 px-3 md:px-4">
+      <section ref={sortRef} className="py-4 px-3 md:px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="inline-flex items-center gap-0.5 bg-muted/40 dark:bg-[hsl(240,10%,16%)] dark:border dark:border-border/50 rounded-xl p-1">
             {sortOptions.map(opt => (
