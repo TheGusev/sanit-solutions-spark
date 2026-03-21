@@ -1,16 +1,18 @@
 
 
-## Plan: Auto-detect device theme on mobile
+## Plan: Add rotating images to "Почему мы" section
 
-### Problem
-Currently the site defaults to `light` theme regardless of user's device settings. On mobile, users expect the site to match their system theme (dark/light).
+### What changes
 
-### Solution
-Change the `ThemeProvider` in `App.tsx` from `defaultTheme="light"` to `defaultTheme="system"` — this will use the device's preferred color scheme via `prefers-color-scheme` media query. This applies to both mobile and desktop on first visit, which is standard UX behavior.
+The "Почему мы" section currently has a single static image (`/images/work/office-cleaning.png`). Add the uploaded photo as a second image and implement crossfade rotation (every 6 seconds), matching the Hero section's pattern.
 
 ### Steps
 
-1. **Update `src/App.tsx`** — change `defaultTheme="light"` to `defaultTheme="system"` in the `ThemeProvider` component.
+1. **Copy uploaded image** to `public/images/work/why-us-documents.jpg`
 
-One-line change, no other files affected.
+2. **Update `src/components/WhyUsExtended.tsx`**:
+   - Add a `useState` + `useEffect` timer for image index rotation (same pattern as Hero)
+   - Define an array of 2 images: existing `office-cleaning.png` + new `why-us-documents.jpg`
+   - Render both `<img>` tags stacked with `absolute inset-0`, toggling opacity via the index state
+   - Crossfade with `transition-opacity duration-1000`
 
