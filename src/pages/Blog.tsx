@@ -163,7 +163,7 @@ const Blog = () => {
                   key={category}
                   role="tab"
                   aria-selected={isActive}
-                  onClick={() => { setSelectedCategory(category); setVisibleCount(30); }}
+                  onClick={() => { setSelectedCategory(category); setVisibleCount(30); setTimeout(() => sortRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}
                   className={`
                     folder-card flex items-center gap-3 px-4 py-3 md:py-3.5 text-left cursor-pointer
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
