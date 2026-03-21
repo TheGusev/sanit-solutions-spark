@@ -175,7 +175,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
           name="twitter:title"
           content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
         />
-        <meta name="twitter:description" content={district.metaDescription} />
+        <meta name="twitter:description" content={pageDescription} />
         <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
 
         <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
