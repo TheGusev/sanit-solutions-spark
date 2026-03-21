@@ -52,15 +52,15 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
   // 2. Сервисы, другие округа, канонический URL
   // ---------------------------------------------------------------------------
   const services = [
-    { title: 'Дезинфекция', href: '/uslugi/dezinfekciya', price: 1000 + district.surcharge },
-    { title: 'Дезинсекция', href: '/uslugi/dezinsekciya', price: 1200 + district.surcharge },
-    { title: 'Дератизация', href: '/uslugi/deratizaciya', price: 1400 + district.surcharge },
-    { title: 'Озонирование', href: '/uslugi/ozonirovanie', price: 1500 + district.surcharge },
+    { title: 'Дезинфекция', href: '/uslugi/dezinfekciya', price: 1000 },
+    { title: 'Дезинсекция', href: '/uslugi/dezinsekciya', price: 1200 },
+    { title: 'Дератизация', href: '/uslugi/deratizaciya', price: 1400 },
+    { title: 'Озонирование', href: '/uslugi/ozonirovanie', price: 1500 },
   ];
 
   const otherDistricts = districtPages.filter((d) => d.id !== district.id).slice(0, 4);
   const canonicalUrl = `${SEO_CONFIG.baseUrl}/uslugi/${serviceType}-${district.id}/`;
-  const pageTitle = `${svc.name} в ${district.name} Москвы — выезд за ${district.responseTime} | от ${svc.basePrice + district.surcharge}₽`;
+  const pageTitle = `${svc.name} в ${district.name} Москвы — выезд за ${district.responseTime} | от ${svc.basePrice}₽`;
   const pageDescription = `Профессиональная ${svc.nameGenitive} в ${district.fullName} Москвы. Выезд ${district.responseTime}. Гарантия результата.`;
 
   // ---------------------------------------------------------------------------
@@ -88,7 +88,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
       '@type': 'AdministrativeArea',
       name: `${district.fullName}, Москва`,
     },
-    priceRange: `от ${svc.basePrice + district.surcharge}₽`,
+    priceRange: `от ${svc.basePrice}₽`,
     openingHours: 'Mo-Su 00:00-23:59',
   };
 
@@ -108,7 +108,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
     },
     offers: {
       '@type': 'Offer',
-      price: svc.basePrice + district.surcharge,
+      price: svc.basePrice,
       priceCurrency: 'RUB',
     },
   };
@@ -268,9 +268,6 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
                         <p className="text-2xl font-bold text-primary">от {service.price}₽</p>
                         {isCurrentService && (
                           <p className="text-xs text-primary font-medium mt-1">Текущая услуга</p>
-                        )}
-                        {!isCurrentService && district.surcharge > 0 && (
-                          <p className="text-xs text-muted-foreground mt-1">включая выезд</p>
                         )}
                       </CardContent>
                     </Card>

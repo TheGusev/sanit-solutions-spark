@@ -28,8 +28,7 @@ const DistrictPricing = ({ district, serviceType = 'dezinfekciya' }: DistrictPri
     { id: 'cafes', label: 'Кафе / Рестораны' },
   ];
 
-  const surcharge = district.surcharge;
-  const base = (price: number) => Math.round(price * svc.baseMultiplier) + surcharge;
+  const base = (price: number) => Math.round(price * svc.baseMultiplier);
 
   const apartmentPrices = [
     { type: '1-комнатная', area: '30-40 м²', price: base(1000), time: '1-1.5 ч' },
