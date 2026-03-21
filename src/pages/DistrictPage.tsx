@@ -191,9 +191,9 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
           <Breadcrumbs items={breadcrumbItems} />
         </div>
 
-        <DistrictHero district={district} onCalculatorOpen={() => setIsCalculatorOpen(true)} />
+        <DistrictHero district={district} serviceType={serviceType} onCalculatorOpen={() => setIsCalculatorOpen(true)} />
 
-        <DistrictSpecifics district={district} />
+        <DistrictSpecifics district={district} serviceType={serviceType} />
 
         <section className="py-12">
           <div className="container mx-auto px-4">
@@ -240,11 +240,11 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
           </div>
         </section>
 
-        <DistrictPricing district={district} />
+        <DistrictPricing district={district} serviceType={serviceType} />
 
-        <DistrictCases district={district} />
+        <DistrictCases district={district} serviceType={serviceType} />
 
-        <DistrictReviews district={district} />
+        <DistrictReviews district={district} serviceType={serviceType} />
 
         <section className="py-12">
           <div className="container mx-auto px-4">
@@ -326,7 +326,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
           </div>
         </section>
 
-        <DistrictCTA district={district} />
+        <DistrictCTA district={district} serviceType={serviceType} />
 
         <section className="py-12">
           <div className="container mx-auto px-4">
@@ -351,7 +351,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
           </div>
         </section>
 
-        <InternalLinks currentService={svc.currentService} title="Другие услуги в Москве" maxLinks={12} />
+        <InternalLinks currentService={svc.currentService} currentDistrict={district.id} title="Другие услуги в Москве" maxLinks={12} />
       </main>
 
       <Footer />

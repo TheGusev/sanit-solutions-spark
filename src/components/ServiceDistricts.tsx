@@ -50,6 +50,9 @@ const okrugs = [
   { id: 'yzao', name: 'ЮЗАО', fullName: 'Юго-Западный' },
   { id: 'zao', name: 'ЗАО', fullName: 'Западный' },
   { id: 'szao', name: 'СЗАО', fullName: 'Северо-Западный' },
+  { id: 'nao', name: 'НАО', fullName: 'Новомосковский' },
+  { id: 'tao', name: 'ТАО', fullName: 'Троицкий' },
+  { id: 'zelao', name: 'ЗелАО', fullName: 'Зеленоградский' },
 ];
 
 const serviceTabs = [
@@ -87,7 +90,7 @@ const ServiceDistricts = () => {
             </TabsList>
             {serviceTabs.map((tab) => (
               <TabsContent key={tab.key} value={tab.key}>
-                <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
                   {okrugs.map((okrug) => (
                     <Link key={okrug.id} to={`/uslugi/${tab.key}-${okrug.id}`}>
                       <Card className="h-full hover:shadow-md transition-all hover:-translate-y-0.5 border hover:border-primary/50">

@@ -10,6 +10,7 @@ import { TrafficProvider } from "@/contexts/TrafficContext";
 import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
 import { CookieBanner } from "@/components/CookieBanner";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Главная загружается сразу
 import Index from "./pages/Index";
@@ -72,6 +73,7 @@ const App = () => (
               <ScrollToTop />
               <CookieBanner />
               <Suspense fallback={<PageLoader />}>
+              <ErrorBoundary>
                 <Routes>
                   {/* Главная и статичные */}
                   <Route path="/" element={<Index />} />
@@ -129,6 +131,7 @@ const App = () => (
                   {/* 404 */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+              </ErrorBoundary>
               </Suspense>
             </TrafficProvider>
           </BrowserRouter>

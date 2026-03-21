@@ -1,12 +1,20 @@
-import { MapPin, Check, Building, Home, UtensilsCrossed } from 'lucide-react';
+import { MapPin, Check, Building, Home, UtensilsCrossed, Bug, MousePointer2 } from 'lucide-react';
 import { DistrictPage } from '@/data/districtPages';
+
+type ServiceType = 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya';
+
+const SERVICE_CASE_LABELS: Record<ServiceType, string> = {
+  dezinfekciya: 'дезинфекции',
+  dezinsekciya: 'дезинсекции',
+  deratizaciya: 'дератизации',
+};
 
 interface DistrictCasesProps {
   district: DistrictPage;
+  serviceType?: ServiceType;
 }
 
-const DistrictCases = ({ district }: DistrictCasesProps) => {
-  // Map case to type for icon
+const DistrictCases = ({ district, serviceType = 'dezinfekciya' }: DistrictCasesProps) => {
   const getCaseType = (title: string): 'business' | 'home' | 'restaurant' => {
     const lowerTitle = title.toLowerCase();
     if (lowerTitle.includes('ресторан') || lowerTitle.includes('кафе') || lowerTitle.includes('кофе')) {
@@ -38,7 +46,7 @@ const DistrictCases = ({ district }: DistrictCasesProps) => {
     <section className="py-12">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">
-          Наши работы в {district.name}
+          Наши работы по {SERVICE_CASE_LABELS[serviceType]} в {district.name}
         </h2>
         <p className="text-muted-foreground mb-8">
           Примеры реальных объектов, которые мы обслужили
@@ -54,13 +62,11 @@ const DistrictCases = ({ district }: DistrictCasesProps) => {
                 key={idx}
                 className="group bg-background rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all"
               >
-                {/* Image placeholder with gradient */}
                 <div className="relative h-48 bg-gradient-to-br from-primary/20 to-green-500/20 overflow-hidden">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <TypeIcon className="w-16 h-16 text-primary/30 group-hover:scale-110 transition-transform" />
                   </div>
                   
-                  {/* Type label */}
                   <div className="absolute top-4 left-4">
                     <span className="inline-block px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-full uppercase tracking-wide">
                       {getTypeLabel(caseType)}
@@ -68,7 +74,6 @@ const DistrictCases = ({ district }: DistrictCasesProps) => {
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="p-6">
                   <h3 className="font-bold text-lg mb-2">{caseItem.title}</h3>
                   
