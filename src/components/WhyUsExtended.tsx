@@ -7,6 +7,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useState, useEffect } from "react";
+
+const WHY_US_IMAGES = [
+  '/images/work/office-cleaning.png',
+  '/images/work/why-us-documents.jpg',
+];
 
 const sections = [
   {
