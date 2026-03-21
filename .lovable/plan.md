@@ -1,56 +1,33 @@
 
 
-## Plan: Create geo-pages for dezinsekciya and deratizaciya by Moscow districts
+## Plan: Add dezinsekciya & deratizaciya district links to ServiceDistricts and Footer
 
-### What we're building
-18 new pages: 12 for dezinsekciya (one per okrug) + 6 for deratizaciya (subset of okrugs where rodent issues are most relevant: ЦАО, САО, СВАО, ВАО, ЮВАО, ЮАО, ЮЗАО, ЗАО, СЗАО + НАО, ТАО, ЗелАО = all 12).
+### Changes
 
-Total: **24 new pages** (12 dezinsekciya + 12 deratizaciya).
+**1. `src/components/ServiceDistricts.tsx`** — expand `adminDistricts` to include all 3 services and render them as tabbed/grouped rows:
+- Replace the single `adminDistricts` array with 3 service groups (dezinfekciya, dezinsekciya, deratizaciya)
+- Each okrug card shows 3 links (one per service) or use a tabbed UI with 3 tabs: Дезинфекция / Дезинсекция / Дератизация
+- Each tab renders the same 9 okrug grid but with service-specific slugs
 
-URL pattern: `/uslugi/dezinsekciya-cao/`, `/uslugi/deratizaciya-cao/`, etc. — same as existing `/uslugi/dezinfekciya-cao/`.
+**2. `src/components/Footer.tsx`** — add a compact "По округам" subsection under the existing "Информация" column with links to the 3 overview-style district pages:
+- Add 2 new links after the existing "По округам Москвы" link:
+  - `• Дезинсекция по округам` → `/uslugi/po-okrugam-moskvy` (same page, or we add anchors)
+  - Actually simpler: add direct links to a few key district pages for dezinsekciya and deratizaciya (e.g., dezinsekciya-cao, deratizaciya-cao) in the existing footer structure
 
-### Approach
-Rather than duplicating all district data 3x, make `DistrictPage` **service-aware** — it receives a `serviceType` prop and adapts titles, descriptions, schema, and breadcrumbs accordingly. The existing `districtPages` data stays as-is (neighborhoods, cases, FAQ are district-specific, not service-specific).
+### Refined approach
 
-### Steps
+Keep it simple — two changes:
 
-1. **`src/pages/ServicePage.tsx`** (lines 58-78) — extend the district detection to handle `dezinsekciya-*` and `deratizaciya-*` prefixes:
-   ```
-   // Check for any service-district slug pattern
-   const serviceDistrictMatch = slug?.match(/^(dezinfekciya|dezinsekciya|deratizaciya)-(.+)$/);
-   if (serviceDistrictMatch) {
-     const [, servicePrefix, districtId] = serviceDistrictMatch;
-     const district = getDistrictById(districtId);
-     if (district) return <DistrictPage districtId={districtId} serviceType={servicePrefix} />;
-   }
-   ```
+**1. `src/components/ServiceDistricts.tsx`** — add Tabs (Дезинфекция / Дезинсекция / Дератизация) above the admin districts grid. Each tab shows the same 9 okrugs with appropriate service prefix in the URL. Use shadcn Tabs component.
 
-2. **`src/pages/DistrictPage.tsx`** — add `serviceType` prop (default `'dezinfekciya'`). Update all hardcoded "Дезинфекция" strings to use a service name map:
-   - `serviceType='dezinsekciya'` → "Дезинсекция", base price 1200₽
-   - `serviceType='deratizaciya'` → "Дератизация", base price 1400₽
-   - `serviceType='dezinfekciya'` → "Дезинфекция", base price 1000₽
-   - Update: `metaTitle`, `h1`, `canonicalUrl`, breadcrumbs, JSON-LD schemas, `og:title`, InternalLinks `currentService`
-   - The `district.slug` for canonical becomes `${serviceType}-${district.id}`
+**2. `src/components/Footer.tsx`** — under "По округам Москвы" add two new lines:
+```
+• Дезинсекция по округам → /uslugi/dezinsekciya-cao
+• Дератизация по округам → /uslugi/deratizaciya-cao
+```
 
-3. **`src/lib/seoRoutes.ts`** (line 280-288) — add dezinsekciya and deratizaciya district routes:
-   ```ts
-   ['dezinfekciya', 'dezinsekciya', 'deratizaciya'].forEach(service => {
-     districtSlugs.forEach(id => {
-       routes.push({ path: `/uslugi/${service}-${id}/`, ... });
-     });
-   });
-   ```
-
-4. **`src/pages/DistrictsOverview.tsx`** — update the district cards to show links to all 3 service variants (dezinfekciya, dezinsekciya, deratizaciya) per district.
-
-5. **Static HTML files** — generate `public/uslugi/dezinsekciya-{id}/index.html` and `public/uslugi/deratizaciya-{id}/index.html` for all 12 okrugs (24 files total) following the same minimal SSG pattern as existing `dezinfekciya-*` files.
-
-### No data duplication
-All 24 new pages reuse the same `districtPages` data — only the service label, prices, and SEO metadata change dynamically based on `serviceType`.
-
-### SSG sync (3-way)
-- `seoRoutes.ts` ✓ (step 3)
-- `App.tsx` — no change needed, already handled by `/uslugi/:slug` → `ServicePage`
-- `AppSSR.tsx` — no change needed (same routing)
-- Static HTML files ✓ (step 5)
+### Technical details
+- `ServiceDistricts.tsx`: Extract okrug IDs (`cao`, `sao`, etc.) and generate slugs dynamically: `${service}-${id}`
+- Tabs component from `@/components/ui/tabs`
+- No new data files needed
 
