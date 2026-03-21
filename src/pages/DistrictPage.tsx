@@ -326,7 +326,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
           </div>
         </section>
 
-        <DistrictCTA district={district} />
+        <DistrictCTA district={district} serviceType={serviceType} />
 
         <section className="py-12">
           <div className="container mx-auto px-4">
