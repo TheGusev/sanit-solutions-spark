@@ -1,31 +1,45 @@
 
 
-# Исправление замечаний в DistrictPage
+# Улучшение страницы «Борьба с кротами» — генерация фото и визуальная переработка
 
-## Найденные проблемы
+## Текущее состояние
 
-### 1. Surcharge в ценах (не убран при предыдущей правке)
-- **L55-58**: `price: 1000 + district.surcharge` — убрать surcharge из всех 4 услуг
-- **L63**: `от ${svc.basePrice + district.surcharge}₽` в pageTitle — убрать surcharge
-- **L91**: `priceRange: от ${svc.basePrice + district.surcharge}₽` в JSON-LD — убрать
-- **L107**: `price: svc.basePrice + district.surcharge` в serviceSchema — убрать
-- **L272-274**: `{!isCurrentService && district.surcharge > 0 && ...}` блок «включая выезд» — удалить
+Страница `/uslugi/borba-s-krotami` использует `ServicePage.tsx` — общий шаблон для всех услуг. Hero-фоном служит `/images/front/farm-countryside.png` (блёклое фото фермы). Единственное фото крота — `/images/pests/mole.png`. Страница выглядит шаблонно и не передаёт специфику уличной услуги.
 
-### 2. Surcharge в DistrictPricing.tsx
-- **L31-32**: `const surcharge = district.surcharge; const base = ... + surcharge` — убрать surcharge из расчёта
+## Что сделаем
 
-### 3. popularObjects не адаптированы под serviceType
-- **L290-315**: Секция «Популярные объекты» показывает одинаковые `district.popularObjects` для всех услуг. `SERVICE_OBJECT_NOTES` уже даёт разные подписи, но заголовок секции использует `svc.name` — это корректно. Объекты сами по себе (квартиры, офисы, рестораны) универсальны для всех услуг — **это нормально**, дополнительная адаптация не нужна.
+### 1. Генерация 3 AI-изображений
 
-## Файлы и правки
+Используем Nano banana pro (`google/gemini-3-pro-image-preview`) через Edge Function для создания:
 
-### `src/pages/DistrictPage.tsx` (5 точечных правок)
-1. L55-58: убрать `+ district.surcharge` из 4 цен
-2. L63: убрать `+ district.surcharge` из pageTitle
-3. L91: убрать `+ district.surcharge` из priceRange
-4. L107: убрать `+ district.surcharge` из serviceSchema offers
-5. L272-274: удалить блок «включая выезд»
+| # | Описание | Назначение | Файл |
+|---|----------|-----------|------|
+| 1 | Красивый зелёный газон с кротовинами, садовый участок, коттедж на фоне, утреннее освещение | Hero-фон | `/images/services/mole-hero.png` |
+| 2 | Специалист устанавливает ловушку в кротовый ход на ухоженном участке | Секция «Методы» | `/images/services/mole-work.png` |
+| 3 | Идеальный газон после обработки, барьерная сетка в разрезе земли | Секция «Результат» | `/images/services/mole-result.png` |
 
-### `src/components/district/DistrictPricing.tsx` (1 правка)
-1. L31-32: убрать surcharge из функции `base()`
+Изображения генерируются скриптом через AI gateway, сохраняются в `public/images/services/`.
+
+### 2. Обновление данных услуги
+
+**Файл: `src/data/services.ts`** (блок `borba-s-krotami`):
+- `heroImage`: заменить на `/images/services/mole-hero.png`
+
+### 3. Добавление фотогалереи на страницу кротов
+
+**Файл: `src/pages/ServicePage.tsx`**:
+- Добавить секцию «Как выглядит проблема и результат» между секциями «Методы» и «Безопасность»
+- Показывать только для `borba-s-krotami` (условие `service.slug === 'borba-s-krotami'`)
+- 2-3 карточки с фото, подписями и иконками «До/После»/«Процесс»
+
+### 4. Обновление pestImages
+
+**Файл: `src/data/pestImages.ts`**:
+- Обновить `mole.png` alt-текст, чтобы упоминать участок (не помещение)
+
+## Технические детали
+
+- Генерация изображений: Edge Function `generate-mole-images` вызывает `ai.gateway.lovable.dev` с моделью `google/gemini-3-pro-image-preview`
+- Результат — base64 PNG, декодируется и сохраняется в Supabase Storage, затем копируется в `public/`
+- Альтернативный вариант: генерация через `lov-exec` скрипт с curl к AI gateway, сохранение напрямую в `public/images/services/`
 
