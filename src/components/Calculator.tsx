@@ -73,6 +73,8 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
   const [showCompactForm, setShowCompactForm] = useState(false); // ← ДОБАВЛЕНО
   const [showClientType, setShowClientType] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const interactFired = useRef(false);
+  const priceViewFired = useRef(false);
 
   // Предзаполнение калькулятора на основе интента
   useEffect(() => {
