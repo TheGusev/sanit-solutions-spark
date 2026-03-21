@@ -20,6 +20,7 @@ const DistrictCTA = ({ district, serviceType = 'dezinfekciya' }: DistrictCTAProp
     const baseObjects: Record<string, number> = {
       cao: 312, sao: 287, svao: 256, vao: 234,
       yuvao: 198, yao: 267, yzao: 245, zao: 223, szao: 189,
+      nao: 142, tao: 156, zelao: 167,
     };
 
     return {
