@@ -64,10 +64,10 @@ const NeighborhoodPage = () => {
 
   // Services with prices
   const services: { title: string; href: string; price: number; iconKey: IconKey }[] = [
-    { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: 1000 + neighborhood.surcharge, iconKey: "virus" },
-    { title: "Дезинсекция", href: "/uslugi/dezinsekciya", price: 1200 + neighborhood.surcharge, iconKey: "bug" },
-    { title: "Дератизация", href: "/uslugi/deratizaciya", price: 1400 + neighborhood.surcharge, iconKey: "mouse" },
-    { title: "Озонирование", href: "/uslugi/ozonirovanie", price: 1500 + neighborhood.surcharge, iconKey: "wind" },
+    { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: 1000, iconKey: "virus" },
+    { title: "Дезинсекция", href: "/uslugi/dezinsekciya", price: 1200, iconKey: "bug" },
+    { title: "Дератизация", href: "/uslugi/deratizaciya", price: 1400, iconKey: "mouse" },
+    { title: "Озонирование", href: "/uslugi/ozonirovanie", price: 1500, iconKey: "wind" },
   ];
 
   // ========== JSON-LD SCHEMAS (NEW!) ==========
@@ -98,7 +98,7 @@ const NeighborhoodPage = () => {
     name: `Дезинфекция ${locationText}`,
     description: neighborhood.metaDescription,
     url: `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`,
-    price: 1000 + neighborhood.surcharge
+    price: 1000
   });
 
   // Breadcrumb items for component
@@ -236,7 +236,7 @@ const NeighborhoodPage = () => {
                     Гарантия до 3 лет
                   </Badge>
                   <Badge className="bg-warning/20 text-warning py-2 px-4 backdrop-blur-sm">
-                    от {1000 + neighborhood.surcharge}₽
+                    от 1000₽
                   </Badge>
                 </div>
 
@@ -301,9 +301,6 @@ const NeighborhoodPage = () => {
                       </div>
                       <h3 className="font-bold text-lg mb-2">{service.title}</h3>
                       <p className="text-2xl font-bold text-primary">от {service.price}₽</p>
-                      {neighborhood.surcharge > 0 && (
-                        <p className="text-xs text-muted-foreground mt-1">включая выезд</p>
-                      )}
                     </CardContent>
                   </Card>
                 </Link>

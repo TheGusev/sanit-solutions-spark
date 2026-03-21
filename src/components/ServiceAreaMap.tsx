@@ -60,7 +60,7 @@ const ServiceAreaMap = () => {
             <strong className="text-foreground">Особенности работы в частном секторе:</strong> для владельцев 
             загородных домов, коттеджей и дач предлагаем комплексные решения — дополнительно обрабатываем 
             прилегающую территорию, подвалы, чердаки, хозяйственные постройки, погреба. Устанавливаем 
-            барьерную защиту периметра участка от грызунов и насекомых. Стоимость выезда за МКАД — от 500₽ 
+            Стоимость выезда за МКАД рассчитывается индивидуально 
             в зависимости от расстояния.
           </p>
         </div>
@@ -92,7 +92,7 @@ const ServiceAreaMap = () => {
                       <div className="flex items-start gap-2">
                         <MapPin className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-semibold">Доплата: {selectedArea.surcharge}</p>
+                          <p className="text-sm font-semibold">Обслуживаем</p>
                           <p className="text-xs text-muted-foreground">
                             {selectedArea.distance || "Центральная Москва"}
                           </p>
@@ -265,7 +265,7 @@ const ServiceAreaMap = () => {
                     <div className="flex items-start gap-3">
                       <MapPin className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-base font-semibold">Доплата: {selectedArea.surcharge}</p>
+                        <p className="text-base font-semibold">Обслуживаем</p>
                         <p className="text-sm text-muted-foreground">
                           {selectedArea.distance || "Центральная Москва"}
                         </p>

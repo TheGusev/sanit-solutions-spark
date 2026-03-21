@@ -54,7 +54,7 @@ export default function MoscowRegionServicePage() {
   const variation = getPageVariation(slug);
   
   // Цена с наценкой за выезд
-  const priceWithSurcharge = serviceData.priceFrom + city.surcharge;
+  const priceWithSurcharge = serviceData.priceFrom;
   
   // SEO - оптимизированные лимиты
   const pageTitle = `${serviceData.title} ${city.prepositional} от ${priceWithSurcharge}₽ — ${SEO_CONFIG.companyName}`;
@@ -107,8 +107,8 @@ export default function MoscowRegionServicePage() {
       answer: item.answer
     })),
     {
-      question: `Есть ли наценка за выезд ${city.prepositional}?`,
-      answer: `Да, наценка за выезд ${city.prepositional} составляет ${city.surcharge}₽. Это связано с расстоянием от МКАД (${city.distance} км) и временем в пути (${city.responseTime}).`
+      question: `Как быстро приедет специалист ${city.prepositional}?`,
+      answer: `Время выезда специалиста ${city.prepositional} составляет ${city.responseTime}. Работаем без выходных, выезд возможен в день обращения.`
     }
   ];
   
@@ -212,7 +212,7 @@ export default function MoscowRegionServicePage() {
                   от {priceWithSurcharge}₽
                 </div>
                 <p className="text-muted-foreground mb-4">
-                  Базовая цена {serviceData.priceFrom}₽ + выезд {city.surcharge}₽
+                  {serviceData.title} {city.prepositional} с гарантией результата
                 </p>
                 <ul className="space-y-2 text-left max-w-sm mx-auto">
                   <li className="flex items-center gap-2">
@@ -266,7 +266,7 @@ export default function MoscowRegionServicePage() {
                     <span className="text-2xl mb-2 block">{pest.icon}</span>
                     <div className="font-medium text-sm">{pest.name}</div>
                     <div className="text-xs text-muted-foreground">
-                      от {pest.priceFrom + city.surcharge}₽
+                      от {pest.priceFrom}₽
                     </div>
                   </div>
                 ))}

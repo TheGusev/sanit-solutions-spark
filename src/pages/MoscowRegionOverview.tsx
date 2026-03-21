@@ -132,10 +132,6 @@ export default function MoscowRegionOverview() {
                             <Clock className="w-4 h-4" />
                             {city.responseTime}
                           </span>
-                          <span className="flex items-center gap-1">
-                            <Car className="w-4 h-4" />
-                            +{city.surcharge}₽
-                          </span>
                         </div>
                         <p className="text-xs text-white/70 line-clamp-2">{city.description}</p>
                       </div>

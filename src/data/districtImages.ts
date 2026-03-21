@@ -32,6 +32,10 @@ export const cityImages: Record<string, string> = {
   podolsk: '/images/front/warehouse-logistics.png',
   shchyolkovo: '/images/front/wooden-houses-forest.png',
   dolgoprudny: '/images/front/apartment-vdnh-view.png',
+  klin: '/images/front/classical-estate-pond.png',
+  ramenskoe: '/images/front/logistics-center.png',
+  chekhov: '/images/front/dacha-house.png',
+  domodedovo: '/images/front/night-towers.jpg',
   default: '/images/backgrounds/moscow-panorama-sunset.jpg'
 };
 
