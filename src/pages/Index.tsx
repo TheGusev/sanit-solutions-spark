@@ -83,9 +83,11 @@ const Index = () => {
       </section>
       
       {/* Mini pricing - immediately after hero */}
-      <Suspense fallback={<SectionLoader />}>
-        <MiniPricing />
-      </Suspense>
+      <div data-section="pricing">
+        <Suspense fallback={<SectionLoader />}>
+          <MiniPricing />
+        </Suspense>
+      </div>
       
       {/* Short "Why Us" block */}
       <Suspense fallback={<SectionLoader />}>
@@ -93,9 +95,11 @@ const Index = () => {
       </Suspense>
 
       {/* Work Process - how we work */}
-      <Suspense fallback={<SectionLoader />}>
-        <WorkProcess />
-      </Suspense>
+      <div data-section="work-process">
+        <Suspense fallback={<SectionLoader />}>
+          <WorkProcess />
+        </Suspense>
+      </div>
       
       {/* Full pricing tables with surcharges */}
       <Suspense fallback={<SectionLoader />}>
@@ -114,22 +118,28 @@ const Index = () => {
             <Suspense fallback={<SectionLoader />}>
               <ServiceAreaCollapsible />
             </Suspense>
-            <Suspense fallback={<SectionLoader />}>
-              <Reviews />
-            </Suspense>
+            <div data-section="reviews">
+              <Suspense fallback={<SectionLoader />}>
+                <Reviews />
+              </Suspense>
+            </div>
           </div>
         </div>
       </section>
       
       {/* Work Gallery */}
-      <Suspense fallback={<SectionLoader />}>
-        <WorkGallery />
-      </Suspense>
+      <div data-section="gallery">
+        <Suspense fallback={<SectionLoader />}>
+          <WorkGallery />
+        </Suspense>
+      </div>
       
       {/* FAQ */}
-      <Suspense fallback={<SectionLoader />}>
-        <FAQ />
-      </Suspense>
+      <div data-section="faq">
+        <Suspense fallback={<SectionLoader />}>
+          <FAQ />
+        </Suspense>
+      </div>
       
       {/* Final CTA */}
       <Suspense fallback={<SectionLoader />}>

@@ -1,5 +1,6 @@
 import { Phone, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackGoal } from "@/lib/analytics";
 
 interface FinalCTAProps {
   onOpenCalculator: () => void;
@@ -7,7 +8,13 @@ interface FinalCTAProps {
 
 const FinalCTA = ({ onOpenCalculator }: FinalCTAProps) => {
   const handleCall = () => {
+    trackGoal("final_cta_call");
     window.location.href = "tel:84950181817";
+  };
+
+  const handleCalc = () => {
+    trackGoal("final_cta_calculator");
+    onOpenCalculator();
   };
 
   return (
@@ -42,7 +49,7 @@ const FinalCTA = ({ onOpenCalculator }: FinalCTAProps) => {
           </Button>
 
           <Button
-            onClick={onOpenCalculator}
+            onClick={handleCalc}
             size="lg"
             variant="outline"
             className="font-bold text-lg px-8 py-6 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
