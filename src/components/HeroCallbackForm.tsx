@@ -100,6 +100,12 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
           placeholder="+7 (___) ___-__-__"
           value={phone}
           onChange={(e) => setPhone(formatPhone(e.target.value))}
+          onFocus={() => {
+            if (!focusFired.current) {
+              focusFired.current = true;
+              trackGoal('form_focus', { source: 'hero_callback', service: serviceSlug });
+            }
+          }}
           className="h-12 text-base flex-1"
           required
         />
