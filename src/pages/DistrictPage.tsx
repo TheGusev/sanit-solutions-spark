@@ -69,8 +69,8 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: `${SEO_CONFIG.companyName} — Дезинфекция в ${district.name}`,
-    description: district.metaDescription,
+    name: `${SEO_CONFIG.companyName} — ${svc.name} в ${district.name}`,
+    description: pageDescription,
     telephone: SEO_CONFIG.phone,
     url: canonicalUrl,
     address: {
@@ -88,7 +88,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
       '@type': 'AdministrativeArea',
       name: `${district.fullName}, Москва`,
     },
-    priceRange: `от ${1000 + district.surcharge}₽`,
+    priceRange: `от ${svc.basePrice + district.surcharge}₽`,
     openingHours: 'Mo-Su 00:00-23:59',
   };
 
