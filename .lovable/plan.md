@@ -1,28 +1,25 @@
 
 
-## Plan: Generate background images for 3 remaining service cards
+## Plan: Make "Районы" and "Отзывы" collapsible triggers side by side
 
-### What needs to happen
+### Problem
+On desktop, the "Все 130 районов Москвы" collapsible block and "Отзывы наших клиентов" collapsible block each take full width as separate sections, creating excessive vertical space.
 
-Generate AI images for the 3 service cards that currently lack background images, then add them to the component.
-
-### Cards needing images
-
-1. **Озонирование** (Ozonation) — professional ozone treatment equipment in a room, blue-tinted atmosphere
-2. **Демеркуризация** (Mercury cleanup) — hazmat suit worker with specialized equipment, clinical/safety feel
-3. **Обработка участков** (Outdoor area treatment) — pest control specialist spraying an outdoor garden/yard area
+### Solution
+Wrap these two sections in a shared row on desktop (grid 2 columns), keeping them stacked on mobile.
 
 ### Steps
 
-1. **Generate 3 images** using AI image generation (google/gemini-3-pro-image-preview for quality):
-   - `public/images/services/ozonirovanie-bg.jpg` — ozone equipment in indoor setting
-   - `public/images/services/demerkurizaciya-bg.jpg` — hazmat/mercury cleanup scene
-   - `public/images/services/obrabotka-uchastkov-bg.jpg` — outdoor pest treatment
+1. **Update `src/pages/Index.tsx`** — wrap the `<ServiceAreaMap />` and `<Reviews />` sections in a shared container with `grid grid-cols-1 md:grid-cols-2 gap-4` layout, inside a single `<section>` block.
 
-2. **Update `src/components/MiniPricing.tsx`** — add `bgImage` property to the 3 remaining service objects (lines 10, 12, 14)
+2. **Update `src/components/ServiceAreaMap.tsx`** — extract the desktop collapsible "Все N районов Москвы" (lines 343-389) into a **separate exported component** `ServiceAreaCollapsible`, so it can be placed independently in the grid. The main `ServiceAreaMap` keeps the map + info panel. The collapsible is no longer rendered inside `ServiceAreaMap` on desktop.
 
-### Technical detail
-- Images generated at appropriate resolution for card backgrounds
-- Each prompt will request a realistic, professional pest control photography style consistent with the existing uploaded photos
-- Existing card rendering logic handles `bgImage` automatically — no template changes needed
+3. **Update `src/components/Reviews.tsx`** — remove the outer `<section>` wrapper so the component can sit inside the shared grid container. The collapsible trigger styling will match the districts trigger: same height, padding, rounded corners, border.
+
+4. **Ensure both triggers have matching height** — use `items-stretch` on the grid so both cards are equal height regardless of content. Font sizes aligned: `text-lg font-semibold` for both titles.
+
+5. **Expanded content** — when either collapsible is opened, the content expands below the grid row spanning full width (`col-span-2` on desktop).
+
+### Mobile behavior
+On mobile (`< md`), everything stays stacked vertically as before — no change to mobile layout.
 
