@@ -25,9 +25,39 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   'shield': ShieldCheck,
 };
 
+// Service-specific description adapters
+const SERVICE_DESCRIPTION_ADAPTERS: Record<ServiceType, (baseDesc: string, title: string) => string> = {
+  dezinfekciya: (desc) => desc,
+  dezinsekciya: (desc, title) => {
+    const t = title.toLowerCase();
+    if (t.includes('бизнес-центр') || t.includes('офис')) return desc.replace(/Работаем в нерабочее время\.?/, 'Уничтожаем тараканов и клопов в офисах без запаха.');
+    if (t.includes('ресторан') || t.includes('кафе') || t.includes('общепит')) return desc.replace(/Выдаём документы для Роспотребнадзора\.?/, 'Уничтожаем тараканов, мух и муравьёв. Выдаём акт для СЭС.');
+    if (t.includes('склад') || t.includes('логистик')) return desc.replace(/Близость к .+ обеспечивает много складских комплексов\.?/, 'Складские комплексы — рассадник тараканов и жуков. Обрабатываем площади от 500 м².');
+    if (t.includes('парк') || t.includes('лес') || t.includes('бор')) return desc.replace(/(?:Безопасные средства для работы|Уникальная экологическая зона|Один из крупнейших парков).*/, 'Обработка от клещей, комаров и мошки. Безопасные препараты.');
+    if (t.includes('первые этаж') || t.includes('подвал')) return desc.replace(/Особое внимание к квартирам над подвалами\.?/, 'Тараканы и блохи из подвалов — обрабатываем квартиры и подвалы комплексно.');
+    if (t.includes('панельн') || t.includes('высотк') || t.includes('жк')) return desc.replace(/Опыт с панельками.*/, 'В панельках насекомые мигрируют по стоякам — обрабатываем по всему стояку.');
+    if (t.includes('частный сектор') || t.includes('коттедж') || t.includes('таунхаус')) return desc.replace(/Обрабатываем (?:частные дома|коттеджи).*/, 'Дезинсекция участков и домов от муравьёв, ос, клещей.');
+    if (t.includes('новостройк')) return desc.replace(/Много (?:новых|современных) ЖК.*/, 'Новостройки заселяются насекомыми из соседних квартир. Барьерная обработка.');
+    return desc;
+  },
+  deratizaciya: (desc, title) => {
+    const t = title.toLowerCase();
+    if (t.includes('бизнес-центр') || t.includes('офис')) return desc.replace(/Работаем в нерабочее время\.?/, 'Устанавливаем приманочные станции и проводим мониторинг грызунов.');
+    if (t.includes('ресторан') || t.includes('кафе') || t.includes('общепит')) return desc.replace(/Выдаём документы для Роспотребнадзора\.?/, 'Дератизация пищевых объектов. Приманки в защитных контейнерах, безопасных для посетителей.');
+    if (t.includes('склад') || t.includes('логистик')) return desc.replace(/Близость к .+ обеспечивает много складских комплексов\.?/, 'Склады привлекают крыс и мышей. Устанавливаем приманочные станции по периметру.');
+    if (t.includes('промзон') || t.includes('промышлен') || t.includes('производств')) return desc.replace(/(?:Много промышленных объектов|Перово, Соколиная гора).*/, 'Промзоны — основной источник грызунов. Комплексная дератизация территории.');
+    if (t.includes('парк') || t.includes('лес') || t.includes('бор')) return desc.replace(/(?:Безопасные средства|Обработка от клещей|Уникальная экологическая зона).*/, 'Грызуны мигрируют из парковых зон. Барьерная дератизация по периметру участков.');
+    if (t.includes('первые этаж') || t.includes('подвал')) return desc.replace(/Особое внимание к квартирам над подвалами\.?/, 'Мыши и крысы в подвалах — главная проблема первых этажей. Герметизация + приманки.');
+    if (t.includes('частный сектор') || t.includes('коттедж') || t.includes('мкад')) return desc.replace(/Обрабатываем (?:частные дома|коттеджи).*|Особый опыт с домами вдоль МКАД.*/, 'Дератизация частных домов и участков. Устанавливаем приманочные станции по периметру.');
+    if (t.includes('очистн')) return desc.replace(/Особый опыт работы рядом с очистными.*/, 'Очистные сооружения привлекают крыс. Регулярная дератизация по договору.');
+    return desc;
+  },
+};
+
 // Default specifics based on district characteristics
-const getDefaultSpecifics = (district: DistrictPage) => {
-  const specifics = [];
+const getDefaultSpecifics = (district: DistrictPage, serviceType: ServiceType = 'dezinfekciya') => {
+  const adapter = SERVICE_DESCRIPTION_ADAPTERS[serviceType];
+  const specifics: { icon: string; title: string; description: string }[] = [];
   
   if (district.id === 'cao') {
     specifics.push(
@@ -133,7 +163,11 @@ const getDefaultSpecifics = (district: DistrictPage) => {
     );
   }
   
-  return specifics;
+  // Apply service-specific adaptations
+  return specifics.map(s => ({
+    ...s,
+    description: adapter(s.description, s.title),
+  }));
 };
 
 interface DistrictSpecificsProps {
