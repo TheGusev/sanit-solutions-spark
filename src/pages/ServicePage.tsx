@@ -404,6 +404,70 @@ const ServicePage = () => {
           </div>
         </section>
 
+        {/* Mole Service Photo Gallery */}
+        {service.slug === 'borba-s-krotami' && (
+          <section className="py-12 md:py-20 bg-muted/30">
+            <div className="container mx-auto px-4">
+              <AnimatedSection animation="fade-up">
+                <SectionHeading
+                  label="РЕЗУЛЬТАТ"
+                  title="Как выглядит проблема и результат"
+                  subtitle="Реальные фото с объектов — до и после обработки участка от кротов"
+                />
+              </AnimatedSection>
+
+              <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                {[
+                  {
+                    src: '/images/services/mole-hero.png',
+                    title: 'Проблема: кротовины на газоне',
+                    desc: 'Свежие кротовины разрушают газон и грядки. Чем раньше начать борьбу — тем проще устранить.',
+                    badge: 'До обработки',
+                    badgeColor: 'bg-destructive text-destructive-foreground',
+                  },
+                  {
+                    src: '/images/services/mole-work.png',
+                    title: 'Процесс: работа специалиста',
+                    desc: 'Установка ловушек и газация тоннелей — безопасно для животных и растений.',
+                    badge: 'Процесс',
+                    badgeColor: 'bg-primary text-primary-foreground',
+                  },
+                  {
+                    src: '/images/services/mole-result.png',
+                    title: 'Результат: чистый участок',
+                    desc: 'Идеальный газон после обработки. Барьерная сетка предотвращает повторное появление.',
+                    badge: 'После',
+                    badgeColor: 'bg-green-600 text-white',
+                  },
+                ].map((item, idx) => (
+                  <AnimatedSection key={idx} animation="fade-up" delay={idx * 150}>
+                    <Card className="overflow-hidden h-full hover:shadow-xl transition-shadow">
+                      <div className="relative aspect-[4/3]">
+                        <img
+                          src={item.src}
+                          alt={item.title}
+                          width={400}
+                          height={300}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <span className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold ${item.badgeColor}`}>
+                          {item.badge}
+                        </span>
+                      </div>
+                      <CardContent className="p-5">
+                        <h3 className="text-lg font-bold mb-2">{item.title}</h3>
+                        <p className="text-muted-foreground text-sm">{item.desc}</p>
+                      </CardContent>
+                    </Card>
+                  </AnimatedSection>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Safety Info (NEW) */}
         {service.safetyInfo && (
           <section className="py-12 md:py-20 bg-muted/30">
