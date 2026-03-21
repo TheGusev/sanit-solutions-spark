@@ -1,66 +1,83 @@
 
 
-# Полный аудит goruslugimsk.ru — повторная проверка после исправлений
+# Полный аудит goruslugimsk.ru — третья проверка
 
-## Что было исправлено с прошлого аудита (74/100)
+## Статус всех предыдущих исправлений
 
-1. **DistrictHero.tsx** — H1 теперь адаптируется к serviceType (дезинсекция/дератизация). ✅
-2. **DistrictPricing.tsx** — цены умножаются на baseMultiplier по услуге. ✅
-3. **DistrictCases.tsx** — заголовок секции адаптирован к serviceType. ✅
-4. **DistrictReviews.tsx** — уникальные отзывы для каждого serviceType. ✅
-5. **DistrictCTA.tsx** — CTA адаптирован к услуге. ✅
-6. **DistrictSpecifics.tsx** — заголовок адаптирован + добавлены НАО/ТАО/ЗелАО. ✅
-7. **ServiceDistricts.tsx** — 12 округов + 3 таба. ✅
-8. **Footer.tsx** — ссылки ведут на /uslugi/po-okrugam-moskvy (обзорная). ✅
-9. **InternalLinks.tsx** — currentDistrict prop + district cross-links. ✅
-10. **DistrictPage.tsx** — передаёт serviceType во все компоненты + currentDistrict в InternalLinks. ✅
-11. **ErrorBoundary** — добавлен и обёрнут вокруг Routes. ✅
-12. **Slider** — h-4 mobile, h-8 thumb, range 30-200. ✅
+| # | Исправление | Статус |
+|---|-------------|--------|
+| 1 | DistrictHero H1 адаптирован к serviceType | ✅ Подтверждено (строки 27-29) |
+| 2 | DistrictPricing baseMultiplier по услуге | ✅ Подтверждено (1.0/1.2/1.4) |
+| 3 | DistrictCases заголовок + даты 2026 | ✅ Подтверждено (строка 49, 97) |
+| 4 | DistrictReviews уникальные шаблоны + детерминированный счётчик | ✅ Подтверждено (строка 190, без Math.random) |
+| 5 | DistrictCTA адаптирован | ✅ Подтверждено (строка 45) |
+| 6 | DistrictSpecifics: SERVICE_DESCRIPTION_ADAPTERS | ✅ Подтверждено (строки 29-55) |
+| 7 | ServiceDistricts: 12 округов + 3 таба | ✅ Подтверждено (строки 43-56) |
+| 8 | Footer → обзорная страница | ✅ Подтверждено (строки 69-71) |
+| 9 | InternalLinks currentDistrict prop + district links | ✅ Подтверждено (строки 138-151, 373) |
+| 10 | ErrorBoundary | ✅ Подтверждено |
+| 11 | Calculator min=30 синхронизирован | ✅ Подтверждено (строки 458-468) |
+| 12 | ServiceObjectPage +3 секции (Этапы, Почему мы, Типичные проблемы) | ✅ Подтверждено (строки 145-208) |
+| 13 | DistrictPage FAQ адаптирован к serviceType (3 динамических вопроса) | ✅ Подтверждено (строки 326-337) |
+| 14 | DistrictPage "Работали на улицах" текст адаптирован | ✅ Подтверждено (строка 308) |
 
 ---
 
-## БЛОК 1-6: ДЕТАЛЬНЫЙ ПОВТОРНЫЙ АУДИТ
+## БЛОК 2. СЕМАНТИКА — обновлённая оценка
 
-### Семантика и LLM-развесовка — было 72, теперь:
-- DistrictHero H1 уникален для 3 услуг ✅ (+8)
-- DistrictReviews уникальны по serviceType ✅ (+3)
-- DistrictCases заголовок адаптирован ✅ (+2)
-- DistrictPricing цены уникальны ✅ (+3)
-- **Остаточная проблема**: DistrictSpecifics описания (getDefaultSpecifics) одинаковые для всех 3 услуг — "Много бизнес-центров" одинаково для дезинфекции/дезинсекции/дератизации. Нужно адаптировать описания под услугу (например, "Дератизация бизнес-центров" vs "Дезинфекция бизнес-центров").
-- **Остаточная проблема**: FAQ в DistrictPage — `district.faq` одинаковый для всех 3 URL (dezinfekciya-cao, dezinsekciya-cao, deratizaciya-cao). Нужно генерировать FAQ с учётом serviceType.
-- **Остаточная проблема**: Секция "Мы уже работали на этих улицах" — одинаковый текст "провели обработку" для всех услуг. Нужно "провели дезинсекцию" / "провели дератизацию".
-- **Остаточная проблема**: ServiceObjectPage контент ~400 слов — thin content.
-- **Оценка: 85/100** (было 72)
+- ✅ H1 уникален для 36 district pages (3 услуги × 12 округов)
+- ✅ Title/Description адаптированы к serviceType
+- ✅ FAQ содержит 3 service-specific вопроса + 3 district-specific
+- ✅ Reviews уникальны по serviceType (разные шаблоны, разные авторы)
+- ✅ Cases заголовок адаптирован
+- ✅ Specifics описания адаптированы через SERVICE_DESCRIPTION_ADAPTERS
+- ✅ "Работали на улицах" текст адаптирован
+- ⚠️ Minor: `district.faq` (строки 338-343) — 3 общих FAQ из данных округа одинаковы для 3 URL. Но 3 service-specific FAQ перед ними компенсируют. **Некритично**.
+- ⚠️ Minor: `district.popularObjects` (строки 280-298) — одинаковые объекты для 3 URL. Контент невелик, но дубль. **Low priority**.
 
-### SEO-онпейдж — было 75, теперь:
-- H1 дубли на district pages устранены ✅ (+5)
-- Цены уникальны ✅ (+3)
-- OG/canonical/robots — без изменений, были корректны ✅
-- **Остаточная проблема**: ServiceObjectPage — мало контента (<600 слов), нет секции "Как мы работаем", "Этапы обработки" и т.д.
-- **Остаточная проблема**: B2B blog articles <1500 слов.
-- **Остаточная проблема**: DistrictPage FAQ не адаптирован к serviceType — дубль контента.
-- **Оценка: 86/100** (было 75)
+**Оценка: 93/100** (было 85)
 
-### GEO-слой — было 68, теперь:
-- ServiceDistricts покрывает все 12 округов ✅ (+6)
-- Footer ведёт на обзорную страницу ✅ (+3)
-- InternalLinks передаёт currentDistrict ✅ (+4)
-- DistrictHero H1/subtitle адаптированы ✅ (+5)
-- **Остаточная проблема**: DistrictReviews строка 190: `Math.random()` в рендере — SSR/hydration mismatch, непредсказуемое число отзывов.
-- **Остаточная проблема**: DistrictSpecifics описания не адаптированы к serviceType.
-- **Оценка: 88/100** (было 68)
+## БЛОК 3. SEO-ОНПЕЙДЖ
 
-### UX — было 82, теперь:
-- Slider mobile — thicker track/thumb ✅ (+2)
-- ErrorBoundary защищает от white screen ✅ (+3)
-- **Остаточная проблема**: Calculator slider 30-200 vs input 10-5000 — рассинхрон (minor).
-- **Оценка: 88/100** (было 82)
+- ✅ H1 уникальны. Title уникальны. Description уникальны.
+- ✅ Canonical self-referencing. OG/Twitter полный набор.
+- ✅ JSON-LD: LocalBusiness + Service + FAQ + Breadcrumb — все адаптированы.
+- ✅ ServiceObjectPage: 600+ слов (Этапы + Почему мы + Типичные проблемы добавлены).
+- ⚠️ B2B blog articles всё ещё ~600-800 слов (требует ручного наращивания контента, не автоматизируется).
+- ⚠️ JSON-LD faqSchema в DistrictPage (строки 116-127) включает только `district.faq`, не включает 3 service-specific вопроса. Яндекс/Google видят неполный FAQ. **Medium**.
 
-### Техническая устойчивость — было 85, теперь:
-- ErrorBoundary добавлен ✅ (+3)
-- **Остаточная проблема**: DistrictReviews `Math.random()` в JSX — hydration mismatch при SSG.
-- **Остаточная проблема**: DistrictCases дата `['Ноябрь', 'Октябрь', 'Сентябрь', 'Декабрь'][idx % 4] 2025` — hardcoded 2025, уже 2026.
-- **Оценка: 90/100** (было 85)
+**Оценка: 92/100** (было 86)
+
+## БЛОК 4. GEO-СЛОЙ
+
+- ✅ 12 округов в ServiceDistricts (НАО, ТАО, ЗелАО добавлены)
+- ✅ Footer → обзорная страница
+- ✅ InternalLinks с currentDistrict
+- ✅ DistrictHero subtitle адаптирован к serviceType
+- ✅ DistrictSpecifics описания адаптированы
+- ⚠️ Minor: `DistrictCTA.getStats()` не включает `nao`, `tao`, `zelao` в baseObjects (строка 21). Для них fallback 200 — нормально, но не идеально.
+
+**Оценка: 95/100** (было 88)
+
+## БЛОК 5. UX
+
+- ✅ Calculator slider/input синхронизированы (min=30)
+- ✅ ErrorBoundary с fallback UI
+- ✅ Breadcrumbs корректны
+- ✅ ServiceObjectPage полноценный контент
+- ✅ Текущая услуга подсвечена ring-2 ring-primary (строка 257)
+
+**Оценка: 95/100** (было 88)
+
+## БЛОК 6. ТЕХНИКА
+
+- ✅ ErrorBoundary
+- ✅ Math.random() убран — детерминированный счётчик
+- ✅ Даты 2026 (с fallback на 2025 для idx%4===3 — корректно)
+- ✅ SSG fail-fast + route integrity validation
+- ⚠️ Minor: DistrictCases дата logic `idx % 4 === 3 ? '2025' : '2026'` — через 9 месяцев станет неактуальной. Dynamic year лучше.
+
+**Оценка: 96/100** (было 90)
 
 ---
 
@@ -68,43 +85,34 @@
 
 | Направление | Прошлая | Текущая |
 |-------------|---------|---------|
-| Семантика и LLM-однозначность | 72 | 85 |
-| SEO-онпейдж | 75 | 86 |
-| GEO-слой | 68 | 88 |
-| UX | 82 | 88 |
-| Техническая устойчивость | 85 | 90 |
+| Семантика | 85 | 93 |
+| SEO-онпейдж | 86 | 92 |
+| GEO-слой | 88 | 95 |
+| UX | 88 | 95 |
+| Техника | 90 | 96 |
 
-**Формула**: `0.3 × 85 + 0.3 × 86 + 0.2 × 88 + 0.1 × 88 + 0.1 × 90`
-= `25.5 + 25.8 + 17.6 + 8.8 + 9.0` = **86.7 ≈ 87**
+**Формула**: `0.3 × 93 + 0.3 × 92 + 0.2 × 95 + 0.1 × 95 + 0.1 × 96`
+= `27.9 + 27.6 + 19.0 + 9.5 + 9.6` = **93.6 ≈ 94**
 
-### **Оценка сайта: 87 из 100** (было 74)
+### **Оценка сайта: 94 из 100** (было 87)
 
 ---
 
-## Оставшиеся проблемы до 100/100 — TOP-10 поправок
+## Оставшиеся задачи до 100/100
 
-| # | Где | Что | Зачем | Баллы |
-|---|-----|-----|-------|-------|
-| 1 | `DistrictSpecifics.tsx` | Адаптировать описания specifics к serviceType (добавить SERVICE_SPECIFIC_DESCRIPTIONS для каждой услуги) | Сейчас описания "бизнес-центров", "парков" одинаковы для 3 URL — дубль контента | +3 |
-| 2 | `DistrictPage.tsx` строки 297-312 | Адаптировать секцию "Мы уже работали" — текст "провели обработку" → "провели {svc.nameGenitive}" | Дубль текста на 3 URL | +1 |
-| 3 | `DistrictPage.tsx` строки 315-327 | Адаптировать FAQ к serviceType — генерировать вопросы с упоминанием конкретной услуги | FAQ одинаковый для 3 URL — значительный дубль контента | +3 |
-| 4 | `DistrictReviews.tsx` строка 190 | Заменить `Math.random()` на детерминированное значение (напр. `district.cases.length * 7 + 47`) | SSR hydration mismatch + непредсказуемый UI | +2 |
-| 5 | `DistrictCases.tsx` строка 97 | Заменить `2025` на `2026` или dynamic year | Устаревшая дата | +1 |
-| 6 | `ServiceObjectPage.tsx` | Добавить секции "Этапы обработки" (5 шагов), "Почему мы" (4 преимущества), "Типичные проблемы" — довести до 600+ слов | Thin content risk | +3 |
-| 7 | B2B blog articles | Нарастить контент до 1500+ слов | Thin content для longreads | +1 |
-| 8 | `Calculator.tsx` | Синхронизировать input min с slider min (30) | Рассинхрон slider/input | +0.5 |
-| 9 | `DistrictPage.tsx` строки 270-295 | Адаптировать секцию "Популярные объекты" к serviceType — разные объекты для дезинсекции vs дератизации | Одинаковые объекты для 3 URL | +1 |
-| 10 | `DistrictPage.tsx` строки 249-268 | Адаптировать "Услуги в {district}" — подсветить текущую услугу, изменить формулировку | Minor UX improvement | +0.5 |
+| # | Где | Что | Баллы |
+|---|-----|-----|-------|
+| 1 | `DistrictPage.tsx` строки 116-127 | Включить 3 service-specific FAQ вопроса в JSON-LD faqSchema (сейчас только district.faq) | +2 |
+| 2 | `DistrictPage.tsx` строки 280-298 | Адаптировать `popularObjects` к serviceType — разные акценты для дезинсекции/дератизации | +1 |
+| 3 | `DistrictCTA.tsx` строка 21 | Добавить nao/tao/zelao в baseObjects | +0.5 |
+| 4 | `DistrictCases.tsx` строка 97 | Dynamic year: `new Date().getFullYear()` вместо hardcoded | +0.5 |
+| 5 | B2B blog articles | Нарастить до 1500+ слов (ручная работа) | +1.5 |
+| 6 | `DistrictPage.tsx` строки 338-343 | Адаптировать district.faq к serviceType (подставлять название услуги в вопросы/ответы) | +0.5 |
 
-### Реализация для достижения 100/100
+### Реализация пунктов 1-4 и 6 (автоматизируемые) даст +4.5 балла → **98.5/100**. Пункт 5 (B2B контент) — ручная работа, +1.5 → **100/100**.
 
-Исправления 1-5 дают **+10 баллов** (87→97). Исправления 6-10 дают оставшиеся **+3 балла**.
-
-**Файлы для изменения:**
-1. `src/components/district/DistrictSpecifics.tsx` — добавить serviceType-aware описания
-2. `src/pages/DistrictPage.tsx` — адаптировать "Работали на улицах", FAQ, объекты к serviceType
-3. `src/components/district/DistrictReviews.tsx` — убрать Math.random(), обновить год
-4. `src/components/district/DistrictCases.tsx` — обновить год 2025→2026
-5. `src/pages/ServiceObjectPage.tsx` — добавить секции для увеличения контента
-6. `src/components/Calculator.tsx` — синхронизировать min input=30
+### Файлы для финальных правок:
+1. `src/pages/DistrictPage.tsx` — faqSchema расширить, popularObjects адаптировать, district.faq адаптировать
+2. `src/components/district/DistrictCTA.tsx` — добавить nao/tao/zelao в baseObjects
+3. `src/components/district/DistrictCases.tsx` — dynamic year
 
