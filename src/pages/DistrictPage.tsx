@@ -108,7 +108,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
     },
     offers: {
       '@type': 'Offer',
-      price: svc.basePrice + district.surcharge,
+      price: svc.basePrice,
       priceCurrency: 'RUB',
     },
   };
