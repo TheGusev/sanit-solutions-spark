@@ -58,9 +58,9 @@ export default function ServiceObjectPage() {
   
   const faqItems = [
     { question: `Сколько стоит ${serviceName.toLowerCase()} ${objectType.genitive}?`, answer: `От ${priceFrom}₽. В стоимость входит выезд, диагностика и гарантия.` },
-    { question: `Как подготовить ${objectType.accusative}?`, answer: `Обеспечьте доступ к плинтусам, уберите продукты, выведите людей и животных на 2-3 часа.` },
-    { question: `Сколько времени занимает обработка?`, answer: `${objectType.averageTime}. Зависит от площади (${objectType.minArea}-${objectType.maxArea} м²).` },
-    { question: `Даёте ли гарантию?`, answer: `Да, гарантия до 3 лет. Повторная обработка бесплатно.` }
+    { question: `Как подготовить ${objectType.accusative} к ${serviceGen}?`, answer: `Обеспечьте доступ к плинтусам, уберите продукты, выведите людей и животных на 2-3 часа.` },
+    { question: `Сколько времени занимает ${serviceName.toLowerCase()} ${objectType.genitive}?`, answer: `${objectType.averageTime}. Зависит от площади (${objectType.minArea}-${objectType.maxArea} м²).` },
+    { question: `Даёте ли гарантию на ${serviceAcc}?`, answer: `Да, гарантия до 3 лет. Повторная обработка бесплатно.` }
   ];
   
   const schemaMarkup = {
