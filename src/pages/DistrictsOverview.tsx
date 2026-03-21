@@ -66,37 +66,40 @@ const DistrictsOverview = () => {
               {districtPages.map((district) => {
                 const bgImage = getDistrictImage(district.id);
                 return (
-                  <Link key={district.id} to={`/uslugi/${district.slug}`}>
-                    <div 
-                      className="relative h-56 rounded-xl overflow-hidden group cursor-pointer"
-                      style={{ backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                    >
-                      {/* Dark gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/10 group-hover:from-black/85 transition-all duration-300" />
-                      
-                      {/* Content */}
-                      <div className="relative h-full flex flex-col justify-end p-5 text-white">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="text-xl font-bold">{district.name}</h3>
-                          <MapPin className="w-5 h-5 opacity-80" />
-                        </div>
-                        <p className="text-sm text-white/80 mb-2">{district.fullName}</p>
-                        <div className="flex items-center gap-4 text-sm text-white/90">
-                          <span className="flex items-center gap-1">
-                            <Car className="w-4 h-4" />
-                            {district.responseTime}
-                          </span>
-                          <span className="font-medium">
-                            {district.surcharge === 0 ? "Бесплатный выезд" : `+${district.surcharge}₽`}
-                          </span>
-                        </div>
-                        <div className="text-xs text-white/70 mt-2 line-clamp-1">
-                          {district.neighborhoods.slice(0, 4).join(", ")}
-                          {district.neighborhoods.length > 4 && ` и ещё ${district.neighborhoods.length - 4}`}
+                  <div key={district.id}>
+                    <Link to={`/uslugi/${district.slug}`}>
+                      <div 
+                        className="relative h-56 rounded-xl overflow-hidden group cursor-pointer"
+                        style={{ backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/10 group-hover:from-black/85 transition-all duration-300" />
+                        <div className="relative h-full flex flex-col justify-end p-5 text-white">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-xl font-bold">{district.name}</h3>
+                            <MapPin className="w-5 h-5 opacity-80" />
+                          </div>
+                          <p className="text-sm text-white/80 mb-2">{district.fullName}</p>
+                          <div className="flex items-center gap-4 text-sm text-white/90">
+                            <span className="flex items-center gap-1">
+                              <Car className="w-4 h-4" />
+                              {district.responseTime}
+                            </span>
+                            <span className="font-medium">
+                              {district.surcharge === 0 ? "Бесплатный выезд" : `+${district.surcharge}₽`}
+                            </span>
+                          </div>
+                          <div className="text-xs text-white/70 mt-2 line-clamp-1">
+                            {district.neighborhoods.slice(0, 4).join(", ")}
+                            {district.neighborhoods.length > 4 && ` и ещё ${district.neighborhoods.length - 4}`}
+                          </div>
                         </div>
                       </div>
+                    </Link>
+                    <div className="flex gap-2 mt-2">
+                      <Link to={`/uslugi/dezinsekciya-${district.id}`} className="text-xs text-primary hover:underline">Дезинсекция</Link>
+                      <Link to={`/uslugi/deratizaciya-${district.id}`} className="text-xs text-primary hover:underline">Дератизация</Link>
                     </div>
-                  </Link>
+                  </div>
                 );
               })}
             </div>

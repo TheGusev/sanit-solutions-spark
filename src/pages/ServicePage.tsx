@@ -56,22 +56,22 @@ const ServicePage = () => {
   const [showCalculator, setShowCalculator] = useState(false);
 
   const districtSlug = slug || "";
-  const isDistrictPage = districtSlug.startsWith('dezinfekciya-');
-  const service = getServiceBySlug(districtSlug);
+  const serviceDistrictMatch = districtSlug.match(/^(dezinfekciya|dezinsekciya|deratizaciya)-(.+)$/);
+  const service = serviceDistrictMatch ? null : getServiceBySlug(districtSlug);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
 
-  // Проверяем, является ли это страницей округа ДЕЗИНФЕКЦИИ
-  if (isDistrictPage) {
-    const districtId = districtSlug.replace('dezinfekciya-', '');
+  // Проверяем, является ли это страницей округа (дезинфекция / дезинсекция / дератизация)
+  if (serviceDistrictMatch) {
+    const [, servicePrefix, districtId] = serviceDistrictMatch;
     const district = getDistrictById(districtId);
     
     if (district) {
       return (
         <Suspense fallback={<PageLoader />}>
-          <DistrictPage districtId={districtId} />
+          <DistrictPage districtId={districtId} serviceType={servicePrefix as 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya'} />
         </Suspense>
       );
     }
