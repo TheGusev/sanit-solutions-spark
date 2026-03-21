@@ -21,6 +21,7 @@ interface InternalLinksProps {
   currentPest?: string;
   currentNeighborhood?: string;
   currentCity?: string;
+  currentDistrict?: string;
   variant?: 'grid' | 'list' | 'compact';
   maxLinks?: number;
   title?: string;
@@ -29,7 +30,7 @@ interface InternalLinksProps {
 interface InternalLink {
   url: string;
   text: string;
-  type: 'service' | 'pest' | 'neighborhood' | 'city';
+  type: 'service' | 'pest' | 'neighborhood' | 'city' | 'district';
 }
 
 
