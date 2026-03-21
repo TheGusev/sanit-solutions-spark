@@ -41,10 +41,13 @@ export default function ServiceObjectPage() {
   }
   
   const serviceName = service.title;
+  const serviceGen = service.nameGenitive || serviceName.toLowerCase();
+  const serviceAcc = service.nameAccusative || serviceName.toLowerCase();
   const priceFrom = Math.round((service.priceFrom || 1500) * objectType.priceMultiplier);
+  const genderAdj = serviceName.endsWith('ие') ? 'Профессиональное' : 'Профессиональная';
   
   const pageTitle = `${serviceName} ${objectType.genitive} в Москве — от ${priceFrom}₽ | Выезд 30 мин`;
-  const pageDescription = `Профессиональная ${serviceName.toLowerCase()} ${objectType.genitive} в Москве от ${priceFrom}₽. Гарантия до 3 лет. ☎️ ${SEO_CONFIG.phone}`;
+  const pageDescription = `${genderAdj} ${serviceName.toLowerCase()} ${objectType.genitive} в Москве от ${priceFrom}₽. Гарантия до 3 лет. ☎️ ${SEO_CONFIG.phone}`;
   const seoMeta = generateSEOMeta(`/uslugi/${serviceSlug}/${objectSlug}`, pageTitle, pageDescription);
   
   const breadcrumbItems = [
@@ -55,9 +58,9 @@ export default function ServiceObjectPage() {
   
   const faqItems = [
     { question: `Сколько стоит ${serviceName.toLowerCase()} ${objectType.genitive}?`, answer: `От ${priceFrom}₽. В стоимость входит выезд, диагностика и гарантия.` },
-    { question: `Как подготовить ${objectType.accusative}?`, answer: `Обеспечьте доступ к плинтусам, уберите продукты, выведите людей и животных на 2-3 часа.` },
-    { question: `Сколько времени занимает обработка?`, answer: `${objectType.averageTime}. Зависит от площади (${objectType.minArea}-${objectType.maxArea} м²).` },
-    { question: `Даёте ли гарантию?`, answer: `Да, гарантия до 3 лет. Повторная обработка бесплатно.` }
+    { question: `Как подготовить ${objectType.accusative} к ${serviceGen}?`, answer: `Обеспечьте доступ к плинтусам, уберите продукты, выведите людей и животных на 2-3 часа.` },
+    { question: `Сколько времени занимает ${serviceName.toLowerCase()} ${objectType.genitive}?`, answer: `${objectType.averageTime}. Зависит от площади (${objectType.minArea}-${objectType.maxArea} м²).` },
+    { question: `Даёте ли гарантию на ${serviceAcc}?`, answer: `Да, гарантия до 3 лет. Повторная обработка бесплатно.` }
   ];
   
   const schemaMarkup = {
@@ -145,14 +148,14 @@ export default function ServiceObjectPage() {
         {/* Этапы обработки */}
         <AnimatedSection className="py-10">
           <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-xl font-bold mb-6 text-center">Этапы {serviceName.toLowerCase()} {objectType.genitive}</h2>
+            <h2 className="text-xl font-bold mb-6 text-center">Этапы {serviceGen} {objectType.genitive}</h2>
             <div className="grid md:grid-cols-5 gap-4">
               {[
                 { step: '1', title: 'Заявка', desc: `Вы звоните или оставляете заявку. Мы уточняем детали: тип ${objectType.genitive}, площадь, характер проблемы.` },
                 { step: '2', title: 'Диагностика', desc: `Специалист приезжает, осматривает ${objectType.accusative}, определяет степень заражения и оптимальный метод обработки.` },
                 { step: '3', title: 'Подготовка', desc: `Готовим оборудование и препараты. Вы обеспечиваете доступ к помещению и убираете продукты.` },
-                { step: '4', title: 'Обработка', desc: `Проводим ${serviceName.toLowerCase()} методом холодного или горячего тумана. Время: ${objectType.averageTime}.` },
-                { step: '5', title: 'Контроль', desc: `Выдаём акт выполненных работ и гарантию до 3 лет. При необходимости — повторная обработка бесплатно.` },
+                { step: '4', title: 'Обработка', desc: `Проводим ${serviceAcc} методом холодного или горячего тумана. Время: ${objectType.averageTime}.` },
+                { step: '5', title: 'Контроль', desc: `Выдаём акт ${serviceGen} и гарантию до 3 лет. При необходимости — повторная обработка бесплатно.` },
               ].map((item, i) => (
                 <div key={i} className="text-center">
                   <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-2 font-bold">{item.step}</div>
@@ -167,13 +170,13 @@ export default function ServiceObjectPage() {
         {/* Почему мы */}
         <AnimatedSection className="py-10 bg-muted/30">
           <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-xl font-bold mb-6 text-center">Почему выбирают нас для {serviceName.toLowerCase()} {objectType.genitive}</h2>
+            <h2 className="text-xl font-bold mb-6 text-center">Почему выбирают нас для {serviceGen} {objectType.genitive}</h2>
             <div className="grid md:grid-cols-2 gap-4">
               {[
-                { title: 'Опыт с 2012 года', desc: `Более 10 лет специализируемся на ${serviceName.toLowerCase()} ${objectType.genitive}. Обработали 15 000+ объектов в Москве.` },
+                { title: 'Опыт с 2012 года', desc: `Более 10 лет специализируемся в области ${serviceGen} ${objectType.genitive}. Обработали 15 000+ объектов в Москве.` },
                 { title: 'Безопасные препараты', desc: `Используем сертифицированные средства IV класса опасности. Безопасны для людей и домашних животных после проветривания.` },
                 { title: 'Гарантия до 3 лет', desc: `Даём письменную гарантию. Если проблема вернётся — повторная обработка бесплатно, без доплат.` },
-                { title: 'Документы для проверок', desc: `Выдаём полный пакет документов: акт дезинфекции, сертификаты на препараты, договор. Для СЭС и Роспотребнадзора.` },
+                { title: 'Документы для проверок', desc: `Выдаём полный пакет документов: акт ${serviceGen}, сертификаты на препараты, договор. Для СЭС и Роспотребнадзора.` },
               ].map((item, i) => (
                 <Card key={i}>
                   <CardContent className="p-4">
@@ -189,7 +192,7 @@ export default function ServiceObjectPage() {
         {/* Типичные проблемы */}
         <AnimatedSection className="py-10">
           <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-xl font-bold mb-6 text-center">Типичные проблемы {objectType.genitive}</h2>
+            <h2 className="text-xl font-bold mb-6 text-center">Типичные проблемы при обработке {objectType.genitive}</h2>
             <div className="grid md:grid-cols-3 gap-4">
               {[
                 { title: 'Самостоятельная обработка', desc: 'Бытовые аэрозоли дают временный эффект. Вредители вырабатывают устойчивость к слабым дозам и возвращаются.' },
@@ -225,7 +228,7 @@ export default function ServiceObjectPage() {
         
         <AnimatedSection className="py-10 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-xl md:text-2xl font-bold mb-3">Закажите {serviceName.toLowerCase()} {objectType.genitive}</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-3">Закажите {serviceAcc} {objectType.genitive}</h2>
             <p className="opacity-90 mb-4">Выезд за 30 минут. Гарантия до 3 лет.</p>
             <Button size="lg" variant="secondary" asChild><a href={`tel:${SEO_CONFIG.phoneClean}`}><Phone className="w-5 h-5 mr-2" />{SEO_CONFIG.phone}</a></Button>
           </div>
