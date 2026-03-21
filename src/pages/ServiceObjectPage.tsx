@@ -148,7 +148,7 @@ export default function ServiceObjectPage() {
         {/* Этапы обработки */}
         <AnimatedSection className="py-10">
           <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-xl font-bold mb-6 text-center">Этапы {serviceName.toLowerCase()} {objectType.genitive}</h2>
+            <h2 className="text-xl font-bold mb-6 text-center">Этапы {serviceGen} {objectType.genitive}</h2>
             <div className="grid md:grid-cols-5 gap-4">
               {[
                 { step: '1', title: 'Заявка', desc: `Вы звоните или оставляете заявку. Мы уточняем детали: тип ${objectType.genitive}, площадь, характер проблемы.` },
