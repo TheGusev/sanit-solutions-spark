@@ -131,6 +131,7 @@ const App = () => (
                   {/* 404 */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+              </ErrorBoundary>
               </Suspense>
             </TrafficProvider>
           </BrowserRouter>
