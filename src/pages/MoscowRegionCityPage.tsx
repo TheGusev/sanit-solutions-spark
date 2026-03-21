@@ -157,10 +157,6 @@ export default function MoscowRegionCityPage() {
                   <span>Выезд {city.responseTime}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-white/90">
-                  <Car className="w-5 h-5" />
-                  <span>+{city.surcharge}₽ за выезд</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-white/90">
                   <Shield className="w-5 h-5" />
                   <span>Гарантия до 3 лет</span>
                 </div>

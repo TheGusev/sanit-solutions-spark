@@ -236,7 +236,7 @@ const NeighborhoodPage = () => {
                     Гарантия до 3 лет
                   </Badge>
                   <Badge className="bg-warning/20 text-warning py-2 px-4 backdrop-blur-sm">
-                    от {1000 + neighborhood.surcharge}₽
+                    от 1000₽
                   </Badge>
                 </div>
 

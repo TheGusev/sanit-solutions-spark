@@ -266,7 +266,7 @@ export default function MoscowRegionServicePage() {
                     <span className="text-2xl mb-2 block">{pest.icon}</span>
                     <div className="font-medium text-sm">{pest.name}</div>
                     <div className="text-xs text-muted-foreground">
-                      от {pest.priceFrom + city.surcharge}₽
+                      от {pest.priceFrom}₽
                     </div>
                   </div>
                 ))}
