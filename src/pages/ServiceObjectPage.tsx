@@ -141,7 +141,72 @@ export default function ServiceObjectPage() {
             </div>
           </div>
         </AnimatedSection>
-        
+
+        {/* Этапы обработки */}
+        <AnimatedSection className="py-10">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <h2 className="text-xl font-bold mb-6 text-center">Этапы {serviceName.toLowerCase()} {objectType.genitive}</h2>
+            <div className="grid md:grid-cols-5 gap-4">
+              {[
+                { step: '1', title: 'Заявка', desc: `Вы звоните или оставляете заявку. Мы уточняем детали: тип ${objectType.genitive}, площадь, характер проблемы.` },
+                { step: '2', title: 'Диагностика', desc: `Специалист приезжает, осматривает ${objectType.accusative}, определяет степень заражения и оптимальный метод обработки.` },
+                { step: '3', title: 'Подготовка', desc: `Готовим оборудование и препараты. Вы обеспечиваете доступ к помещению и убираете продукты.` },
+                { step: '4', title: 'Обработка', desc: `Проводим ${serviceName.toLowerCase()} методом холодного или горячего тумана. Время: ${objectType.averageTime}.` },
+                { step: '5', title: 'Контроль', desc: `Выдаём акт выполненных работ и гарантию до 3 лет. При необходимости — повторная обработка бесплатно.` },
+              ].map((item, i) => (
+                <div key={i} className="text-center">
+                  <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-2 font-bold">{item.step}</div>
+                  <h3 className="font-semibold text-sm mb-1">{item.title}</h3>
+                  <p className="text-xs text-muted-foreground">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </AnimatedSection>
+
+        {/* Почему мы */}
+        <AnimatedSection className="py-10 bg-muted/30">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <h2 className="text-xl font-bold mb-6 text-center">Почему выбирают нас для {serviceName.toLowerCase()} {objectType.genitive}</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {[
+                { title: 'Опыт с 2012 года', desc: `Более 10 лет специализируемся на ${serviceName.toLowerCase()} ${objectType.genitive}. Обработали 15 000+ объектов в Москве.` },
+                { title: 'Безопасные препараты', desc: `Используем сертифицированные средства IV класса опасности. Безопасны для людей и домашних животных после проветривания.` },
+                { title: 'Гарантия до 3 лет', desc: `Даём письменную гарантию. Если проблема вернётся — повторная обработка бесплатно, без доплат.` },
+                { title: 'Документы для проверок', desc: `Выдаём полный пакет документов: акт дезинфекции, сертификаты на препараты, договор. Для СЭС и Роспотребнадзора.` },
+              ].map((item, i) => (
+                <Card key={i}>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold mb-1">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </AnimatedSection>
+
+        {/* Типичные проблемы */}
+        <AnimatedSection className="py-10">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <h2 className="text-xl font-bold mb-6 text-center">Типичные проблемы {objectType.genitive}</h2>
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                { title: 'Самостоятельная обработка', desc: 'Бытовые аэрозоли дают временный эффект. Вредители вырабатывают устойчивость к слабым дозам и возвращаются.' },
+                { title: 'Затягивание проблемы', desc: 'Каждая неделя промедления увеличивает популяцию вредителей. Чем раньше обработка — тем дешевле и проще.' },
+                { title: 'Частичная обработка', desc: `${objectType.namePlural} требуют комплексного подхода. Обработка только одной комнаты не решает проблему — вредители мигрируют.` },
+              ].map((item, i) => (
+                <Card key={i}>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold mb-1">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground">{item.desc}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </AnimatedSection>
+
         <AnimatedSection className="py-10">
           <div className="container mx-auto px-4">
             <h2 className="text-xl font-bold mb-6 text-center">Вопросы и ответы</h2>
