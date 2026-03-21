@@ -52,7 +52,8 @@ const Reviews = () => {
   };
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+    <>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger className="w-full flex items-center justify-between bg-card rounded-xl p-4 md:p-6 border border-border hover:bg-muted/50 transition-all shadow-sm hover:shadow-md group cursor-pointer min-h-[72px] md:min-h-[88px]">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-primary/10 flex items-center justify-center">
