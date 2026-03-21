@@ -48,7 +48,14 @@ const IndexSSR = () => {
       <WhyUsExtended />
       <PricingByArea />
       <ServiceAreaMap />
-      <Reviews />
+      <section className="py-4 md:py-8 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            <ServiceAreaCollapsible />
+            <Reviews />
+          </div>
+        </div>
+      </section>
       <FAQ />
       <FinalCTA onOpenCalculator={noop} />
       <Footer />
