@@ -90,6 +90,13 @@ const Calculator = ({ isModal = false }: CalculatorProps) => {
     }
   }, [context, initialized]);
 
+  // Track calc_price_view once user interacts and sees a price
+  useEffect(() => {
+    if (hasInteracted && !priceViewFired.current) {
+      priceViewFired.current = true;
+      trackGoal("calc_price_view");
+    }
+  }, [hasInteracted]);
 
   // Логирование изменений полей калькулятора
   useEffect(() => {
