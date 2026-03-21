@@ -67,6 +67,8 @@ const Footer = memo(() => {
             <h4 className="font-bold mb-4">Информация</h4>
             <ul className="space-y-2 text-sm opacity-80">
               <li><Link to="/uslugi/po-okrugam-moskvy" className="hover:opacity-100">• По округам Москвы</Link></li>
+              <li><Link to="/uslugi/dezinsekciya-cao" className="hover:opacity-100">• Дезинсекция по округам</Link></li>
+              <li><Link to="/uslugi/deratizaciya-cao" className="hover:opacity-100">• Дератизация по округам</Link></li>
               <li><Link to="/rajony" className="hover:opacity-100">• Районы Москвы</Link></li>
               <li><Link to="/blog" className="hover:opacity-100">• Блог и статьи</Link></li>
               <li><Link to="/blog/kak-podgotovit-pomeshchenie" className="hover:opacity-100">• Подготовка к дезинфекции</Link></li>

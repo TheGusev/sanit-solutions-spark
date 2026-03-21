@@ -3,10 +3,10 @@ import { MapPin, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 // Top 40 districts for display on homepage
 const topDistricts = [
-  // ЦАО
   { slug: 'arbat', name: 'Арбат', district: 'ЦАО' },
   { slug: 'zamoskvorechye', name: 'Замоскворечье', district: 'ЦАО' },
   { slug: 'khamovniki', name: 'Хамовники', district: 'ЦАО' },
@@ -16,32 +16,20 @@ const topDistricts = [
   { slug: 'tagansky', name: 'Таганский', district: 'ЦАО' },
   { slug: 'meshchansky', name: 'Мещанский', district: 'ЦАО' },
   { slug: 'yakimanka', name: 'Якиманка', district: 'ЦАО' },
-  
-  // ЮАО
   { slug: 'maryino', name: 'Марьино', district: 'ЮАО' },
   { slug: 'brateevo', name: 'Братеево', district: 'ЮАО' },
   { slug: 'orekhovo-borisovo-severnoe', name: 'Орехово-Борисово', district: 'ЮАО' },
-  
-  // ЮВАО
   { slug: 'tekstilshchiki', name: 'Текстильщики', district: 'ЮВАО' },
   { slug: 'pechatniki', name: 'Печатники', district: 'ЮВАО' },
   { slug: 'vykhino-zhulebino', name: 'Выхино-Жулебино', district: 'ЮВАО' },
-  
-  // ВАО
   { slug: 'izmaylovo', name: 'Измайлово', district: 'ВАО' },
   { slug: 'perovo', name: 'Перово', district: 'ВАО' },
-  
-  // САО
   { slug: 'sokol', name: 'Сокол', district: 'САО' },
   { slug: 'khoroshevsky', name: 'Хорошёво-Мнёвники', district: 'САО' },
-  
-  // ЗАО
   { slug: 'kuntsevo', name: 'Кунцево', district: 'ЗАО' },
   { slug: 'fili-davydkovo', name: 'Фили-Давыдково', district: 'ЗАО' },
   { slug: 'ochakovo-matveevskoe', name: 'Очаково-Матвеевское', district: 'ЗАО' },
   { slug: 'krylatskoe', name: 'Крылатское', district: 'ЗАО' },
-  
-  // ЮЗАО
   { slug: 'gagarinskiy', name: 'Гагаринский', district: 'ЮЗАО' },
   { slug: 'lomonosovsky', name: 'Ломоносовский', district: 'ЮЗАО' },
   { slug: 'akademichesky', name: 'Академический', district: 'ЮЗАО' },
@@ -49,22 +37,25 @@ const topDistricts = [
   { slug: 'konkovo', name: 'Коньково', district: 'ЮЗАО' },
   { slug: 'tyoply-stan', name: 'Тёплый Стан', district: 'ЮЗАО' },
   { slug: 'yasenevo', name: 'Ясенево', district: 'ЮЗАО' },
-  
-  // Additional
   { slug: 'dorogomilovo', name: 'Дорогомилово', district: 'ЗАО' },
 ];
 
-// Administrative districts
-const adminDistricts = [
-  { slug: 'dezinfekciya-cao', name: 'ЦАО', fullName: 'Центральный' },
-  { slug: 'dezinfekciya-sao', name: 'САО', fullName: 'Северный' },
-  { slug: 'dezinfekciya-svao', name: 'СВАО', fullName: 'Северо-Восточный' },
-  { slug: 'dezinfekciya-vao', name: 'ВАО', fullName: 'Восточный' },
-  { slug: 'dezinfekciya-yuvao', name: 'ЮВАО', fullName: 'Юго-Восточный' },
-  { slug: 'dezinfekciya-yao', name: 'ЮАО', fullName: 'Южный' },
-  { slug: 'dezinfekciya-yzao', name: 'ЮЗАО', fullName: 'Юго-Западный' },
-  { slug: 'dezinfekciya-zao', name: 'ЗАО', fullName: 'Западный' },
-  { slug: 'dezinfekciya-szao', name: 'СЗАО', fullName: 'Северо-Западный' },
+const okrugs = [
+  { id: 'cao', name: 'ЦАО', fullName: 'Центральный' },
+  { id: 'sao', name: 'САО', fullName: 'Северный' },
+  { id: 'svao', name: 'СВАО', fullName: 'Северо-Восточный' },
+  { id: 'vao', name: 'ВАО', fullName: 'Восточный' },
+  { id: 'yuvao', name: 'ЮВАО', fullName: 'Юго-Восточный' },
+  { id: 'yao', name: 'ЮАО', fullName: 'Южный' },
+  { id: 'yzao', name: 'ЮЗАО', fullName: 'Юго-Западный' },
+  { id: 'zao', name: 'ЗАО', fullName: 'Западный' },
+  { id: 'szao', name: 'СЗАО', fullName: 'Северо-Западный' },
+];
+
+const serviceTabs = [
+  { key: 'dezinfekciya', label: 'Дезинфекция' },
+  { key: 'dezinsekciya', label: 'Дезинсекция' },
+  { key: 'deratizaciya', label: 'Дератизация' },
 ];
 
 const ServiceDistricts = () => {
@@ -80,24 +71,37 @@ const ServiceDistricts = () => {
           </p>
         </div>
 
-        {/* Administrative Districts Grid */}
+        {/* Tabbed Administrative Districts */}
         <div className="mb-8">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <MapPin className="w-5 h-5 text-primary" />
             Административные округа
           </h3>
-          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
-            {adminDistricts.map((district) => (
-              <Link key={district.slug} to={`/uslugi/${district.slug}`}>
-                <Card className="h-full hover:shadow-md transition-all hover:-translate-y-0.5 border hover:border-primary/50">
-                  <CardContent className="p-3 text-center">
-                    <span className="font-bold text-primary text-sm">{district.name}</span>
-                    <p className="text-xs text-muted-foreground truncate">{district.fullName}</p>
-                  </CardContent>
-                </Card>
-              </Link>
+          <Tabs defaultValue="dezinfekciya" className="w-full">
+            <TabsList className="mb-4 w-full flex flex-wrap h-auto gap-1">
+              {serviceTabs.map((tab) => (
+                <TabsTrigger key={tab.key} value={tab.key} className="flex-1 min-w-[120px]">
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {serviceTabs.map((tab) => (
+              <TabsContent key={tab.key} value={tab.key}>
+                <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
+                  {okrugs.map((okrug) => (
+                    <Link key={okrug.id} to={`/uslugi/${tab.key}-${okrug.id}`}>
+                      <Card className="h-full hover:shadow-md transition-all hover:-translate-y-0.5 border hover:border-primary/50">
+                        <CardContent className="p-3 text-center">
+                          <span className="font-bold text-primary text-sm">{okrug.name}</span>
+                          <p className="text-xs text-muted-foreground truncate">{okrug.fullName}</p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </TabsContent>
             ))}
-          </div>
+          </Tabs>
         </div>
 
         {/* Popular Neighborhoods */}
