@@ -277,13 +277,15 @@ export function getAllSSGRoutes() {
     changefreq: 'monthly'
   });
   
-  // Страницы округов
-  districtSlugs.forEach(id => {
-    routes.push({
-      path: `/uslugi/dezinfekciya-${id}/`,
-      outputPath: `uslugi/dezinfekciya-${id}/index.html`,
-      priority: '0.85',
-      changefreq: 'monthly'
+  // Страницы округов (дезинфекция + дезинсекция + дератизация)
+  ['dezinfekciya', 'dezinsekciya', 'deratizaciya'].forEach(service => {
+    districtSlugs.forEach(id => {
+      routes.push({
+        path: `/uslugi/${service}-${id}/`,
+        outputPath: `uslugi/${service}-${id}/index.html`,
+        priority: '0.85',
+        changefreq: 'monthly'
+      });
     });
   });
   

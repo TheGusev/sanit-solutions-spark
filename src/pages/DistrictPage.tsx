@@ -22,18 +22,26 @@ import DistrictReviews from '@/components/district/DistrictReviews';
 import DistrictCTA from '@/components/district/DistrictCTA';
 import SectionHeading from '@/components/ui/SectionHeading';
 
+type ServiceType = 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya';
+
+const SERVICE_CONFIG: Record<ServiceType, { name: string; nameGenitive: string; basePrice: number; currentService: string }> = {
+  dezinfekciya: { name: 'Дезинфекция', nameGenitive: 'дезинфекции', basePrice: 1000, currentService: 'dezinfekciya' },
+  dezinsekciya: { name: 'Дезинсекция', nameGenitive: 'дезинсекции', basePrice: 1200, currentService: 'dezinsekciya' },
+  deratizaciya: { name: 'Дератизация', nameGenitive: 'дератизации', basePrice: 1400, currentService: 'deratizaciya' },
+};
+
 interface DistrictPageProps {
   districtId?: string;
+  serviceType?: ServiceType;
 }
 
-const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
+const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya' }: DistrictPageProps) => {
   const params = useParams<{ districtId: string }>();
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
-  // Используем districtId из пропсов или из URL params
   const districtId = propDistrictId || params.districtId;
-  
   const district = districtId ? getDistrictById(districtId) : undefined;
+  const svc = SERVICE_CONFIG[serviceType];
 
   // Если округ не найден по id — уводим на список округов
   if (!district) {
@@ -51,7 +59,9 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
   ];
 
   const otherDistricts = districtPages.filter((d) => d.id !== district.id).slice(0, 4);
-  const canonicalUrl = `${SEO_CONFIG.baseUrl}/uslugi/${district.slug}/`;
+  const canonicalUrl = `${SEO_CONFIG.baseUrl}/uslugi/${serviceType}-${district.id}/`;
+  const pageTitle = `${svc.name} в ${district.name} Москвы — выезд за ${district.responseTime} | от ${svc.basePrice + district.surcharge}₽`;
+  const pageDescription = `Профессиональная ${svc.nameGenitive} в ${district.fullName} Москвы. Выезд ${district.responseTime}. Гарантия результата.`;
 
   // ---------------------------------------------------------------------------
   // 3. JSON‑LD схемы
@@ -59,8 +69,8 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: `${SEO_CONFIG.companyName} — Дезинфекция в ${district.name}`,
-    description: district.metaDescription,
+    name: `${SEO_CONFIG.companyName} — ${svc.name} в ${district.name}`,
+    description: pageDescription,
     telephone: SEO_CONFIG.phone,
     url: canonicalUrl,
     address: {
@@ -78,16 +88,16 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
       '@type': 'AdministrativeArea',
       name: `${district.fullName}, Москва`,
     },
-    priceRange: `от ${1000 + district.surcharge}₽`,
+    priceRange: `от ${svc.basePrice + district.surcharge}₽`,
     openingHours: 'Mo-Su 00:00-23:59',
   };
 
   const serviceSchema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    serviceType: 'Дезинфекция',
-    name: `Дезинфекция в ${district.name} Москвы`,
-    description: district.metaDescription,
+    serviceType: svc.name,
+    name: `${svc.name} в ${district.name} Москвы`,
+    description: pageDescription,
     provider: {
       '@type': 'LocalBusiness',
       name: SEO_CONFIG.companyName,
@@ -98,7 +108,7 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
     },
     offers: {
       '@type': 'Offer',
-      price: 1000 + district.surcharge,
+      price: svc.basePrice + district.surcharge,
       priceCurrency: 'RUB',
     },
   };
@@ -123,14 +133,14 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
       { '@type': 'ListItem', position: 1, name: 'Главная', item: SEO_CONFIG.baseUrl },
       { '@type': 'ListItem', position: 2, name: 'Услуги', item: `${SEO_CONFIG.baseUrl}/#services` },
       { '@type': 'ListItem', position: 3, name: 'По округам Москвы', item: `${SEO_CONFIG.baseUrl}/uslugi/po-okrugam-moskvy` },
-      { '@type': 'ListItem', position: 4, name: `Дезинфекция в ${district.name}`, item: canonicalUrl },
+      { '@type': 'ListItem', position: 4, name: `${svc.name} в ${district.name}`, item: canonicalUrl },
     ],
   };
 
   const breadcrumbItems = [
     { label: 'Услуги', href: '/#services' },
     { label: 'По округам Москвы', href: '/uslugi/po-okrugam-moskvy' },
-    { label: `Дезинфекция в ${district.name}` },
+    { label: `${svc.name} в ${district.name}` },
   ];
 
   // ---------------------------------------------------------------------------
@@ -139,8 +149,8 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
   return (
     <>
       <Helmet>
-        <title>{district.metaTitle}</title>
-        <meta name="description" content={district.metaDescription} />
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
         <link rel="canonical" href={canonicalUrl} />
         <link rel="alternate" hrefLang="ru" href={canonicalUrl} />
         <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
@@ -151,9 +161,9 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
 
         <meta
           property="og:title"
-          content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
+          content={`${svc.name} в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
         />
-        <meta property="og:description" content={district.metaDescription} />
+        <meta property="og:description" content={pageDescription} />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:image" content={SEO_CONFIG.ogImage} />
@@ -163,9 +173,9 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content={`Дезинфекция в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
+          content={`${svc.name} в ${district.name} Москвы — ${SEO_CONFIG.companyName}`}
         />
-        <meta name="twitter:description" content={district.metaDescription} />
+        <meta name="twitter:description" content={pageDescription} />
         <meta name="twitter:image" content={SEO_CONFIG.ogImage} />
 
         <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
@@ -238,7 +248,7 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
 
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <SectionHeading label="УСЛУГИ" title={`Услуги дезинфекции в ${district.name}`} align="left" />
+            <SectionHeading label="УСЛУГИ" title={`Услуги ${svc.nameGenitive} в ${district.name}`} align="left" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {services.map((service) => (
                 <Link key={service.href} to={service.href}>
@@ -323,7 +333,7 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
             <SectionHeading label="ОКРУГА" title="Другие округа Москвы" align="left" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {otherDistricts.map((d) => (
-                <Link key={d.id} to={`/uslugi/${d.slug}`}>
+                <Link key={d.id} to={`/uslugi/${serviceType}-${d.id}`}>
                   <Card className="hover:shadow-md transition-shadow hover:-translate-y-1">
                     <CardContent className="p-4 text-center">
                       <h3 className="font-bold text-primary">{d.name}</h3>
@@ -341,7 +351,7 @@ const DistrictPage = ({ districtId: propDistrictId }: DistrictPageProps) => {
           </div>
         </section>
 
-        <InternalLinks currentService="dezinfekciya" title="Другие услуги в Москве" maxLinks={12} />
+        <InternalLinks currentService={svc.currentService} title="Другие услуги в Москве" maxLinks={12} />
       </main>
 
       <Footer />
