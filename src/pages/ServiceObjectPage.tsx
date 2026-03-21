@@ -154,8 +154,8 @@ export default function ServiceObjectPage() {
                 { step: '1', title: 'Заявка', desc: `Вы звоните или оставляете заявку. Мы уточняем детали: тип ${objectType.genitive}, площадь, характер проблемы.` },
                 { step: '2', title: 'Диагностика', desc: `Специалист приезжает, осматривает ${objectType.accusative}, определяет степень заражения и оптимальный метод обработки.` },
                 { step: '3', title: 'Подготовка', desc: `Готовим оборудование и препараты. Вы обеспечиваете доступ к помещению и убираете продукты.` },
-                { step: '4', title: 'Обработка', desc: `Проводим ${serviceName.toLowerCase()} методом холодного или горячего тумана. Время: ${objectType.averageTime}.` },
-                { step: '5', title: 'Контроль', desc: `Выдаём акт выполненных работ и гарантию до 3 лет. При необходимости — повторная обработка бесплатно.` },
+                { step: '4', title: 'Обработка', desc: `Проводим ${serviceAcc} методом холодного или горячего тумана. Время: ${objectType.averageTime}.` },
+                { step: '5', title: 'Контроль', desc: `Выдаём акт ${serviceGen} и гарантию до 3 лет. При необходимости — повторная обработка бесплатно.` },
               ].map((item, i) => (
                 <div key={i} className="text-center">
                   <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-2 font-bold">{item.step}</div>
