@@ -1,8 +1,6 @@
 import { useEffect, useState, lazy, Suspense } from "react";
 import SectionLoader from "@/components/SectionLoader";
 import { useMLPrediction } from "@/hooks/useMLPrediction";
-import { useScrollDepth } from "@/hooks/useScrollDepth";
-import { useHomepageGoals } from "@/hooks/useHomepageGoals";
 import { generateIndexMetadata } from "@/lib/metadata";
 import SEOHead from "@/components/SEOHead";
 
