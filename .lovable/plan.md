@@ -1,59 +1,17 @@
 
 
-# Добавление целей на все кнопки тарифов и CTA без трекинга
+# Обновление памяти целей Яндекс.Метрики
 
-## Проблема
+Обновляю knowledge-запись `analytics/yandex-metrika-goals-v4` до `v5` с полным актуальным списком всех целей после последних добавлений.
 
-Кнопки «Заказать» в `ServiceTariffs` и телефонные CTA в нескольких компонентах не отправляют цели в Яндекс.Метрику. Это слепые зоны аналитики.
-
-## Компоненты без целей (нужно добавить trackGoal)
-
-| # | Компонент | Кнопка | Цель |
-|---|-----------|--------|------|
-| 1 | `ServiceTariffs.tsx` | «Заказать» (tel) | `tariff_call_{prefix}` + params: tariff name, price |
-| 2 | `DistrictCTA.tsx` | Телефон (tel) | `district_cta_call` + params: district, service |
-| 3 | `DistrictsOverview.tsx` | Телефон (tel) | `districts_overview_call` |
-| 4 | `ServiceSESPage.tsx` (нижний CTA, строка 179) | Телефон (tel) | `ses_cta_call` |
-| 5 | `ServiceLandingUchastkiPage.tsx` (нижний CTA, строка 195) | Телефон (tel) | `uchastki_cta_call` |
-| 6 | `blog/ServiceCTA.tsx` | Телефон (tel) | `blog_cta_call` |
-| 7 | `ServiceAreaMap.tsx` (2 места, строки 127 и 303) | Телефон (tel) | `area_map_call` |
-
-## Компоненты с целями (уже ОК)
-
-- `ServiceStickyBar` — `service_sticky_call` ✅
-- `FinalCTA` — `final_cta_call` ✅
-- `Footer` — `phone_click` ✅
-- `StickyCTA` — `phone_click` ✅
-- `MobileQuickCTA` — `phone_click` ✅
-- `DesktopStickySidebar` — через TrafficContext ✅
-- `ServicePage` hero — `handlePhoneClick` ✅
-- `ServiceSESPage` hero — `phone_click` ✅
-- `ServiceLandingUchastkiPage` hero — `phone_click` ✅
-- `HeroCallbackForm` — `hero_callback_submit` ✅
-- `LeadFormModal` — `calc_lead_*` ✅
-- `QuickCallForm` — `quick_call_submit` + `lead_submit` ✅
-- `Calculator` — `calc_interact`, `calc_price_view` ✅
-- `CalculatorModal` — `calc_open` ✅
-- `FlashDiscountBadge` — `flash_badge_click` ✅
-
-## Файлы для правки
-
-| Файл | Правка |
-|------|--------|
-| `src/components/ServiceTariffs.tsx` | Добавить import `trackGoal`, `getYmGoalPrefix`; onClick на кнопку «Заказать» |
-| `src/components/district/DistrictCTA.tsx` | Добавить import `trackGoal`; onClick на телефонную ссылку |
-| `src/pages/DistrictsOverview.tsx` | Добавить onClick с `trackGoal` на телефонную кнопку |
-| `src/pages/ServiceSESPage.tsx` | Добавить onClick с `trackGoal` на нижний CTA (строка 179) |
-| `src/pages/ServiceLandingUchastkiPage.tsx` | Добавить onClick с `trackGoal` на нижний CTA (строка 195) |
-| `src/components/blog/ServiceCTA.tsx` | Добавить import `trackGoal`; onClick на «Позвонить» |
-| `src/components/ServiceAreaMap.tsx` | Добавить import `trackGoal`; onClick на 2 телефонные кнопки |
-
-## Полный актуальный список целей после правки
+## Содержимое новой записи
 
 ```text
+Yandex Metrika (ID 105828040) — полный список целей:
+
 ── Формы / лиды ──────────────────────────────
 calc_lead_{prefix}          — отправка формы из калькулятора
-quiz_lead_{prefix}          — отправка формы из квиза  
+quiz_lead_{prefix}          — отправка формы из квиза
 sticky_quiz_lead_{prefix}   — лид из sticky-квиза
 hero_callback_submit        — форма обратного звонка (hero)
 callback_{prefix}           — pest-specific callback
@@ -64,13 +22,13 @@ lead_submit                 — общий лид
 phone_click                 — общий клик по телефону
 service_sticky_call         — sticky bar (мобильный)
 final_cta_call              — финальный CTA
-tariff_call_{prefix}        — кнопка «Заказать» в тарифах  ← НОВАЯ
-district_cta_call           — CTA районной страницы         ← НОВАЯ
-districts_overview_call     — обзор районов                 ← НОВАЯ
-ses_cta_call                — нижний CTA на SES-странице    ← НОВАЯ
-uchastki_cta_call           — нижний CTA на странице участков ← НОВАЯ
-blog_cta_call               — CTA в блоге                   ← НОВАЯ
-area_map_call               — карта районов                 ← НОВАЯ
+tariff_call_{prefix}        — кнопка «Заказать» в тарифах
+district_cta_call           — CTA районной страницы
+districts_overview_call     — обзор районов
+ses_cta_call                — нижний CTA на SES-странице
+uchastki_cta_call           — нижний CTA на странице участков
+blog_cta_call               — CTA в блоге
+area_map_call               — карта районов
 
 ── Калькулятор ───────────────────────────────
 calc_open                   — открытие калькулятора
@@ -93,7 +51,14 @@ flash_badge_shown           — показ скидки
 flash_badge_click           — клик по скидке
 ai_referral                 — переход из AI
 telegram_click              — клик по Telegram
+
+Prefix определяется функцией getYmGoalPrefix() из URL:
+klopy, tarakany, muravyi, blohi, kleshchi, komary, muhi, mol,
+krysy, kroty, dezinsekciya, deratizaciya, dezinfekciya,
+dezodoraciya, ozonirovanie, sertifikaciya, uchastki, ses, main, general.
 ```
 
-7 файлов, 7 правок — добавление import + onClick handler.
+## Действие
+
+Это обновление памяти проекта — изменений в коде нет.
 
