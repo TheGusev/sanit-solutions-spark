@@ -45,6 +45,7 @@ import WhyProblemReturns from "@/components/WhyProblemReturns";
 import LazySection from "@/components/LazySection";
 import CalculatorModal from "@/components/CalculatorModal";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { SERVICE_GALLERY, GALLERY_SUBTITLES } from "@/data/serviceGallery";
 
 // Ленивая загрузка DistrictPage для избежания циклических зависимостей
 const DistrictPage = lazy(() => import("./DistrictPage"));
