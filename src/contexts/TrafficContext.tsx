@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { initializeTrafficContext, TrafficContext as TrafficContextType } from '@/hooks/useTrafficContext';
 import { supabase } from '@/lib/supabaseClient';
 import { setUserProperties, trackPageView } from '@/lib/analytics';
+import { useGlobalGoals } from '@/hooks/useGlobalGoals';
 
 interface TrafficContextValue {
   context: TrafficContextType | null;
@@ -25,6 +26,9 @@ export function TrafficProvider({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const lastLoggedPath = useRef<string | null>(null);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Глобальные микроконверсии на всех страницах
+  useGlobalGoals();
 
   // Инициализация контекста при первой загрузке
   useEffect(() => {

@@ -1,8 +1,6 @@
 import { useEffect, useState, lazy, Suspense } from "react";
 import SectionLoader from "@/components/SectionLoader";
 import { useMLPrediction } from "@/hooks/useMLPrediction";
-import { useScrollDepth } from "@/hooks/useScrollDepth";
-import { useHomepageGoals } from "@/hooks/useHomepageGoals";
 import { generateIndexMetadata } from "@/lib/metadata";
 import SEOHead from "@/components/SEOHead";
 
@@ -37,9 +35,7 @@ const Index = () => {
   // Integrate ML prediction in main flow for real-time personalization
   const { prediction, isLoading: mlLoading } = useMLPrediction();
   
-  // Track scroll depth goals
-  useScrollDepth();
-  useHomepageGoals();
+  // Global goals now handled by useGlobalGoals in TrafficProvider
 
   useEffect(() => {
     // Toggle debug panel with Ctrl+Shift+D

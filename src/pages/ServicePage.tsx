@@ -550,7 +550,7 @@ const ServicePage = () => {
 
         {/* Pricing Table (NEW) */}
         {service.pricing && (
-          <section id="pricing-by-area" className="py-12 md:py-20">
+          <section id="pricing-by-area" className="py-12 md:py-20" data-section="pricing">
             <div className="container mx-auto px-4">
               <AnimatedSection animation="fade-up">
                 <SectionHeading label="СТОИМОСТЬ" title={`Стоимость ${service.title.toLowerCase()} в Москве и МО`} />
@@ -653,7 +653,7 @@ const ServicePage = () => {
 
         {/* FAQ */}
         <LazySection minHeight="300px">
-          <section className="py-12 md:py-20">
+          <section className="py-12 md:py-20" data-section="faq">
             <div className="container mx-auto px-4">
               <AnimatedSection animation="fade-up">
                 <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title="Часто задаваемые вопросы" />
