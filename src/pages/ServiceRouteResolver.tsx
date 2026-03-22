@@ -46,7 +46,11 @@ export default function ServiceRouteResolver() {
     return <ServiceObjectPage />;
   }
   
-  // REMOVED: Neighborhoods no longer matched here — all geo pages at /rajony/[slug]/ (Issue #1)
+  // 4. Район → редирект на /rajony/
+  const neighborhood = neighborhoods.find(n => n.slug === subSlug);
+  if (neighborhood) {
+    return <Navigate to={`/rajony/${subSlug}/`} replace />;
+  }
   
   // Ничего не найдено → 404
   return <NotFound />;
