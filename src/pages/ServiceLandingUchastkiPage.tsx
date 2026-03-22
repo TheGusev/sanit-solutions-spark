@@ -134,7 +134,7 @@ const ServiceLandingUchastkiPage = () => {
 
         {/* Pricing */}
         <AnimatedSection>
-          <section className="py-16 bg-muted/30">
+          <section className="py-16 bg-muted/30" data-section="pricing">
             <div className="container mx-auto px-4 max-w-2xl">
               <SectionHeading title="Стоимость обработки участка" />
               <Table className="mt-8">
