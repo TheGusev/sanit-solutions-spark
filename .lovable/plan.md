@@ -1,54 +1,22 @@
 
 
-# Серверные 301-редиректы для районных URL
+# Генерация нового фонового изображения для карточки «Озонирование»
 
 ## Проблема
 
-Сейчас `/uslugi/dezinfekciya/basmannyy/` и подобные URL отдают HTTP 200 + клиентский редирект через React `<Navigate>`. Яндекс видит 200, а не 301 — поисковый вес не передаётся на `/rajony/`.
+Текущее изображение `/images/services/ozonirovanie-bg.jpg` — сплошной синий фон, выбивается из стиля остальных карточек, где используются тёмные атмосферные фотографии помещений.
 
 ## Решение
 
-Добавить в `public/_redirects` явные 301-правила для каждого из ~130 районов × 3 услуги (dezinsekciya, dezinfekciya, deratizaciya) = ~390 строк. Также добавить аналогичные правила для 5 дополнительных услуг (dezodoraciya, ozonirovanie, sertifikaciya, fumigaciya, demerkurizaciya) где возможны утечки.
+1. **Сгенерировать новое изображение** через AI (Nano banana pro — `google/gemini-3-pro-image-preview`) — тёмная атмосферная фотография комнаты/помещения с визуальным намёком на озонирование (свежий воздух, чистое пространство, лёгкая дымка). Стиль: тёмные тона, как у остальных карточек (dezinfekciya, dezinsekciya и т.д.).
 
-Wildcard-правила вида `/uslugi/:service/:slug` запрещены — они сломают рабочие pest/object маршруты (`/uslugi/dezinsekciya/tarakany/`). Поэтому только явные slugи.
+2. **Заменить файл** `/images/services/ozonirovanie-bg.jpg` на новое изображение.
 
-## Файлы
+Код менять не нужно — путь в `MiniPricing.tsx` остаётся тот же.
+
+### Файлы
 
 | Файл | Действие |
 |------|----------|
-| `public/_redirects` | +~390 строк 301-редиректов для 3 основных услуг × ~130 районов |
-
-## Формат каждой строки
-
-```
-/uslugi/dezinsekciya/arbat/    /rajony/arbat/    301
-/uslugi/dezinfekciya/arbat/    /rajony/arbat/    301
-/uslugi/deratizaciya/arbat/    /rajony/arbat/    301
-```
-
-Размещение: после блока "Anti-cannibalization" и перед блоком "renamed blog articles", чтобы правила срабатывали до SPA fallback.
-
-## Полный список районов (130 шт.)
-
-CAO (10): arbat, tverskoy, zamoskvorechye, khamovniki, presnensky, basmannyy, krasnoselsky, meshchansky, tagansky, yakimanka
-
-SAO (16): aeroport, begovoy, sokol, voykovskiy, golovinsky, koptevo, timiryazevsky, khovrino, savelovsky, levoberezhny, dmitrovsky, zapadnoe-degunino, vostochnoe-degunino, beskudnikovsky, molzhaninovsky, khoroshevsky
-
-SVAO (17): altufyevsky, babushkinsky, bibirevo, butyrsky, lianozovo, losinoostrovskiy, marfino, ostankinsky, otradnoe, rostokino, sviblovo, severny, severnoe-medvedkovo, yuzhnoe-medvedkovo, yaroslavsky, severny-rayon + ещё
-
-ВАО (16): bogorodskoe, veshnyaki, vostochnoe-izmaylovo, vostochny, golyanovo, ivanovskoe, izmaylovo, kosino-ukhtomsky, metrogorodok, novogireevo, novokosino, perovo, preobrazhenskoe, severnoe-izmaylovo, sokolinaya-gora, sokolniki
-
-ЮВАО (12): vykhino-zhulebino, kapotnya, kuzminki, lefortovo, lyublino, maryino, nekrasovka, nizhegorodsky, pechatniki, ryazansky, tekstilshchiki, yuzhnoport
-
-ЮАО (16): biryulyovo-vostochnoe, biryulyovo-zapadnoe, brateevo, danilovsky, donskoy, zyablikovo, moskvorechye-saburovo, nagatino-sadovniki, nagatinsky-zaton, nagorny, orekhovo-borisovo-severnoe, orekhovo-borisovo-yuzhnoe, tsaritsyno, chertanovo-severnoe, chertanovo-tsentralnoe, chertanovo-yuzhnoe
-
-ЮЗАО (12): akademichesky, gagarin, zyuzino, konkovo, kotlovka, lomonosovsky, obruchevsky, severnoe-butovo, tyoply-stan, cheryomushki, yuzhnoe-butovo, yasenevo
-
-ЗАО (13): vnukovo, dorogomilovo, krylatskoe, kuntsevo, mozhaysky, novo-peredelkino, ochakovo-matveevskoe, prospekt-vernadskogo, ramenki, solntsevo, troparyovo-nikulino, filyovsky-park, fili-davydkovo
-
-СЗАО (8): kurkino, mitino, pokrovskoe-streshnevo, severnoe-tushino, strogino, khoroshevo-mnevniki, shchukino, yuzhnoe-tushino
-
-НАО+ТАО+ЗелАО (10): sosenskoe, vnukovskoe, troitsk, shcherbinka, moskovsky, zelenograd-1..5
-
-Итого ~130 × 3 = ~390 строк. Файл вырастет, но это стандартная практика для серверных редиректов.
+| `public/images/services/ozonirovanie-bg.jpg` | Заменить на сгенерированное изображение |
 
