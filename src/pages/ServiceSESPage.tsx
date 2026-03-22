@@ -177,7 +177,7 @@ const ServiceSESPage = () => {
             <p className="mb-6 opacity-90">Звоните — выезд специалиста в течение 30 минут</p>
             <div className="flex flex-wrap justify-center gap-3">
               <Button size="lg" variant="secondary" className="gap-2" asChild>
-                <a href="tel:84950181817"><Phone className="h-5 w-5" /> 8-495-018-18-17</a>
+                <a href="tel:84950181817" onClick={() => trackGoal('ses_cta_call')}><Phone className="h-5 w-5" /> 8-495-018-18-17</a>
               </Button>
               <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary gap-2" onClick={() => setShowCalculator(true)}>
                 <Calculator className="h-5 w-5" /> Рассчитать стоимость

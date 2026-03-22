@@ -76,7 +76,7 @@ const ServiceTariffs = ({ tariffs, serviceTitle, serviceAccusative }: ServiceTar
                     className="w-full min-h-[48px] text-base"
                     asChild
                   >
-                    <a href="tel:84950181817">
+                    <a href="tel:84950181817" onClick={() => trackGoal(`tariff_call_${getYmGoalPrefix()}`, { tariff: tariff.name, price: tariff.price })}>
                       <Phone className="w-4 h-4 mr-2" />
                       Заказать
                     </a>
