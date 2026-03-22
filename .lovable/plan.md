@@ -1,46 +1,50 @@
 
 
-# Исправление ошибок индексации Яндекса + подготовка к переобходу
+# Исправление удалённых doorway-страниц `/uslugi/dezinfekciya/[район]/`
 
-## Анализ скриншотов
+## Что происходит
 
-### Что происходит
+На скриншоте видны два типа страниц:
 
-1. **`/uslugi/dezinsektsiya/` → 404** — Яндекс обходит URL с опечаткой (dezinsek**TS**iya вместо dezinsek**C**iya). У нас нет редиректа — Яндекс получает 404. Надо добавить 301.
+### 1. Проблема: `/uslugi/dezinfekciya/basmannyy/`, `/dorogomilovo/`, `/tverskoy/`, `/zamoskvorechye/`
+Эти страницы **были удалены** из SSG (строка 301 в `vite-plugin-ssg.ts`: `// REMOVED: /uslugi/dezinfekciya/[neighborhood] doorway pages`). Теперь при заходе на них:
+- SPA fallback отдаёт `index.html` с **HTTP 200**
+- React-роутер рендерит `<NotFound />` на клиенте
+- Яндекс видит **200 + пустой контент** = "малоценная страница"
 
-2. **`/uslugi/dezinsekciya/blohi` → 301** и **`/uslugi/dezinsekciya/restoranov` → 301** — это URL без trailing slash. SPA fallback отдаёт `index.html`, роутер рендерит страницу, но Яндексу видит 301 (добавление `/`). Это нормальное поведение, не ошибка.
+Это **мягкий 404** — самый вредный сценарий для SEO. Нужно отдавать **301 → /rajony/[район]/**.
 
-3. **«Маловостребованная страница»** — это стандартная метка Яндекса для новых НЧ-страниц. Они в индексе, просто помечены как low-demand. По мере роста ссылочной массы и трафика метка уйдёт.
+### 2. Нормально: NCH-страницы (клопы/тараканы + район)
+`/uslugi/dezinsekciya/klopy/maryino/`, `/tarakany/khamovniki/` и т.д. — это рабочие НЧ-страницы. Статус "маловостребованная" — **нормально** для новых нишевых страниц. Они в индексе, просто Яндекс пока не видит спрос.
 
-4. **Google: 328 из 446** — нормальный рост, 118 excluded — типично для нового контента.
+### 3. Нормально: `/uslugi/dezinfekciya/hostela/`
+Объектная страница, статус "Каноническая" — всё правильно.
 
-**Вывод: страницы НЕ выкидываются из поиска.** Единственная реальная проблема — 404 на опечатке `/dezinsektsiya/`.
+## Решение
 
-## Что сделаем
+### `src/pages/ServiceRouteResolver.tsx` — добавить редирект
 
-### 1. Добавить 301-редиректы на частые опечатки в `public/_redirects`
+Если `subSlug` совпадает с районом из `neighborhoods` — вернуть `<Navigate to={/rajony/${subSlug}/} replace />` вместо `<NotFound />`. Это работает для **всех** 130 районов автоматически, без 130 строк в `_redirects`.
 
+```typescript
+// После проверки pest и object:
+import { neighborhoods } from '@/data/neighborhoods';
+import { Navigate } from 'react-router-dom';
+
+// 4. Если subSlug — район → 301 на /rajony/
+const neighborhood = neighborhoods.find(n => n.slug === subSlug);
+if (neighborhood) {
+  return <Navigate to={`/rajony/${subSlug}/`} replace />;
+}
 ```
-/uslugi/dezinsektsiya/           /uslugi/dezinsekciya/           301
-/uslugi/dezinsektsiya/*          /uslugi/dezinsekciya/:splat     301
-/uslugi/dezinfektsiya/           /uslugi/dezinfekciya/           301
-/uslugi/dezinfektsiya/*          /uslugi/dezinfekciya/:splat     301
-/uslugi/deratizatsiya/           /uslugi/deratizaciya/           301
-/uslugi/deratizatsiya/*          /uslugi/deratizaciya/:splat     301
-```
 
-### 2. Обновить `robots.txt` — актуализировать дату
-
-### 3. Подготовить список URL для ручной отправки на переобход
-
-Вывести пользователю инструкцию: какие URL отправить на переобход в Яндекс.Вебмастер и Google Search Console (sitemap-index.xml + ключевые страницы).
+Это решает проблему для **всех** URL вида `/uslugi/[любая-услуга]/[район]/` — редиректит на `/rajony/[район]/`.
 
 ### Файлы
 
-| Файл | Действие |
-|------|----------|
-| `public/_redirects` | +6 строк 301-редиректов для опечаток |
-| `public/robots.txt` | Обновить дату |
+| Файл | Правка |
+|------|--------|
+| `src/pages/ServiceRouteResolver.tsx` | +import neighborhoods, +Navigate; добавить проверку районов перед NotFound |
 
-Минимальные правки — 2 файла, ~10 строк.
+Одна правка в одном файле. Все 130 районов покрыты автоматически. Яндекс при следующем обходе получит 301 и перенесёт вес на `/rajony/` страницы.
 
