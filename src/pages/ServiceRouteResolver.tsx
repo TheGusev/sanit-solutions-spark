@@ -7,16 +7,15 @@
  * - ServiceDistrictPage (районы Москвы: arbat, tverskoy)
  */
 
-import { useParams } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import { getSubpageByPath } from '@/data/serviceSubpages';
 import { getPestBySlug } from '@/data/pests';
 import { getObjectBySlug } from '@/data/objects';
-// neighborhoods import removed — geo pages now at /rajony/ only
+import { neighborhoods } from '@/data/neighborhoods';
 
 import ServiceSubpage from './ServiceSubpage';
 import ServicePestPage from './ServicePestPage';
 import ServiceObjectPage from './ServiceObjectPage';
-// ServiceDistrictPage import removed — geo pages now at /rajony/ only
 import NotFound from './NotFound';
 
 export default function ServiceRouteResolver() {
