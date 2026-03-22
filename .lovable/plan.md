@@ -1,51 +1,46 @@
 
 
-# Прокинуть все цели на все страницы сайта
+# Исправление ошибок индексации Яндекса + подготовка к переобходу
 
-## Проблема
+## Анализ скриншотов
 
-Сейчас `useScrollDepth()` и `useHomepageGoals()` вызываются **только в `Index.tsx`**. Остальные страницы (услуги, блог, округа, районы, МО, контакты) не трекают скролл, время на странице и просмотр секций.
+### Что происходит
 
-## Решение
+1. **`/uslugi/dezinsektsiya/` → 404** — Яндекс обходит URL с опечаткой (dezinsek**TS**iya вместо dezinsek**C**iya). У нас нет редиректа — Яндекс получает 404. Надо добавить 301.
 
-Вместо добавления хуков в каждую из ~15 страниц — вынести трекинг на **глобальный уровень** в `TrafficProvider`, который уже оборачивает весь роутинг в `App.tsx`.
+2. **`/uslugi/dezinsekciya/blohi` → 301** и **`/uslugi/dezinsekciya/restoranov` → 301** — это URL без trailing slash. SPA fallback отдаёт `index.html`, роутер рендерит страницу, но Яндексу видит 301 (добавление `/`). Это нормальное поведение, не ошибка.
 
-### 1. Создать `src/hooks/useGlobalGoals.ts`
+3. **«Маловостребованная страница»** — это стандартная метка Яндекса для новых НЧ-страниц. Они в индексе, просто помечены как low-demand. По мере роста ссылочной массы и трафика метка уйдёт.
 
-Универсальный хук, объединяющий:
-- **Скролл** 25/50/75/100% — с префиксом страницы (например `scroll_25` с параметром `page`)
-- **Время на странице** 30с / 60с / 2мин — сбрасывается при навигации
-- **Просмотр секций** — ищет любые элементы с `data-section` на текущей странице и трекает их просмотр
-- **Копирование телефона** — глобальный `copy` listener
+4. **Google: 328 из 446** — нормальный рост, 118 excluded — типично для нового контента.
 
-Хук принимает `pathname` и сбрасывает счётчики при смене страницы.
+**Вывод: страницы НЕ выкидываются из поиска.** Единственная реальная проблема — 404 на опечатке `/dezinsektsiya/`.
 
-### 2. Обновить `src/contexts/TrafficContext.tsx`
+## Что сделаем
 
-Вызвать `useGlobalGoals()` внутри `TrafficProvider` — автоматически работает на всех страницах.
+### 1. Добавить 301-редиректы на частые опечатки в `public/_redirects`
 
-### 3. Убрать дублирование из `Index.tsx`
+```
+/uslugi/dezinsektsiya/           /uslugi/dezinsekciya/           301
+/uslugi/dezinsektsiya/*          /uslugi/dezinsekciya/:splat     301
+/uslugi/dezinfektsiya/           /uslugi/dezinfekciya/           301
+/uslugi/dezinfektsiya/*          /uslugi/dezinfekciya/:splat     301
+/uslugi/deratizatsiya/           /uslugi/deratizaciya/           301
+/uslugi/deratizatsiya/*          /uslugi/deratizaciya/:splat     301
+```
 
-Удалить `useScrollDepth()` и `useHomepageGoals()` из `Index.tsx` — они теперь глобальные.
+### 2. Обновить `robots.txt` — актуализировать дату
 
-### 4. Добавить `data-section` на ключевые секции других страниц
+### 3. Подготовить список URL для ручной отправки на переобход
 
-- **`ServicePage.tsx`**: pricing, reviews, faq, gallery
-- **`DistrictPage.tsx`**: pricing, reviews
-- **`BlogPost.tsx`**: content, faq
-- **`ServiceLandingUchastkiPage.tsx`**: pricing, quiz, faq
+Вывести пользователю инструкцию: какие URL отправить на переобход в Яндекс.Вебмастер и Google Search Console (sitemap-index.xml + ключевые страницы).
 
 ### Файлы
 
 | Файл | Действие |
 |------|----------|
-| `src/hooks/useGlobalGoals.ts` | Создать — универсальный хук |
-| `src/contexts/TrafficContext.tsx` | Добавить вызов `useGlobalGoals()` |
-| `src/pages/Index.tsx` | Убрать `useScrollDepth`, `useHomepageGoals` |
-| `src/pages/ServicePage.tsx` | Добавить `data-section` на секции |
-| `src/pages/DistrictPage.tsx` | Добавить `data-section` на секции |
-| `src/pages/BlogPost.tsx` | Добавить `data-section` на секции |
-| `src/pages/ServiceLandingUchastkiPage.tsx` | Добавить `data-section` на секции |
+| `public/_redirects` | +6 строк 301-редиректов для опечаток |
+| `public/robots.txt` | Обновить дату |
 
-Существующие хуки `useHomepageGoals.ts` и `useScrollDepth.ts` останутся как файлы (не сломают импорты), но больше не будут вызываться напрямую — их логика поглощена `useGlobalGoals`.
+Минимальные правки — 2 файла, ~10 строк.
 
