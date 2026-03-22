@@ -15,7 +15,6 @@ import {
   Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Phone, Shield, Clock, Award, Bug, Zap, CheckCircle, Users, Beaker, Calculator } from "lucide-react";
-import { trackGoal } from "@/lib/analytics";
 import CalculatorModal from "@/components/CalculatorModal";
 import type { PageMetadata } from "@/lib/metadata";
 

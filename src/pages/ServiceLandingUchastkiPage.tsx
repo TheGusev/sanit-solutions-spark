@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Phone, TreePine, Bug, Droplets, Shield, Leaf, Calculator } from "lucide-react";
-import { trackGoal } from "@/lib/analytics";
 import CalculatorModal from "@/components/CalculatorModal";
 import type { PageMetadata } from "@/lib/metadata";
 
