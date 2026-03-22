@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trackGoal } from "@/lib/analytics";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { Link } from "react-router-dom";
 import { moscowDistricts, moscowRegion, ServiceArea } from "@/data/serviceAreas";
@@ -124,7 +125,7 @@ const ServiceAreaMap = () => {
                       <Button 
                         variant="outline" 
                         className="w-full text-sm whitespace-normal" 
-                        onClick={() => window.location.href = 'tel:84950181817'}
+                        onClick={() => { trackGoal('area_map_call'); window.location.href = 'tel:84950181817'; }}
                       >
                         <Phone className="mr-2 h-4 w-4 flex-shrink-0" />
                         8-495-018-18-17
@@ -300,7 +301,7 @@ const ServiceAreaMap = () => {
                     <Button 
                       variant="outline" 
                       className="w-full whitespace-normal" 
-                      onClick={() => window.location.href = 'tel:84950181817'}
+                      onClick={() => { trackGoal('area_map_call'); window.location.href = 'tel:84950181817'; }}
                     >
                       <Phone className="mr-2 h-4 w-4 flex-shrink-0" />
                       8-495-018-18-17

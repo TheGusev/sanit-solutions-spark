@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trackGoal } from "@/lib/analytics";
 import Header from "@/components/Header";
 import ServiceQuiz from "@/components/ServiceQuiz";
 import Footer from "@/components/Footer";
@@ -16,7 +17,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Phone, TreePine, Bug, Droplets, Shield, Leaf, Calculator } from "lucide-react";
-import { trackGoal } from "@/lib/analytics";
 import CalculatorModal from "@/components/CalculatorModal";
 import type { PageMetadata } from "@/lib/metadata";
 
@@ -192,7 +192,7 @@ const ServiceLandingUchastkiPage = () => {
             <p className="mb-6 opacity-90">Бесплатный выезд специалиста для оценки территории</p>
             <div className="flex flex-wrap justify-center gap-3">
               <Button size="lg" variant="secondary" className="gap-2" asChild>
-                <a href="tel:84950181817"><Phone className="h-5 w-5" /> 8-495-018-18-17</a>
+                <a href="tel:84950181817" onClick={() => trackGoal('uchastki_cta_call')}><Phone className="h-5 w-5" /> 8-495-018-18-17</a>
               </Button>
               <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary gap-2" onClick={() => setShowCalculator(true)}>
                 <Calculator className="h-5 w-5" /> Рассчитать стоимость

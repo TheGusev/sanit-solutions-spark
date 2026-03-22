@@ -1,4 +1,5 @@
 import { Phone, Clock, Star, Zap, BadgeCheck, FileText } from 'lucide-react';
+import { trackGoal } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { DistrictPage } from '@/data/districtPages';
 
@@ -74,7 +75,7 @@ const DistrictCTA = ({ district, serviceType = 'dezinfekciya' }: DistrictCTAProp
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
               <Button size="lg" variant="secondary" className="text-lg px-8" asChild>
-                <a href="tel:84950181817">
+                <a href="tel:84950181817" onClick={() => trackGoal('district_cta_call', { district: district.id, service: serviceType })}>
                   <Phone className="w-5 h-5 mr-2" />
                   8-495-018-18-17
                 </a>

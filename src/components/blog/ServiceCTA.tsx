@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Phone, ArrowRight } from "lucide-react";
+import { trackGoal } from "@/lib/analytics";
 
 interface ServiceLink {
   slug: string;
@@ -102,7 +103,7 @@ const ServiceCTA = ({ services }: ServiceCTAProps) => {
                 </Button>
               ))}
               <Button className="min-h-[48px]" asChild>
-                <a href="tel:84950181817">
+                <a href="tel:84950181817" onClick={() => trackGoal('blog_cta_call')}>
                   <Phone className="w-4 h-4 mr-2" />
                   Позвонить
                 </a>

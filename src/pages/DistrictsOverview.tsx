@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { MapPin, Clock, Car, Shield, Phone } from "lucide-react";
+import { trackGoal } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
@@ -151,7 +152,7 @@ const DistrictsOverview = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild>
-                <a href="tel:84950181817">
+                <a href="tel:84950181817" onClick={() => trackGoal('districts_overview_call')}>
                   <Phone className="w-5 h-5 mr-2" />
                   8-495-018-18-17
                 </a>
