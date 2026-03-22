@@ -1,31 +1,51 @@
 
 
-# Перенос галереи «До / После» в начало страницы услуги
+# Вынос данных SERVICE_GALLERY в отдельный файл
 
-## Проблема
+## Что делаем
 
-Сейчас блок «Как выглядит проблема и результат» (фото До / Процесс / После) расположен далеко внизу страницы — после Quiz, Тарифов, WhyProblemReturns, WhenNeeded, Описания и Методов (строки 407–470 в ServicePage.tsx). Пользователь хочет его видеть сразу после Hero-секции.
+Переносим константы `SERVICE_GALLERY` и `subtitleMap` из `ServicePage.tsx` в новый файл данных, оставляя в компоненте только рендеринг.
 
-## Решение
+## Файлы
 
-Переместить блок галереи (строки 407–470) сразу после Hero-секции (после строки 297), перед ServiceQuiz. Это один вырезать-вставить в одном файле.
+| Файл | Действие |
+|------|----------|
+| `src/data/serviceGallery.ts` | **Создать** — экспорт типа `GalleryItem`, константы `SERVICE_GALLERY` и `GALLERY_SUBTITLES` |
+| `src/pages/ServicePage.tsx` | Удалить строки 301–331 (данные), добавить импорт из `@/data/serviceGallery`, использовать импортированные константы в строках 323–331 |
 
-### Файл
+## Новый файл `src/data/serviceGallery.ts`
 
-| Файл | Правка |
-|------|--------|
-| `src/pages/ServicePage.tsx` | Вырезать блок галереи (строки 407–470), вставить после строки 297 (закрытие `</section>` Hero) |
+```typescript
+export type GalleryItem = {
+  src: string;
+  title: string;
+  desc: string;
+  badge: string;
+  badgeColor: string;
+};
 
-Порядок секций станет:
-1. Hero
-2. **Галерея До / Процесс / После** ← сюда
-3. ServiceQuiz
-4. ServiceTariffs
-5. WhyProblemReturns
-6. WhenNeeded
-7. Описание & Преимущества
-8. Методы
-9. и т.д.
+export const SERVICE_GALLERY: Record<string, GalleryItem[]> = {
+  'borba-s-krotami': [...],
+  'dezinsekciya': [...],
+  'deratizaciya': [...],
+  'dezinfekciya': [...],
+};
 
-Одна правка, один файл, ~65 строк перемещены.
+export const GALLERY_SUBTITLES: Record<string, string> = {
+  'borba-s-krotami': 'Реальные фото...',
+  // ...
+};
+```
+
+## Изменение в `ServicePage.tsx`
+
+Строки 300–331 (IIFE с данными) заменяются на:
+```typescript
+import { SERVICE_GALLERY, GALLERY_SUBTITLES } from '@/data/serviceGallery';
+// ...
+const galleryItems = SERVICE_GALLERY[service.slug];
+const subtitle = GALLERY_SUBTITLES[service.slug] || '';
+```
+
+Рендеринг (строки 333–362) остаётся без изменений.
 
