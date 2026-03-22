@@ -23,6 +23,14 @@
 /wp-json/*           /404.html   404
 /wp-cron.php         /404.html   404
 
+# 301 Redirects — typo transliterations (dezinsekTSiya → dezinsekCiya)
+/uslugi/dezinsektsiya/           /uslugi/dezinsekciya/           301
+/uslugi/dezinsektsiya/*          /uslugi/dezinsekciya/:splat     301
+/uslugi/dezinfektsiya/           /uslugi/dezinfekciya/           301
+/uslugi/dezinfektsiya/*          /uslugi/dezinfekciya/:splat     301
+/uslugi/deratizatsiya/           /uslugi/deratizaciya/           301
+/uslugi/deratizatsiya/*          /uslugi/deratizaciya/:splat     301
+
 # 301 Redirects — combo pages cannibalize pest clusters (Issue #5)
 /uslugi/dezinsekciya/klopov-i-tarakanov/*  /uslugi/dezinsekciya/unichtozhenie-klopov/  301
 /uslugi/dezinsekciya/klopov-i-bloh/*       /uslugi/dezinsekciya/unichtozhenie-klopov/  301
