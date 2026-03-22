@@ -653,7 +653,7 @@ const ServicePage = () => {
 
         {/* FAQ */}
         <LazySection minHeight="300px">
-          <section className="py-12 md:py-20">
+          <section className="py-12 md:py-20" data-section="faq">
             <div className="container mx-auto px-4">
               <AnimatedSection animation="fade-up">
                 <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title="Часто задаваемые вопросы" />

@@ -170,7 +170,7 @@ const ServiceLandingUchastkiPage = () => {
 
         {/* FAQ */}
         <AnimatedSection>
-          <section className="py-16">
+          <section className="py-16" data-section="faq">
             <div className="container mx-auto px-4 max-w-3xl">
               <SectionHeading title="Вопросы об обработке участков" />
               <Accordion type="single" collapsible className="mt-8">

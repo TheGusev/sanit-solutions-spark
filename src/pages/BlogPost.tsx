@@ -262,7 +262,7 @@ const BlogPost = () => {
       </section>
 
       {/* Article Content with TOC */}
-      <section className="pb-12 md:pb-16 px-4">
+      <section className="pb-12 md:pb-16 px-4" data-section="content">
         <div className="container mx-auto max-w-6xl">
           <div className={showToc ? "flex flex-col lg:grid lg:grid-cols-[250px_1fr] gap-8" : ""}>
             {showToc && (
