@@ -1,64 +1,110 @@
 
 
-# Обновление памяти целей Яндекс.Метрики
+# Расширение мониторинга: SEO-аналитика, рендеринг, семантика
 
-Обновляю knowledge-запись `analytics/yandex-metrika-goals-v4` до `v5` с полным актуальным списком всех целей после последних добавлений.
+## Что добавляем в ежедневный отчёт
 
-## Содержимое новой записи
+### 1. Семантическое ядро — развесовка по кластерам и приоритетам
+Скрипт парсит `semanticCore.ts` из репозитория и выводит:
+- Количество запросов по кластерам (service, pest, object, district, nch, blog)
+- Развесовка по приоритетам (P1–P5)
+- Соотношение commercial / informational / navigational
+- Количество дублей запросов (если появились)
+
+### 2. SSG-маршруты — детальная разбивка
+Парсит `seoRoutes.ts` и выводит количество маршрутов по типам:
+- Статические, услуги, подстраницы, вредители, объекты, районы, МО города, блог, НЧ
+- Дельта с прошлым запуском (сохраняется в `.monitoring-cache.json`)
+
+### 3. Рендеринг — проверка SSG-файлов
+Запрашивает несколько ключевых страниц и проверяет:
+- Наличие `<h1>` в HTML (SSR работает)
+- Наличие JSON-LD (`application/ld+json`)
+- Наличие canonical link
+- Размер HTML (> 10KB = норма, < 5KB = пустая оболочка)
+
+### 4. Гео-роутинг — проверка районов и МО
+Случайно выбирает 3 района из `/rajony/` и 2 города из `/moscow-oblast/`:
+- Проверяет HTTP 200
+- Наличие H1 с названием района/города
+- Время отклика
+
+### 5. Индексация — % покрытия
+Считает процент индексации: `YANDEX_INDEXED / total_sitemap_urls * 100%` и аналогично для Google. Показывает прогресс к цели.
+
+### 6. Тренд — сравнение с предыдущим днём
+Скрипт сохраняет ключевые метрики в `.monitoring-cache.json` и показывает дельту:
+- Δ страниц в sitemap
+- Δ семантических записей
+- Δ PageSpeed score
+- Δ индексации
+
+## Файлы
+
+| Файл | Действие |
+|------|----------|
+| `scripts/monitor.py` | Добавить 5 новых секций: семантика, SSG-разбивка, рендеринг, гео-проверка, тренды |
+| `.monitoring-cache.json` | Создаётся автоматически скриптом для хранения предыдущих данных |
+| `.github/workflows/monitoring.yml` | Добавить `pip install` для `beautifulsoup4`; добавить `git add .monitoring-cache.json` |
+| `MONITORING.md` | Будет автоматически содержать новые секции |
+
+## Новые секции в Telegram-отчёте
 
 ```text
-Yandex Metrika (ID 105828040) — полный список целей:
+📊 Мониторинг goruslugimsk.ru
+🕐 23.03.2026 09:00 MSK
+━━━━━━━━━━━━━━━━━━━━
 
-── Формы / лиды ──────────────────────────────
-calc_lead_{prefix}          — отправка формы из калькулятора
-quiz_lead_{prefix}          — отправка формы из квиза
-sticky_quiz_lead_{prefix}   — лид из sticky-квиза
-hero_callback_submit        — форма обратного звонка (hero)
-callback_{prefix}           — pest-specific callback
-quick_call_submit           — быстрый звонок
-lead_submit                 — общий лид
+🟢 Статус (ср. отклик 950 мс)
+... (как раньше)
 
-── Телефонные звонки ─────────────────────────
-phone_click                 — общий клик по телефону
-service_sticky_call         — sticky bar (мобильный)
-final_cta_call              — финальный CTA
-tariff_call_{prefix}        — кнопка «Заказать» в тарифах
-district_cta_call           — CTA районной страницы
-districts_overview_call     — обзор районов
-ses_cta_call                — нижний CTA на SES-странице
-uchastki_cta_call           — нижний CTA на странице участков
-blog_cta_call               — CTA в блоге
-area_map_call               — карта районов
+🔐 SSL
+... (как раньше)
 
-── Калькулятор ───────────────────────────────
-calc_open                   — открытие калькулятора
-calc_interact               — взаимодействие с калькулятором
-calc_price_view             — просмотр цены
-calc_calculate              — расчёт стоимости
+📄 Контент (sitemap)
+• Всего URL: 1282 (▲+3)
+• Услуги: 871 | Блог: 204
+• Районы: 131 | МО: 71
 
-── Скролл / вовлечение ──────────────────────
-scroll_25 / scroll_50       — глубина прокрутки
-time_30s / time_60s         — время на сайте
-section_pricing_visible     — видимость секции цен
-section_reviews_visible     — видимость отзывов
-section_faq_visible         — видимость FAQ
-section_gallery_visible     — видимость галереи
-section_process_visible     — видимость процесса
+🧠 Семантическое ядро
+• Запросов: 156 | Дублей: 0
+• P1: 12 | P2: 34 | P3: 56 | P4: 42 | P5: 12
+• commercial: 120 | info: 30 | nav: 6
+• Кластеры: service:8 pest:11 object:15 district:40 blog:72
 
-── Прочие ────────────────────────────────────
-form_focus                  — фокус на форме
-flash_badge_shown           — показ скидки
-flash_badge_click           — клик по скидке
-ai_referral                 — переход из AI
-telegram_click              — клик по Telegram
+📐 SSG маршруты
+• Всего: 1282 (▲+3 vs вчера)
+• Услуги: 7 | Подстраницы: 17
+• Pest×Object: 84 | Pest×Geo: 1774
+• Районы: 130 | МО: 14×4=56
+• Блог: 204
 
-Prefix определяется функцией getYmGoalPrefix() из URL:
-klopy, tarakany, muravyi, blohi, kleshchi, komary, muhi, mol,
-krysy, kroty, dezinsekciya, deratizaciya, dezinfekciya,
-dezodoraciya, ozonirovanie, sertifikaciya, uchastki, ses, main, general.
+🔍 Рендеринг (SSR/SSG)
+• /uslugi/dezinsekciya/ — H1:✅ JSON-LD:✅ canonical:✅ 45KB
+• /rajony/arbat/ — H1:✅ JSON-LD:✅ canonical:✅ 38KB
+• /blog/borba-s-tarakanami/ — H1:✅ JSON-LD:✅ canonical:✅ 32KB
+
+🗺️ Гео-роутинг (случайная выборка)
+• /rajony/tverskoy/ — ✅ 200, H1: «...Тверской», 890мс
+• /rajony/khamovniki/ — ✅ 200, H1: «...Хамовники», 920мс
+• /moscow-oblast/odintsovo/ — ✅ 200, H1: «...Одинцово», 780мс
+
+📈 Индексация
+• Яндекс: 890/1282 (69%) ▲+15
+• Google: 650/1282 (51%) ▲+22
+
+⚙️ PageSpeed
+• Desktop: 95 (▲+2) | Mobile: 78 (▼-1)
+
+📉 Тренд (vs вчера)
+• Страниц: +3 | Семантика: 0 | PSI Desktop: +2
 ```
 
-## Действие
+## Технические детали
 
-Это обновление памяти проекта — изменений в коде нет.
+- Семантическое ядро: парсится regex из `src/data/semanticCore.ts` (считаем `query:`, `priority:`, `cluster:`, `intent:`)
+- SSG маршруты: парсится regex из `src/lib/seoRoutes.ts` (считаем push-вызовы и forEach-циклы) 
+- Рендеринг: `requests.get()` + `beautifulsoup4` для парсинга H1, JSON-LD, canonical
+- Кэш: JSON-файл с предыдущими метриками для вычисления дельты
+- Гео: случайная выборка из sitemap по паттерну `/rajony/` и `/moscow-oblast/`
 
