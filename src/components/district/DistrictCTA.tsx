@@ -1,4 +1,5 @@
 import { Phone, Clock, Star, Zap, BadgeCheck, FileText } from 'lucide-react';
+import { trackGoal } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { DistrictPage } from '@/data/districtPages';
 
