@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { initializeTrafficContext, TrafficContext as TrafficContextType } from '@/hooks/useTrafficContext';
 import { supabase } from '@/lib/supabaseClient';
 import { setUserProperties, trackPageView } from '@/lib/analytics';
+import { useGlobalGoals } from '@/hooks/useGlobalGoals';
 
 interface TrafficContextValue {
   context: TrafficContextType | null;
