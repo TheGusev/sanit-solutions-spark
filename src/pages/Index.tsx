@@ -35,9 +35,7 @@ const Index = () => {
   // Integrate ML prediction in main flow for real-time personalization
   const { prediction, isLoading: mlLoading } = useMLPrediction();
   
-  // Track scroll depth goals
-  useScrollDepth();
-  useHomepageGoals();
+  // Global goals now handled by useGlobalGoals in TrafficProvider
 
   useEffect(() => {
     // Toggle debug panel with Ctrl+Shift+D

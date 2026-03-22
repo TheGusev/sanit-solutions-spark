@@ -335,7 +335,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
           </div>
         </section>
 
-        <section className="py-12 bg-muted/30">
+        <section className="py-12 bg-muted/30" data-section="faq">
           <div className="container mx-auto px-4">
             <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title={`Частые вопросы о ${svc.nameGenitive} в ${district.name}`} align="left" />
             <Accordion type="single" collapsible className="max-w-3xl">

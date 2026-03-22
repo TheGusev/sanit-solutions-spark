@@ -27,6 +27,9 @@ export function TrafficProvider({ children }: { children: React.ReactNode }) {
   const lastLoggedPath = useRef<string | null>(null);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Глобальные микроконверсии на всех страницах
+  useGlobalGoals();
+
   // Инициализация контекста при первой загрузке
   useEffect(() => {
     initializeTrafficContext().then(trafficContext => {
