@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import AnimatedSection from "@/components/AnimatedSection";
+import { trackGoal, getYmGoalPrefix } from "@/lib/analytics";
 
 interface Tariff {
   name: string;
