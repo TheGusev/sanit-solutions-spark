@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trackGoal } from "@/lib/analytics";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { Link } from "react-router-dom";
 import { moscowDistricts, moscowRegion, ServiceArea } from "@/data/serviceAreas";
