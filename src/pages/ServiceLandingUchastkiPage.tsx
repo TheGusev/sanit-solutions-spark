@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trackGoal } from "@/lib/analytics";
 import Header from "@/components/Header";
 import ServiceQuiz from "@/components/ServiceQuiz";
 import Footer from "@/components/Footer";
