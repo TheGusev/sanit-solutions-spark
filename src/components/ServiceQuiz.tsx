@@ -225,6 +225,20 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle, basePric
                   ))}
                 </div>
 
+                {/* Estimated price */}
+                {estimatedPrice && (
+                  <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center mb-4">
+                    <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">
+                      <Tag className="w-4 h-4" />
+                      Ориентировочная стоимость
+                    </p>
+                    <p className="text-2xl font-bold text-primary mt-1">{estimatedPrice}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Точную цену назовём после осмотра
+                    </p>
+                  </div>
+                )}
+
                 <div className="space-y-3 flex-1">
                   <Input
                     type="tel"
