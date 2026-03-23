@@ -341,6 +341,9 @@ const ServicePage = () => {
               steps={service.quizSteps}
               serviceSlug={service.slug}
               serviceTitle={service.title}
+              basePrice={service.tariffs?.[0]?.price || `от ${service.priceFrom} ₽`}
+              priceMap={getServicePriceMap(service.slug)}
+              priceStepIndex={getServicePriceStepIndex(service.slug)}
             />
           )}
         </LazySection>

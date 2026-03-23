@@ -281,6 +281,7 @@ export default function ServicePestPage() {
               steps={pest.quizSteps}
               serviceSlug={`${service}/${pestSlug}`}
               serviceTitle={`Уничтожение ${pest.genitive}`}
+              basePrice={pest.tariffs?.[0]?.price || `от ${pest.priceFrom} ₽`}
             />
           )}
         </LazySection>
