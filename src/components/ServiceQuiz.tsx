@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Phone, ChevronLeft, ChevronRight, Send } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Phone, ChevronLeft, ChevronRight, Send, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
