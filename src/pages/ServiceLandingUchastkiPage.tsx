@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getServicePriceMap, getServicePriceStepIndex } from "@/data/quizPriceMap";
 import { trackGoal } from "@/lib/analytics";
 import Header from "@/components/Header";
 import ServiceQuiz from "@/components/ServiceQuiz";
@@ -161,6 +162,9 @@ const ServiceLandingUchastkiPage = () => {
         <ServiceQuiz
           serviceSlug="obrabotka-uchastkov"
           serviceTitle="Обработка участков"
+          basePrice="от 4 000 ₽"
+          priceMap={getServicePriceMap("obrabotka-uchastkov")}
+          priceStepIndex={getServicePriceStepIndex("obrabotka-uchastkov")}
           steps={[
             { question: "Что беспокоит?", options: ["Клещи", "Комары", "Борщевик", "Несколько вредителей"] },
             { question: "Площадь участка?", options: ["до 6 соток", "6–10 соток", "10–20 соток", "более 20 соток"] },

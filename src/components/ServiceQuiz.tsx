@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Phone, ChevronLeft, ChevronRight, Send } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Phone, ChevronLeft, ChevronRight, Send, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
@@ -27,6 +27,9 @@ interface ServiceQuizProps {
   steps: QuizStep[];
   serviceSlug: string;
   serviceTitle: string;
+  basePrice?: string;
+  priceMap?: Record<string, string>;
+  priceStepIndex?: number;
 }
 
 const formatPhone = (value: string) => {
@@ -40,7 +43,7 @@ const formatPhone = (value: string) => {
   return formatted;
 };
 
-export default function ServiceQuiz({ steps, serviceSlug, serviceTitle }: ServiceQuizProps) {
+export default function ServiceQuiz({ steps, serviceSlug, serviceTitle, basePrice, priceMap, priceStepIndex }: ServiceQuizProps) {
   const { context } = useTraffic();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
@@ -49,9 +52,16 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle }: Servic
   const [agreed, setAgreed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const totalSteps = steps.length + 1; // quiz steps + final form
+  const totalSteps = steps.length + 1;
   const isLastStep = currentStep === steps.length;
   const progress = ((currentStep + 1) / totalSteps) * 100;
+
+  const estimatedPrice = useMemo(() => {
+    if (priceMap && answers[priceStepIndex ?? 1]) {
+      return priceMap[answers[priceStepIndex ?? 1]] || basePrice || null;
+    }
+    return basePrice || null;
+  }, [answers, priceMap, basePrice, priceStepIndex]);
 
   const handleOptionSelect = (option: string) => {
     const newAnswers = [...answers];
@@ -214,6 +224,20 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle }: Servic
                     </div>
                   ))}
                 </div>
+
+                {/* Estimated price */}
+                {estimatedPrice && (
+                  <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center mb-4">
+                    <p className="text-sm text-muted-foreground flex items-center justify-center gap-1">
+                      <Tag className="w-4 h-4" />
+                      Ориентировочная стоимость
+                    </p>
+                    <p className="text-2xl font-bold text-primary mt-1">{estimatedPrice}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Точную цену назовём после осмотра
+                    </p>
+                  </div>
+                )}
 
                 <div className="space-y-3 flex-1">
                   <Input

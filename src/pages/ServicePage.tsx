@@ -46,6 +46,7 @@ import LazySection from "@/components/LazySection";
 import CalculatorModal from "@/components/CalculatorModal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { SERVICE_GALLERY, GALLERY_SUBTITLES } from "@/data/serviceGallery";
+import { getServicePriceMap, getServicePriceStepIndex } from "@/data/quizPriceMap";
 
 // Ленивая загрузка DistrictPage для избежания циклических зависимостей
 const DistrictPage = lazy(() => import("./DistrictPage"));
@@ -340,6 +341,9 @@ const ServicePage = () => {
               steps={service.quizSteps}
               serviceSlug={service.slug}
               serviceTitle={service.title}
+              basePrice={service.tariffs?.[0]?.price || `от ${service.priceFrom} ₽`}
+              priceMap={getServicePriceMap(service.slug)}
+              priceStepIndex={getServicePriceStepIndex(service.slug)}
             />
           )}
         </LazySection>
