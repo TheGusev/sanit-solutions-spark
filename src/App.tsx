@@ -46,6 +46,7 @@ const MoscowRegionServicePage = lazy(
 const ServiceSESPage = lazy(() => import("./pages/ServiceSESPage"));
 const ReviewsPage = lazy(() => import("./pages/ReviewsPage"));
 const ServiceLandingUchastkiPage = lazy(() => import("./pages/ServiceLandingUchastkiPage"));
+const MoleCityPage = lazy(() => import("./pages/MoleCityPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Админка
