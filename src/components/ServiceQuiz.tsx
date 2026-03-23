@@ -43,7 +43,7 @@ const formatPhone = (value: string) => {
   return formatted;
 };
 
-export default function ServiceQuiz({ steps, serviceSlug, serviceTitle }: ServiceQuizProps) {
+export default function ServiceQuiz({ steps, serviceSlug, serviceTitle, basePrice, priceMap, priceStepIndex }: ServiceQuizProps) {
   const { context } = useTraffic();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
