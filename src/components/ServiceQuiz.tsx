@@ -52,9 +52,16 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle, basePric
   const [agreed, setAgreed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const totalSteps = steps.length + 1; // quiz steps + final form
+  const totalSteps = steps.length + 1;
   const isLastStep = currentStep === steps.length;
   const progress = ((currentStep + 1) / totalSteps) * 100;
+
+  const estimatedPrice = useMemo(() => {
+    if (priceMap && answers[priceStepIndex ?? 1]) {
+      return priceMap[answers[priceStepIndex ?? 1]] || basePrice || null;
+    }
+    return basePrice || null;
+  }, [answers, priceMap, basePrice, priceStepIndex]);
 
   const handleOptionSelect = (option: string) => {
     const newAnswers = [...answers];
