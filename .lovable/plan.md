@@ -1,51 +1,121 @@
 
-# Исправление меню «Услуги»: сворачивание подпунктов + порядок
+
+# Добавление ориентировочной цены на финальный шаг квиза
 
 ## Проблема
 
-1. Подменю Дезинсекции и Дератизации всегда раскрыты — занимают много места в дропдауне
-2. «Борьба с кротами» и «Обработка участков» стоят в конце, а нужно сразу после «Дератизация»
+На финальном шаге квиза (скриншоты) пользователь видит сводку ответов + форму телефона, но **не видит ориентировочную цену**. Это снижает мотивацию оставить заявку.
 
-## Изменения
+## Решение
 
-### 1. Порядок в `servicesMenu` (строки 89–115)
+Добавить в `ServiceQuiz` опциональный проп `priceEstimate` — объект с логикой ценообразования. Если проп не передан, показать базовую цену из `tariffs` или `priceFrom` сервиса. Цена рассчитывается на основе ответов квиза.
 
-Новый порядок:
-1. Дезинсекция (с subItems)
-2. Дератизация (с subItems)
-3. Борьба с кротами
-4. Обработка участков
-5. Дезинфекция
-6. Озонирование
-7. Дезодорация
-8. Демеркуризация
+## Подход к ценообразованию
 
-### 2. Подпункты скрыты по умолчанию — раскрываются по hover
+Каждый сервис уже имеет `tariffs` (Эконом / Стандарт / Премиум). Вместо сложной калькуляции используем простой маппинг:
 
-Вместо того чтобы всегда показывать `subItems`, добавляем `group` с `hover:` — подпункты появляются при наведении на родительский пункт. Реализация: оборачиваем каждый пункт с subItems в `div` с `group` классом, а блок subItems получает `hidden group-hover:block`. Это работает и в десктопном дропдауне, и не ломает мобильное меню (в мобильном используется Accordion, он не затронут).
+1. **ServiceQuiz получает новый проп** `basePrice: string` (например `"от 1 000 ₽"`) и опциональный `priceMap` — словарь `{ [answerKey]: string }` для уточнения цены на основе ответов.
+2. На финальном шаге после сводки ответов показываем блок с ценой: «Ориентировочная стоимость: от X ₽».
+3. Если `priceMap` не передан — показываем `basePrice`.
 
-### Файл
+## Реализация
 
-| Файл | Правка |
-|------|--------|
-| `src/components/Header.tsx` | Переупорядочить массив `servicesMenu`; обернуть subItems в hover-группу (2 места: строки 171–193 и 230–252) |
+### Файл: `src/components/ServiceQuiz.tsx`
 
-### Детали hover-группы (desktop dropdown)
-
-```tsx
-<div key={service.href} className="group/sub relative">
-  <DropdownMenuItem asChild>
-    <Link to={service.href} className="cursor-pointer font-medium flex items-center justify-between">
-      {service.title}
-      {service.subItems.length > 0 && <ChevronDown className="w-3 h-3 ml-1" />}
-    </Link>
-  </DropdownMenuItem>
-  {service.subItems.length > 0 && (
-    <div className="pl-4 border-l-2 border-russia-red/30 ml-2 mb-1 hidden group-hover/sub:block">
-      {service.subItems.map(...)}
-    </div>
-  )}
-</div>
+**Новые пропсы:**
+```typescript
+interface ServiceQuizProps {
+  steps: QuizStep[];
+  serviceSlug: string;
+  serviceTitle: string;
+  basePrice?: string;           // "от 1 200 ₽"
+  priceMap?: Record<string, string>; // { "Квартира": "от 1 200 ₽", "Склад": "от 2 500 ₽" }
+  priceStepIndex?: number;      // индекс шага, ответ которого определяет цену (по умолчанию 1 — второй вопрос, обычно «тип помещения»)
+}
 ```
 
-Мобильное меню (Sheet + Accordion) — остаётся без изменений, там уже работает через AccordionContent.
+**Логика определения цены:**
+```typescript
+const estimatedPrice = useMemo(() => {
+  if (priceMap && answers[priceStepIndex ?? 1]) {
+    return priceMap[answers[priceStepIndex ?? 1]] || basePrice || null;
+  }
+  return basePrice || null;
+}, [answers, priceMap, basePrice, priceStepIndex]);
+```
+
+**UI на финальном шаге** (после сводки ответов, перед формой телефона):
+```tsx
+{estimatedPrice && (
+  <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center">
+    <p className="text-sm text-muted-foreground">Ориентировочная стоимость</p>
+    <p className="text-2xl font-bold text-primary">{estimatedPrice}</p>
+    <p className="text-xs text-muted-foreground mt-1">
+      Точную цену назовём после осмотра
+    </p>
+  </div>
+)}
+```
+
+### Файл: `src/pages/ServicePage.tsx`
+
+Передать `basePrice` и `priceMap` из данных сервиса:
+```tsx
+<ServiceQuiz
+  steps={service.quizSteps}
+  serviceSlug={service.slug}
+  serviceTitle={service.title}
+  basePrice={service.tariffs?.[0]?.price}
+  priceMap={getServicePriceMap(service.slug)}
+/>
+```
+
+### Файл: `src/pages/ServicePestPage.tsx`
+
+Аналогично — из данных pest:
+```tsx
+basePrice={pest.tariffs?.[0]?.price || `от ${pest.priceFrom} ₽`}
+```
+
+### Файл: `src/pages/ServiceLandingUchastkiPage.tsx`
+
+Передать `basePrice="от 3 000 ₽"` и `priceMap` для участков.
+
+### Новый файл: `src/data/quizPriceMap.ts`
+
+Маппинг ответов на цены для каждого сервиса. Данные берутся из существующих `servicePrices.ts` и `tariffs`:
+
+```typescript
+export const quizPriceMaps: Record<string, { stepIndex: number; prices: Record<string, string> }> = {
+  dezinfekciya: {
+    stepIndex: 0, // "Что обрабатываем?"
+    prices: { "Квартира": "от 1 000 ₽", "Офис": "от 1 800 ₽", "Склад / производство": "от 2 500 ₽", "Кафе / ресторан": "от 2 500 ₽", "Медучреждение": "от 3 500 ₽" }
+  },
+  dezinsekciya: {
+    stepIndex: 1, // "Тип помещения?"
+    prices: { "Квартира": "от 1 200 ₽", "Частный дом": "от 2 000 ₽", "Ресторан / кафе": "от 3 500 ₽", "Общежитие": "от 2 500 ₽", "Склад / производство": "от 3 000 ₽" }
+  },
+  deratizaciya: {
+    stepIndex: 1, // "Тип объекта?"
+    prices: { "Квартира": "от 1 400 ₽", "Частный дом": "от 2 000 ₽", "Подвал / чердак": "от 2 000 ₽", "Склад": "от 2 500 ₽", "Ресторан / кафе": "от 3 000 ₽" }
+  },
+  // ... и для всех остальных сервисов
+};
+```
+
+## Файлы для правки
+
+| Файл | Действие |
+|------|----------|
+| `src/data/quizPriceMap.ts` | Создать — маппинг ответов квиза на цены |
+| `src/components/ServiceQuiz.tsx` | Добавить пропсы `basePrice`, `priceMap`, `priceStepIndex`; блок цены на финальном шаге |
+| `src/pages/ServicePage.tsx` | Передать `basePrice` и `priceMap` в ServiceQuiz |
+| `src/pages/ServicePestPage.tsx` | Передать `basePrice` в ServiceQuiz |
+| `src/pages/ServiceLandingUchastkiPage.tsx` | Передать `basePrice` и `priceMap` в ServiceQuiz |
+
+## Что НЕ трогаем
+
+- Калькулятор (Calculator.tsx) — у него своя логика цен
+- Тарифы (ServiceTariffs.tsx) — отдельный компонент
+- Данные сервисов (services.ts, pests.ts) — не меняем структуру
+
