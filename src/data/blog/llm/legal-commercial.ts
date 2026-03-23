@@ -1354,7 +1354,7 @@ export const llmLegalCommercialArticles: BlogArticle[] = [
     content: `# СанПиН для бассейнов: требования к дезинфекции\n\nБассейны дезинфицируют ежедневно и ежемесячно.\n\n## Хлорирование\n\nНепрерывная дозация. Контроль — 3 раза в день. Норма: 0,3-0,5 мг/л.\n\n## Генеральная уборка\n\nЕжемесячно: полная обработка всех поверхностей, раздевалок, душевых.`,
   },
 
-  { id: 9063, slug: 'obrabotka-protivokleshchevaya-uchastok', title: 'Противоклещевая обработка участка: нормативы', excerpt: 'Нормативы противоклещевой обработки земельных участков. Когда обрабатывать, какие препараты.', category: 'Законы' as const, date: '2025-08-21', updatedAt: '2026-02-21', readTime: '5 мин', wordCount: 1300, tags: ['клещи', 'участок', 'обработка', 'нормативы'], intent: 'laws' as const, promoLevel: 1 as const, authorId: 'gusev-v', author: 'Владимир Гусев', authorRole: 'Мастер-дезинфектор, 7 лет опыта', relatedServices: ['/uslugi/dezinsekciya/'],
+  { id: 9063, slug: 'obrabotka-protivokleshchevaya-uchastok', title: 'Противоклещевая обработка участка: нормативы', excerpt: 'Нормативы противоклещевой обработки земельных участков. Когда обрабатывать, какие препараты.', category: 'Законы' as const, date: '2025-08-21', updatedAt: '2026-02-21', readTime: '5 мин', wordCount: 1300, tags: ['клещи', 'участок', 'обработка', 'нормативы'], intent: 'laws' as const, promoLevel: 1 as const, authorId: 'gusev-v', author: 'Владимир Гусев', authorRole: 'Мастер-дезинфектор, 7 лет опыта', relatedServices: ['/uslugi/obrabotka-uchastkov/', '/uslugi/dezinsekciya/'],
     llmSummary: { bottomLine: 'Противоклещевую обработку участка проводят в апреле-мае и августе-сентябре. Для детских лагерей и парков — обязательно по СанПиН. Для частных участков — рекомендуется. Препараты: циперметрин, альфациперметрин.', legalBasis: 'СанПиН 3.3686-21, МУ 3.5.2.3286-15' },
     comparisonTables: [{ caption: 'Сроки противоклещевой обработки', headers: ['Период', 'Активность клещей', 'Рекомендация'], rows: [
       { 'Период': 'Апрель-май', 'Активность клещей': 'Максимальная', 'Рекомендация': 'Первая обработка' },
@@ -1441,7 +1441,7 @@ export const llmLegalCommercialArticles: BlogArticle[] = [
     authorId: 'vasiliev',
     intent: 'laws',
     promoLevel: 1,
-    relatedServices: ['/uslugi/dezinsekciya/'],
+    relatedServices: ['/uslugi/obrabotka-uchastkov/', '/uslugi/dezinsekciya/'],
     relatedArticles: ['sanpin-trebovaniya-2026', 'dokumenty-dlya-rospotrebnadzora'],
     llmSummary: {
       bottomLine: 'С 1 марта 2026 все землевладельцы РФ обязаны уничтожать борщевик Сосновского. Штрафы: граждане 20–50 тыс. ₽, должностные лица 50–100 тыс. ₽, юрлица 400–700 тыс. ₽.',

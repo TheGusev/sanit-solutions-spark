@@ -61,6 +61,25 @@ const tagToServices: Record<string, ServiceLink[]> = {
   кроты: [
     { slug: "borba-s-krotami", title: "Борьба с кротами" },
   ],
+  клещи: [
+    { slug: "obrabotka-uchastkov", title: "Обработка участков" },
+    { slug: "dezinsekciya", title: "Дезинсекция" },
+  ],
+  комары: [
+    { slug: "obrabotka-uchastkov", title: "Обработка участков" },
+  ],
+  борщевик: [
+    { slug: "obrabotka-uchastkov", title: "Обработка участков" },
+  ],
+  участок: [
+    { slug: "obrabotka-uchastkov", title: "Обработка участков" },
+  ],
+  дачн: [
+    { slug: "obrabotka-uchastkov", title: "Обработка участков" },
+  ],
+  снт: [
+    { slug: "obrabotka-uchastkov", title: "Обработка участков" },
+  ],
 };
 
 export const getServicesForTags = (tags: string[]): ServiceLink[] => {
