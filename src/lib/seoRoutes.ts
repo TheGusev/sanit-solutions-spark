@@ -136,8 +136,17 @@ export const tier2Neighborhoods = [
 
 // Tier pest groups for NCH generation
 export const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi'];
-export const tier2Pests = ['muravyi', 'blohi', 'mol', 'kroty'];
+export const tier2Pests = ['muravyi', 'blohi', 'mol']; // kroty removed — outdoor MO service
 export const tier3Pests = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
+
+// Города МО для коммерческих лендингов кротов
+export const moleCitySlugs = [
+  'istra', 'krasnogorsk', 'nakhabino', 'dedovsk',
+  'odintsovo', 'barvikha', 'usovo', 'zhukovka',
+  'lobnya', 'dolgoprudny-mo', 'dmitrov-mo', 'yakhroma',
+  'chekhov-mo', 'serpukhov', 'naro-fominsk', 'mozhaysk',
+  'klin-mo', 'solnechnogorsk', 'domodedovo-mo',
+];
 
 // Типы объектов (синхронизировано с src/data/objects.ts)
 export const objectSlugs = [
@@ -218,7 +227,7 @@ export function getAllSSGRoutes() {
   // Tier 1: top 4 pests × all 131 neighborhoods (~524 pages)
   const allPestSlugs = [...dezinsekciyaPestSlugs, ...deratizaciyaPestSlugs];
   const tier1PestsLocal = ['tarakany', 'klopy', 'krysy', 'myshi'];
-  const tier2PestsLocal = ['muravyi', 'blohi', 'mol', 'kroty'];
+  const tier2PestsLocal = ['muravyi', 'blohi', 'mol']; // kroty removed
   const tier3PestsLocal = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
   
   const tier2NeighborhoodsLocal = [
@@ -412,6 +421,16 @@ export function getAllSSGRoutes() {
     });
   });
   
+  // Коммерческие гео-лендинги для кротов (МО)
+  moleCitySlugs.forEach(citySlug => {
+    routes.push({
+      path: `/uslugi/borba-s-krotami/${citySlug}/`,
+      outputPath: `uslugi/borba-s-krotami/${citySlug}/index.html`,
+      priority: '0.8',
+      changefreq: 'monthly'
+    });
+  });
+
   // Run integrity checks (fail-fast in CI)
   validateAllRoutes(routes, neighborhoodSlugs);
   

@@ -20,6 +20,7 @@ import ServicePage from "./pages/ServicePage";
 import ServiceRouteResolver from "./pages/ServiceRouteResolver";
 import ThreeSegmentRouteResolver from "./pages/ThreeSegmentRouteResolver";
 import ServiceLandingUchastkiPage from "./pages/ServiceLandingUchastkiPage";
+import MoleCityPage from "./pages/MoleCityPage";
 import Contacts from "./pages/Contacts";
 import Team from "./pages/Team";
 import DistrictsOverview from "./pages/DistrictsOverview";
@@ -62,6 +63,7 @@ const AppSSR = () => (
 
         {/* Сложные маршруты услуг — статические ПЕРЕД параметрическими */}
         <Route path="/uslugi/obrabotka-uchastkov" element={<ServiceLandingUchastkiPage />} />
+        <Route path="/uslugi/borba-s-krotami/:citySlug" element={<MoleCityPage />} />
         <Route path="/uslugi/:service/:segment2/:segment3" element={<ThreeSegmentRouteResolver />} />
         <Route path="/uslugi/:parentSlug/:subSlug" element={<ServiceRouteResolver />} />
         {/* Универсальный роут для всех услуг и округов */}

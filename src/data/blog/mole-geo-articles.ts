@@ -19,19 +19,15 @@ interface MoleGeoData {
   tags: string[];
 }
 
-// Таблица цен для всех гео-статей
-const pricingTable = `
-## Стоимость уничтожения кротов на участке
+// Pricing table removed — commercial intent redirected to /uslugi/borba-s-krotami/[city]/
+// Blog articles now serve informational intent only
 
-| Площадь участка | Цена (разовая обработка) | Абонемент (сезон) |
-|---|---|---|
-| 6 соток | от 4 500 ₽ | от 12 000 ₽ |
-| 10 соток | от 6 500 ₽ | от 17 000 ₽ |
-| 15 соток | от 8 500 ₽ | от 22 000 ₽ |
-| 20+ соток | от 11 000 ₽ | от 28 000 ₽ |
-
-Выезд специалиста для осмотра — бесплатно. Гарантия на обработку — 6 месяцев.
-`;
+// Slug mapping: blog slug → commercial city slug
+const blogToCitySlug: Record<string, string> = {
+  'kroty-istra': 'istra', 'kroty-krasnogorsk': 'krasnogorsk', 'kroty-nakhabino': 'nakhabino', 'kroty-dedovsk': 'dedovsk',
+  'kroty-odintsovo': 'odintsovo', 'kroty-barvikha': 'barvikha', 'kroty-usovo': 'usovo', 'kroty-zhukovka': 'zhukovka',
+  'kroty-dolgoprudny': 'dolgoprudny-mo', 'kroty-lobnya': 'lobnya', 'kroty-dmitrov': 'dmitrov-mo', 'kroty-yakhroma': 'yakhroma',
+};
 
 function generateMoleGeoContent(data: MoleGeoData): string {
   return `## Кроты ${data.locationName}: масштаб проблемы
@@ -75,7 +71,7 @@ ${data.soilType} в сочетании с умеренным уровнем гр
 
 Ультразвуковые отпугиватели, касторовое масло, петарды — эти «народные» методы дают лишь временный эффект. Кроты привыкают к раздражителям за 1-2 недели и возвращаются. Только комплексный профессиональный подход даёт устойчивый результат.
 
-${pricingTable}
+${blogToCitySlug[data.slug] ? `> **[Узнайте стоимость и закажите обработку ${data.locationName} →](/uslugi/borba-s-krotami/${blogToCitySlug[data.slug]}/)**` : ''}
 
 ## Когда лучше обрабатывать участок
 

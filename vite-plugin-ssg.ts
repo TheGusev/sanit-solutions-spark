@@ -103,8 +103,17 @@ const tier2Neighborhoods = [
 ];
 
 const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi'];
-const tier2Pests = ['muravyi', 'blohi', 'mol', 'kroty'];
+const tier2Pests = ['muravyi', 'blohi', 'mol']; // kroty removed — outdoor MO service
 const tier3Pests = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
+
+// Города МО для коммерческих лендингов кротов
+const moleCitySlugs = [
+  'istra', 'krasnogorsk', 'nakhabino', 'dedovsk',
+  'odintsovo', 'barvikha', 'usovo', 'zhukovka',
+  'lobnya', 'dolgoprudny-mo', 'dmitrov-mo', 'yakhroma',
+  'chekhov-mo', 'serpukhov', 'naro-fominsk', 'mozhaysk',
+  'klin-mo', 'solnechnogorsk', 'domodedovo-mo',
+];
 
 // Округа Москвы
 const districtSlugs = [
@@ -395,6 +404,15 @@ function getAllRoutes(): SSGRoute[] {
         outputPath: `moscow-oblast/${citySlug}/${serviceSlug}/index.html`,
         priority: '0.75'
       });
+    });
+  });
+  
+  // Коммерческие гео-лендинги для кротов (МО)
+  moleCitySlugs.forEach(citySlug => {
+    routes.push({
+      path: `/uslugi/borba-s-krotami/${citySlug}/`,
+      outputPath: `uslugi/borba-s-krotami/${citySlug}/index.html`,
+      priority: '0.8'
     });
   });
   
