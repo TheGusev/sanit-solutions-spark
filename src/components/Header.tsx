@@ -106,12 +106,12 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
         { title: "От мышей", href: "/uslugi/deratizaciya/myshi" },
       ]
     },
+    { title: "Борьба с кротами", href: "/uslugi/borba-s-krotami", subItems: [] },
+    { title: "Обработка участков", href: "/uslugi/obrabotka-uchastkov", subItems: [] },
     { title: "Дезинфекция", href: "/uslugi/dezinfekciya", subItems: [] },
     { title: "Озонирование", href: "/uslugi/ozonirovanie", subItems: [] },
     { title: "Дезодорация", href: "/uslugi/dezodoraciya", subItems: [] },
     { title: "Демеркуризация", href: "/uslugi/demerkurizaciya", subItems: [] },
-    { title: "Борьба с кротами", href: "/uslugi/borba-s-krotami", subItems: [] },
-    { title: "Обработка участков", href: "/uslugi/obrabotka-uchastkov", subItems: [] },
   ];
 
   const infoLinks = [
@@ -169,14 +169,15 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50 max-h-[70vh] overflow-y-auto">
                     {servicesMenu.map((service) => (
-                      <div key={service.href}>
+                      <div key={service.href} className="group/sub relative">
                         <DropdownMenuItem asChild>
-                          <Link to={service.href} className="cursor-pointer font-medium">
+                          <Link to={service.href} className="cursor-pointer font-medium flex items-center justify-between">
                             {service.title}
+                            {service.subItems.length > 0 && <ChevronDown className="w-3 h-3 ml-1 opacity-50" />}
                           </Link>
                         </DropdownMenuItem>
-                        {service.subItems && service.subItems.length > 0 && (
-                          <div className="pl-4 border-l-2 border-russia-red/30 ml-2 mb-1">
+                        {service.subItems.length > 0 && (
+                          <div className="pl-4 border-l-2 border-russia-red/30 ml-2 mb-1 hidden group-hover/sub:block">
                             {service.subItems.map((sub) => (
                               <DropdownMenuItem key={sub.href} asChild>
                                 <Link 
@@ -232,14 +233,15 @@ const Header = ({ onCalculatorClick }: HeaderProps) => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="bg-background border shadow-lg z-50 max-h-[70vh] overflow-y-auto">
                     {servicesMenu.map((service) => (
-                      <div key={service.href}>
+                      <div key={service.href} className="group/sub relative">
                         <DropdownMenuItem asChild>
-                          <Link to={service.href} className="cursor-pointer font-medium">
+                          <Link to={service.href} className="cursor-pointer font-medium flex items-center justify-between">
                             {service.title}
+                            {service.subItems.length > 0 && <ChevronDown className="w-3 h-3 ml-1 opacity-50" />}
                           </Link>
                         </DropdownMenuItem>
-                        {service.subItems && service.subItems.length > 0 && (
-                          <div className="pl-4 border-l-2 border-russia-red/30 ml-2 mb-1">
+                        {service.subItems.length > 0 && (
+                          <div className="pl-4 border-l-2 border-russia-red/30 ml-2 mb-1 hidden group-hover/sub:block">
                             {service.subItems.map((sub) => (
                               <DropdownMenuItem key={sub.href} asChild>
                                 <Link 
