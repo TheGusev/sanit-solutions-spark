@@ -27,6 +27,9 @@ interface ServiceQuizProps {
   steps: QuizStep[];
   serviceSlug: string;
   serviceTitle: string;
+  basePrice?: string;
+  priceMap?: Record<string, string>;
+  priceStepIndex?: number;
 }
 
 const formatPhone = (value: string) => {
