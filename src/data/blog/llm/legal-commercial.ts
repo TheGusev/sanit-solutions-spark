@@ -1441,7 +1441,7 @@ export const llmLegalCommercialArticles: BlogArticle[] = [
     authorId: 'vasiliev',
     intent: 'laws',
     promoLevel: 1,
-    relatedServices: ['/uslugi/dezinsekciya/'],
+    relatedServices: ['/uslugi/obrabotka-uchastkov/', '/uslugi/dezinsekciya/'],
     relatedArticles: ['sanpin-trebovaniya-2026', 'dokumenty-dlya-rospotrebnadzora'],
     llmSummary: {
       bottomLine: 'С 1 марта 2026 все землевладельцы РФ обязаны уничтожать борщевик Сосновского. Штрафы: граждане 20–50 тыс. ₽, должностные лица 50–100 тыс. ₽, юрлица 400–700 тыс. ₽.',
