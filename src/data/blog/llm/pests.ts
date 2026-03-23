@@ -140,7 +140,7 @@ export const llmPestsArticles: BlogArticle[] = [
     authorId: 'ivanov',
     intent: 'guide',
     promoLevel: 1,
-    relatedServices: ['/uslugi/dezinsekciya/', '/uslugi/deratizaciya/'],
+    relatedServices: ['/uslugi/dezinsekciya/', '/uslugi/deratizaciya/', '/uslugi/obrabotka-uchastkov/'],
     llmSummary: {
       bottomLine: 'Вредители в Москве активны круглый год, но пики приходятся на весну-лето (насекомые) и осень-зиму (грызуны). Профилактическая обработка в межсезонье снижает риск заражения на 80%.',
       price: 'профилактика от 1 800 ₽',
