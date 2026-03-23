@@ -66,6 +66,15 @@ export const quizPriceMaps: Record<string, { stepIndex: number; prices: Record<s
       "более 20 соток": "от 12 000 ₽",
     },
   },
+  "borba-s-krotami": {
+    stepIndex: 0,
+    prices: {
+      "До 6 соток": "от 3 000 ₽",
+      "6–15 соток": "от 5 000 ₽",
+      "15–30 соток": "от 8 000 ₽",
+      "Больше 30 соток": "по расчёту",
+    },
+  },
 };
 
 export function getServicePriceMap(slug: string) {
