@@ -63,6 +63,7 @@ const AppSSR = () => (
 
         {/* Сложные маршруты услуг — статические ПЕРЕД параметрическими */}
         <Route path="/uslugi/obrabotka-uchastkov" element={<ServiceLandingUchastkiPage />} />
+        <Route path="/uslugi/borba-s-krotami/:citySlug" element={<MoleCityPage />} />
         <Route path="/uslugi/:service/:segment2/:segment3" element={<ThreeSegmentRouteResolver />} />
         <Route path="/uslugi/:parentSlug/:subSlug" element={<ServiceRouteResolver />} />
         {/* Универсальный роут для всех услуг и округов */}

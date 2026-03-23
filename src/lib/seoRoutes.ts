@@ -421,6 +421,16 @@ export function getAllSSGRoutes() {
     });
   });
   
+  // Коммерческие гео-лендинги для кротов (МО)
+  moleCitySlugs.forEach(citySlug => {
+    routes.push({
+      path: `/uslugi/borba-s-krotami/${citySlug}/`,
+      outputPath: `uslugi/borba-s-krotami/${citySlug}/index.html`,
+      priority: '0.8',
+      changefreq: 'monthly'
+    });
+  });
+
   // Run integrity checks (fail-fast in CI)
   validateAllRoutes(routes, neighborhoodSlugs);
   

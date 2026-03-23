@@ -24,7 +24,7 @@ export { topNeighborhoods } from '@/lib/seoRoutes';
 
 // Tiered pest groups
 export const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi'];
-export const tier2PestsList = ['muravyi', 'blohi', 'mol', 'kroty'];
+export const tier2PestsList = ['muravyi', 'blohi', 'mol']; // kroty removed — outdoor MO service, not urban neighborhoods
 export const tier3PestsList = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
 export const topPests = tier1Pests;
 
