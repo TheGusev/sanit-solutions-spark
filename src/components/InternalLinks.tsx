@@ -121,7 +121,9 @@ export function InternalLinks({
     { slug: 'dezinsekciya', name: 'Дезинсекция' },
     { slug: 'deratizaciya', name: 'Дератизация' },
     { slug: 'dezinfekciya', name: 'Дезинфекция' },
-    { slug: 'ozonirovanie', name: 'Озонирование' }
+    { slug: 'ozonirovanie', name: 'Озонирование' },
+    { slug: 'obrabotka-uchastkov', name: 'Обработка участков' },
+    { slug: 'borba-s-krotami', name: 'Борьба с кротами' }
   ];
   
   mainServices
