@@ -136,8 +136,17 @@ export const tier2Neighborhoods = [
 
 // Tier pest groups for NCH generation
 export const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi'];
-export const tier2Pests = ['muravyi', 'blohi', 'mol', 'kroty'];
+export const tier2Pests = ['muravyi', 'blohi', 'mol']; // kroty removed — outdoor MO service
 export const tier3Pests = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
+
+// Города МО для коммерческих лендингов кротов
+export const moleCitySlugs = [
+  'istra', 'krasnogorsk', 'nakhabino', 'dedovsk',
+  'odintsovo', 'barvikha', 'usovo', 'zhukovka',
+  'lobnya', 'dolgoprudny-mo', 'dmitrov-mo', 'yakhroma',
+  'chekhov-mo', 'serpukhov', 'naro-fominsk', 'mozhaysk',
+  'klin-mo', 'solnechnogorsk', 'domodedovo-mo',
+];
 
 // Типы объектов (синхронизировано с src/data/objects.ts)
 export const objectSlugs = [
