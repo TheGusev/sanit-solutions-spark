@@ -20,6 +20,7 @@ import ServicePage from "./pages/ServicePage";
 import ServiceRouteResolver from "./pages/ServiceRouteResolver";
 import ThreeSegmentRouteResolver from "./pages/ThreeSegmentRouteResolver";
 import ServiceLandingUchastkiPage from "./pages/ServiceLandingUchastkiPage";
+import MoleCityPage from "./pages/MoleCityPage";
 import Contacts from "./pages/Contacts";
 import Team from "./pages/Team";
 import DistrictsOverview from "./pages/DistrictsOverview";
