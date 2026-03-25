@@ -1,94 +1,129 @@
 
 
-# Усиление внутренней перелинковки на сайте
+# Полный SEO-аудит сайта goruslugimsk.ru — Заключение
 
-## Анализ текущего состояния
-
-### Где InternalLinks уже стоит (10 страниц):
-NchPage, MoscowRegionCityPage, MoscowRegionServicePage, MoleCityPage, ServiceDistrictPage, ServiceObjectPage, DistrictPage, BlogPost, NeighborhoodPage, ServicePestPage
-
-### Где InternalLinks НЕТ (8 коммерческих страниц):
-| Страница | Тип | Проблема |
-|----------|-----|----------|
-| **ServicePage.tsx** | Главные услуги (8 шт) | 0 ссылок на смежные |
-| **ServiceSubpage.tsx** | Методы (17 шт) | 0 ссылок |
-| **ServiceLandingUchastkiPage.tsx** | Обработка участков | 0 ссылок |
-| **ServiceSESPage.tsx** | Служба дезинсекции | 0 ссылок |
-| **DistrictsOverview.tsx** | Обзор округов | 0 ссылок на блог/районы |
-| **MoscowRegionOverview.tsx** | Обзор МО | 0 ссылок |
-| **NeighborhoodsOverview.tsx** | Обзор районов | 0 ссылок |
-| **Blog.tsx** | Листинг блога | 0 ссылок на услуги |
-
-### Проблемы в самом InternalLinks:
-1. **Пустой MoleCityPage** — `<InternalLinks />` без пропсов, генерит только 2 ссылки на главные услуги
-2. **Только dezinsekciya/deratizaciya** — вредители dezinfekciya, borba-s-krotami, obrabotka-uchastkov не участвуют
-3. **Нет ссылок на блог** — компонент не знает про статьи
-4. **Нет ссылок на /otzyvy, /rajony, /moscow-oblast** — обзорные хабы без входящих ссылок из перелинковки
-5. **Города МО — только первые 2** — всегда Химки и Мытищи, остальные 12+ городов — 0 входящих
-
-### Итого: ~1700+ страниц, из них ~200+ коммерческих без блока перелинковки
+## Оценка: 82 / 100
 
 ---
 
-## План усиления (2 части)
+## ✅ Что работает отлично (базовые системы)
 
-### Часть 1: Расширить компонент InternalLinks
-
-**Новые типы ссылок:**
-- `blog` — 1-2 релевантные статьи блога (по тегам/категории)
-- `hub` — ссылки на обзорные хабы (/rajony, /moscow-oblast, /otzyvy)
-- `moleCity` — города кротов (для borba-s-krotami страниц)
-
-**Исправления:**
-- Добавить пропс `currentMoleCity` для MoleCityPage
-- Рандомизировать города МО (не всегда первые 2, а по близости/релевантности)
-- Добавить borba-s-krotami и obrabotka-uchastkov в пул вредителей/услуг
-- Увеличить `maxLinks` по умолчанию до 16
-
-### Часть 2: Добавить InternalLinks на 8 страниц
-
-| # | Файл | Пропсы |
-|---|------|--------|
-| 1 | `ServicePage.tsx` | `currentService={service.slug}` |
-| 2 | `ServiceSubpage.tsx` | `currentService={parentService}` |
-| 3 | `ServiceLandingUchastkiPage.tsx` | `currentService="obrabotka-uchastkov"` |
-| 4 | `ServiceSESPage.tsx` | `currentService="dezinsekciya"` |
-| 5 | `DistrictsOverview.tsx` | ссылки на блог + МО + услуги |
-| 6 | `MoscowRegionOverview.tsx` | ссылки на блог + округа + услуги |
-| 7 | `NeighborhoodsOverview.tsx` | ссылки на услуги + блог |
-| 8 | `Blog.tsx` | ссылки на услуги + районы |
-| 9 | `MoleCityPage.tsx` | FIX: передать `currentService="borba-s-krotami" currentCity={city.slug}` |
-
-### Часть 3: Контекстные блог-ссылки в InternalLinks
-
-Добавить в компонент логику подбора 1-2 статей блога по ключевым словам:
-- Страница дезинсекции → статья «Клопы в квартире», «Борьба с тараканами»
-- Страница дератизации → статья «Грызуны в доме»
-- Страница обработки участков → статья «Борщевик закон 2026»
-- Кроты → статьи mole-geo
+| Компонент | Статус | Комментарий |
+|-----------|--------|-------------|
+| Routing App.tsx ↔ AppSSR.tsx | ✅ Синхронизированы | Все роуты зеркалированы |
+| Anti-cannibalization validator | ✅ Работает | Forbidden patterns блокируют Object+Geo, Pest@service |
+| Trailing slash policy | ✅ Консистентно | nginx + canonicals + internal links |
+| Tiered NCH model | ✅ 3 тира | ~774 NCH-страниц, правильная развесовка приоритетов |
+| Blog deOptimization | ✅ Работает | Блог не каннибализирует коммерческие |
+| 12 Яндекс-целей | ✅ Чисто | Все старые цели удалены |
+| Geo scope separation | ✅ /uslugi/ vs /rajony/ | Нет пересечений |
+| InternalLinks component | ✅ Расширен | 16 ссылок, blog/hub/moleCity типы |
 
 ---
 
-## Файлы (10 файлов)
+## 🔴 Критические баги (5 штук, -18 баллов)
 
-| # | Файл | Правки |
-|---|------|--------|
-| 1 | `src/components/InternalLinks.tsx` | Расширить: +blog, +hub, +moleCity типы; рандомизация городов МО; borba-s-krotami/obrabotka в пул; maxLinks=16 |
-| 2 | `src/pages/ServicePage.tsx` | Добавить `<InternalLinks currentService={service.slug} />` перед Footer |
-| 3 | `src/pages/ServiceSubpage.tsx` | Добавить `<InternalLinks currentService={parentSlug} />` |
-| 4 | `src/pages/ServiceLandingUchastkiPage.tsx` | Добавить `<InternalLinks currentService="obrabotka-uchastkov" />` |
-| 5 | `src/pages/ServiceSESPage.tsx` | Добавить `<InternalLinks currentService="dezinsekciya" />` |
-| 6 | `src/pages/DistrictsOverview.tsx` | Добавить `<InternalLinks />` с ссылками на блог и МО |
-| 7 | `src/pages/MoscowRegionOverview.tsx` | Добавить `<InternalLinks />` |
-| 8 | `src/pages/NeighborhoodsOverview.tsx` | Добавить `<InternalLinks />` |
-| 9 | `src/pages/Blog.tsx` | Добавить `<InternalLinks />` с ссылками на услуги |
-| 10 | `src/pages/MoleCityPage.tsx` | Исправить пустые пропсы → `currentService="borba-s-krotami" currentCity={city.slug}` |
+### БАГ 1: 4 новых города кротов не в SSG (-5)
 
-## Ожидаемый результат
+**Проблема**: `moleCitySlugs` в `seoRoutes.ts` (строка 143) — **хардкодный массив** из 19 городов. Но `moleCities.ts` экспортирует свой `moleCitySlugs` через `moleCities.map(c => c.slug)` с 23 записями. SSG использует хардкод из `seoRoutes.ts`.
 
-- ~200 страниц получат 12-16 контекстных внутренних ссылок
-- Блог-статьи начнут получать входящие ссылки с коммерческих страниц
-- Обзорные хабы (/rajony, /moscow-oblast, /otzyvy) получат массу входящих
-- Города МО распределятся равномерно вместо перекоса на Химки/Мытищи
-- Страницы кротов будут перелинкованы между собой
+**Результат**: Страницы `/uslugi/borba-s-krotami/taldom/`, `/dubna-mo/`, `/ruza/`, `/voskresensk-mo/` НЕ будут сгенерированы при сборке → 404 на проде.
+
+**Исправление**: В `seoRoutes.ts` строка 143 — заменить хардкод на импорт:
+```ts
+import { moleCitySlugs } from '@/data/moleCities';
+```
+Или добавить 4 slug вручную: `'taldom', 'dubna-mo', 'ruza', 'voskresensk-mo'`.
+
+### БАГ 2: Статья borshchevik-zakon-shtraf-2026 не в SSG (-3)
+
+**Проблема**: Статья добавлена в `llm/legal-commercial.ts` и рендерится через `/blog/:slug`, но её slug **отсутствует** в массиве `blogArticleSlugs` в `seoRoutes.ts`. Значит HTML не будет сгенерирован → 404 на проде (или SPA fallback без SEO).
+
+**Исправление**: Добавить `'borshchevik-zakon-shtraf-2026'` в `blogArticleSlugs` (после строки 366 в seoRoutes.ts).
+
+### БАГ 3: Битая ссылка в InternalLinks — kroty-na-uchastke-kak-izbavitsya (-3)
+
+**Проблема**: `InternalLinks.tsx` строка 91 ссылается на `/blog/kroty-na-uchastke-kak-izbavitsya` — **такого slug нет** ни в одном массиве статей. Это 404 ссылка, которая рендерится на всех страницах borba-s-krotami.
+
+**Исправление**: Заменить на существующий slug, например `'kroty-istra'` или `'kroty-novorizhskoe-shosse'`.
+
+### БАГ 4: Сертификация — orphan page (-4)
+
+**Проблема**: `/uslugi/sertifikaciya/` существует как статический HTML в `public/`, но:
+- НЕТ в `servicesSlugs` → не генерируется SSG
+- НЕТ в `services.ts` → ServicePage рендерит NotFound
+- Есть в analytics PATHNAME_SLUG_MAP
+- 10+ блог-статей ссылаются на неё
+
+**Результат**: Страница работает только из статического HTML. При первой SPA-навигации → NotFound. Нет React-рендера, нет квиза, нет перелинковки.
+
+**Исправление**: Либо добавить `sertifikaciya` в `services.ts` как полноценную услугу, либо удалить все ссылки на неё из блога.
+
+### БАГ 5: blogArticleSlugs рассинхронизирован с allBlogArticles (-3)
+
+**Проблема**: `blogArticleSlugs` в `seoRoutes.ts` — хардкодный массив ~206 slug'ов. Но `allBlogArticles` собирается динамически из 10+ файлов данных. Каждая новая статья требует ручного добавления в ОБА места. Текущий рассинхрон: минимум `borshchevik-zakon-shtraf-2026` отсутствует, вероятно есть и другие.
+
+**Исправление**: Заменить хардкод на динамический импорт:
+```ts
+import { allBlogArticles } from '@/data/blog';
+const blogArticleSlugs = allBlogArticles.map(a => a.slug);
+```
+
+---
+
+## 🟡 Предупреждения (не критичные, но стоит исправить)
+
+| # | Проблема | Влияние |
+|---|----------|---------|
+| 1 | `sertifikaciya` в PATHNAME_SLUG_MAP аналитики, но страница — orphan | Ложные цели |
+| 2 | InternalLinks: `window.location.pathname` на SSR = пустая строка | Хабы всегда все 5 рендерятся, без фильтрации |
+| 3 | `moleCitySlugs` дублирован: хардкод в seoRoutes.ts + computed в moleCities.ts | Рассинхрон при добавлении городов |
+| 4 | Blog на сервисных страницах ссылается на 2-3 фиксированных статьи | Нет ротации, все 200+ страниц дают одни и те же ссылки |
+| 5 | `servicesSlugs` не включает `sertifikaciya` и `dezodoraciya` в пул InternalLinks | Нет входящих ссылок с перелинковки |
+| 6 | Нет `deratizaciya/myshi` маппинга в PATHNAME_SLUG_MAP | myshi-страницы трекаются как `deratizaciya` вместо `myshi` |
+
+---
+
+## 📊 Развесовка страниц и покрытие запросов
+
+| Кластер | Страниц | Priority | Покрытие |
+|---------|---------|----------|----------|
+| Коммерческие хабы (8 услуг) | 8 | 0.9 | ✅ Все ВЧ |
+| Услуга+Вредитель | 14 | 0.85 | ✅ Все СЧ |
+| Услуга+Объект | 56 | 0.8 | ✅ Все СЧ |
+| Подстраницы методов | 17 | 0.85 | ✅ |
+| НЧ Tier 1 (4 pest × 131 geo) | 524 | 0.7 | ✅ |
+| НЧ Tier 2 (3 pest × 40 geo) | 120 | 0.65 | ✅ |
+| НЧ Tier 3 (6 pest × 15 geo) | 90 | 0.6 | ✅ |
+| Округа (3 service × 12) | 36 | 0.85 | ✅ |
+| Районы | 131 | 0.75 | ✅ |
+| МО города | 14 + 56 | 0.8/0.75 | ✅ |
+| Кроты МО | 19 (нужно 23) | 0.8 | ⚠️ -4 |
+| Блог | ~206 (нужно 207+) | 0.6 | ⚠️ -1+ |
+| Сертификация | 1 (orphan) | — | 🔴 Сломан |
+| **Итого SSG** | **~1,774** | — | — |
+
+### Каннибализация запросов
+
+| Проверка | Результат |
+|----------|-----------|
+| Pest@service level | ✅ Заблокировано validator |
+| Object+Geo leak | ✅ Заблокировано |
+| Blog vs Commercial | ✅ deOptimize + max-snippet:160 |
+| Geo /uslugi/ vs /rajony/ | ✅ Разделено |
+| Combo-pest (klopov-i-tarakanov) | ✅ Pruned + 301 |
+| Doorway detection | ✅ Нет тонких doorway |
+| Дубликаты canonical | ✅ Self-referencing |
+
+---
+
+## 📋 План исправлений (5 файлов)
+
+| # | Файл | Что исправить |
+|---|------|---------------|
+| 1 | `src/lib/seoRoutes.ts` | Импортировать `moleCitySlugs` из `moleCities.ts` вместо хардкода; добавить `borshchevik-zakon-shtraf-2026` в blogArticleSlugs (или заменить хардкод на динамический) |
+| 2 | `src/components/InternalLinks.tsx` | Заменить битый slug `kroty-na-uchastke-kak-izbavitsya` на существующий |
+| 3 | `src/data/services.ts` | Добавить `sertifikaciya` как полноценную услугу, или... |
+| 4 | `src/data/blog/llm/legal-commercial.ts` | ...удалить все ссылки на `/uslugi/sertifikaciya/` и заменить на `/uslugi/dezinfekciya/` |
+| 5 | `src/lib/analytics.ts` | Добавить `'/uslugi/deratizaciya/myshi': 'myshi'` в PATHNAME_SLUG_MAP |
 
