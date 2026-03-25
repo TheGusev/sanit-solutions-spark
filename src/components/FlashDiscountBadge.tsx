@@ -19,7 +19,6 @@ const FlashDiscountBadge = () => {
     const showTimer = setTimeout(() => {
       setIsVisible(true);
       sessionStorage.setItem('flash_badge_shown', 'true');
-      trackGoal('flash_badge_shown');
     }, 2000);
 
     return () => clearTimeout(showTimer);
