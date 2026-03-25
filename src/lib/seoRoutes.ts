@@ -359,6 +359,8 @@ export function getAllSSGRoutes() {
     'ryzhie-tarakany-unichtozhenie', 'domashnie-muravi-pochemu-ne-pomogaet', 'podgotovka-kvartiry-chek-list',
     'dezinfekciya-posle-bolezni', 'profilaktika-tarakanov', 'kak-vybrat-sluzhbu-dezinfekcii',
     'kejs-restoran-tarakany', 'kejs-gostinica-klopy', 'dezinfekciya-ofisa-bez-pomeh',
+    // ===== Legal-commercial articles =====
+    'borshchevik-zakon-shtraf-2026',
   ];
   
   blogArticleSlugs.forEach(slug => {
