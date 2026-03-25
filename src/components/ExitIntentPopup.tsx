@@ -40,11 +40,6 @@ const ExitIntentPopup = () => {
     
     sessionStorage.setItem("exitIntentShown", "true");
     setOpen(true);
-    
-    trackGoal('exit_intent_shown', {
-      intent: context?.intent,
-      variant: context?.variantId
-    });
   }, [context]);
 
   useEffect(() => {
