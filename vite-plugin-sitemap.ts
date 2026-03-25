@@ -328,14 +328,17 @@ export function sitemapPlugin(): Plugin {
       ];
       
       // ========== SITEMAP-MOSCOW.XML (округа + районы) ==========
+      const districtServicePrefixes = ['dezinfekciya', 'dezinsekciya', 'deratizaciya'];
       const moscowUrls: SitemapUrl[] = [
-        // Страницы округов (dezinfekciya-cao и т.д.)
-        ...districtSlugs.map(d => ({
-          loc: `/uslugi/dezinfekciya-${d}/`,
-          lastmod: currentDate,
-          changefreq: 'monthly',
-          priority: '0.85',
-        })),
+        // Страницы округов (dezinfekciya-cao, dezinsekciya-cao, deratizaciya-cao и т.д.)
+        ...districtServicePrefixes.flatMap(prefix =>
+          districtSlugs.map(d => ({
+            loc: `/uslugi/${prefix}-${d}/`,
+            lastmod: currentDate,
+            changefreq: 'monthly',
+            priority: '0.85',
+          }))
+        ),
         // Страницы районов
         ...neighborhoodSlugs.map(slug => ({
           loc: `/rajony/${slug}/`,
