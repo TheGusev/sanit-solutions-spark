@@ -253,6 +253,8 @@ const blogSlugs = [
   'ryzhie-tarakany-unichtozhenie', 'domashnie-muravi-pochemu-ne-pomogaet', 'podgotovka-kvartiry-chek-list',
   'dezinfekciya-posle-bolezni', 'profilaktika-tarakanov', 'kak-vybrat-sluzhbu-dezinfekcii',
   'kejs-restoran-tarakany', 'kejs-gostinica-klopy', 'dezinfekciya-ofisa-bez-pomeh',
+  // ===== Legal-commercial (1) =====
+  'borshchevik-zakon-shtraf-2026',
 ];
 
 // Города кротов МО (23 города — синхронизировано с src/data/moleCities.ts)
