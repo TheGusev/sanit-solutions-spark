@@ -33,25 +33,8 @@ const StickyCTA = ({ price, discount, onOrderClick }: StickyCTAProps) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isDismissed]);
 
-  useEffect(() => {
-    if (isVisible && !hasTrackedView) {
-      trackGoal('sticky_cta_view', {
-        intent: context?.intent,
-        variant: context?.variantId,
-        price,
-        discount
-      });
-      setHasTrackedView(true);
-    }
-  }, [isVisible, hasTrackedView, context, price, discount]);
-
   const handleClick = () => {
-    trackGoal('sticky_cta_click', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      price,
-      discount
-    });
+    trackGoal('calc_open');
     onOrderClick();
   };
 
