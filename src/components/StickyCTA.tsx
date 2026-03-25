@@ -14,7 +14,7 @@ const StickyCTA = ({ price, discount, onOrderClick }: StickyCTAProps) => {
   const { context } = useTraffic();
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
-  const [hasTrackedView, setHasTrackedView] = useState(false);
+
 
   useEffect(() => {
     const handleScroll = () => {
