@@ -88,7 +88,7 @@ const blogByService: Record<string, { url: string; text: string }[]> = {
     { url: '/blog/sezonnost-vreditelej', text: 'Сезонность вредителей' },
   ],
   'borba-s-krotami': [
-    { url: '/blog/kroty-na-uchastke-kak-izbavitsya', text: 'Кроты на участке: как избавиться' },
+    { url: '/blog/kroty-novorizhskoe-shosse', text: 'Кроты на Новорижском шоссе' },
     { url: '/blog/sezonnost-vreditelej', text: 'Сезонность вредителей' },
   ],
 };

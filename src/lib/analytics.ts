@@ -127,6 +127,7 @@ const PATHNAME_SLUG_MAP: Record<string, string> = {
   '/uslugi/dezinsekciya/muhi': 'muhi',
   '/uslugi/dezinsekciya/mol': 'mol',
   '/uslugi/deratizaciya/krysy': 'krysy',
+  '/uslugi/deratizaciya/myshi': 'myshi',
   '/uslugi/deratizaciya/kroty': 'kroty',
   '/uslugi/borba-s-krotami': 'kroty',
   '/uslugi/dezinsekciya': 'dezinsekciya',
