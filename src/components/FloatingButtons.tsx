@@ -18,11 +18,6 @@ const FloatingButtons = () => {
   };
 
   const handleMaxClick = () => {
-    trackGoal('max_click', {
-      intent: context?.intent,
-      variant: context?.variantId
-    });
-    
     window.open("https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo", "_blank");
   };
 

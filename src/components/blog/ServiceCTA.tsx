@@ -122,7 +122,7 @@ const ServiceCTA = ({ services }: ServiceCTAProps) => {
                 </Button>
               ))}
               <Button className="min-h-[48px]" asChild>
-                <a href="tel:84950181817" onClick={() => trackGoal('blog_cta_call')}>
+                <a href="tel:84950181817" onClick={() => trackGoal('phone_click')}>
                   <Phone className="w-4 h-4 mr-2" />
                   Позвонить
                 </a>

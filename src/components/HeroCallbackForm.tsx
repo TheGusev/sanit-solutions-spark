@@ -1,11 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
 import { useTraffic } from '@/contexts/TrafficContext';
-import { trackGoal, getYmGoalId } from '@/lib/analytics';
+import { trackGoal } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 
 interface HeroCallbackFormProps {
@@ -30,7 +30,7 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
   const [phone, setPhone] = useState('+7');
   const [agreed, setAgreed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const focusFired = useRef(false);
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,12 +48,10 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
 
     setIsSubmitting(true);
 
-    const goalParams = {
+    trackGoal('hero_callback_submit', {
       intent: context?.intent,
       service: serviceSlug,
-    };
-    trackGoal('hero_callback_submit', goalParams);
-    trackGoal(getYmGoalId('callback'), goalParams);
+    });
 
     try {
       const { data, error } = await supabase.functions.invoke('handle-lead', {
@@ -100,12 +98,6 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
           placeholder="+7 (___) ___-__-__"
           value={phone}
           onChange={(e) => setPhone(formatPhone(e.target.value))}
-          onFocus={() => {
-            if (!focusFired.current) {
-              focusFired.current = true;
-              trackGoal('form_focus', { source: 'hero_callback', service: serviceSlug });
-            }
-          }}
           className="h-12 text-base flex-1"
           required
         />

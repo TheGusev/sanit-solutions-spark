@@ -15,14 +15,6 @@ const Footer = memo(() => {
     });
   };
 
-  const handleMessengerClick = (messenger: string) => {
-    trackGoal('messenger_click', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      messenger: messenger,
-      source: 'footer'
-    });
-  };
 
   return (
     <footer className="bg-[hsl(230,25%,12%)] text-white">
@@ -120,7 +112,7 @@ const Footer = memo(() => {
                   href="https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  onClick={() => handleMessengerClick('max')}
+                  
                   className="hover:opacity-100"
                 >
                   MAX Мессенджер

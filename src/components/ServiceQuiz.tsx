@@ -124,13 +124,7 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle, basePric
       }
 
       const prefix = getYmGoalPrefix();
-      const quizSource = sessionStorage.getItem('quiz_source');
-      if (quizSource === 'sticky_bar') {
-        trackGoal(`sticky_quiz_lead_${prefix}`, { intent: context?.intent, service: serviceSlug });
-        sessionStorage.removeItem('quiz_source');
-      } else {
-        trackGoal(`quiz_lead_${prefix}`, { intent: context?.intent, service: serviceSlug });
-      }
+      trackGoal(`quiz_lead_${prefix}`, { intent: context?.intent, service: serviceSlug });
 
       toast.success('✅ Заявка отправлена! Перезвоним в течение 15 минут');
       setCurrentStep(0);

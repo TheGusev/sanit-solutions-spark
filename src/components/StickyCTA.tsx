@@ -14,7 +14,7 @@ const StickyCTA = ({ price, discount, onOrderClick }: StickyCTAProps) => {
   const { context } = useTraffic();
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
-  const [hasTrackedView, setHasTrackedView] = useState(false);
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,25 +33,8 @@ const StickyCTA = ({ price, discount, onOrderClick }: StickyCTAProps) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isDismissed]);
 
-  useEffect(() => {
-    if (isVisible && !hasTrackedView) {
-      trackGoal('sticky_cta_view', {
-        intent: context?.intent,
-        variant: context?.variantId,
-        price,
-        discount
-      });
-      setHasTrackedView(true);
-    }
-  }, [isVisible, hasTrackedView, context, price, discount]);
-
   const handleClick = () => {
-    trackGoal('sticky_cta_click', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      price,
-      discount
-    });
+    trackGoal('calc_open');
     onOrderClick();
   };
 
@@ -61,10 +44,7 @@ const StickyCTA = ({ price, discount, onOrderClick }: StickyCTAProps) => {
   };
 
   const handleCall = () => {
-    trackGoal('sticky_cta_call', {
-      intent: context?.intent,
-      variant: context?.variantId
-    });
+    trackGoal('phone_click');
     window.location.href = "tel:84950181817";
   };
 

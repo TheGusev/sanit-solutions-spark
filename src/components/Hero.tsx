@@ -117,11 +117,7 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
           <div className="flex justify-center">
             <Button 
               onClick={() => {
-                trackGoal('hero_cta_click', {
-                  intent: context?.intent,
-                  variant: context?.variantId,
-                  button: 'order_and_calculate'
-                });
+                trackGoal('calc_open');
                 handleCalculatorClick();
               }}
               size="lg"

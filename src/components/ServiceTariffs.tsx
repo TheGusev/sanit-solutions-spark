@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import AnimatedSection from "@/components/AnimatedSection";
-import { trackGoal, getYmGoalPrefix } from "@/lib/analytics";
+import { trackGoal } from "@/lib/analytics";
 
 interface Tariff {
   name: string;
@@ -76,7 +76,7 @@ const ServiceTariffs = ({ tariffs, serviceTitle, serviceAccusative }: ServiceTar
                     className="w-full min-h-[48px] text-base"
                     asChild
                   >
-                    <a href="tel:84950181817" onClick={() => trackGoal(`tariff_call_${getYmGoalPrefix()}`, { tariff: tariff.name, price: tariff.price })}>
+                    <a href="tel:84950181817" onClick={() => trackGoal('phone_click')}>
                       <Phone className="w-4 h-4 mr-2" />
                       Заказать
                     </a>

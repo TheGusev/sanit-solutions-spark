@@ -92,7 +92,7 @@ const ServiceLandingUchastkiPage = () => {
                       <Phone className="h-5 w-5" /> 8-495-018-18-17
                     </a>
                   </Button>
-                  <Button size="lg" variant="outline" className="gap-2" onClick={() => { trackGoal('calculator_click', { source: 'uchastki_hero' }); setShowCalculator(true); }}>
+                  <Button size="lg" variant="outline" className="gap-2" onClick={() => { trackGoal('calc_open'); setShowCalculator(true); }}>
                     <Calculator className="h-5 w-5" /> Рассчитать стоимость
                   </Button>
                 </div>
@@ -196,7 +196,7 @@ const ServiceLandingUchastkiPage = () => {
             <p className="mb-6 opacity-90">Бесплатный выезд специалиста для оценки территории</p>
             <div className="flex flex-wrap justify-center gap-3">
               <Button size="lg" variant="secondary" className="gap-2" asChild>
-                <a href="tel:84950181817" onClick={() => trackGoal('uchastki_cta_call')}><Phone className="h-5 w-5" /> 8-495-018-18-17</a>
+                <a href="tel:84950181817" onClick={() => trackGoal('phone_click')}><Phone className="h-5 w-5" /> 8-495-018-18-17</a>
               </Button>
               <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary gap-2" onClick={() => setShowCalculator(true)}>
                 <Calculator className="h-5 w-5" /> Рассчитать стоимость

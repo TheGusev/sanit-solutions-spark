@@ -142,7 +142,7 @@ export default function MoleCityPage() {
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button size="lg" className="min-h-[48px] text-base" asChild>
-                  <a href={`tel:${SEO_CONFIG.phoneClean}`} onClick={() => trackGoal('mole_city_call', { city: city.slug })}>
+                  <a href={`tel:${SEO_CONFIG.phoneClean}`} onClick={() => trackGoal('phone_click')}>
                     <Phone className="w-4 h-4 mr-2" />
                     {SEO_CONFIG.phone}
                   </a>

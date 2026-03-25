@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { trackAIReferral, detectDarkAITraffic } from "@/lib/analytics";
+
 import DOMPurify from "dompurify";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -89,8 +89,6 @@ const BlogPost = () => {
   useEffect(() => {
     if (post) {
       document.title = `${deOptimizeBlogTitle(post.title, post.slug)} | Санитарные Решения`;
-      trackAIReferral();
-      detectDarkAITraffic();
     }
   }, [post]);
 

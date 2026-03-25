@@ -40,11 +40,6 @@ const ExitIntentPopup = () => {
     
     sessionStorage.setItem("exitIntentShown", "true");
     setOpen(true);
-    
-    trackGoal('exit_intent_shown', {
-      intent: context?.intent,
-      variant: context?.variantId
-    });
   }, [context]);
 
   useEffect(() => {
@@ -156,10 +151,7 @@ const ExitIntentPopup = () => {
       if (error) throw error;
 
       if (data?.success) {
-        trackGoal('exit_intent_submit', {
-          intent: context?.intent,
-          variant: context?.variantId
-        });
+        trackGoal('lead_submit');
         
         sessionStorage.setItem("leadSubmitted", "true");
         setSubmitted(true);
