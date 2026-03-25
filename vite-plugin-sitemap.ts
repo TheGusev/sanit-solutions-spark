@@ -428,6 +428,13 @@ export function sitemapPlugin(): Plugin {
       
       // УДАЛЕНО: sitemap-services-district.xml (520 doorway-страниц удалены Day 3-4)
       
+      // ========== SITEMAP-MOLE.XML (кроты МО — 23 города) ==========
+      const moleUrls: SitemapUrl[] = moleCitySlugs.map(citySlug => ({
+        loc: `/uslugi/borba-s-krotami/${citySlug}/`,
+        lastmod: currentDate,
+        changefreq: 'monthly',
+        priority: '0.8',
+      }));
       
       // ========== SITEMAP-BLOG.XML (блог) ==========
       const blogUrls: SitemapUrl[] = blogSlugs.map(slug => ({
