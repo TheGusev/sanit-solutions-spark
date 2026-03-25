@@ -453,6 +453,7 @@ export function sitemapPlugin(): Plugin {
         { filename: 'sitemap-moscow.xml', urls: moscowUrls },
         { filename: 'sitemap-moscow-region.xml', urls: moscowRegionUrls },
         { filename: 'sitemap-nch.xml', urls: nchUrls },
+        { filename: 'sitemap-mole.xml', urls: moleUrls },
         { filename: 'sitemap-blog.xml', urls: blogUrls },
       ];
       
