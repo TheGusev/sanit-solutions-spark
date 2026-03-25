@@ -253,6 +253,18 @@ const blogSlugs = [
   'ryzhie-tarakany-unichtozhenie', 'domashnie-muravi-pochemu-ne-pomogaet', 'podgotovka-kvartiry-chek-list',
   'dezinfekciya-posle-bolezni', 'profilaktika-tarakanov', 'kak-vybrat-sluzhbu-dezinfekcii',
   'kejs-restoran-tarakany', 'kejs-gostinica-klopy', 'dezinfekciya-ofisa-bez-pomeh',
+  // ===== Legal-commercial (1) =====
+  'borshchevik-zakon-shtraf-2026',
+];
+
+// Города кротов МО (23 города — синхронизировано с src/data/moleCities.ts)
+const moleCitySlugs = [
+  'istra', 'krasnogorsk', 'nakhabino', 'dedovsk',
+  'odintsovo', 'barvikha', 'usovo', 'zhukovka',
+  'lobnya', 'dolgoprudny-mo', 'dmitrov-mo', 'yakhroma',
+  'chekhov-mo', 'serpukhov', 'naro-fominsk', 'mozhaysk',
+  'klin-mo', 'solnechnogorsk', 'domodedovo-mo',
+  'taldom', 'dubna-mo', 'ruza', 'voskresensk-mo',
 ];
 
 // Города МО
@@ -316,14 +328,17 @@ export function sitemapPlugin(): Plugin {
       ];
       
       // ========== SITEMAP-MOSCOW.XML (округа + районы) ==========
+      const districtServicePrefixes = ['dezinfekciya', 'dezinsekciya', 'deratizaciya'];
       const moscowUrls: SitemapUrl[] = [
-        // Страницы округов (dezinfekciya-cao и т.д.)
-        ...districtSlugs.map(d => ({
-          loc: `/uslugi/dezinfekciya-${d}/`,
-          lastmod: currentDate,
-          changefreq: 'monthly',
-          priority: '0.85',
-        })),
+        // Страницы округов (dezinfekciya-cao, dezinsekciya-cao, deratizaciya-cao и т.д.)
+        ...districtServicePrefixes.flatMap(prefix =>
+          districtSlugs.map(d => ({
+            loc: `/uslugi/${prefix}-${d}/`,
+            lastmod: currentDate,
+            changefreq: 'monthly',
+            priority: '0.85',
+          }))
+        ),
         // Страницы районов
         ...neighborhoodSlugs.map(slug => ({
           loc: `/rajony/${slug}/`,
@@ -413,6 +428,13 @@ export function sitemapPlugin(): Plugin {
       
       // УДАЛЕНО: sitemap-services-district.xml (520 doorway-страниц удалены Day 3-4)
       
+      // ========== SITEMAP-MOLE.XML (кроты МО — 23 города) ==========
+      const moleUrls: SitemapUrl[] = moleCitySlugs.map(citySlug => ({
+        loc: `/uslugi/borba-s-krotami/${citySlug}/`,
+        lastmod: currentDate,
+        changefreq: 'monthly',
+        priority: '0.8',
+      }));
       
       // ========== SITEMAP-BLOG.XML (блог) ==========
       const blogUrls: SitemapUrl[] = blogSlugs.map(slug => ({
@@ -431,6 +453,7 @@ export function sitemapPlugin(): Plugin {
         { filename: 'sitemap-moscow.xml', urls: moscowUrls },
         { filename: 'sitemap-moscow-region.xml', urls: moscowRegionUrls },
         { filename: 'sitemap-nch.xml', urls: nchUrls },
+        { filename: 'sitemap-mole.xml', urls: moleUrls },
         { filename: 'sitemap-blog.xml', urls: blogUrls },
       ];
       
