@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LeadFormModal } from './LeadFormModal';
-import { trackGoal } from '@/lib/analytics';
+
 
 const FlashDiscountBadge = () => {
   const [isVisible, setIsVisible] = useState(false);
