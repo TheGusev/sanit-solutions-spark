@@ -1,4 +1,5 @@
 import { useState } from "react";
+import InternalLinks from "@/components/InternalLinks";
 import { trackGoal } from "@/lib/analytics";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";

@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/table";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import InternalLinks from "@/components/InternalLinks";
 import WorkProcess from "@/components/WorkProcess";
 import AnimatedSection from "@/components/AnimatedSection";
 import { getServiceBySlug, servicePages, getRelatedArticlesForService } from "@/data/services";

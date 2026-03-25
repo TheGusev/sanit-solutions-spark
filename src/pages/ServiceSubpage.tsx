@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import InternalLinks from "@/components/InternalLinks";
 import AnimatedSection from "@/components/AnimatedSection";
 import { getSubpageByPath } from "@/data/serviceSubpages";
 import { getServiceBySlug } from "@/data/services";
