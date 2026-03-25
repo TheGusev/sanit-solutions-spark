@@ -92,7 +92,7 @@ const ServiceLandingUchastkiPage = () => {
                       <Phone className="h-5 w-5" /> 8-495-018-18-17
                     </a>
                   </Button>
-                  <Button size="lg" variant="outline" className="gap-2" onClick={() => { trackGoal('calculator_click', { source: 'uchastki_hero' }); setShowCalculator(true); }}>
+                  <Button size="lg" variant="outline" className="gap-2" onClick={() => { trackGoal('calc_open'); setShowCalculator(true); }}>
                     <Calculator className="h-5 w-5" /> Рассчитать стоимость
                   </Button>
                 </div>
