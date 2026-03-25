@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import InternalLinks from "@/components/InternalLinks";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import { allBlogArticles, blogCategories } from "@/data/blog";
@@ -286,6 +287,8 @@ const Blog = () => {
           </Button>
         </div>
       </section>
+
+      <InternalLinks />
 
       <Footer />
     </div>

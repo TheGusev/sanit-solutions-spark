@@ -295,7 +295,7 @@ export default function MoleCityPage() {
           </section>
         )}
 
-        <InternalLinks />
+        <InternalLinks currentService="borba-s-krotami" currentMoleCity={city.slug} />
       </main>
 
       <Footer />

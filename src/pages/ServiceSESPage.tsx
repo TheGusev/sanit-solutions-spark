@@ -1,4 +1,5 @@
 import { useState } from "react";
+import InternalLinks from "@/components/InternalLinks";
 import { trackGoal } from "@/lib/analytics";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -184,6 +185,7 @@ const ServiceSESPage = () => {
             </div>
           </div>
         </section>
+        <InternalLinks currentService="dezinsekciya" />
       </main>
       <Footer />
       <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />

@@ -1,12 +1,16 @@
 /**
  * Компонент внутренней перелинковки для SEO.
- * Генерирует 8-12 релевантных ссылок на связанные страницы.
+ * Генерирует 12-16 релевантных ссылок на связанные страницы.
  * 
- * Правила перелинковки:
- * - Другие вредители той же услуги (3-4 ссылки)
- * - Соседние районы (3-4 ссылки)
- * - Главные страницы услуг (2 ссылки)
- * - Города МО при наличии (1-2 ссылки)
+ * Типы ссылок:
+ * - pest: Другие вредители той же услуги
+ * - neighborhood: Соседние районы
+ * - service: Главные страницы услуг
+ * - district: Услуги по округам
+ * - city: Города МО
+ * - blog: Релевантные статьи блога
+ * - hub: Обзорные хабы (/rajony, /moscow-oblast, /otzyvy)
+ * - moleCity: Города борьбы с кротами
  */
 
 import { Link } from 'react-router-dom';
@@ -14,6 +18,7 @@ import { pests, getPestsByService } from '@/data/pests';
 import { moscowRegionCities } from '@/data/moscowRegion';
 import { topNeighborhoods } from '@/lib/seoRoutes';
 import { neighborhoods } from '@/data/neighborhoods';
+import { moleCities } from '@/data/moleCities';
 import { ArrowRight } from 'lucide-react';
 
 interface InternalLinksProps {
@@ -22,6 +27,7 @@ interface InternalLinksProps {
   currentNeighborhood?: string;
   currentCity?: string;
   currentDistrict?: string;
+  currentMoleCity?: string;
   variant?: 'grid' | 'list' | 'compact';
   maxLinks?: number;
   title?: string;
@@ -30,9 +36,8 @@ interface InternalLinksProps {
 interface InternalLink {
   url: string;
   text: string;
-  type: 'service' | 'pest' | 'neighborhood' | 'city' | 'district';
+  type: 'service' | 'pest' | 'neighborhood' | 'city' | 'district' | 'blog' | 'hub' | 'moleCity';
 }
-
 
 function getDistance(a: [number, number], b: [number, number]): number {
   const dlat = a[0] - b[0];
@@ -40,10 +45,62 @@ function getDistance(a: [number, number], b: [number, number]): number {
   return Math.sqrt(dlat * dlat + dlng * dlng);
 }
 
+/** Pseudo-random shuffle based on current day (stable per day) */
+function seededShuffle<T>(arr: T[]): T[] {
+  const seed = new Date().getDate();
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = (seed * (i + 1) * 31) % (i + 1);
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 const okrugIds = ['cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao'];
 const serviceKeys = ['dezinfekciya', 'dezinsekciya', 'deratizaciya'] as const;
-const serviceNames: Record<string, string> = { dezinfekciya: 'Дезинфекция', dezinsekciya: 'Дезинсекция', deratizaciya: 'Дератизация' };
+const serviceNames: Record<string, string> = {
+  dezinfekciya: 'Дезинфекция',
+  dezinsekciya: 'Дезинсекция',
+  deratizaciya: 'Дератизация',
+  'obrabotka-uchastkov': 'Обработка участков',
+  'borba-s-krotami': 'Борьба с кротами',
+};
 const okrugNames: Record<string, string> = { cao: 'ЦАО', sao: 'САО', svao: 'СВАО', vao: 'ВАО', yuvao: 'ЮВАО', yao: 'ЮАО', yzao: 'ЮЗАО', zao: 'ЗАО', szao: 'СЗАО' };
+
+/** Blog articles mapped by related service keyword */
+const blogByService: Record<string, { url: string; text: string }[]> = {
+  dezinsekciya: [
+    { url: '/blog/klopy-v-kvartire', text: 'Клопы в квартире: как избавиться' },
+    { url: '/blog/borba-s-tarakanami', text: 'Борьба с тараканами: методы' },
+    { url: '/blog/sezonnost-vreditelej', text: 'Сезонность вредителей' },
+  ],
+  deratizaciya: [
+    { url: '/blog/gryzuny-v-dome', text: 'Грызуны в доме: что делать' },
+    { url: '/blog/sezonnost-vreditelej', text: 'Сезонность вредителей' },
+  ],
+  dezinfekciya: [
+    { url: '/blog/vidy-dezinfekcii', text: 'Виды дезинфекции' },
+    { url: '/blog/dezinfekciya-ofisa', text: 'Дезинфекция офиса' },
+    { url: '/blog/ozonirovaniye-pomeshcheniy', text: 'Озонирование помещений' },
+  ],
+  'obrabotka-uchastkov': [
+    { url: '/blog/borshchevik-zakon-shtraf-2026', text: 'Борщевик: закон и штрафы 2026' },
+    { url: '/blog/sezonnost-vreditelej', text: 'Сезонность вредителей' },
+  ],
+  'borba-s-krotami': [
+    { url: '/blog/kroty-na-uchastke-kak-izbavitsya', text: 'Кроты на участке: как избавиться' },
+    { url: '/blog/sezonnost-vreditelej', text: 'Сезонность вредителей' },
+  ],
+};
+
+/** Hub pages for cross-linking */
+const hubLinks: InternalLink[] = [
+  { url: '/rajony', text: 'Районы Москвы — все районы', type: 'hub' },
+  { url: '/moscow-oblast', text: 'Московская область — все города', type: 'hub' },
+  { url: '/otzyvy', text: 'Отзывы клиентов', type: 'hub' },
+  { url: '/uslugi/po-okrugam-moskvy', text: 'Услуги по округам Москвы', type: 'hub' },
+  { url: '/blog', text: 'Полезные статьи', type: 'hub' },
+];
 
 export function InternalLinks({
   currentService,
@@ -51,8 +108,9 @@ export function InternalLinks({
   currentNeighborhood,
   currentCity,
   currentDistrict,
+  currentMoleCity,
   variant = 'grid',
-  maxLinks = 12,
+  maxLinks = 16,
   title = 'Смотрите также'
 }: InternalLinksProps) {
   const links: InternalLink[] = [];
@@ -64,14 +122,12 @@ export function InternalLinks({
     
     otherPests.forEach(pest => {
       if (currentNeighborhood) {
-        // НЧ-страница: ссылка на другого вредителя в том же районе
         links.push({
           url: `/uslugi/${currentService}/${pest.slug}/${currentNeighborhood}`,
           text: `Уничтожение ${pest.genitive} в районе`,
           type: 'pest'
         });
       } else {
-        // Страница услуга+вредитель: ссылка на другого вредителя
         links.push({
           url: `/uslugi/${currentService}/${pest.slug}`,
           text: `Уничтожение ${pest.genitive}`,
@@ -103,7 +159,7 @@ export function InternalLinks({
       if (currentService && currentPest) {
         links.push({
           url: `/uslugi/${currentService}/${currentPest}/${n.slug}`,
-          text: `${currentService === 'dezinsekciya' ? 'Дезинсекция' : 'Дератизация'} в ${n.name}`,
+          text: `${serviceNames[currentService] || 'Дезинсекция'} в ${n.name}`,
           type: 'neighborhood'
         });
       } else {
@@ -116,7 +172,7 @@ export function InternalLinks({
     });
   }
   
-  // 3. Главные страницы услуг (2 ссылки)
+  // 3. Главные страницы услуг (2-3 ссылки)
   const mainServices = [
     { slug: 'dezinsekciya', name: 'Дезинсекция' },
     { slug: 'deratizaciya', name: 'Дератизация' },
@@ -128,7 +184,7 @@ export function InternalLinks({
   
   mainServices
     .filter(s => s.slug !== currentService)
-    .slice(0, 2)
+    .slice(0, 3)
     .forEach(service => {
       links.push({
         url: `/uslugi/${service.slug}`,
@@ -137,7 +193,7 @@ export function InternalLinks({
       });
     });
   
-  // 3.5 Услуги по округам (2-3 ссылки)
+  // 3.5 Услуги по округам (2 ссылки)
   if (currentService) {
     const otherServices = serviceKeys.filter(s => s !== currentService);
     otherServices.slice(0, 2).forEach((s, i) => {
@@ -152,9 +208,10 @@ export function InternalLinks({
     });
   }
 
-  // 4. Города МО (1-2 ссылки)
+  // 4. Города МО — рандомизированные (2 ссылки)
   if (!currentCity && currentService) {
-    moscowRegionCities.slice(0, 2).forEach(city => {
+    const shuffled = seededShuffle(moscowRegionCities.filter(c => c.slug !== currentCity));
+    shuffled.slice(0, 2).forEach(city => {
       links.push({
         url: `/moscow-oblast/${city.slug}/${currentService}`,
         text: `${serviceNames[currentService] || 'Дезинфекция'} ${city.prepositional}`,
@@ -162,6 +219,40 @@ export function InternalLinks({
       });
     });
   }
+
+  // 5. Города кротов (для страниц borba-s-krotami) — 2-3 ссылки
+  if (currentService === 'borba-s-krotami' || currentMoleCity) {
+    const otherMoleCities = seededShuffle(
+      moleCities.filter(c => c.slug !== currentMoleCity)
+    ).slice(0, 3);
+    otherMoleCities.forEach(mc => {
+      links.push({
+        url: `/uslugi/borba-s-krotami/${mc.slug}`,
+        text: `Кроты ${mc.prepositional}`,
+        type: 'moleCity'
+      });
+    });
+  }
+
+  // 6. Блог-ссылки (1-2 статьи по текущей услуге)
+  const blogKey = currentService || '';
+  const blogArticles = blogByService[blogKey];
+  if (blogArticles) {
+    blogArticles.slice(0, 2).forEach(article => {
+      links.push({
+        url: article.url,
+        text: article.text,
+        type: 'blog'
+      });
+    });
+  }
+
+  // 7. Хабы (2 ссылки)
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+  const relevantHubs = hubLinks.filter(h => !currentPath.startsWith(h.url));
+  seededShuffle(relevantHubs).slice(0, 2).forEach(hub => {
+    links.push(hub);
+  });
   
   // Ограничиваем количество ссылок
   const finalLinks = links.slice(0, maxLinks);

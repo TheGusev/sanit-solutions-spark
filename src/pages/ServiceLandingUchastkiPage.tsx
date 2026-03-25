@@ -4,6 +4,7 @@ import { trackGoal } from "@/lib/analytics";
 import Header from "@/components/Header";
 import ServiceQuiz from "@/components/ServiceQuiz";
 import Footer from "@/components/Footer";
+import InternalLinks from "@/components/InternalLinks";
 import SEOHead from "@/components/SEOHead";
 import AnimatedSection from "@/components/AnimatedSection";
 import HeroCallbackForm from "@/components/HeroCallbackForm";
@@ -204,6 +205,7 @@ const ServiceLandingUchastkiPage = () => {
             </div>
           </div>
         </section>
+        <InternalLinks currentService="obrabotka-uchastkov" />
       </main>
       <Footer />
       <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
