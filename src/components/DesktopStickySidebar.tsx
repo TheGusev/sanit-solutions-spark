@@ -30,38 +30,20 @@ const DesktopStickySidebar = ({
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Track visibility for analytics
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
-      trackGoal('desktop_sticky_view', {
-        intent: context?.intent,
-        variant: context?.variantId,
-        finalPrice,
-        discount
-      });
     }, 500);
-    
     return () => clearTimeout(timer);
-  }, [context, finalPrice, discount]);
+  }, []);
 
   const handleOrder = () => {
-    trackGoal('desktop_sticky_click', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      action: 'order',
-      finalPrice,
-      discount
-    });
+    trackGoal('calc_open');
     setShowLeadForm(true);
   };
 
   const handlePhone = () => {
-    trackGoal('desktop_sticky_click', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      action: 'phone'
-    });
+    trackGoal('phone_click');
     window.location.href = 'tel:84950181817';
   };
 

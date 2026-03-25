@@ -46,7 +46,6 @@ const FlashDiscountBadge = () => {
   const handleClick = () => {
     setHasInteracted(true);
     setIsFormOpen(true);
-    trackGoal('flash_badge_click');
   };
 
   if (!isVisible) return null;

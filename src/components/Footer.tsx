@@ -120,7 +120,7 @@ const Footer = memo(() => {
                   href="https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  onClick={() => handleMessengerClick('max')}
+                  
                   className="hover:opacity-100"
                 >
                   MAX Мессенджер

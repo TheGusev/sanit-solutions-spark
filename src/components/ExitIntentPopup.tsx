@@ -151,10 +151,7 @@ const ExitIntentPopup = () => {
       if (error) throw error;
 
       if (data?.success) {
-        trackGoal('exit_intent_submit', {
-          intent: context?.intent,
-          variant: context?.variantId
-        });
+        trackGoal('lead_submit');
         
         sessionStorage.setItem("leadSubmitted", "true");
         setSubmitted(true);

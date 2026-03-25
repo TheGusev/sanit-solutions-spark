@@ -44,10 +44,7 @@ const StickyCTA = ({ price, discount, onOrderClick }: StickyCTAProps) => {
   };
 
   const handleCall = () => {
-    trackGoal('sticky_cta_call', {
-      intent: context?.intent,
-      variant: context?.variantId
-    });
+    trackGoal('phone_click');
     window.location.href = "tel:84950181817";
   };
 

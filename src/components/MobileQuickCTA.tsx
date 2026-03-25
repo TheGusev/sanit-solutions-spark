@@ -20,11 +20,7 @@ const MobileQuickCTA = ({ onCalculatorClick }: MobileQuickCTAProps) => {
   };
 
   const handleCalculatorClick = () => {
-    trackGoal('calculator_click', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      source: 'mobile_quick_cta'
-    });
+    trackGoal('calc_open');
     onCalculatorClick();
   };
 

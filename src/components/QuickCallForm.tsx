@@ -71,12 +71,6 @@ export function QuickCallForm({ calculatorData, onSuccess }: QuickCallFormProps)
     setError(null);
 
     try {
-      trackGoal('quick_call_submit', {
-        intent: context?.intent,
-        variant: context?.variantId,
-        price: calculatorData.finalPrice
-      });
-
       const { data, error: fnError } = await supabase.functions.invoke("handle-lead", {
         body: {
           name: "Быстрый звонок",
