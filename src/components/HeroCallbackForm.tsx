@@ -48,12 +48,10 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
 
     setIsSubmitting(true);
 
-    const goalParams = {
+    trackGoal('hero_callback_submit', {
       intent: context?.intent,
       service: serviceSlug,
-    };
-    trackGoal('hero_callback_submit', goalParams);
-    trackGoal(getYmGoalId('callback'), goalParams);
+    });
 
     try {
       const { data, error } = await supabase.functions.invoke('handle-lead', {
