@@ -89,8 +89,6 @@ const BlogPost = () => {
   useEffect(() => {
     if (post) {
       document.title = `${deOptimizeBlogTitle(post.title, post.slug)} | Санитарные Решения`;
-      trackAIReferral();
-      detectDarkAITraffic();
     }
   }, [post]);
 
