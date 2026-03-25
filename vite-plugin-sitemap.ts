@@ -255,6 +255,16 @@ const blogSlugs = [
   'kejs-restoran-tarakany', 'kejs-gostinica-klopy', 'dezinfekciya-ofisa-bez-pomeh',
 ];
 
+// Города кротов МО (23 города — синхронизировано с src/data/moleCities.ts)
+const moleCitySlugs = [
+  'istra', 'krasnogorsk', 'nakhabino', 'dedovsk',
+  'odintsovo', 'barvikha', 'usovo', 'zhukovka',
+  'lobnya', 'dolgoprudny-mo', 'dmitrov-mo', 'yakhroma',
+  'chekhov-mo', 'serpukhov', 'naro-fominsk', 'mozhaysk',
+  'klin-mo', 'solnechnogorsk', 'domodedovo-mo',
+  'taldom', 'dubna-mo', 'ruza', 'voskresensk-mo',
+];
+
 // Города МО
 const moscowRegionCitySlugs = [
   'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 
