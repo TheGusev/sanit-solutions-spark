@@ -798,6 +798,7 @@ const ServicePage = () => {
           </div>
         </section>
         <ServiceStickyBar />
+        <InternalLinks currentService={service.slug} />
       </main>
 
       <Footer />

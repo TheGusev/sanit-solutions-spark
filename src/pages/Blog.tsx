@@ -287,6 +287,8 @@ const Blog = () => {
         </div>
       </section>
 
+      <InternalLinks />
+
       <Footer />
     </div>
   );

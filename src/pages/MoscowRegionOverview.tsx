@@ -160,6 +160,7 @@ export default function MoscowRegionOverview() {
             </Button>
           </div>
         </AnimatedSection>
+        <InternalLinks />
       </main>
       
       <Footer />

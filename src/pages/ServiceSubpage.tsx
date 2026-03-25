@@ -387,6 +387,7 @@ const ServiceSubpage = () => {
             </Link>
           </div>
         </section>
+        <InternalLinks currentService={parentSlug} />
       </main>
 
       <Footer />

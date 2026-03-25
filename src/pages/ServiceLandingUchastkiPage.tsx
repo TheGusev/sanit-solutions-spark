@@ -204,6 +204,7 @@ const ServiceLandingUchastkiPage = () => {
             </div>
           </div>
         </section>
+        <InternalLinks currentService="obrabotka-uchastkov" />
       </main>
       <Footer />
       <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />

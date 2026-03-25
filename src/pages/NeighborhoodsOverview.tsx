@@ -248,6 +248,7 @@ const NeighborhoodsOverview = () => {
             </Link>
           </div>
         </section>
+        <InternalLinks />
       </main>
 
       <Footer />

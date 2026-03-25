@@ -163,6 +163,7 @@ const DistrictsOverview = () => {
             </div>
           </section>
         </div>
+        <InternalLinks />
       </main>
 
       <Footer />
