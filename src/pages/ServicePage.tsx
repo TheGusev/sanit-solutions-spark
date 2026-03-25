@@ -92,11 +92,7 @@ const ServicePage = () => {
   };
 
   const handleCalculatorClick = () => {
-    trackGoal('calculator_click', {
-      intent: context?.intent,
-      source: 'service_page',
-      service: service.slug
-    });
+    trackGoal('calc_open');
     setShowCalculator(true);
   };
 

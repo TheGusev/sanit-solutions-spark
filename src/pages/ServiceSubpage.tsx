@@ -47,7 +47,7 @@ const ServiceSubpage = () => {
   };
 
   const handleCalculatorClick = () => {
-    trackGoal('calculator_click', { source: 'subpage', service: subpage.fullPath });
+    trackGoal('calc_open');
     setShowCalculator(true);
   };
 

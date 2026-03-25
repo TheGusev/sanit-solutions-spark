@@ -15,14 +15,6 @@ const Footer = memo(() => {
     });
   };
 
-  const handleMessengerClick = (messenger: string) => {
-    trackGoal('messenger_click', {
-      intent: context?.intent,
-      variant: context?.variantId,
-      messenger: messenger,
-      source: 'footer'
-    });
-  };
 
   return (
     <footer className="bg-[hsl(230,25%,12%)] text-white">
