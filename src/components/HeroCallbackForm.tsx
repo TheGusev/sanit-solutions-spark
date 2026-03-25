@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
 import { useTraffic } from '@/contexts/TrafficContext';
-import { trackGoal, getYmGoalId } from '@/lib/analytics';
+import { trackGoal } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 
 interface HeroCallbackFormProps {
