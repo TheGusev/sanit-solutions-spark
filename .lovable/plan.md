@@ -1,44 +1,49 @@
 
 
-# Добавить составную цель `all_conversions` в trackGoal
+# Улучшение страницы обработки участков + добавление слизней
 
 ## Что делаем
 
-В функции `trackGoal` в `src/lib/analytics.ts` после отправки основной цели — проверяем, входит ли `goalName` в список 10 статических целей или начинается с `quiz_lead_` / `calc_lead_`. Если да — дополнительно отправляем `ym(YANDEX_COUNTER_ID, 'reachGoal', 'all_conversions')`.
+Страница `/uslugi/obrabotka-uchastkov` сейчас простая по сравнению с основными сервисными страницами (кроты, дезинсекция и т.д.). Нужно:
 
-## Файл: `src/lib/analytics.ts`
+1. **Добавить галерею «До / Процесс / После»** — как на странице кротов
+2. **Добавить слизней** как 5-й тип вредителя
+3. **Добавить hero-фон** с градиентным оверлеем (как на ServicePage)
+4. **Добавить блоки доверия** (гарантия, лицензия, выезд в течение часа)
+5. **Добавить секцию WorkProcess** (4 шага)
+6. **Обновить SEO-метаданные** с учётом слизней
+7. **Добавить «Слизни» в квиз**
 
-После строки 181 (`}`) добавить блок:
+## Файлы
 
-```typescript
-// Составная цель all_conversions — срабатывает при любой конверсии
-const ALL_CONV_GOALS = new Set([
-  'final_cta_call', 'final_cta_calculator', 'calc_open',
-  'calc_interact', 'calc_price_view', 'service_sticky_call',
-  'calc_calculate', 'lead_submit', 'hero_callback_submit', 'phone_click'
-]);
+| # | Файл | Действие |
+|---|------|----------|
+| 1 | `src/data/serviceGallery.ts` | Добавить запись `'obrabotka-uchastkov'` с 3 фото (до/процесс/после) + subtitle |
+| 2 | `src/pages/ServiceLandingUchastkiPage.tsx` | Полная переработка: hero с фоновым изображением и градиентом, блоки доверия (Shield/Clock/Award), галерея из serviceGallery.ts, WorkProcess, слизни в targets и квизе |
 
-const isConversion = ALL_CONV_GOALS.has(goalName) ||
-  goalName.startsWith('quiz_lead_') ||
-  goalName.startsWith('calc_lead_');
+## Детали изменений в ServiceLandingUchastkiPage
 
-if (isConversion && goalName !== 'all_conversions') {
-  try {
-    window.ym(YANDEX_COUNTER_ID, 'reachGoal', 'all_conversions', params);
-    console.log('Composite goal tracked: all_conversions');
-  } catch (err) {
-    console.debug('all_conversions error:', err);
-  }
-}
-```
+### Hero секция
+- Фоновое изображение `/images/work/outdoor-treatment.png` с blur и градиентным оверлеем (как в ServicePage)
+- Tricolor underline под h1
+- Блоки доверия: гарантия до 3 лет, выезд в течение часа, лицензия Роспотребнадзора
 
-Защита `goalName !== 'all_conversions'` предотвращает рекурсию.
+### Новый вредитель — Слизни
+- Добавить в `targets`: `{ icon: Bug, title: "Слизни", desc: "Уничтожение слизней на грядках, в теплицах и на газонах. Защита урожая безопасными методами." }`
+- Добавить в квиз первый шаг: опция «Слизни»
+- Обновить title/description с упоминанием слизней
 
-## Что нужно в Яндекс.Метрике
+### Галерея «До / Процесс / После»
+- Импорт `SERVICE_GALLERY`, `GALLERY_SUBTITLES` из `serviceGallery.ts`
+- Рендер 3 карточек с бейджами (идентично ServicePage, строки 298-332)
+- Вставить между hero и targets
 
-Создать цель: тип «JavaScript-событие», идентификатор `all_conversions`.
+### WorkProcess
+- Добавить компонент `<WorkProcess />` между targets и pricing
+
+### FAQ
+- Добавить вопрос про слизней: «Как избавиться от слизней на участке?»
 
 ## Результат
-
-Одна цель `all_conversions` покрывает все 12+ конверсий через логику «ИЛИ». Оригинальные цели продолжают работать без изменений.
+Страница участков визуально совпадает с остальными сервисными страницами: hero с фоном, галерея, процесс работы, квиз. Слизни добавлены как полноценный вредитель.
 
