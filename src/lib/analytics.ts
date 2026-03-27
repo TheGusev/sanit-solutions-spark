@@ -181,6 +181,28 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
     }
   }
   
+  // Составная цель all_conversions — срабатывает при любой конверсии
+  const ALL_CONV_GOALS = new Set([
+    'final_cta_call', 'final_cta_calculator', 'calc_open',
+    'calc_interact', 'calc_price_view', 'service_sticky_call',
+    'calc_calculate', 'lead_submit', 'hero_callback_submit', 'phone_click'
+  ]);
+
+  const isConversion = ALL_CONV_GOALS.has(goalName) ||
+    goalName.startsWith('quiz_lead_') ||
+    goalName.startsWith('calc_lead_');
+
+  if (isConversion && goalName !== 'all_conversions') {
+    if (window.ym && typeof window.ym === 'function') {
+      try {
+        window.ym(YANDEX_COUNTER_ID, 'reachGoal', 'all_conversions', params);
+        console.log('Composite goal tracked: all_conversions');
+      } catch (err) {
+        console.debug('all_conversions error:', err);
+      }
+    }
+  }
+  
   // VK Pixel - отправка конверсий
   if (window.VK?.Retargeting?.Event) {
     try {
