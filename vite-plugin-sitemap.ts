@@ -231,7 +231,7 @@ const blogSlugs = [
   'vrediteli-v-kvartir', 'vrediteli-v-domov', 'vrediteli-v-ofisov', 'vrediteli-v-restoranov', 'vrediteli-v-skladov', 'vrediteli-v-proizvodstv',
   'profilaktika-vreditelej-v-kvartir', 'profilaktika-vreditelej-v-domov', 'profilaktika-vreditelej-v-ofisov', 'profilaktika-vreditelej-v-restoranov', 'profilaktika-vreditelej-v-skladov', 'profilaktika-vreditelej-v-proizvodstv',
   // ===== Legal articles (11) =====
-  'sanpin-trebovaniya-2026', 'trebovaniya-rospotrebnadzora-2026', 'dokumenty-dlya-obshhepita',
+  'sanpin-trebovaniya-2026', 'dokumenty-dlya-obshhepita',
   'zhurnal-uchyota-dezinsekcii', 'licenziya-na-dezinfekciyu', 'shtrafy-za-vrediteley',
   'haccp-i-dezinsekciya', 'dogovor-na-dezinsekciyu-obrazec', 'proverka-ses-kak-podgotovitsya',
   'bezopasnost-preparatov', 'kak-vybrat-kompaniyu',
@@ -476,6 +476,11 @@ export function sitemapPlugin(): Plugin {
       // Также создаём sitemap.xml как алиас для обратной совместимости
       writeFileSync(resolve('dist/sitemap.xml'), indexXml);
       console.log(`✓ sitemap.xml (alias) generated`);
+      
+      // Генерация IndexNow ключа
+      const indexNowKey = 'goruslugimsk-2026-indexnow';
+      writeFileSync(resolve('dist', `${indexNowKey}.txt`), indexNowKey);
+      console.log(`✓ ${indexNowKey}.txt generated`);
       
       console.log(`\n📊 Sitemap Summary:`);
       console.log(`   Total sitemaps: ${filenames.length}`);

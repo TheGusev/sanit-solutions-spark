@@ -113,6 +113,7 @@ const moleCitySlugs = [
   'lobnya', 'dolgoprudny-mo', 'dmitrov-mo', 'yakhroma',
   'chekhov-mo', 'serpukhov', 'naro-fominsk', 'mozhaysk',
   'klin-mo', 'solnechnogorsk', 'domodedovo-mo',
+  'taldom', 'dubna-mo', 'ruza', 'voskresensk-mo',
 ];
 
 // Округа Москвы
@@ -232,7 +233,7 @@ const blogSlugs = [
   'vrediteli-v-kvartir', 'vrediteli-v-domov', 'vrediteli-v-ofisov', 'vrediteli-v-restoranov', 'vrediteli-v-skladov', 'vrediteli-v-proizvodstv',
   'profilaktika-vreditelej-v-kvartir', 'profilaktika-vreditelej-v-domov', 'profilaktika-vreditelej-v-ofisov', 'profilaktika-vreditelej-v-restoranov', 'profilaktika-vreditelej-v-skladov', 'profilaktika-vreditelej-v-proizvodstv',
   // ===== Legal articles (11) =====
-  'sanpin-trebovaniya-2026', 'trebovaniya-rospotrebnadzora-2026', 'dokumenty-dlya-obshhepita',
+  'sanpin-trebovaniya-2026', 'dokumenty-dlya-obshhepita',
   'zhurnal-uchyota-dezinsekcii', 'licenziya-na-dezinfekciyu', 'shtrafy-za-vrediteley',
   'haccp-i-dezinsekciya', 'dogovor-na-dezinsekciyu-obrazec', 'proverka-ses-kak-podgotovitsya',
   'bezopasnost-preparatov', 'kak-vybrat-kompaniyu',
@@ -352,11 +353,14 @@ function getAllRoutes(): SSGRoute[] {
     outputPath: 'uslugi/po-okrugam-moskvy/index.html'
   });
   
-  // Страницы округов
-  districtSlugs.forEach(id => {
-    routes.push({
-      path: `/uslugi/dezinfekciya-${id}/`,
-      outputPath: `uslugi/dezinfekciya-${id}/index.html`
+  // Страницы округов (3 услуги × 12 округов = 36 страниц)
+  const districtServicePrefixes = ['dezinfekciya', 'dezinsekciya', 'deratizaciya'];
+  districtServicePrefixes.forEach(prefix => {
+    districtSlugs.forEach(id => {
+      routes.push({
+        path: `/uslugi/${prefix}-${id}/`,
+        outputPath: `uslugi/${prefix}-${id}/index.html`
+      });
     });
   });
   
