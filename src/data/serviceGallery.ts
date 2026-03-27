@@ -39,4 +39,5 @@ export const GALLERY_SUBTITLES: Record<string, string> = {
   'dezinsekciya': 'Фото с объектов — до и после дезинсекции помещений',
   'deratizaciya': 'Фото с объектов — до и после дератизации',
   'dezinfekciya': 'Фото с объектов — до и после дезинфекции помещений',
+  'obrabotka-uchastkov': 'Реальные фото с объектов — до и после обработки участка от вредителей',
 };
