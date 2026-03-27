@@ -113,6 +113,7 @@ const moleCitySlugs = [
   'lobnya', 'dolgoprudny-mo', 'dmitrov-mo', 'yakhroma',
   'chekhov-mo', 'serpukhov', 'naro-fominsk', 'mozhaysk',
   'klin-mo', 'solnechnogorsk', 'domodedovo-mo',
+  'taldom', 'dubna-mo', 'ruza', 'voskresensk-mo',
 ];
 
 // Округа Москвы
