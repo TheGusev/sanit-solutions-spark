@@ -353,11 +353,14 @@ function getAllRoutes(): SSGRoute[] {
     outputPath: 'uslugi/po-okrugam-moskvy/index.html'
   });
   
-  // Страницы округов
-  districtSlugs.forEach(id => {
-    routes.push({
-      path: `/uslugi/dezinfekciya-${id}/`,
-      outputPath: `uslugi/dezinfekciya-${id}/index.html`
+  // Страницы округов (3 услуги × 12 округов = 36 страниц)
+  const districtServicePrefixes = ['dezinfekciya', 'dezinsekciya', 'deratizaciya'];
+  districtServicePrefixes.forEach(prefix => {
+    districtSlugs.forEach(id => {
+      routes.push({
+        path: `/uslugi/${prefix}-${id}/`,
+        outputPath: `uslugi/${prefix}-${id}/index.html`
+      });
     });
   });
   

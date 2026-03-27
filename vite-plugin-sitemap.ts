@@ -477,6 +477,11 @@ export function sitemapPlugin(): Plugin {
       writeFileSync(resolve('dist/sitemap.xml'), indexXml);
       console.log(`✓ sitemap.xml (alias) generated`);
       
+      // Генерация IndexNow ключа
+      const indexNowKey = 'goruslugimsk-2026-indexnow';
+      writeFileSync(resolve('dist', `${indexNowKey}.txt`), indexNowKey);
+      console.log(`✓ ${indexNowKey}.txt generated`);
+      
       console.log(`\n📊 Sitemap Summary:`);
       console.log(`   Total sitemaps: ${filenames.length}`);
       console.log(`   Total URLs: ${totalUrls}`);
