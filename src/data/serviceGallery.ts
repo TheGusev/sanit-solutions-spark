@@ -27,6 +27,11 @@ export const SERVICE_GALLERY: Record<string, GalleryItem[]> = {
     { src: '/images/services/dezinfection-process.png', title: 'Процесс: генератор холодного тумана', desc: 'Обработка помещения мелкодисперсным дезинфицирующим раствором.', badge: 'Процесс', badgeColor: 'bg-primary text-primary-foreground' },
     { src: '/images/services/dezinfection-after.png', title: 'Результат: стерильное помещение', desc: 'Чистые стены, уничтожены бактерии и споры плесени. Безопасно для проживания.', badge: 'После', badgeColor: 'bg-green-600 text-white' },
   ],
+  'obrabotka-uchastkov': [
+    { src: '/images/services/uchastok-before.jpg', title: 'Проблема: вредители на участке', desc: 'Клещи в траве, слизни на грядках, комары у водоёмов — участок небезопасен для отдыха.', badge: 'До обработки', badgeColor: 'bg-destructive text-destructive-foreground' },
+    { src: '/images/services/uchastok-process.jpg', title: 'Процесс: обработка территории', desc: 'Специалист в защитном костюме обрабатывает газон, кустарники и грядки сертифицированным препаратом.', badge: 'Процесс', badgeColor: 'bg-primary text-primary-foreground' },
+    { src: '/images/services/uchastok-after.jpg', title: 'Результат: чистый участок', desc: 'Безопасный газон, защищённые грядки. Гарантия результата до 3 лет.', badge: 'После', badgeColor: 'bg-green-600 text-white' },
+  ],
 };
 
 export const GALLERY_SUBTITLES: Record<string, string> = {
