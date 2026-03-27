@@ -1,49 +1,80 @@
 
 
-# Улучшение страницы обработки участков + добавление слизней
+# ШАГ 1: Исправление SSG/Sitemap + ШАГ 2: IndexNow
 
-## Что делаем
+## ШАГ 1: Три критических исправления
 
-Страница `/uslugi/obrabotka-uchastkov` сейчас простая по сравнению с основными сервисными страницами (кроты, дезинсекция и т.д.). Нужно:
+### 1.1 Округа: добавить dezinsekciya и deratizaciya в SSG
 
-1. **Добавить галерею «До / Процесс / После»** — как на странице кротов
-2. **Добавить слизней** как 5-й тип вредителя
-3. **Добавить hero-фон** с градиентным оверлеем (как на ServicePage)
-4. **Добавить блоки доверия** (гарантия, лицензия, выезд в течение часа)
-5. **Добавить секцию WorkProcess** (4 шага)
-6. **Обновить SEO-метаданные** с учётом слизней
-7. **Добавить «Слизни» в квиз**
+**Проблема:** `vite-plugin-ssg.ts` строки 356-361 генерирует только `dezinfekciya-{okrug}`, а sitemap уже отдаёт все 3 услуги × 12 округов = 36 URL. SSG даёт только 12 → 24 soft-404.
 
-## Файлы
+**Файл:** `vite-plugin-ssg.ts`, строки 355-361
+**Было:**
+```typescript
+districtSlugs.forEach(id => {
+  routes.push({ path: `/uslugi/dezinfekciya-${id}/`, ... });
+});
+```
+**Станет:**
+```typescript
+const districtServicePrefixes = ['dezinfekciya', 'dezinsekciya', 'deratizaciya'];
+districtServicePrefixes.forEach(prefix => {
+  districtSlugs.forEach(id => {
+    routes.push({ path: `/uslugi/${prefix}-${id}/`, outputPath: `uslugi/${prefix}-${id}/index.html` });
+  });
+});
+```
+
+### 1.2 Города кротов: добавить 4 недостающих в SSG
+
+**Проблема:** `moleCitySlugs` в sitemap содержит 23 города (включая taldom, dubna-mo, ruza, voskresensk-mo), а в SSG — только 19.
+
+**Файл:** `vite-plugin-ssg.ts`, строки 110-116 — добавить `'taldom', 'dubna-mo', 'ruza', 'voskresensk-mo'` в массив `moleCitySlugs`.
+
+### 1.3 Удалить дубль блога
+
+**Проблема:** `trebovaniya-rospotrebnadzora-2026` встречается дважды: строка 199 (legacy) и строка 235 (legal) в обоих файлах.
+
+**Файл:** `vite-plugin-ssg.ts` — удалить из legal-секции (строка 235)
+**Файл:** `vite-plugin-sitemap.ts` — удалить из legal-секции (строка 234)
+
+---
+
+## ШАГ 2: Yandex IndexNow
+
+### 2.1 Ключ IndexNow при сборке
+
+**Файл:** `vite-plugin-sitemap.ts` — в `closeBundle()` добавить генерацию файла `dist/goruslugimsk-2026-indexnow.txt` с содержимым `goruslugimsk-2026-indexnow`.
+
+### 2.2 Скрипт отправки (новый файл)
+
+**Файл:** `scripts/send-indexnow-stateless.mjs`
+
+Логика:
+- Парсит все `dist/sitemap-*.xml` файлов, извлекает `<loc>` теги
+- `START_DATE = new Date('2026-03-27').getTime()`
+- `daysPassed = Math.floor((Date.now() - START_DATE) / 86400000)`
+- `LIMIT = 50`
+- `startIndex = (daysPassed * LIMIT) % urls.length`
+- Срез `urls.slice(startIndex, startIndex + LIMIT)` (с wrap-around через concat)
+- POST на `https://yandex.com/indexnow` с JSON body
+- Console.log: день, индексы, статус ответа
+
+### 2.3 GitHub Actions Workflow (новый файл)
+
+**Файл:** `.github/workflows/daily-indexnow.yml`
+
+- `schedule: cron '0 3 * * *'` + `workflow_dispatch`
+- Steps: checkout → setup node 20 → `npm ci` → `npm run build` → `node scripts/send-indexnow-stateless.mjs`
+
+---
+
+## Сводка файлов
 
 | # | Файл | Действие |
 |---|------|----------|
-| 1 | `src/data/serviceGallery.ts` | Добавить запись `'obrabotka-uchastkov'` с 3 фото (до/процесс/после) + subtitle |
-| 2 | `src/pages/ServiceLandingUchastkiPage.tsx` | Полная переработка: hero с фоновым изображением и градиентом, блоки доверия (Shield/Clock/Award), галерея из serviceGallery.ts, WorkProcess, слизни в targets и квизе |
-
-## Детали изменений в ServiceLandingUchastkiPage
-
-### Hero секция
-- Фоновое изображение `/images/work/outdoor-treatment.png` с blur и градиентным оверлеем (как в ServicePage)
-- Tricolor underline под h1
-- Блоки доверия: гарантия до 3 лет, выезд в течение часа, лицензия Роспотребнадзора
-
-### Новый вредитель — Слизни
-- Добавить в `targets`: `{ icon: Bug, title: "Слизни", desc: "Уничтожение слизней на грядках, в теплицах и на газонах. Защита урожая безопасными методами." }`
-- Добавить в квиз первый шаг: опция «Слизни»
-- Обновить title/description с упоминанием слизней
-
-### Галерея «До / Процесс / После»
-- Импорт `SERVICE_GALLERY`, `GALLERY_SUBTITLES` из `serviceGallery.ts`
-- Рендер 3 карточек с бейджами (идентично ServicePage, строки 298-332)
-- Вставить между hero и targets
-
-### WorkProcess
-- Добавить компонент `<WorkProcess />` между targets и pricing
-
-### FAQ
-- Добавить вопрос про слизней: «Как избавиться от слизней на участке?»
-
-## Результат
-Страница участков визуально совпадает с остальными сервисными страницами: hero с фоном, галерея, процесс работы, квиз. Слизни добавлены как полноценный вредитель.
+| 1 | `vite-plugin-ssg.ts` | Округа: 3 услуги × 12; добавить 4 города кротов; удалить дубль блога |
+| 2 | `vite-plugin-sitemap.ts` | Удалить дубль блога; добавить генерацию IndexNow ключа |
+| 3 | `scripts/send-indexnow-stateless.mjs` | Новый: stateless IndexNow скрипт |
+| 4 | `.github/workflows/daily-indexnow.yml` | Новый: ежедневный cron workflow |
 
