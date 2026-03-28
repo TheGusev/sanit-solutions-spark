@@ -2,8 +2,8 @@ name: Daily IndexNow Submission
 
 on:
   schedule:
-    - cron: '0 3 * * *'  # Every day at 03:00 UTC
-  workflow_dispatch:       # Manual trigger
+    - cron: '0 3 * * *'
+  workflow_dispatch:
 
 jobs:
   submit:
@@ -11,14 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 20
-          cache: npm
+          bun-version: latest
 
-      - run: npm ci
+      - run: bun install --frozen-lockfile
 
-      - run: npm run build
+      - run: bun run build
 
       - name: Send IndexNow batch
         run: node scripts/send-indexnow-stateless.mjs
