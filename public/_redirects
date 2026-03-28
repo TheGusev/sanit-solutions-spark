@@ -443,6 +443,54 @@
 
 # Total redirect lines: 390
 
+# --- Typo без trailing slash (Яндекс обходит оба варианта) ---
+/uslugi/dezinsektsiya           /uslugi/dezinsekciya/           301
+/uslugi/dezinfektsiya           /uslugi/dezinfekciya/           301
+/uslugi/deratizatsiya           /uslugi/deratizaciya/           301
+
+# --- /uslugi/ корень → главная (убирает 403 Forbidden) ---
+/uslugi/          /                301
+/uslugi           /                301
+
+# --- Старый путь sluzhba-dezinsekcii → услуга ---
+/sluzhba-dezinsekcii/    /uslugi/dezinsekciya/    301
+/sluzhba-dezinsekcii     /uslugi/dezinsekciya/    301
+
+# --- Конкретные 404 из лога Вебмастера ---
+/uslugi/dezinsekciya/cheshuynits/   /uslugi/dezinsekciya/cheshuynitsy/  301
+/uslugi/dezinsekciya/cheshuynits    /uslugi/dezinsekciya/cheshuynitsy/  301
+/uslugi/dezinsekciya/kvartir/       /uslugi/dezinsekciya/               301
+/uslugi/dezinsekciya/kvartir        /uslugi/dezinsekciya/               301
+/uslugi/deratizaciya/skladov/       /uslugi/deratizaciya/               301
+/uslugi/deratizaciya/skladov        /uslugi/deratizaciya/               301
+
+# --- moscow-oblast без trailing slash ---
+/moscow-oblast/khimki           /moscow-oblast/khimki/          301
+/moscow-oblast/domodedovo       /moscow-oblast/domodedovo/      301
+/moscow-oblast/krasnogorsk      /moscow-oblast/krasnogorsk/     301
+/moscow-oblast/mytishchi        /moscow-oblast/mytishchi/       301
+/moscow-oblast/ramenskoe        /moscow-oblast/ramenskoe/       301
+/moscow-oblast/balashikha       /moscow-oblast/balashikha/      301
+/moscow-oblast/podolsk          /moscow-oblast/podolsk/         301
+/moscow-oblast/lyubertsy        /moscow-oblast/lyubertsy/       301
+/moscow-oblast/odintsovo        /moscow-oblast/odintsovo/       301
+/moscow-oblast/korolev          /moscow-oblast/korolev/         301
+/moscow-oblast/shchyolkovo      /moscow-oblast/shchyolkovo/     301
+/moscow-oblast/zhukovsky        /moscow-oblast/zhukovsky/       301
+/moscow-oblast/pushkino         /moscow-oblast/pushkino/        301
+/moscow-oblast/sergiev-posad    /moscow-oblast/sergiev-posad/   301
+
+# --- Wildcard pest+geo doorway → чистый pest хаб ---
+/uslugi/dezinsekciya/tarakany/:slug  /uslugi/dezinsekciya/tarakany/     301
+/uslugi/dezinsekciya/klopy/:slug     /uslugi/dezinsekciya/klopy/        301
+/uslugi/dezinsekciya/muravyi/:slug   /uslugi/dezinsekciya/muravyi/      301
+/uslugi/dezinsekciya/blohi/:slug     /uslugi/dezinsekciya/blohi/        301
+/uslugi/dezinsekciya/mol/:slug       /uslugi/dezinsekciya/mol/          301
+/uslugi/deratizaciya/krysy/:slug     /uslugi/deratizaciya/krysy/        301
+/uslugi/deratizaciya/myshi/:slug     /uslugi/deratizaciya/myshi/        301
+/uslugi/dezinsekciya/cheshuynitsy/:slug  /uslugi/dezinsekciya/cheshuynitsy/  301
+/uslugi/dezinsekciya/kozheyedy/:slug     /uslugi/dezinsekciya/kozheyedy/     301
+
 # 301 Redirects — renamed blog articles (commercial → informational)
 /blog/ceny-na-unichtozhenie-tarakany  /blog/skolko-stoit-obrabotka-tarakany/  301
 /blog/ceny-na-unichtozhenie-klopy     /blog/skolko-stoit-obrabotka-klopy/     301
