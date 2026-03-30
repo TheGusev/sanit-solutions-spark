@@ -7,6 +7,7 @@
  */
 
 import { useParams, Link } from 'react-router-dom';
+import { tier2PestsList, tier3PestsList } from '@/data/nchSeeds';
 import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
