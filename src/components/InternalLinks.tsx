@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom';
 import { pests, getPestsByService } from '@/data/pests';
 import { moscowRegionCities } from '@/data/moscowRegion';
 import { topNeighborhoods } from '@/lib/seoRoutes';
+import { tier1Pests } from '@/data/nchSeeds';
 import { neighborhoods } from '@/data/neighborhoods';
 import { moleCities } from '@/data/moleCities';
 import { ArrowRight } from 'lucide-react';
