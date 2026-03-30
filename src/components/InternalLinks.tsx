@@ -122,7 +122,8 @@ export function InternalLinks({
     const otherPests = servicePests.filter(p => p.slug !== currentPest).slice(0, 4);
     
     otherPests.forEach(pest => {
-      if (currentNeighborhood) {
+      // Only link to NCH pages for Tier 1 pests (avoid linking to noindex Tier 2+3)
+      if (currentNeighborhood && tier1Pests.includes(pest.slug)) {
         links.push({
           url: `/uslugi/${currentService}/${pest.slug}/${currentNeighborhood}`,
           text: `Уничтожение ${pest.genitive} в районе`,

@@ -387,30 +387,7 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-      // Tier 2: next 4 pests × top 40 neighborhoods
-      tier2PestsList.forEach(pestSlug => {
-        const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
-        tier2Neighborhoods.forEach(nhoodSlug => {
-          nchUrls.push({
-            loc: `/uslugi/${service}/${pestSlug}/${nhoodSlug}/`,
-            lastmod: currentDate,
-            changefreq: 'monthly',
-            priority: '0.65',
-          });
-        });
-      });
-      
-      // Tier 3: remaining 6 pests × top 15 neighborhoods
-      tier3PestsList.forEach(pestSlug => {
-        topNeighborhoods.forEach(nhoodSlug => {
-          nchUrls.push({
-            loc: `/uslugi/dezinsekciya/${pestSlug}/${nhoodSlug}/`,
-            lastmod: currentDate,
-            changefreq: 'monthly',
-            priority: '0.6',
-          });
-        });
-      });
+      // Tier 2+3: removed from sitemap (noindex pages — doorway/thin content risk)
       
       // ========== SITEMAP-SERVICES-OBJECT.XML (услуга + объект = 24 URL) ==========
       const serviceObjectUrls: SitemapUrl[] = [];

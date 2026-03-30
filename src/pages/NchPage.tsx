@@ -173,7 +173,7 @@ export default function NchPage() {
       <Helmet>
         <title>{seoMeta.title}</title>
         <meta name="description" content={seoMeta.description} />
-        <meta name="robots" content={seoMeta.robots} />
+        <meta name="robots" content={isNoindexTier ? 'noindex, follow' : seoMeta.robots} />
         <link rel="canonical" href={seoMeta.canonical} />
         <link rel="alternate" hrefLang="ru" href={seoMeta.hreflangRu} />
         <link rel="alternate" hrefLang="x-default" href={seoMeta.hreflangDefault} />
