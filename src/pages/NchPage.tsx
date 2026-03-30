@@ -7,6 +7,7 @@
  */
 
 import { useParams, Link } from 'react-router-dom';
+import { tier2PestsList, tier3PestsList } from '@/data/nchSeeds';
 import NotFound from './NotFound';
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
@@ -84,6 +85,9 @@ export default function NchPage() {
   
   const canonicalPath = `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`;
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);
+  
+  // Tier 2+3 pests → noindex to avoid doorway/thin content penalties
+  const isNoindexTier = tier2PestsList.includes(pestSlug!) || tier3PestsList.includes(pestSlug!);
   
   // Breadcrumbs
   const breadcrumbItems = [
@@ -169,7 +173,7 @@ export default function NchPage() {
       <Helmet>
         <title>{seoMeta.title}</title>
         <meta name="description" content={seoMeta.description} />
-        <meta name="robots" content={seoMeta.robots} />
+        <meta name="robots" content={isNoindexTier ? 'noindex, follow' : seoMeta.robots} />
         <link rel="canonical" href={seoMeta.canonical} />
         <link rel="alternate" hrefLang="ru" href={seoMeta.hreflangRu} />
         <link rel="alternate" hrefLang="x-default" href={seoMeta.hreflangDefault} />
