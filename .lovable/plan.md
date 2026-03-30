@@ -1,121 +1,167 @@
 
 
-# Анализ проблем индексации и скрипта IndexNow
+# SAFE SEO REFACTOR — goruslugimsk.ru
 
-## Что показывают скриншоты
+## Executive Summary
 
-### Статистика обхода — 3 категории проблем:
-
-**1. Правильные 301 редиректы (НЕ проблема):**
-- `/moscow-oblast/krasnogorsk` → 301 (без слеша → со слешем)
-- `/moscow-oblast/domodedovo` → 301
-- `/uslugi/dezinsekciya/blohi` → 301 (старый doorway → /rajony/)
-- `/uslugi/dezinsekciya/restoranov` → 301
-- `/uslugi/deratizaciya/unichtozhenie-krys` → 301
-- `/terms`, `/team` без слеша → 301
-
-Это нормально. Яндекс постепенно переобходит и запоминает новые адреса.
-
-**2. Настоящие 404 — старые doorway-пути без редиректов:**
-- `/uslugi/dezinsektsiya/` → 404 (11 марта) — Ошибка! Есть в `_redirects` строка 27, НО Яндекс обходил без trailing slash. Нужно добавить вариант без слеша
-- `/uslugi/dezinfektsiya/` → 404 (6 марта) — та же проблема
-- `/uslugi/dezinsekciya/kvartir/` → 404 (2 марта)
-- `/uslugi/deratizaciya/skladov/` → 404 (2 марта) — ранее были 404, теперь должны быть 200 OK (если SSG уже развёрнут)
-- `/uslugi/dezinsekciya/cheshuynits/` → 404 — нет в `_redirects`
-
-**3. Массовые 404 на блог-статьях (скрин 4 — февраль):**
-- ~20 статей: `postelnye-klopy-polnyj-gajd`, `profilaktika-tarakanov`, `dezinfekciya-ofisa-bez-pomeh` и т.д.
-- Все эти слаги ЕСТЬ в SSG/sitemap/data
-- **Причина:** эти статьи были добавлены после того, как Яндекс обходил сайт в феврале. На момент обхода HTML-файлов не существовало в deploy. После последнего деплоя они должны отдавать 200 OK
-
-**4. Страницы в поиске с пометкой "Малоценная" (скрин 7):**
-- `/blog/borba-s-tarakanami/` — малоценная
-- `/uslugi/dezinfekciya/akademichesky/` — малоценная  
-- `/uslugi/dezinsekciya/tarakany/lyublino/` — малоценная (doorway)
+Проект имеет ~1,249 SSG-страниц. Главный риск — 734 NCH-страницы (pest+neighborhood) с шаблонным контентом, которые Яндекс уже помечает "малоценными". Предлагается 3-этапный рефакторинг: немедленно убрать Tier 3 из индекса (90 стр.), усилить Tier 1 уникальными блоками, почистить orphan-ссылки на `/uslugi/sertifikaciya/` в JSON-LD.
 
 ---
 
-## Про скрипт IndexNow — он БЕЗОПАСЕН
+## 1. Классификация страниц
 
-Скрипт парсит **только sitemap-*.xml** из `dist/`. Sitemap генерируется из `vite-plugin-sitemap.ts`, который содержит только реальные URL. Он НЕ отправит:
-- 404 страницы (их нет в sitemap)
-- Doorway URL (их нет в sitemap)
-- Старые WordPress пути (их нет в sitemap)
+### Оставить `index, follow` (~425 стр.)
+- Главная, контакты, команда, СЭС, отзывы, блог-листинг
+- 7 услуг-хабов + 17 подстраниц + 14 pest-страниц
+- 56 object-страниц, 36 округов, 130 районов
+- 71 МО, 23 кротов, 207 блог-статей
+- NCH Tier 1 (524 стр.) — после усиления
 
-**Но** есть нюанс: если sitemap содержал фантомные URL (мы убрали `kroty` из tier2 и дубль блога), при следующем деплое они исчезнут.
+### Перевести в `noindex, follow` (~210 стр.)
+- **NCH Tier 3** (90 стр.): 6 слабых вредителей × 15 районов — максимальный doorway-риск
+- **NCH Tier 2** (120 стр.): муравьи/блохи/моль × 40 районов — средний риск
+- `/privacy/`, `/terms/` — уже noindex, подтвердить
 
----
+### Усилить уникализацию (~524 стр.)
+- **NCH Tier 1**: tarakany, klopy, krysy, myshi × 131 район
 
-## Почему индексация падает (293 → -9%)
-
-1. **301 редиректы работают правильно** — Яндекс убирает старые doorway URL из индекса и заменяет их на /rajony/. Это НОРМАЛЬНОЕ падение числа, не деградация
-2. **Блог-статьи отдавали 404** в феврале потому что были добавлены в код, но ещё не задеплоены с SSG. После деплоя они начнут отдавать 200
-3. **Пометка "Малоценная"** — для NCH Tier 3 страниц (pest+geo) это ожидаемо, потому что контент шаблонный
-
----
-
-## План исправлений (3 файла)
-
-### 1. `public/_redirects` — добавить недостающие 301
-
-Яндекс обходит URL и с trailing slash, и без. Нужно добавить:
-
-```text
-# Варианты без trailing slash для typo-редиректов
-/uslugi/dezinsektsiya           /uslugi/dezinsekciya/           301
-/uslugi/dezinfektsiya           /uslugi/dezinfekciya/           301
-/uslugi/deratizatsiya           /uslugi/deratizaciya/           301
-
-# Без trailing slash для moscow-oblast городов
-/moscow-oblast/khimki           /moscow-oblast/khimki/          301
-/moscow-oblast/domodedovo       /moscow-oblast/domodedovo/      301
-/moscow-oblast/krasnogorsk      /moscow-oblast/krasnogorsk/     301
-/moscow-oblast/mytishchi        /moscow-oblast/mytishchi/       301
-/moscow-oblast/ramenskoe        /moscow-oblast/ramenskoe/       301
-
-# Doorway pest+geo → чистый pest (404 в логе)
-/uslugi/dezinsekciya/cheshuynits/   /uslugi/dezinsekciya/cheshuynitsy/  301
-/uslugi/dezinsekciya/kvartir/       /uslugi/dezinsekciya/               301
-/uslugi/deratizaciya/skladov/       /uslugi/deratizaciya/               301
-```
-
-Также добавить wildcard-редирект для pest+geo doorway (где pest-slug + neighborhood slug):
-```text
-/uslugi/dezinsekciya/tarakany/:slug  /uslugi/dezinsekciya/tarakany/     301
-/uslugi/dezinsekciya/klopy/:slug     /uslugi/dezinsekciya/klopy/        301
-/uslugi/dezinsekciya/muravyi/:slug   /uslugi/dezinsekciya/muravyi/      301
-/uslugi/dezinsekciya/blohi/:slug     /uslugi/dezinsekciya/blohi/        301
-/uslugi/dezinsekciya/mol/:slug       /uslugi/dezinsekciya/mol/          301
-/uslugi/deratizaciya/krysy/:slug     /uslugi/deratizaciya/krysy/        301
-/uslugi/deratizaciya/myshi/:slug     /uslugi/deratizaciya/myshi/        301
-```
-
-### 2. `public/_redirects` — обработать `/uslugi/` (403 Forbidden)
-
-Яндекс обходит `/uslugi/` — это корень услуг, для него нет страницы. Нужен 301:
-```text
-/uslugi/          /                301
-/uslugi           /                301
-```
-
-### 3. `public/_redirects` — обработать `/sluzhba-dezinsekcii/`
-
-Виден в логе обхода — 200 OK но это SPA fallback (фактически пустая страница). Нужен 301:
-```text
-/sluzhba-dezinsekcii/    /uslugi/dezinsekciya/    301
-```
+### Orphan-починка
+- Удалить `/uslugi/sertifikaciya` из JSON-LD в `index.html` (строки 332-355) — страница-orphan без SPA-рендера
+- Удалить ссылку на sertifikaciya из SSR-fallback в `index.html` (строка 388, 480)
+- Удалить ссылку из `public/uslugi/po-okrugam-moskvy/index.html` (строка 82)
 
 ---
 
-## Итого
+## 2. NCH Tier обработка
 
-| Действие | Файл | Результат |
-|----------|------|-----------|
-| Добавить ~25 недостающих 301 редиректов | `public/_redirects` | Убирает все 404 из лога Вебмастера |
-| Редирект `/uslugi/` → `/` | `public/_redirects` | Убирает 403 Forbidden |
-| Wildcard pest+geo → pest | `public/_redirects` | Ловит ВСЕ doorway комбинации, даже те что ещё не обнаружены |
+### Tier 3 → `noindex, follow` + убрать из sitemap
+90 страниц: komary, muhi, osy-shershni, cheshuynitsy, kleshchi, mokricy × 15 районов
 
-**IndexNow скрипт менять не нужно** — он уже отправляет только валидные URL из sitemap.
+**Файлы:**
+1. `src/pages/NchPage.tsx` — добавить проверку: если pest в tier3PestsList → robots = `noindex, follow`
+2. `vite-plugin-sitemap.ts` — убрать блок Tier 3 (строки 403-413)
+3. `src/components/InternalLinks.tsx` — не линковать на Tier 3 NCH страницы
 
-**Почему падает индексация — это нормально:** Яндекс убирает из индекса 390 doorway-страниц (получают 301) и заменяет их на 130 хабов /rajony/. Числа стабилизируются через 2-3 недели.
+### Tier 2 → `noindex, follow` + убрать из sitemap
+120 страниц: muravyi, blohi, mol × 40 районов
+
+**Файлы:**
+1. `src/pages/NchPage.tsx` — если pest в tier2PestsList → robots = `noindex, follow`
+2. `vite-plugin-sitemap.ts` — убрать блок Tier 2 (строки 390-401)
+
+SSG продолжит генерировать HTML (страницы остаются для пользователей из рекламы), но поисковики не будут их индексировать.
+
+### Tier 1 → усиление уникальности (524 стр.)
+
+Текущая проблема: `contentGenerator.ts` имеет 3-4 вариации на каждый блок, выбираемые по хешу. Для 524 страниц это даёт массовое совпадение shingle-отпечатков.
+
+**Новый подход — добавить в NchPage.tsx 3 уникальных блока:**
+
+#### A. Блок «Когда нужна обработка именно в {район}»
+Генерируется в `contentGenerator.ts` новой функцией `generateWhyThisArea(ctx)`:
+- Использует `neighborhood.description`, `neighborhood.districtId`, pest-specific данные
+- 6+ вариаций текста, выбираемых по хешу `pest+neighborhood+district`
+- Включает: тип застройки района, близость к водоёмам/паркам/метро, климатические особенности
+
+#### B. Блок «Стоимость по типу объекта»
+Таблица цен: квартира 1к / 2к / 3к / дом / офис — с разными ценами для каждого pest
+- Данные из `pest.priceFrom` с множителями по типу объекта
+- Уникальная для каждой комбинации pest+район (множитель по districtId — ЦАО дороже)
+
+#### C. Блок «Отзыв из района»
+Детерминистичный выбор отзыва из `reviews.ts` по хешу neighborhood, с привязкой к району в тексте.
+
+**Также:**
+- H2 вариация: 8+ шаблонов вместо текущих 3, с кластером спроса (жильё vs коммерция)
+- Intro: 8+ вариаций вместо 4
+- FAQ: добавить 2 pest-specific + 1 neighborhood-specific вопроса к базовым 5
+
+---
+
+## 3. High Risk URLs/Templates
+
+| Шаблон | Риск doorway | Риск thin | Риск дубля | Действие |
+|--------|-------------|-----------|------------|----------|
+| NCH Tier 3 (90) | HIGH | HIGH | HIGH | `noindex` + убрать из sitemap |
+| NCH Tier 2 (120) | MEDIUM | HIGH | HIGH | `noindex` + убрать из sitemap |
+| NCH Tier 1 (524) | MEDIUM | MEDIUM | MEDIUM | Усилить контент (блоки A/B/C) |
+| Object-страницы (56) | LOW | MEDIUM | MEDIUM | Оставить (разные услуги = разный intent) |
+| Районы (130) | LOW | LOW | LOW | Оставить |
+| Округа (36) | LOW | LOW | LOW | Оставить |
+| Сертификация orphan | — | — | — | Убрать из JSON-LD, оставить static HTML |
+
+---
+
+## 4. Exact Code/File Changes
+
+### Файл 1: `src/pages/NchPage.tsx`
+- Импортировать `tier2PestsList`, `tier3PestsList` из `nchSeeds.ts`
+- После строки 86 (`const seoMeta = ...`): проверить pest tier и выставить robots:
+```
+const isNoindexTier = tier2PestsList.includes(pestSlug) || tier3PestsList.includes(pestSlug);
+```
+- В Helmet: заменить `seoMeta.robots` на `isNoindexTier ? 'noindex, follow' : seoMeta.robots`
+- Добавить после секции "Guarantee" (строка 470): блоки A (WhyThisArea), B (PriceByObjectType), C (LocalReview)
+
+### Файл 2: `src/lib/contentGenerator.ts`
+- Добавить функцию `generateWhyThisArea(ctx)` — 6+ вариаций
+- Добавить функцию `generatePriceTable(ctx)` — цены по типу объекта
+- Добавить функцию `generateLocalReview(ctx)` — детерминистичный отзыв
+- Расширить `generateIntro()` с 4 до 8 вариаций
+- Расширить `generateFAQ()` — добавить pest-specific вопросы
+
+### Файл 3: `vite-plugin-sitemap.ts`
+- Удалить блок Tier 2 (строки 390-401)
+- Удалить блок Tier 3 (строки 403-413)
+- Пересчёт: sitemap уменьшится на ~210 URL
+
+### Файл 4: `index.html`
+- Удалить JSON-LD блок сертификации (строки 332-355)
+- Удалить ссылку на sertifikaciya из SSR-fallback (строка 388, 480)
+
+### Файл 5: `public/uslugi/po-okrugam-moskvy/index.html`
+- Удалить строку 82 (ссылка на sertifikaciya)
+
+### Файл 6: `src/components/InternalLinks.tsx`
+- Добавить фильтр: не линковать на NCH-страницы с pest из tier2/tier3 списков
+
+---
+
+## 5. Что НЕ делать
+
+- **Не создавать** `/uslugi/borshchevik/` — нет коммерческого спроса, статья в блоге достаточна
+- **Не создавать** `/uslugi/sertifikaciya/` как SPA-страницу — orphan-контент, низкий спрос
+- **Не создавать** combo-pest страниц (klopov-i-tarakanov)
+- **Не плодить** новые NCH-слои
+- **Не трогать** A/B тесты — они уже SEO-safe (H1/Title статичны, вариации только UI)
+
+---
+
+## 6. Безопасность: Cloaking / UA-switching
+
+Подтверждаю по коду:
+- `contentVariations.ts` использует `simpleHash(slug)` — детерминистичный, одинаковый для бота и пользователя
+- A/B тесты: Thompson Sampling через `useABVariant` кэширует вариант в localStorage, но H1/Title/Description статичны (SEO guardrails)
+- Нет UA-based branching, нет `navigator.userAgent` проверок для контентных решений
+- SSG выдаёт одинаковый HTML для всех
+
+---
+
+## 7. Rollout Plan
+
+### Этап 1: IMMEDIATE (этот деплой)
+1. NCH Tier 2+3 → `noindex, follow` в NchPage.tsx
+2. Tier 2+3 убрать из sitemap
+3. Orphan sertifikaciya — убрать из JSON-LD и SSR-fallback
+4. InternalLinks — не линковать на noindex NCH
+
+### Этап 2: AFTER REINDEX (через 1-2 недели)
+1. Усилить NCH Tier 1 — блоки A/B/C в NchPage.tsx
+2. Расширить contentGenerator.ts (8+ вариаций)
+3. Отправить обновлённый sitemap в Вебмастер
+
+### Этап 3: GROWTH (через 3-4 недели, после стабилизации)
+1. Мониторинг: если Tier 1 стабильно индексируется → оставить
+2. Если Tier 1 помечается малоценным → дальнейшее noindex до Tier 1 topNeighborhoods (15 районов)
+3. Масштабирование рекламы только после стабилизации индексации
 
