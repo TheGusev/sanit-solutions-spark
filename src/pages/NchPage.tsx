@@ -86,6 +86,9 @@ export default function NchPage() {
   const canonicalPath = `/uslugi/${service}/${pestSlug}/${neighborhoodSlug}`;
   const seoMeta = generateSEOMeta(canonicalPath, pageTitle, pageDescription);
   
+  // Tier 2+3 pests → noindex to avoid doorway/thin content penalties
+  const isNoindexTier = tier2PestsList.includes(pestSlug!) || tier3PestsList.includes(pestSlug!);
+  
   // Breadcrumbs
   const breadcrumbItems = [
     { label: 'Услуги', href: `/uslugi/${service}` },
