@@ -550,7 +550,7 @@ export default function NchPage() {
               </Card>
             </div>
           </div>
-        
+        </AnimatedSection>
         {/* FAQ */}
         <AnimatedSection className="py-10">
           <div className="container mx-auto px-4">
