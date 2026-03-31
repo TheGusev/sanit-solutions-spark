@@ -478,6 +478,78 @@ export default function NchPage() {
             </div>
           </div>
         </AnimatedSection>
+
+        {/* Block A: Why this area */}
+        <AnimatedSection className="py-10">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto">
+              <Card className="border-primary/20 bg-primary/5">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    {whyThisArea.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed">{whyThisArea.text}</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </AnimatedSection>
+
+        {/* Block B: Price by object type */}
+        <AnimatedSection className="py-10 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <h2 className="text-xl font-bold mb-6 text-center">
+              Стоимость обработки от {pest.genitive} {locationText}
+            </h2>
+            <div className="max-w-3xl mx-auto overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-3 px-4 font-semibold">Тип помещения</th>
+                    <th className="text-left py-3 px-4 font-semibold">Стоимость от</th>
+                    <th className="text-left py-3 px-4 font-semibold hidden sm:table-cell">Примечание</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {priceTable.map((row, i) => (
+                    <tr key={i} className="border-b border-border/50 hover:bg-muted/50 transition-colors">
+                      <td className="py-3 px-4 text-sm">{row.objectType}</td>
+                      <td className="py-3 px-4 text-sm font-semibold text-primary">{row.price}₽</td>
+                      <td className="py-3 px-4 text-sm text-muted-foreground hidden sm:table-cell">{row.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </AnimatedSection>
+
+        {/* Block C: Local review */}
+        <AnimatedSection className="py-10">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-1 mb-3">
+                    {Array.from({ length: localReview.rating }).map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-muted-foreground mb-4 italic">«{localReview.text}»</p>
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{localReview.displayName}</span>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      Район {localReview.neighborhoodName}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         
         {/* FAQ */}
         <AnimatedSection className="py-10">
