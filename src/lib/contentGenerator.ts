@@ -358,7 +358,7 @@ export function generateWhyThisArea(ctx: ContentContext): { title: string; text:
       text: `Район ${location} отличается ${buildingContext[dType]}. Из-за высокой плотности застройки ${pestName.toLowerCase()} быстро распространяются от квартиры к квартире. Самостоятельная обработка одного помещения неэффективна — необходимо профессиональное уничтожение ${pestGenitive} с барьерной защитой.`,
     },
     {
-      title: `${pest?.name || 'Вредители'} в ${location}: местная специфика`,
+      title: `${ctx.pest?.name || 'Вредители'} в ${location}: местная специфика`,
       text: `В ${location} мы проводим обработки более 8 лет и хорошо знаем особенности местной застройки. ${district} — это ${buildingContext[dType]}. Наши мастера учитывают эти факторы при выборе метода и препарата для уничтожения ${pestGenitive}.`,
     },
     {
