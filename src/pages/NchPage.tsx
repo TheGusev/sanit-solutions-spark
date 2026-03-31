@@ -119,6 +119,9 @@ export default function NchPage() {
   const whyFolkMethodsDontWork = generateWhyFolkMethodsDontWork(contentContext);
   const guaranteeText = generateGuaranteeText(contentContext);
   const faqItems = generateFAQ(contentContext);
+  const whyThisArea = generateWhyThisArea(contentContext);
+  const priceTable = generatePriceTable(contentContext);
+  const localReview = generateLocalReview(contentContext);
   
   // Schema.org
   const schemaMarkup = {
