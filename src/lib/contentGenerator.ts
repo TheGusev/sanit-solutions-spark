@@ -135,7 +135,7 @@ function selectByHash<T>(items: T[], hashStr: string): T {
 }
 
 /**
- * Генерирует вступительный параграф
+ * Генерирует вступительный параграф (8 вариаций)
  */
 export function generateIntro(ctx: ContentContext): string {
   const location = ctx.neighborhoodName || ctx.cityName || 'вашем районе';
@@ -150,6 +150,14 @@ export function generateIntro(ctx: ContentContext): string {
     `В ${location} ${pestName} появляются особенно часто из-за особенностей местной застройки. Самостоятельная борьба редко даёт результат — ${pestName} быстро адаптируются к магазинным препаратам. Профессиональная дезинсекция решает проблему раз и навсегда.`,
     
     `Обнаружили ${ctx.pest?.genitive || 'вредителей'} в своей квартире в ${location}? Не откладывайте решение проблемы — чем раньше провести обработку, тем быстрее и дешевле избавиться от ${pestGenitive}. Выезжаем в течение ${ctx.responseTime || '1 часа'}.`,
+
+    `Ночной вызов в ${location}? Работаем круглосуточно без выходных. ${ctx.pest?.namePlural || 'Вредители'} активнее всего ночью — именно поэтому мы выезжаем на обработку от ${pestGenitive} в любое время суток, включая праздники.`,
+
+    `Рестораны, кафе и офисы в ${location} особенно уязвимы: ${pestName} мигрируют через вентиляцию и коммуникации. Мы проводим обработку от ${pestGenitive} для бизнеса с выдачей полного пакета документов для Роспотребнадзора.`,
+
+    `${ctx.pest?.seasonality ? `Сезон активности ${pestGenitive} — ${ctx.pest.seasonality}.` : ''} В ${location} пик обращений приходится на тёплое время года, когда ${pestName} размножаются особенно быстро. Раннее обращение экономит и время, и бюджет.`,
+
+    `Соседи провели обработку, а ${pestName} перебрались к вам? Это частая ситуация в многоквартирных домах ${location}. Мы обрабатываем квартиру так, чтобы создать барьер от повторного заселения ${pestGenitive} из смежных помещений.`,
   ];
   
   const hashStr = `${ctx.service}-${ctx.pest?.slug || ''}-${ctx.neighborhoodName || ctx.cityName || ''}`;
@@ -245,9 +253,10 @@ export function generateGuaranteeText(ctx: ContentContext): string {
 export function generateFAQ(ctx: ContentContext): Array<{ question: string; answer: string }> {
   const location = ctx.neighborhoodName || ctx.cityName || 'ваш район';
   const pestGenitive = ctx.pest?.genitive || 'вредителей';
+  const pestName = ctx.pest?.namePlural || 'Вредители';
   const priceFrom = ctx.priceFrom || ctx.pest?.priceFrom || 1200;
   
-  return [
+  const baseFAQ = [
     {
       question: `Сколько стоит вызов в ${location}?`,
       answer: `Выезд в район ${location} бесплатный. Стоимость обработки от ${priceFrom}₽ в зависимости от площади помещения и степени заражения.`,
@@ -269,6 +278,153 @@ export function generateFAQ(ctx: ContentContext): Array<{ question: string; answ
       answer: `При соблюдении наших рекомендаций эффект держится от 6 месяцев до года. Мы даём гарантию и проводим повторную обработку бесплатно, если ${pestGenitive.replace('от ', '')} появятся снова.`,
     },
   ];
+
+  // Pest-specific FAQ
+  const dangerText = ctx.pest?.dangerLevel === 'high'
+    ? `Да, ${pestName.toLowerCase()} представляют серьёзную угрозу: переносят инфекции, вызывают аллергические реакции. Особенно опасны для детей и людей с ослабленным иммунитетом.`
+    : ctx.pest?.dangerLevel === 'medium'
+    ? `${pestName} могут вызывать аллергию и дискомфорт. Для детей и домашних животных контакт нежелателен. Рекомендуем провести обработку при первых признаках.`
+    : `Прямой угрозы здоровью ${pestName.toLowerCase()} обычно не представляют, но создают антисанитарные условия и психологический дискомфорт.`;
+
+  baseFAQ.push({
+    question: `Опасны ли ${pestName.toLowerCase()} для детей и животных?`,
+    answer: dangerText,
+  });
+
+  // Neighborhood-specific FAQ
+  baseFAQ.push({
+    question: `Часто ли вызывают в ${location}?`,
+    answer: `Да, район ${location} входит в число районов с регулярными обращениями. Среднее время прибытия — ${ctx.responseTime || '30-60 минут'}. Наши мастера хорошо знают местную застройку и типичные очаги заражения.`,
+  });
+
+  // Method FAQ
+  if (ctx.pest?.methods?.length) {
+    baseFAQ.push({
+      question: `Какой метод лучше для борьбы с ${pestGenitive}?`,
+      answer: `Для ${pestGenitive} мы рекомендуем: ${ctx.pest.methods.join(', ')}. Конкретный метод подбирается после осмотра помещения с учётом площади и степени заражения.`,
+    });
+  }
+
+  return baseFAQ;
+}
+
+// ============================================================
+// Tier 1 NCH uniqueness blocks
+// ============================================================
+
+import { staticReviews } from '@/data/reviews';
+
+/** District type classification for content variation */
+const districtTypes: Record<string, 'center' | 'residential' | 'industrial' | 'suburban'> = {
+  'cao': 'center',
+  'sao': 'residential', 'svao': 'residential', 'vao': 'residential',
+  'yuvao': 'industrial', 'yao': 'residential', 'yzao': 'residential',
+  'zao': 'residential', 'szao': 'residential',
+  'nao': 'suburban', 'tao': 'suburban', 'zelao': 'suburban',
+};
+
+/** District price multiplier */
+const districtPriceMultiplier: Record<string, number> = {
+  'cao': 1.0, 'sao': 1.0, 'zao': 1.0, 'szao': 1.0,
+  'svao': 1.05, 'vao': 1.05, 'yao': 1.05, 'yzao': 1.05,
+  'yuvao': 1.1,
+  'nao': 1.15, 'tao': 1.2, 'zelao': 1.15,
+};
+
+/**
+ * Блок A: «Почему проблема типична для {район}»
+ */
+export function generateWhyThisArea(ctx: ContentContext): { title: string; text: string } {
+  const location = ctx.neighborhoodName || 'этом районе';
+  const pestName = ctx.pest?.namePlural?.toLowerCase() || 'вредители';
+  const pestGenitive = ctx.pest?.genitive || 'вредителей';
+  const dType = districtTypes[ctx.districtId || ''] || 'residential';
+  const district = ctx.districtId?.toUpperCase() || '';
+
+  const buildingContext: Record<string, string> = {
+    center: `старый жилой фонд с дореволюционными домами и кирпичными зданиями, где изношенные коммуникации и подвалы создают благоприятные условия для ${pestGenitive}`,
+    residential: `типовая многоэтажная застройка с мусоропроводами, общими подвалами и тесным расположением квартир — идеальная среда для миграции ${pestGenitive} между помещениями`,
+    industrial: `смешанная застройка: жилые кварталы соседствуют со складами и промзонами, откуда ${pestName} легко проникают в квартиры через коммуникации`,
+    suburban: `малоэтажная застройка с частными домами и таунхаусами, где ${pestName} проникают с приусадебных участков и из подпольных пространств`,
+  };
+
+  const variations = [
+    {
+      title: `Когда нужна обработка от ${pestGenitive} именно в ${location}`,
+      text: `${location} (${district}) — район с ${buildingContext[dType]}. Близость к паркам, скверам и водоёмам дополнительно увеличивает популяцию ${pestGenitive}. Жители регулярно обращаются за профессиональной обработкой, особенно в период ${ctx.pest?.seasonality || 'весна-осень'}.`,
+    },
+    {
+      title: `Почему ${pestName.toLowerCase()} появляются в ${location}`,
+      text: `Район ${location} отличается ${buildingContext[dType]}. Из-за высокой плотности застройки ${pestName.toLowerCase()} быстро распространяются от квартиры к квартире. Самостоятельная обработка одного помещения неэффективна — необходимо профессиональное уничтожение ${pestGenitive} с барьерной защитой.`,
+    },
+    {
+      title: `${ctx.pest?.name || 'Вредители'} в ${location}: местная специфика`,
+      text: `В ${location} мы проводим обработки более 8 лет и хорошо знаем особенности местной застройки. ${district} — это ${buildingContext[dType]}. Наши мастера учитывают эти факторы при выборе метода и препарата для уничтожения ${pestGenitive}.`,
+    },
+    {
+      title: `Особенности борьбы с ${pestGenitive} в ${location}`,
+      text: `Климат Москвы и ${buildingContext[dType]} делают ${location} районом с повышенным риском появления ${pestGenitive}. Ближайшие станции метро и торговые центры создают постоянный поток людей, что способствует распространению ${pestGenitive}. Мы применяем комплексный подход: обработка + барьер + профилактика.`,
+    },
+    {
+      title: `Обработка от ${pestGenitive} в ${location}: что важно знать`,
+      text: `${location} входит в ${district}, где ${buildingContext[dType]}. В многоквартирных домах ${pestName.toLowerCase()} часто мигрируют через вентиляцию и канализацию. Мы рекомендуем обработку не только своей квартиры, но и создание барьерной защиты от повторного заселения ${pestGenitive} из соседних помещений.`,
+    },
+    {
+      title: `${location}: типичные причины появления ${pestGenitive}`,
+      text: `Район ${location} характеризуется ${buildingContext[dType]}. Основные причины появления ${pestGenitive}: миграция от соседей после точечных обработок, проникновение из подвалов и чердаков, завоз с покупками и мебелью. ${ctx.pest?.seasonality ? `Пик обращений — ${ctx.pest.seasonality}.` : ''} Наши специалисты проведут диагностику и подберут оптимальный метод.`,
+    },
+  ];
+
+  const hashStr = `whyarea-${ctx.pest?.slug}-${ctx.neighborhoodName}-${ctx.districtId}`;
+  return selectByHash(variations, hashStr);
+}
+
+/**
+ * Блок B: «Стоимость по типу объекта»
+ */
+export interface PriceTableRow {
+  objectType: string;
+  price: number;
+  note: string;
+}
+
+export function generatePriceTable(ctx: ContentContext): PriceTableRow[] {
+  const basePrice = ctx.pest?.priceFrom || 1200;
+  const dMult = districtPriceMultiplier[ctx.districtId || ''] || 1.0;
+
+  const roundTo50 = (n: number) => Math.round(n / 50) * 50;
+
+  return [
+    { objectType: 'Квартира 1-комнатная', price: roundTo50(basePrice * 1.0 * dMult), note: 'Холодный туман, барьер' },
+    { objectType: 'Квартира 2-комнатная', price: roundTo50(basePrice * 1.3 * dMult), note: 'Холодный туман, барьер' },
+    { objectType: 'Квартира 3-комнатная', price: roundTo50(basePrice * 1.5 * dMult), note: 'Комплексная обработка' },
+    { objectType: 'Частный дом', price: roundTo50(basePrice * 2.0 * dMult), note: 'Дом + прилегающая территория' },
+    { objectType: 'Офис / магазин', price: roundTo50(basePrice * 1.8 * dMult), note: 'С документами для проверок' },
+    { objectType: 'Ресторан / кафе', price: roundTo50(basePrice * 2.2 * dMult), note: 'Пищевое производство, акт' },
+  ];
+}
+
+/**
+ * Блок C: «Отзыв из района» — детерминистичный выбор
+ */
+export interface LocalReviewData {
+  displayName: string;
+  text: string;
+  rating: number;
+  neighborhoodName: string;
+}
+
+export function generateLocalReview(ctx: ContentContext): LocalReviewData {
+  const location = ctx.neighborhoodName || 'Москва';
+  const idx = hashCode(ctx.neighborhoodName || 'default') % staticReviews.length;
+  const review = staticReviews[idx];
+
+  return {
+    displayName: review.display_name,
+    text: review.text,
+    rating: review.rating,
+    neighborhoodName: location,
+  };
 }
 
 /**
