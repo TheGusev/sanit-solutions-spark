@@ -34,7 +34,10 @@ import {
   generateWhyFolkMethodsDontWork,
   generateGuaranteeText,
   generateFAQ,
-  generateFAQSchema
+  generateFAQSchema,
+  generateWhyThisArea,
+  generatePriceTable,
+  generateLocalReview,
 } from '@/lib/contentGenerator';
 
 export default function NchPage() {
