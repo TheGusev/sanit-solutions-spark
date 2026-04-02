@@ -1,71 +1,152 @@
 
 
-# Усиление NCH Tier 1: 3 уникальных блока + расширение вариаций
+# Web Push Notifications для админ-панели
 
-## Что делаем
+## Обзор
 
-Добавляем в каждую из 524 NCH Tier 1 страниц три новых контентных блока, которые создают уникальность на уровне URL (не только переменных). Также расширяем существующие вариации intro и FAQ.
+Добавляем полноценную цепочку: Service Worker → PWA manifest → Push подписка → Supabase trigger → Edge Function → Web Push на iPhone.
 
-## Файл 1: `src/lib/contentGenerator.ts`
+**Важное ограничение iOS**: Push API на iPhone работает ТОЛЬКО для PWA, установленных на Home Screen (iOS 16.4+). Это именно наш сценарий.
 
-### Новая функция `generateWhyThisArea(ctx)`
-6 вариаций текста, выбираемых по хешу `pest+neighborhood+district`. Каждая использует:
-- `neighborhood.description` (уже есть в данных — описание района с ориентирами)
-- `neighborhood.landmarks` (массив достопримечательностей)
-- `districtId` → тип округа (центр/спальный/промзона)
-- pest-specific факторы (почему именно этот вредитель типичен для данного типа застройки)
+**Важное ограничение Deno**: npm-пакет `web-push` не работает в Deno Edge Functions. Будем реализовывать Web Push протокол напрямую через `crypto.subtle` (ECDSA P-256 + HKDF + AES-GCM) — стандартный подход для Deno.
 
-Возвращает объект `{ title: string, text: string }`.
+---
 
-### Новая функция `generatePriceTable(ctx)`
-Генерирует массив `{ objectType, price, note }[]` для таблицы цен:
-- Базовая цена из `pest.priceFrom`
-- Множители по типу объекта: 1к квартира ×1.0, 2к ×1.3, 3к ×1.5, дом ×2.0, офис ×1.8
-- Множитель по округу: ЦАО ×1.0, САО/ЗАО ×1.0, окраины ×1.1, ЗелАО/НАО/ТАО ×1.2
-- Итого: уникальная цена для каждой комбинации pest × district
+## Файлы для создания/изменения
 
-### Новая функция `generateLocalReview(ctx)`
-Детерминистичный выбор отзыва из `staticReviews` по хешу `neighborhood.slug`. Возвращает отзыв с добавленной привязкой к району (`display_name`, `text`, `rating`, `neighborhoodName`).
+| # | Файл | Действие |
+|---|------|----------|
+| 1 | `public/sw.js` | **Создать** — Service Worker с push handler |
+| 2 | `public/manifest.json` | **Создать** — PWA manifest для installability |
+| 3 | `index.html` | **Изменить** — добавить `<link rel="manifest">` |
+| 4 | `src/main.tsx` | **Изменить** — регистрация SW с iframe/preview guard |
+| 5 | `src/hooks/usePushNotifications.ts` | **Создать** — хук подписки/отписки |
+| 6 | `src/components/admin/PushNotificationSettings.tsx` | **Создать** — UI компонент |
+| 7 | `src/pages/admin/Settings.tsx` | **Изменить** — добавить секцию уведомлений |
+| 8 | **Миграция SQL** | **Создать** — таблица `push_subscriptions` + trigger `on_new_lead` |
+| 9 | `supabase/functions/save-push-subscription/index.ts` | **Создать** — сохранение подписки |
+| 10 | `supabase/functions/send-push-notification/index.ts` | **Создать** — отправка push через Web Push протокол |
+| 11 | `supabase/config.toml` | **Изменить** — добавить новые функции |
+| 12 | **Secrets** | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` |
 
-### Расширение `generateIntro()`: с 4 до 8 вариаций
-Добавить 4 новые вариации с акцентом на:
-- Срочность (ночной вызов, выезд в праздники)
-- B2B сценарий (рестораны, офисы в районе)
-- Сезонность (`pest.seasonality`)
-- Соседский эффект (обработка соседей — частая причина миграции)
+---
 
-### Расширение `generateFAQ()`: +3 вопроса
-- 1 pest-specific: «Опасны ли {pest} для детей/животных?» (ответ из `pest.dangerLevel`)
-- 1 neighborhood-specific: «Часто ли вызывают в {район}?» (ответ с `responseTime`)
-- 1 метод: «Какой метод лучше для {pest}?» (из `pest.methods`)
+## Детали реализации
 
-## Файл 2: `src/pages/NchPage.tsx`
+### 1. `public/sw.js`
+- `push` event → `showNotification` с title, body, icon, badge, vibrate, actions
+- `notificationclick` → `clients.openWindow('/admin/')`
+- Минимальный SW — только push, без кэширования (не ломаем preview)
 
-### Новые импорты
-```
-import { generateWhyThisArea, generatePriceTable, generateLocalReview } from '@/lib/contentGenerator';
-```
-
-### Генерация данных (после строки 118)
-```
-const whyThisArea = generateWhyThisArea(contentContext);
-const priceTable = generatePriceTable(contentContext);
-const localReview = generateLocalReview(contentContext);
+### 2. `public/manifest.json`
+```json
+{
+  "name": "Горуслуги МСК — Админ",
+  "short_name": "Горуслуги",
+  "start_url": "/admin/",
+  "display": "standalone",
+  "theme_color": "#16a34a",
+  "icons": [{ "src": "/favicon.ico", "sizes": "48x48" }]
+}
 ```
 
-### Блок A: «Почему проблема типична для {район}» (после секции Guarantee, строка 474)
-Карточка с `whyThisArea.title` как H2, `whyThisArea.text` как параграф. Иконка MapPin. Фон `bg-blue-50`.
+### 3. `index.html`
+Добавить `<link rel="manifest" href="/manifest.json">` в `<head>`.
 
-### Блок B: «Стоимость по типу помещения» (после блока A)
-Таблица из `priceTable`: столбцы «Тип помещения», «Стоимость от», «Примечание». Стиль — как существующая Price Card, но в формате таблицы.
+### 4. `src/main.tsx`
+Регистрация SW с guard:
+- НЕ регистрировать в iframe
+- НЕ регистрировать на preview хостах
+- Только на production domain
 
-### Блок C: «Отзыв из района» (после блока B)
-Карточка с `localReview`: имя, звёзды, текст, пометка «Район {neighborhood.name}». Стиль — Card с Star иконкой.
+### 5. `src/hooks/usePushNotifications.ts`
+- `subscribeToPush()`: requestPermission → pushManager.subscribe → POST в save-push-subscription
+- `unsubscribeFromPush()`: pushManager.unsubscribe
+- `sendTestPush()`: вызов send-push-notification с тестовыми данными
+- VAPID public key берётся из `import.meta.env.VITE_VAPID_PUBLIC_KEY` (хардкод в коде, это публичный ключ)
 
-## Результат
+### 6. PushNotificationSettings компонент
+- Показывает статус поддержки, подписки
+- Кнопки: включить/выключить/тест
+- Предупреждение для не-PWA контекста
 
-- Каждая из 524 Tier 1 страниц получает 3 уникальных блока с данными, специфичными для комбинации pest × neighborhood × district
-- Intro имеет 8 вариаций вместо 4 → снижение shingle-дублей в 2 раза
-- FAQ расширен до 8 вопросов вместо 5 → больше уникального контента
-- Все данные детерминистичны (hashCode) → бот и пользователь видят одинаковый HTML
+### 7. SQL миграция
+
+**Таблица push_subscriptions:**
+```sql
+CREATE TABLE push_subscriptions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  endpoint TEXT NOT NULL UNIQUE,
+  p256dh TEXT NOT NULL,
+  auth TEXT NOT NULL,
+  user_agent TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  last_used TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "admins_manage" ON push_subscriptions
+  FOR ALL TO authenticated
+  USING (has_role(auth.uid(), 'admin'::app_role))
+  WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
+```
+
+**Trigger on leads INSERT:**
+Используем `pg_net` (доступен в Supabase) для HTTP вызова edge function:
+```sql
+CREATE OR REPLACE FUNCTION notify_new_lead()
+RETURNS TRIGGER AS $$
+BEGIN
+  PERFORM net.http_post(
+    url := (SELECT current_setting('supabase.url', true)) || '/functions/v1/send-push-notification',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer ' || (SELECT current_setting('supabase.service_role_key', true))
+    ),
+    body := row_to_json(NEW)::jsonb
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_new_lead
+  AFTER INSERT ON leads
+  FOR EACH ROW EXECUTE FUNCTION notify_new_lead();
+```
+
+### 8. Edge Function: save-push-subscription
+- POST: upsert subscription по endpoint
+- Требует admin auth (проверка через getClaims)
+- DELETE: удаление по endpoint
+
+### 9. Edge Function: send-push-notification
+- Получает lead data из trigger payload
+- Читает все подписки из push_subscriptions
+- Реализует Web Push протокол:
+  - VAPID JWT signing через `crypto.subtle` (ECDSA P-256)
+  - Payload encryption (ECDH + HKDF + AES-128-GCM)
+  - POST на push endpoint с заголовками Authorization (vapid), TTL, Content-Encoding
+- При HTTP 410 → удаляет expired подписку
+- Принимает также ручной вызов для тест-push (с проверкой admin auth)
+
+### 10. VAPID ключи
+Сгенерирую через Edge Function или попрошу пользователя добавить через secrets tool:
+- `VAPID_PUBLIC_KEY` — base64url encoded
+- `VAPID_PRIVATE_KEY` — base64url encoded
+- `VAPID_SUBJECT` — `mailto:admin@goruslugimsk.ru`
+
+Публичный ключ также хардкодится в фронтенде (это безопасно, он публичный).
+
+---
+
+## Безопасность
+
+- `save-push-subscription`: только для admin (проверка JWT + role)
+- `send-push-notification`: принимает от trigger (service_role_key) или от admin (JWT + role)
+- VAPID private key только в Supabase Secrets
+- RLS на push_subscriptions: только admin
+
+## Что НЕ делаем
+- Не используем Firebase/FCM/OneSignal
+- Не добавляем кэширование в SW (не ломаем preview)
+- Не трогаем Telegram логику (оставляем как есть, но она уже фактически не используется)
 
