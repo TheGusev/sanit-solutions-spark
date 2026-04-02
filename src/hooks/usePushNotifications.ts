@@ -46,26 +46,26 @@ export function usePushNotifications() {
   };
 
   const subscribeToPush = useCallback(async () => {
-    if (!isSupported) return false;
+    if (!isSupported) { console.log('[Push] Not supported'); return false; }
     setIsLoading(true);
+    console.log('[Push] Starting subscription...');
 
     try {
-      // Request permission
       const permission = await Notification.requestPermission();
+      console.log('[Push] Permission:', permission);
       if (permission !== 'granted') {
-        console.warn('Push permission denied');
         setIsLoading(false);
         return false;
       }
 
-      // Register SW if needed
       let registration = await navigator.serviceWorker.getRegistration('/sw.js');
       if (!registration) {
+        console.log('[Push] Registering SW...');
         registration = await navigator.serviceWorker.register('/sw.js');
         await navigator.serviceWorker.ready;
       }
+      console.log('[Push] SW scope:', registration?.scope);
 
-      // Subscribe to push
       const appServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
@@ -73,8 +73,9 @@ export function usePushNotifications() {
       });
 
       const subJson = subscription.toJSON();
+      console.log('[Push] Subscribed, endpoint:', subJson.endpoint?.slice(0, 60));
 
-      // Save to backend
+      console.log('[Push] Saving to backend...');
       const { error } = await supabase.functions.invoke('save-push-subscription', {
         body: {
           endpoint: subJson.endpoint,
@@ -87,17 +88,18 @@ export function usePushNotifications() {
       });
 
       if (error) {
-        console.error('Error saving subscription:', error);
+        console.error('[Push] Backend error:', error);
         setIsLoading(false);
         return false;
       }
 
+      console.log('[Push] ✅ Subscription saved successfully');
       setIsSubscribed(true);
       localStorage.setItem('push_subscribed', 'true');
       setIsLoading(false);
       return true;
     } catch (err) {
-      console.error('Error subscribing to push:', err);
+      console.error('[Push] Error:', err);
       setIsLoading(false);
       return false;
     }
