@@ -125,6 +125,9 @@ const AdminSettings = () => {
             </CardContent>
           </Card>
 
+          {/* Push Notifications */}
+          <PushNotificationSettings />
+
           {/* Quick actions */}
           <Card>
             <CardHeader>
