@@ -11,10 +11,12 @@ import {
   LogOut,
   Menu,
   X,
-  Beaker
+  Beaker,
+  Bell
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 const navItems = [
   { path: '/admin', icon: ClipboardList, label: 'Заявки', end: true },
@@ -29,8 +31,31 @@ const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showPushBanner, setShowPushBanner] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isSupported, isSubscribed, subscribeToPush, isLoading: pushLoading } = usePushNotifications();
+
+  useEffect(() => {
+    if (isAuthenticated && isSupported && !isSubscribed && !localStorage.getItem('push_banner_dismissed')) {
+      setShowPushBanner(true);
+    }
+  }, [isAuthenticated, isSupported, isSubscribed]);
+
+  const handleEnablePush = async () => {
+    const success = await subscribeToPush();
+    if (success) {
+      toast.success('Уведомления включены!');
+      setShowPushBanner(false);
+    } else {
+      toast.error('Не удалось включить уведомления. Проверьте разрешения.');
+    }
+  };
+
+  const handleDismissPushBanner = () => {
+    setShowPushBanner(false);
+    localStorage.setItem('push_banner_dismissed', 'true');
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -168,6 +193,33 @@ const AdminDashboard = () => {
 
       {/* Main content */}
       <main className="lg:ml-64 pt-14 lg:pt-0">
+        {showPushBanner && (
+          <div className="mx-4 mt-4 lg:mx-6 lg:mt-6 flex items-center justify-between gap-3 rounded-lg border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm dark:border-yellow-700 dark:bg-yellow-950">
+            <div className="flex items-center gap-2">
+              <Bell className="h-4 w-4 text-yellow-600 shrink-0" />
+              <span className="text-yellow-800 dark:text-yellow-200">
+                Включите уведомления, чтобы получать оповещения о новых заявках
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                size="sm"
+                onClick={handleEnablePush}
+                disabled={pushLoading}
+                className="bg-primary text-primary-foreground"
+              >
+                {pushLoading ? 'Подключение…' : 'Включить'}
+              </Button>
+              <button
+                onClick={handleDismissPushBanner}
+                className="text-muted-foreground hover:text-foreground p-1"
+                aria-label="Закрыть"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
         <div className="p-4 lg:p-6">
           <Outlet />
         </div>

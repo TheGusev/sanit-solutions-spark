@@ -133,8 +133,9 @@ async function hkdf(
   info: Uint8Array,
   length: number
 ): Promise<Uint8Array> {
-  const key = await crypto.subtle.importKey("raw", ikm, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
-  const prk = new Uint8Array(await crypto.subtle.sign("HMAC", key, salt.length > 0 ? salt : new Uint8Array(32)));
+  // RFC 5869: HKDF-Extract(salt, IKM) = HMAC-Hash(salt, IKM) — salt is the key, IKM is the data
+  const saltKey = await crypto.subtle.importKey("raw", salt.length > 0 ? salt : new Uint8Array(32), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const prk = new Uint8Array(await crypto.subtle.sign("HMAC", saltKey, ikm));
 
   const prkKey = await crypto.subtle.importKey("raw", prk, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   const infoWithCounter = concatUint8Arrays(info, new Uint8Array([1]));
