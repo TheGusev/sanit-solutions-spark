@@ -28,3 +28,25 @@ if (hasSSGContent) {
   // CSR fallback - standard client-side rendering
   createRoot(rootElement).render(<App />);
 }
+
+// Register Service Worker for push notifications (production only, not in iframe/preview)
+if ('serviceWorker' in navigator) {
+  const isInIframe = (() => {
+    try { return window.self !== window.top; } catch { return true; }
+  })();
+  const isPreviewHost =
+    window.location.hostname.includes('id-preview--') ||
+    window.location.hostname.includes('lovableproject.com') ||
+    window.location.hostname.includes('lovable.app');
+
+  if (!isInIframe && !isPreviewHost) {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.warn('SW registration failed:', err);
+    });
+  } else {
+    // Unregister any existing SW in preview/iframe contexts
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((r) => r.unregister());
+    });
+  }
+}
