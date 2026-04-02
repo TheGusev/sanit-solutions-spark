@@ -13,6 +13,7 @@ import {
   Info
 } from 'lucide-react';
 import { toast } from 'sonner';
+import PushNotificationSettings from '@/components/admin/PushNotificationSettings';
 
 interface DBStats {
   leads: number;
