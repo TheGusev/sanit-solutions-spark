@@ -40,6 +40,7 @@ YANDEX_METRIKA_TOKEN = os.getenv("YANDEX_METRIKA_TOKEN")
 METRIKA_ID           = os.getenv("METRIKA_ID", "105828040")
 YANDEX_INDEXED       = os.getenv("YANDEX_INDEXED", "")
 GOOGLE_INDEXED       = os.getenv("GOOGLE_INDEXED", "")
+PAGESPEED_API_KEY = os.getenv("PAGESPEED_API_KEY", "")
 CACHE_FILE           = ".monitoring-cache.json"
 
 KEY_URLS = [
@@ -102,6 +103,7 @@ def delta_str(current: int | float, previous: int | float | None) -> str:
 def check_url(url: str, timeout: int = 15) -> dict:
     try:
         r = requests.get(url, timeout=timeout, allow_redirects=True)
+                r.encoding = "utf-8"
         return {
             "url": url,
             "status_code": r.status_code,
@@ -171,9 +173,12 @@ def fetch_sitemap_stats() -> dict:
 
 def fetch_pagespeed(url: str, strategy: str = "desktop") -> dict:
     """Вызывает Google PageSpeed Insights API (бесплатный)."""
+        # Проверка наличия API-ключа
+        if not PAGESPEED_API_KEY:
+                    return {"score": "не настроен", "lcp": "-", "cls": "-"}
     api = (
         f"https://www.googleapis.com/pagespeedonline/v5/runPagespeed"
-        f"?url={url}&strategy={strategy}&category=performance"
+        f"?url={url}&strategy={strategy}&category=performance&key={PAGESPEED_API_KEY}"
     )
     try:
         resp = requests.get(api, timeout=60)
@@ -402,6 +407,7 @@ def check_geo_routing(sitemap_urls: list) -> list:
         path = url.replace(SITE_URL, "")
         try:
             r = requests.get(url, timeout=20)
+                        r.encoding = "utf-8"
             h1_text = ""
             if HAS_BS4 and r.status_code == 200:
                 soup = BeautifulSoup(r.text, "html.parser")
