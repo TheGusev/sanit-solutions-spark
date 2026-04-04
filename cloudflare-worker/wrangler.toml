@@ -1,0 +1,25 @@
+name = "push-notifications-worker"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "push-notifications-worker"
+
+# D1 Database для хранения подписок
+[[d1_databases]]
+binding = "PUSH_DB"
+database_name = "push_subscriptions"
+database_id = "your-d1-database-id"  # Создать через: wrangler d1 create push_subscriptions
+
+# VAPID ключи для Web Push
+[vars]
+VAPID_PUBLIC_KEY = "BDl5Ji02s_G6xfDQmZRRaHpVdQ1zQbM7XrFr73k72Gl8lXuHH2txh2BtSfc1nPx4TcGMhw-2CASLhNEhN1DBIjY"
+VAPID_SUBJECT = "mailto:admin@goruslugimsk.ru"
+
+# Приватный ключ нужно добавить через secrets:
+# wrangler secret put VAPID_PRIVATE_KEY
+
+# Routes
+routes = [
+  { pattern = "goruslugimsk.ru/api/push/*", zone_name = "goruslugimsk.ru" }
+]
