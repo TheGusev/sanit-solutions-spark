@@ -106,8 +106,7 @@ def check_url(url: str, timeout: int = 15) -> dict:
                 r.encoding = "utf-8"
         return {
             "url": url,
-            "status_code": r.status_code,
-            "response_time": round(r.elapsed.total_seconds() * 1000),
+            "status_code": r.status_c        "response_time": round(r.elapsed.total_seconds() * 1000),
             "ok": r.status_code == 200,
         }
     except Exception as e:
@@ -410,8 +409,7 @@ def check_geo_routing(sitemap_urls: list) -> list:
                         r.encoding = "utf-8"
             h1_text = ""
             if HAS_BS4 and r.status_code == 200:
-                soup = BeautifulSoup(r.text, "html.parser")
-                h1 = soup.find("h1")
+                soup = BeautifulSoup(r.text, "html.p            h1 = soup.find("h1")
                 h1_text = h1.get_text(strip=True)[:50] if h1 else "—"
             elif r.status_code == 200:
                 m = re.search(r"<h1[^>]*>(.*?)</h1>", r.text, re.DOTALL)
