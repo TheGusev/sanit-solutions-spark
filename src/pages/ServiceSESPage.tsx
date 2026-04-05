@@ -205,7 +205,9 @@ const ServiceSESPage = () => {
             </div>
           </div>
         </section>
-        <InternalLinks currentService="dezinsekciya" />
+        <RelatedServices serviceSlug="dezinsekciya" />
+        <RelatedGeoLinks serviceSlug="dezinsekciya" />
+        <RelatedBlogLinks serviceSlug="dezinsekciya" />
       </main>
       <Footer />
       <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
