@@ -87,6 +87,11 @@ export default function ServicePestPage() {
     { label: pest.name }
   ];
   
+  const avgRating = reviews.length > 0
+    ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length).toFixed(1)
+    : '4.9';
+  const reviewCount = reviews.length || staticReviews.length;
+
   const schemaMarkup = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -107,6 +112,13 @@ export default function ServicePestPage() {
         priceCurrency: 'RUB',
         minPrice: pest.priceFrom
       }
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: avgRating,
+      reviewCount: reviewCount,
+      bestRating: 5,
+      worstRating: 1
     }
   };
   
