@@ -137,9 +137,9 @@ async function hkdf(
   const saltKey = await crypto.subtle.importKey("raw", saltData, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   const prk = new Uint8Array(await crypto.subtle.sign("HMAC", saltKey, ikm.buffer as ArrayBuffer));
 
-  const prkKey = await crypto.subtle.importKey("raw", prk, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const prkKey = await crypto.subtle.importKey("raw", prk.buffer as ArrayBuffer, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   const infoWithCounter = concatUint8Arrays(info, new Uint8Array([1]));
-  const okm = new Uint8Array(await crypto.subtle.sign("HMAC", prkKey, infoWithCounter));
+  const okm = new Uint8Array(await crypto.subtle.sign("HMAC", prkKey, infoWithCounter.buffer as ArrayBuffer));
   return okm.slice(0, length);
 }
 
