@@ -35,8 +35,7 @@ export function generateOrganizationLD() {
       ]
     },
     "sameAs": [
-      "https://vk.com/yourpage",
-      "https://t.me/yourpage"
+      "https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo"
     ]
   };
 }
