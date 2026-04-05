@@ -13,7 +13,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import AnimatedSection from '@/components/AnimatedSection';
-import InternalLinks from '@/components/InternalLinks';
+import RelatedServices from '@/components/RelatedServices';
+import RelatedGeoLinks from '@/components/RelatedGeoLinks';
 import ServiceQuiz from '@/components/ServiceQuiz';
 import ServiceTariffs from '@/components/ServiceTariffs';
 import WhyProblemReturns from '@/components/WhyProblemReturns';
@@ -535,12 +536,11 @@ export default function ServicePestPage() {
           </div>
         </AnimatedSection>
         
-        {/* Internal Links */}
-        <InternalLinks
-          currentService={service}
-          currentPest={pestSlug}
-          title="Другие услуги"
-        />
+        {/* Related Services */}
+        <RelatedServices serviceSlug={service!} pestSlug={pestSlug} />
+        
+        {/* Geo Links */}
+        <RelatedGeoLinks serviceSlug={service} pestSlug={pestSlug} title={`Уничтожение ${pest.genitive} по районам`} />
         <ServiceStickyBar />
       </main>
       

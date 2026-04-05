@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/table";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import InternalLinks from "@/components/InternalLinks";
+import RelatedGeoLinks from "@/components/RelatedGeoLinks";
 import WorkProcess from "@/components/WorkProcess";
 import AnimatedSection from "@/components/AnimatedSection";
 import { getServiceBySlug, servicePages, getRelatedArticlesForService } from "@/data/services";
@@ -734,7 +734,7 @@ const ServicePage = () => {
                 return (
                   <Link 
                     key={idx} 
-                    to={`/uslugi/dezinfekciya-${slugs[idx]}`}
+                    to={`/uslugi/${['dezinfekciya', 'dezinsekciya', 'deratizaciya'].includes(service.slug) ? service.slug : 'dezinfekciya'}-${slugs[idx]}`}
                     className="px-4 py-2 bg-muted hover:bg-primary hover:text-primary-foreground rounded-full transition-colors text-sm font-medium"
                   >
                     {name}
@@ -799,7 +799,7 @@ const ServicePage = () => {
           </div>
         </section>
         <ServiceStickyBar />
-        <InternalLinks currentService={service.slug} />
+        <RelatedGeoLinks serviceSlug={service.slug} title={`${service.title} по районам Москвы`} />
       </main>
 
       <Footer />

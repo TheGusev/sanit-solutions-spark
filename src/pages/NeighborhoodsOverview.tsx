@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import InternalLinks from '@/components/InternalLinks';
+import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { neighborhoods, getNeighborhoodsByDistrict } from '@/data/neighborhoods';
 import { SEO_CONFIG } from '@/lib/seo';
@@ -249,7 +249,8 @@ const NeighborhoodsOverview = () => {
             </Link>
           </div>
         </section>
-        <InternalLinks />
+        <RelatedServices serviceSlug="dezinsekciya" title="Популярные услуги" />
+        <RelatedServices serviceSlug="deratizaciya" title="Борьба с грызунами" />
       </main>
 
       <Footer />
