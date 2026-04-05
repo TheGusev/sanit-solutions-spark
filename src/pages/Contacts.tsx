@@ -39,6 +39,7 @@ const popularNeighborhoods = [
 ];
 const Contacts = () => {
   const handlePhoneClick = () => {
+    trackGoal('phone_click');
     window.location.href = "tel:84950181817";
   };
 

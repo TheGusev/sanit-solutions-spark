@@ -164,7 +164,7 @@ const ServicePage = () => {
         "@type": "ListItem",
         "position": 1,
         "name": "Главная",
-        "item": "https://goruslugimsk.ru"
+        "item": "https://goruslugimsk.ru/"
       },
       {
         "@type": "ListItem",
@@ -175,13 +175,44 @@ const ServicePage = () => {
       {
         "@type": "ListItem",
         "position": 3,
-        "name": service.title,
-        "item": `https://goruslugimsk.ru/uslugi/${service.slug}`
+        "name": service.title
       }
     ]
   };
 
-  metadata.schema = [schemaMarkup, faqSchema, breadcrumbSchema];
+  // Contextual FAQ additions with internal links for key service hubs
+  const contextualFaqMap: Record<string, Array<{ question: string; answer: string }>> = {
+    dezinsekciya: [
+      { question: "Работаете ли вы по всей Москве?", answer: "Да, охватываем все районы Москвы и Московскую область. Выберите ваш район на странице районов." },
+    ],
+    deratizaciya: [
+      { question: "Выезжаете в Московскую область?", answer: "Да, работаем по всему МО. Подробнее — на странице городов Московской области." },
+    ],
+    'borba-s-krotami': [
+      { question: "Совмещаете ли с обработкой участка?", answer: "Да, можно заказать комплексно с обработкой участка от других вредителей." },
+    ],
+  };
+
+  const contextualFaqItems = contextualFaqMap[service.slug] || [];
+  const allFaqForSchema = [
+    ...service.faq,
+    ...contextualFaqItems,
+  ];
+
+  const faqSchemaFull = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": allFaqForSchema.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  };
+
+  metadata.schema = [schemaMarkup, faqSchemaFull, breadcrumbSchema];
 
   return (
     <>
