@@ -799,7 +799,7 @@ const ServicePage = () => {
           </div>
         </section>
         <ServiceStickyBar />
-        <InternalLinks currentService={service.slug} />
+        <RelatedGeoLinks serviceSlug={service.slug} title={`${service.title} по районам Москвы`} />
       </main>
 
       <Footer />
