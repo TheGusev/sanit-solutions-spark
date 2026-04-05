@@ -25,6 +25,8 @@ import { getPestBySlug, pests } from '@/data/pests';
 import { IconFromKey, getIconKeyFromEmoji } from '@/lib/iconMap';
 import { getPestImage } from '@/data/pestImages';
 import { servicePages, getRelatedArticlesForPest } from '@/data/services';
+import { staticReviews } from '@/data/reviews';
+import { supabase } from '@/lib/supabaseClient';
 import { topNeighborhoods } from '@/data/nchSeeds';
 import { neighborhoods } from '@/data/neighborhoods';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
