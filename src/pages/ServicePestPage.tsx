@@ -388,7 +388,8 @@ export default function ServicePestPage() {
                       Сколько стоит уничтожение {pest.genitive}?
                     </AccordionTrigger>
                     <AccordionContent>
-                      Стоимость начинается от {pest.priceFrom}₽. Итоговая цена зависит от площади помещения, степени заражения и выбранного метода обработки.
+                      Стоимость начинается от {pest.priceFrom}₽. Итоговая цена зависит от площади помещения, степени заражения и выбранного метода обработки.{' '}
+                      <Link to={`/uslugi/${service}/`} className="text-primary hover:underline">Подробнее о ценах на {serviceName.toLowerCase()}</Link>.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="q2">
