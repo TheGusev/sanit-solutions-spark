@@ -1,72 +1,89 @@
 
 
-# ФИНАЛЬНЫЙ QA АУДИТ — Все 12 Issues
+# Обновление llms.txt и llms-full.txt по спецификации v1.1.1
 
----
+## Что не так сейчас
 
-## СТАТУС: ВСЕ 12 ISSUES ЗАКРЫТЫ ✓
+Текущий `llms.txt` — базовый, не соответствует спецификации llms.txt v1.1.1:
+- Нет секции `> blockquote` с кратким описанием (required по спеку)
+- Нет ссылок на детальные страницы (формат `- [Title](url): description`)
+- Нет `llms-full.txt` (расширенная версия с полным контентом)
+- Дублирование в `public/llms.txt` и `public/.well-known/llms.txt` — одинаковый файл
+- Телефон указан старый (+7 906) вместо актуального (8-495-018-18-17)
+- Нет секций: Team, Certifications, FAQ, Pricing structure
 
----
+## Что делаем
 
-| # | Issue | Статус | Подтверждение |
-|---|-------|--------|---------------|
-| B1 | Footer trailing slashes | **FIXED** | Все ссылки в Footer.tsx имеют trailing slash (lines 46-80) |
-| B2 | jsonLD placeholder sameAs | **FIXED** | Заменён на реальный MAX URL (line 38) |
-| B3 | jsonLD neighborhood URL без slash | **FIXED** | Line 55: `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}/` |
-| B4 | Ссылки на deprecated sertifikaciya | **FIXED** | `grep sertifikaciya` = 0 результатов во всём проекте |
-| B5 | analytics sertifikaciya mapping | **FIXED** | Удалён из analytics.ts (line 138 теперь `obrabotka-uchastkov`) |
-| C1 | `/#services` anchor в BreadcrumbList | **FIXED** | ServicePage line 159-161: "Услуги" без `item` (промежуточный элемент) |
-| C2 | DistrictPage baseUrl без trailing slash | **FIXED** | Line 143: `${SEO_CONFIG.baseUrl}/` — с trailing slash |
-| C3 | DistrictPage breadcrumb URLs без slash | **FIXED** | Line 144: `/uslugi/po-okrugam-moskvy/`; line 145: без item (leaf) |
-| C4 | NeighborhoodsOverview breadcrumb без slash | **FIXED** | Line 68: `${SEO_CONFIG.baseUrl}/`; line 69: leaf без item |
-| C5 | NeighborhoodPage breadcrumb URLs | **FIXED** | Lines 87-89: все URL с trailing slash через `generateBreadcrumbLD` |
-| C6 | DistrictPage последний breadcrumb с item | **FIXED** | Line 145: `{ '@type': 'ListItem', position: 3, name: '...' }` — без item |
-| F1 | ~40 internal links без trailing slash | **FIXED** | ServicePage line 797: `/uslugi/${otherService.slug}/`; ServiceSubpage lines 117, 378, 388: все с `/` |
+### 1. `public/llms.txt` — переписать по спецификации v1.1.1
 
----
+Структура:
+```
+# ГорУслуги — Санитарные Решения
 
-## ДОПОЛНИТЕЛЬНЫЕ ПРОВЕРКИ
+> Профессиональная дезинфекция, дезинсекция и дератизация в Москве и МО. Лицензия Роспотребнадзора. Гарантия до 3 лет.
 
-| Проверка | Статус |
-|----------|--------|
-| `generateBreadcrumbSchema()` — baseUrl с trailing slash | ✓ Line 339: `SEO_CONFIG.baseUrl + '/'` |
-| `generateBreadcrumbSchema()` — leaf без item | ✓ Line 345: `...(item.href ? { item } : {})` — без href = без item |
-| `isSeoLinkable()` — фильтрует noindex | ✓ EXCLUDED_PREFIXES + Tier 2/3 NCH check |
-| InternalLinks.tsx удалён | ✓ Файл не существует |
-| Импорты InternalLinks | ✓ 0 в проекте |
-| LocalBusiness на главной | ✓ В `generateIndexMetadata()` |
-| FAQPage schema синхронизирована | ✓ На ServicePage, DistrictsOverview, + все существующие |
-| Контекстные FAQ с Link | ✓ ServicePage lines 166-176 для 3 hub slugs |
-| phone_click на Contacts | ✓ trackGoal вызывается |
-| all_conversions работает | ✓ Без изменений, anti-recursion guard на месте |
+## Услуги
+- [Дезинфекция](https://goruslugimsk.ru/uslugi/dezinfekciya/): Уничтожение вирусов, бактерий, грибков — от 1000₽
+- [Дезинсекция](https://goruslugimsk.ru/uslugi/dezinsekciya/): Тараканы, клопы, блохи, муравьи — от 1200₽
+- [Дератизация](https://goruslugimsk.ru/uslugi/deratizaciya/): Крысы, мыши — от 3000₽
+...
 
----
+## Вредители
+- [Тараканы](url): описание
+- [Клопы](url): описание
+...
 
-## ОБНОВЛЁННАЯ ОЦЕНКА
+## География
+- [Москва по округам](url): ЦАО, САО, СВАО, ВАО...
+- [Московская область](url): 23 города
 
-| Категория | Было | Стало |
-|-----------|------|-------|
-| Архитектура и роутинг | 96 | 96 |
-| SEO on-page | 87 | **95** |
-| Schema.org | 88 | **96** |
-| Внутренняя перелинковка | 95 | **97** |
-| Analytics | 92 | **94** |
-| Trailing slash consistency | 82 | **96** |
-| Инфраструктура | 93 | 93 |
-| Content и E-E-A-T | 89 | **92** |
-| **ИТОГО** | **91** | **95** |
+## Типы объектов
+- [Квартиры](url), [Офисы](url), [Рестораны](url)...
 
----
+## Блог (экспертные статьи)
+- [Борьба с тараканами](url): 2000+ слов, FAQ
+...top-10 статей
 
-## ВЕРДИКТ
+## Команда
+6 лицензированных специалистов с опытом 5-12 лет
 
-**95 / 100** — все 12 найденных issues исправлены. 0 open issues. Проект полностью готов к production.
+## Контакты
+Телефон: 8-495-018-18-17
+Режим: ежедневно, круглосуточно
 
-Оставшиеся 5 баллов — это потенциал для:
-- Добавления реальных соцсетей в sameAs (сейчас только MAX)
-- Расширения FAQ на оставшиеся service hubs
-- AggregateRating schema из реальных отзывов
-- Web Vitals оптимизации (LCP, CLS)
+## Юридическая информация
+ООО «Санитарные Решения», ИНН: 5410169338, ОГРН: 1245400015653
+```
 
-Это не баги — это growth opportunities.
+### 2. `public/llms-full.txt` — создать расширенную версию
+
+Полная версия с:
+- Детальным описанием каждой услуги (из `services.ts`)
+- Полным прайс-листом (из `servicePrices.ts`)
+- FAQ по каждой услуге (из `services.ts` → `faq`)
+- Списком всех вредителей с описанием, методами, ценами (из `pests.ts`)
+- Полной географией: все округа + все города МО
+- Типами объектов с особенностями
+- Топ-20 блог-статей с excerpt
+
+### 3. `public/.well-known/llms.txt` — зеркало `public/llms.txt`
+
+Идентичный файл (по спецификации — оба пути должны отдавать одинаковый контент).
+
+### 4. `robots.txt` — не меняем
+
+Уже есть Allow для LLM-краулеров. Не нужно добавлять ссылку на llms.txt в robots (нет такого стандарта).
+
+## Файлы
+
+| Действие | Файл |
+|----------|------|
+| Перезаписать | `public/llms.txt` |
+| Перезаписать | `public/.well-known/llms.txt` |
+| Создать | `public/llms-full.txt` |
+
+## Что НЕ меняется
+- URL, canonical, robots, sitemap — без изменений
+- Код приложения — без изменений
+- Никакие .tsx/.ts файлы не редактируются
 
