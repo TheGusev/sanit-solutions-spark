@@ -219,7 +219,7 @@ export function getAllSSGRoutes() {
   
   // НЧ-страницы: Tiered expansion
   // Tier 1: top 4 pests × all 131 neighborhoods (~524 pages)
-  const allPestSlugs = [...dezinsekciyaPestSlugs, ...deratizaciyaPestSlugs];
+  
   const tier1PestsLocal = ['tarakany', 'klopy', 'krysy', 'myshi'];
   const tier2PestsLocal = ['muravyi', 'blohi', 'mol']; // kroty removed
   const tier3PestsLocal = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
