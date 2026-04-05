@@ -52,7 +52,7 @@ export function generateNeighborhoodLD(neighborhood: {
     "@type": "LocalBusiness",
     "name": `${SEO_CONFIG.companyName} — ${neighborhood.name}`,
     "description": `Дезинфекция в районе ${neighborhood.name}, Москва. Выезд специалиста в течение 15 минут.`,
-    "url": `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}`,
+    "url": `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}/`,
     "telephone": SEO_CONFIG.phone,
     "address": {
       "@type": "PostalAddress",

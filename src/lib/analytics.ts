@@ -135,7 +135,7 @@ const PATHNAME_SLUG_MAP: Record<string, string> = {
   '/uslugi/dezinfekciya': 'dezinfekciya',
   '/uslugi/dezodoraciya': 'dezodoraciya',
   '/uslugi/ozonirovanie': 'ozonirovanie',
-  '/uslugi/sertifikaciya': 'sertifikaciya',
+  
   '/uslugi/obrabotka-uchastkov': 'uchastki',
   '/sluzhba-dezinsekcii': 'ses',
 };

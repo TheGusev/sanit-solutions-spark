@@ -76,14 +76,14 @@ const Footer = memo(() => {
           <div>
             <h4 className="font-bold mb-4">Московская область</h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><Link to="/moscow-oblast" className="hover:opacity-100">• Все города МО</Link></li>
-              <li><Link to="/moscow-oblast/khimki" className="hover:opacity-100">• Химки</Link></li>
-              <li><Link to="/moscow-oblast/mytishchi" className="hover:opacity-100">• Мытищи</Link></li>
-              <li><Link to="/moscow-oblast/balashikha" className="hover:opacity-100">• Балашиха</Link></li>
-              <li><Link to="/moscow-oblast/krasnogorsk" className="hover:opacity-100">• Красногорск</Link></li>
-              <li><Link to="/moscow-oblast/podolsk" className="hover:opacity-100">• Подольск</Link></li>
-              <li><Link to="/moscow-oblast/domodedovo" className="hover:opacity-100">• Домодедово</Link></li>
-              <li><Link to="/moscow-oblast/ramenskoe" className="hover:opacity-100">• Раменское</Link></li>
+              <li><Link to="/moscow-oblast/" className="hover:opacity-100">• Все города МО</Link></li>
+              <li><Link to="/moscow-oblast/khimki/" className="hover:opacity-100">• Химки</Link></li>
+              <li><Link to="/moscow-oblast/mytishchi/" className="hover:opacity-100">• Мытищи</Link></li>
+              <li><Link to="/moscow-oblast/balashikha/" className="hover:opacity-100">• Балашиха</Link></li>
+              <li><Link to="/moscow-oblast/krasnogorsk/" className="hover:opacity-100">• Красногорск</Link></li>
+              <li><Link to="/moscow-oblast/podolsk/" className="hover:opacity-100">• Подольск</Link></li>
+              <li><Link to="/moscow-oblast/domodedovo/" className="hover:opacity-100">• Домодедово</Link></li>
+              <li><Link to="/moscow-oblast/ramenskoe/" className="hover:opacity-100">• Раменское</Link></li>
             </ul>
           </div>
 

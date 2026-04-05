@@ -242,7 +242,7 @@ const NeighborhoodsOverview = () => {
         <section className="py-8">
           <div className="container mx-auto px-4 text-center">
             <Link 
-              to="/uslugi/po-okrugam-moskvy"
+              to="/uslugi/po-okrugam-moskvy/"
               className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
             >
               Смотреть услуги по округам Москвы →

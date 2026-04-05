@@ -385,7 +385,7 @@ const ServiceSubpage = () => {
         {/* Back to parent service */}
         <section className="py-8">
           <div className="container mx-auto px-4 text-center">
-            <Link to={`/uslugi/${parentSlug}`} className="inline-flex items-center text-primary hover:underline font-medium">
+            <Link to={`/uslugi/${parentSlug}/`} className="inline-flex items-center text-primary hover:underline font-medium">
               ← Вернуться к услуге {parentService?.title || 'Услуги'}
             </Link>
           </div>

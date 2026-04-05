@@ -94,7 +94,7 @@ const DistrictsOverview = () => {
                 const bgImage = getDistrictImage(district.id);
                 return (
                   <div key={district.id}>
-                    <Link to={`/uslugi/${district.slug}`}>
+                    <Link to={`/uslugi/${district.slug}/`}>
                       <div 
                         className="relative h-56 rounded-xl overflow-hidden group cursor-pointer"
                         style={{ backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}

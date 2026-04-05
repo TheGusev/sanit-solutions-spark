@@ -84,9 +84,9 @@ const NeighborhoodPage = () => {
 
   // Breadcrumb schema
   const breadcrumbSchema = generateBreadcrumbLD([
-    { name: "Главная", url: SEO_CONFIG.baseUrl },
-    { name: "Районы Москвы", url: `${SEO_CONFIG.baseUrl}/rajony` },
-    { name: neighborhood.name, url: `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}` }
+    { name: "Главная", url: `${SEO_CONFIG.baseUrl}/` },
+    { name: "Районы Москвы", url: `${SEO_CONFIG.baseUrl}/rajony/` },
+    { name: neighborhood.name, url: `${SEO_CONFIG.baseUrl}/rajony/${neighborhood.slug}/` }
   ]);
 
   // FAQ schema

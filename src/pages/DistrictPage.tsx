@@ -147,8 +147,7 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
   };
 
   const breadcrumbItems = [
-    { label: 'Услуги', href: '/#services' },
-    { label: 'По округам Москвы', href: '/uslugi/po-okrugam-moskvy' },
+    { label: 'По округам Москвы', href: '/uslugi/po-okrugam-moskvy/' },
     { label: `${svc.name} в ${district.name}` },
   ];
 
