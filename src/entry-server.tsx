@@ -16,6 +16,8 @@ export interface RenderResult {
   };
 }
 
+export { getAllSSGRoutes } from './lib/seoRoutes';
+
 export function render(url: string): RenderResult {
   const helmetContext: { helmet?: any } = {};
   

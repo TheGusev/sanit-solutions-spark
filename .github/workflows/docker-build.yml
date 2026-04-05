@@ -41,7 +41,8 @@ jobs:
             moscow-oblast/khimki/index.html \
             blog/klopy-v-kvartire/index.html \
             sluzhba-dezinsekcii/index.html \
-            rajony/maryino/index.html; do
+            rajony/maryino/index.html \
+43:             blog/klopy-v-kvartire/index.html; do
             if [ ! -f "/usr/share/nginx/html/$f" ]; then
               echo "MISSING: $f"
               FAIL=1

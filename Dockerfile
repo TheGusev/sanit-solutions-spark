@@ -15,10 +15,10 @@ COPY . .
 # Собираем приложение
 ENV DOCKER_BUILD=true
 ARG CACHEBUST=1
-RUN npm run build 2>&1 | tee /tmp/build-output.log; echo "EXIT:$?" && grep -E '(Error|❌|MISSING|error TS)' /tmp/build-output.log | head -50 || true
-RUN find /app/dist -name "index.html" | wc -l && echo "=== SSG page count above ==="
-
-# ── Hard SSG artifact check: fail build if critical pages missing ──
+RUN npm run build 2>&1 | tee /tmp/build-output.log && \
+    SSG_COUNT=$(find /app/dist -name "index.html" | wc -l) && \
+    echo "SSG pages: $SSG_COUNT" && \
+    test "$SSG_COUNT" -ge 500 || (echo "FAIL: only $SSG_COUNT pages" && exit 1)
 
 # Этап 2: Production с Nginx
 FROM nginx:alpine
