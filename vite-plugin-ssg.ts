@@ -678,6 +678,7 @@ export function ssgPlugin(): Plugin {
             
           } catch (error) {
             console.error(`❌ ${route.path}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                    if (error instanceof Error && error.stack) console.error(error.stack);
             errorCount++;
           }
         }
