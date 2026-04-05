@@ -43,15 +43,15 @@ const Footer = memo(() => {
           <div>
             <h4 className="font-bold mb-4">Услуги</h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><Link to="/uslugi/dezinfekciya" className="hover:opacity-100">• Дезинфекция помещений</Link></li>
-              <li><Link to="/uslugi/dezinsekciya" className="hover:opacity-100">• Дезинсекция (уничтожение насекомых)</Link></li>
-              <li><Link to="/uslugi/deratizaciya" className="hover:opacity-100">• Дератизация (борьба с грызунами)</Link></li>
-              <li><Link to="/uslugi/ozonirovanie" className="hover:opacity-100">• Озонирование</Link></li>
-              <li><Link to="/uslugi/dezodoraciya" className="hover:opacity-100">• Дезодорация</Link></li>
-              <li><Link to="/uslugi/demerkurizaciya" className="hover:opacity-100">• Демеркуризация</Link></li>
-              <li><Link to="/uslugi/borba-s-krotami" className="hover:opacity-100">• Борьба с кротами</Link></li>
-              <li><Link to="/uslugi/obrabotka-uchastkov" className="hover:opacity-100">• Обработка участков</Link></li>
-              <li><Link to="/sluzhba-dezinsekcii" className="hover:opacity-100">• Служба дезинсекции</Link></li>
+              <li><Link to="/uslugi/dezinfekciya/" className="hover:opacity-100">• Дезинфекция помещений</Link></li>
+              <li><Link to="/uslugi/dezinsekciya/" className="hover:opacity-100">• Дезинсекция (уничтожение насекомых)</Link></li>
+              <li><Link to="/uslugi/deratizaciya/" className="hover:opacity-100">• Дератизация (борьба с грызунами)</Link></li>
+              <li><Link to="/uslugi/ozonirovanie/" className="hover:opacity-100">• Озонирование</Link></li>
+              <li><Link to="/uslugi/dezodoraciya/" className="hover:opacity-100">• Дезодорация</Link></li>
+              <li><Link to="/uslugi/demerkurizaciya/" className="hover:opacity-100">• Демеркуризация</Link></li>
+              <li><Link to="/uslugi/borba-s-krotami/" className="hover:opacity-100">• Борьба с кротами</Link></li>
+              <li><Link to="/uslugi/obrabotka-uchastkov/" className="hover:opacity-100">• Обработка участков</Link></li>
+              <li><Link to="/sluzhba-dezinsekcii/" className="hover:opacity-100">• Служба дезинсекции</Link></li>
             </ul>
           </div>
 
