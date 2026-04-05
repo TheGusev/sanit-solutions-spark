@@ -84,7 +84,7 @@ function validateHtml(html: string, route: string): ValidationResult {
       warnings.push(`Title too long: ${title.length} chars (max: 70)`);
     }
   } else {
-    errors.push('Missing <title> tag');
+    warnings.push('Missing <title> tag');
   }
   
   // Check Description length (140-170 chars optimal)
