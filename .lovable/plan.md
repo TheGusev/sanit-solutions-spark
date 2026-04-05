@@ -1,153 +1,155 @@
 
 
-# Усиление внутренней перелинковки — Phase 1
+# Phase 1 Internal Linking — Current Implementation Status Report
 
-## Обзор
+## 1. СПИСОК ИЗМЕНЁННЫХ / СОЗДАННЫХ ФАЙЛОВ
 
-Создаём централизованную систему перелинковки, которая заменяет текущий "all-purpose" `InternalLinks.tsx` на набор специализированных блоков. Каждый блок появляется только там, где он логически уместен. Текущая архитектура (noindex/index, canonical, sitemap, SSG, paid-traffic) не затрагивается.
+| Файл | Статус |
+|------|--------|
+| `src/lib/internalLinking.ts` | **Created** — централизованная логика перелинковки |
+| `src/components/RelatedServices.tsx` | **Created** — блок смежных услуг (3-6 карточек) |
+| `src/components/RelatedGeoLinks.tsx` | **Created** — блок гео-ссылок (6-8 районов + МО) |
+| `src/components/RelatedBlogLinks.tsx` | **Created** — блок статей (2-3 карточки) |
+| `src/components/Breadcrumbs.tsx` | **Updated** — добавлен BreadcrumbList JSON-LD schema |
+| `src/pages/ServicePage.tsx` | **Updated** — fix district links bug + RelatedGeoLinks |
+| `src/pages/ServicePestPage.tsx` | **Updated** — RelatedServices + RelatedGeoLinks |
+| `src/pages/ServiceObjectPage.tsx` | **Updated** — RelatedServices |
+| `src/pages/NeighborhoodsOverview.tsx` | **Updated** — RelatedServices (dezinsekciya + deratizaciya) |
+| `src/pages/MoscowRegionOverview.tsx` | **Updated** — RelatedServices |
+| `vite-plugin-ssg.ts` | **Updated** — fix TS error line 394 |
 
-## Текущее состояние
+## 2. HELPER FUNCTIONS (все в `src/lib/internalLinking.ts`)
 
-Сейчас перелинковка реализована через один компонент `InternalLinks.tsx`, который генерирует 12-16 ссылок автоматически (pest, neighborhood, service, district, city, blog, hub, moleCity). Проблемы:
-- Один блок на все типы страниц — нет кластерной логики
-- Ссылки на noindex NCH Tier 2/3 (через `topNeighborhoods`)
-- Случайная ротация через `seededShuffle` — SEO-непредсказуемо
-- До 16 ссылок в одном блоке без разделения по интенту
+| Функция | Назначение |
+|---------|-----------|
+| `isSeoLinkable(path)` | Проверяет indexable target: исключает admin, privacy, terms, login, NCH Tier 2/3 |
+| `getPageCluster(pathname)` | Определяет тип кластера: service-hub, pest-page, object-page, geo-hub, geo-city, blog, ses, other |
+| `getRelatedServices(serviceSlug, pestSlug?)` | 3-6 related services из того же кластера |
+| `getRelatedGeoLinks(serviceSlug?, pestSlug?)` | 6-8 top neighborhoods + 2-3 MO cities |
+| `getRelatedBlogLinks(serviceSlug?, pestSlug?)` | 2-3 релевантных статей |
+| `getRelatedObjects(serviceSlug, currentObjectSlug?)` | 4-6 indexable object pages |
+| `getBreadcrumbItems(pathname)` | Генерирует breadcrumb chain по URL |
+| `generateBreadcrumbSchema(items)` | Генерирует BreadcrumbList JSON-LD |
 
-`Breadcrumbs.tsx` уже есть, но без BreadcrumbList schema.org. ServicePage использует ui/breadcrumb.tsx (shadcn) с schema. ServicePestPage использует кастомный Breadcrumbs.tsx без schema.
+## 3. ИСКЛЮЧЁННЫЕ ИЗ ПЕРЕЛИНКОВКИ
 
-## Что создаётся / меняется
+- `/admin/*` — utility
+- `/privacy/` — utility
+- `/terms/` — utility
+- `/login` — utility
+- NCH Tier 2 pests: `muravyi`, `blohi`, `mol` — noindex
+- NCH Tier 3 pests: `komary`, `muhi`, `osy-shershni`, `cheshuynitsy`, `kleshchi`, `mokricy` — noindex
+- Все 4-segment `/uslugi/service/pest/neighborhood/` где pest не в tier1Pests (`tarakany`, `klopy`, `krysy`, `myshi`)
 
-### 1. Новый файл: `src/lib/internalLinking.ts` — централизованная логика
+Фильтрация через `isSeoLinkable()` — единый gate для всех helper functions.
 
-Определяет:
-- `getPageCluster(pathname)` — возвращает тип кластера (service-hub, pest-page, object-page, geo-hub, geo-city, blog, ses)
-- `getRelatedServices(serviceSlug, pestSlug?)` — 3-6 релевантных услуг из того же кластера, только indexable
-- `getRelatedPests(serviceSlug, currentPest)` — до 4 related pests из `pest.relatedPests`
-- `getRelatedGeoLinks(serviceSlug, pestSlug?)` — 6-8 top neighborhoods + "Все районы" + 2-4 города МО
-- `getRelatedBlogLinks(serviceSlug, pestSlug?)` — 2-3 статьи из `getRelatedArticlesForPest/Service`
-- `getRelatedObjects(serviceSlug)` — 4-6 indexable object pages
-- `isSeoLinkable(path)` — проверяет что target indexable (исключает tier2/3 NCH, privacy, terms, admin)
-- `getBreadcrumbItems(pathname)` — генерирует breadcrumb chain по URL-структуре
+## 4. БЛОКИ НА КАЖДОЙ СТРАНИЦЕ
 
-Ключевой принцип: все функции фильтруют через `isSeoLinkable()` — noindex страницы никогда не попадают в выдачу.
+**Page: `/`**
+- Added blocks: нет (уже хорошо перелинкована, не трогали)
 
-### 2. Обновление: `src/components/Breadcrumbs.tsx` — добавить BreadcrumbList schema
+**Page: `/uslugi/dezinsekciya/`**
+- Breadcrumbs: уже были (shadcn) с schema
+- District links: **FIXED** — теперь ведут на `/uslugi/dezinsekciya-cao` (было: всегда `dezinfekciya-*`)
+- RelatedGeoLinks: **ADDED** (8 top neighborhoods + "Все районы" + 3 MO cities)
+- Related services: уже были (hardcoded в `service.relatedServices`)
+- Related articles: уже были (из `getRelatedArticlesForService`)
 
-Текущий компонент работает визуально, но не генерирует JSON-LD. Добавляем:
-- `<script type="application/ld+json">` с BreadcrumbList schema
-- Проп `showSchema?: boolean` (default true) чтобы не дублировать schema на страницах где она уже в SEOHead
+**Page: `/uslugi/dezinsekciya/klopy/`**
+- Breadcrumbs: уже были (кастомные, с BreadcrumbList schema после обновления)
+- RelatedServices: **ADDED** (до 4 related pests: tarakany, blohi, muravyi + parent hub dezinsekciya)
+- RelatedGeoLinks: **ADDED** (8 Tier 1 NCH neighborhoods для klopy + 3 MO cities)
+- Related articles: уже были (inline, из `getRelatedArticlesForPest`)
 
-### 3. Новый компонент: `src/components/RelatedServices.tsx`
+**Page: `/uslugi/dezinsekciya/tarakany/`**
+- Аналогично klopy: RelatedServices + RelatedGeoLinks **ADDED**
 
-- Принимает `serviceSlug`, `pestSlug?`
-- Отображает 3-6 карточек смежных услуг
-- Для pest pages: другие вредители того же сервиса + parent service hub
-- Для service hubs: pest pages этого сервиса
-- Для borba-s-krotami: obrabotka-uchastkov + MO hubs
-- Exclude: noindex, current page, unrelated clusters
-- Заголовок: "Смежные услуги" / "С какими проблемами ещё обращаются"
+**Page: `/uslugi/deratizaciya/`**
+- District links: **FIXED** — теперь `deratizaciya-cao` (было `dezinfekciya-cao`)
+- RelatedGeoLinks: **ADDED**
 
-### 4. Новый компонент: `src/components/RelatedGeoLinks.tsx`
+**Page: `/uslugi/borba-s-krotami/`**
+- RelatedGeoLinks: **ADDED** (neighborhoods через /rajony/, без MO — борьба с кротами excluded)
+- District links: уже были, сохранены (fall back to dezinfekciya prefix — корректно т.к. нет `/uslugi/borba-s-krotami-cao`)
 
-- Принимает `serviceSlug?`, `pestSlug?`
-- Отображает 6-8 top neighborhoods (только из indexable Tier 1) + кнопку "Все районы →"
-- Опционально 2-4 города МО
-- Заголовок: "Работаем по районам Москвы"
-- Не выводит NCH Tier 2/3 ссылки
+**Page: `/uslugi/obrabotka-uchastkov/`**
+- RelatedGeoLinks: **ADDED** (neighborhoods + MO cities)
 
-### 5. Новый компонент: `src/components/RelatedBlogLinks.tsx`
+**Page: `/rajony/`**
+- RelatedServices: **ADDED** — 2 блока: "Популярные услуги" (dezinsekciya pests) + "Борьба с грызунами" (deratizaciya pests)
 
-- Принимает `serviceSlug?`, `pestSlug?`
-- Показывает 2-3 релевантные статьи (карточки)
-- Использует existing `getRelatedArticlesForPest/Service`
+**Page: `/moscow-oblast/`**
+- RelatedServices: **ADDED** — блок "Наши услуги" (dezinsekciya pests: top 4)
 
-### 6. Обновление страниц (подключение новых блоков)
+**Page: `/sluzhba-dezinsekcii/`**
+- Пока использует старый `InternalLinks` — **НЕ ОБНОВЛЕНА** (Phase 2 задача)
 
-**ServicePage.tsx** (service hubs):
-- Уже имеет: breadcrumbs (shadcn), related services, related articles, district links
-- Добавить: `RelatedGeoLinks` (заменяет текущий hardcoded блок округов с неправильными ссылками — сейчас все ведут на `dezinfekciya-*` даже для dezinsekciya)
-- Заменить `InternalLinks` на `RelatedBlogLinks` (если related articles уже есть — не дублировать)
+## 5. ИСТОЧНИКИ ВНУТРЕННИХ ССЫЛОК ДЛЯ 10 MONEY PAGES
 
-**ServicePestPage.tsx** (pest pages):
-- Уже имеет: breadcrumbs (кастомные), related articles, district links, InternalLinks
-- Добавить: `RelatedServices` (related pests из `pest.relatedPests` + parent hub)
-- Обновить: district links — фильтровать только indexable NCH (Tier 1)
-- Заменить: `InternalLinks` на `RelatedGeoLinks` + `RelatedBlogLinks`
+**Target: `/uslugi/dezinsekciya/`**
+- Receives from: `/` (header/menu), pest pages (parent hub link), `/rajony/` (RelatedServices), `/moscow-oblast/` (RelatedServices), blog articles, `/sluzhba-dezinsekcii/` (InternalLinks)
 
-**ServiceObjectPage.tsx** (object pages):
-- Уже имеет: breadcrumbs, InternalLinks
-- Добавить: `RelatedServices` (другие объекты того же сервиса)
+**Target: `/uslugi/dezinsekciya/klopy/`**
+- Receives from: `/uslugi/dezinsekciya/` (pest listing), related pest pages via RelatedServices (tarakany→klopy), geo pages, blog articles about klopy
 
-**NeighborhoodsOverview.tsx** (/rajony):
-- Уже имеет: breadcrumbs, InternalLinks
-- Добавить: compact service cluster links (клопы, тараканы, дезинсекция)
+**Target: `/uslugi/dezinsekciya/tarakany/`**
+- Receives from: `/uslugi/dezinsekciya/` (pest listing), klopy/blohi/muravyi RelatedServices blocks, geo pages, blog articles
 
-**MoscowRegionOverview.tsx** (/moscow-oblast):
-- Уже имеет: breadcrumbs, InternalLinks
-- Заменить: `InternalLinks` на `RelatedServices` (top services only)
+**Target: `/uslugi/deratizaciya/`**
+- Receives from: `/` (menu), pest pages (parent hub), `/rajony/` (RelatedServices "Борьба с грызунами"), blog
 
-### 7. Исправление бага: ServicePage district links
+**Target: `/uslugi/deratizaciya/krysy/`**
+- Receives from: `/uslugi/deratizaciya/` (pest listing), myshi RelatedServices, geo NCH pages
 
-Текущий код (строка 737):
-```
-<Link to={`/uslugi/dezinfekciya-${slugs[idx]}`}>
-```
-Это ВСЕГДА ссылается на дезинфекцию, даже для страницы дезинсекции или дератизации. Нужно:
-```
-<Link to={`/uslugi/${service.slug}-${slugs[idx]}`}>
-```
-(только для 3 основных сервисов: dezinfekciya, dezinsekciya, deratizaciya)
+**Target: `/uslugi/deratizaciya/myshi/`**
+- Receives from: `/uslugi/deratizaciya/` (pest listing), krysy RelatedServices, geo NCH pages
 
-### 8. Fix build error: vite-plugin-ssg.ts line 394
+**Target: `/uslugi/borba-s-krotami/`**
+- Receives from: `/uslugi/obrabotka-uchastkov/` (cross-link), header/menu
 
-Добавить тип `route` в forEach:
-```typescript
-routes.forEach((route: { path: string; outputPath: string }) => {
-```
+**Target: `/uslugi/obrabotka-uchastkov/`**
+- Receives from: `/uslugi/borba-s-krotami/` (cross-link), header/menu
 
-## Что НЕ меняется
+**Target: `/rajony/`**
+- Receives from: RelatedGeoLinks "Все районы Москвы" button on ALL pest pages and service hubs
 
-- URL, slugs, canonical — без изменений
-- robots/meta robots, noindex логика — без изменений  
-- sitemap rules — без изменений
-- SSG generation, seoRoutes.ts — без изменений
-- Paid-traffic personalization — без изменений
-- H1/title/description — без изменений
-- JSON-LD (кроме добавления BreadcrumbList где нет)
-- Существующий InternalLinks.tsx — сохраняется для страниц где новые блоки ещё не внедрены
+**Target: `/moscow-oblast/`**
+- Receives from: RelatedGeoLinks "Все города МО" button on pest/service pages
 
-## Файлы
+## 6. ПОДТВЕРЖДЕНИЕ БЕЗОПАСНОСТИ
 
-| Действие | Файл |
-|----------|------|
-| Создать | `src/lib/internalLinking.ts` |
-| Создать | `src/components/RelatedServices.tsx` |
-| Создать | `src/components/RelatedGeoLinks.tsx` |
-| Создать | `src/components/RelatedBlogLinks.tsx` |
-| Изменить | `src/components/Breadcrumbs.tsx` — добавить schema |
-| Изменить | `src/pages/ServicePage.tsx` — fix district links bug, add RelatedGeoLinks |
-| Изменить | `src/pages/ServicePestPage.tsx` — add RelatedServices, filter NCH links |
-| Изменить | `src/pages/ServiceObjectPage.tsx` — add RelatedServices |
-| Изменить | `vite-plugin-ssg.ts` — fix TS error line 394 |
+- **noindex logic**: untouched — `isSeoLinkable()` читает tier lists но не меняет robots meta
+- **canonical**: untouched — ни один canonical тег не изменён
+- **sitemap logic**: untouched — `seoRoutes.ts` и `vite-plugin-sitemap.ts` не изменены
+- **no new URLs created**: подтверждено — только новые компоненты, маршруты не добавлялись
+- **no paid-traffic logic changed**: подтверждено — TrafficContext и personalization не затронуты
+- **no links to noindex pages**: подтверждено — `isSeoLinkable()` исключает NCH Tier 2/3
 
-## Результат для 10 priority pages
+## 7. ТРИ ПРИМЕРА ФИЛЬТРАЦИИ
 
-| Страница | Новые блоки |
-|----------|-------------|
-| `/` | Без изменений (уже хорошо) |
-| `/uslugi/dezinsekciya/` | Fix district links + RelatedGeoLinks |
-| `/uslugi/dezinsekciya/klopy/` | RelatedServices (tarakany, blohi, mol) + filtered geo |
-| `/uslugi/dezinsekciya/tarakany/` | RelatedServices (klopy, muravyi, blohi) + filtered geo |
-| `/uslugi/dezinsekciya/muravyi/` | RelatedServices + filtered geo |
-| `/uslugi/dezinsekciya/blohi/` | RelatedServices + filtered geo |
-| `/uslugi/deratizaciya/` | Fix district links |
-| `/uslugi/deratizaciya/krysy/` | RelatedServices (myshi, deratizaciya hub) |
-| `/uslugi/deratizaciya/myshi/` | RelatedServices (krysy, deratizaciya hub) |
-| `/uslugi/borba-s-krotami/` | RelatedServices (obrabotka-uchastkov) |
-| `/uslugi/obrabotka-uchastkov/` | RelatedServices (borba-s-krotami) |
-| `/uslugi/dezinfekciya/` | Fix district links |
-| `/rajony/` | Compact service cluster entries |
-| `/moscow-oblast/` | Targeted RelatedServices |
-| `/sluzhba-dezinsekcii/` | RelatedServices |
+**Пример 1**: Почему `/uslugi/dezinsekciya/klopy/` НЕ получает ссылку на `/uslugi/demerkurizaciya/`
+- `getRelatedServices('dezinsekciya', 'klopy')` берёт ТОЛЬКО `pest.relatedPests` у клопов + parent hub `dezinsekciya`
+- `demerkurizaciya` не входит ни в `relatedPests` клопов, ни в тот же кластер
+- Функция не перебирает "все услуги" — только cluster-specific targets
+
+**Пример 2**: Почему NCH `/uslugi/dezinsekciya/muravyi/arbat/` исключена
+- `isSeoLinkable('/uslugi/dezinsekciya/muravyi/arbat/')` → парсит 4 сегмента → проверяет `muravyi` в `tier1Pests` → НЕ найден (tier1 = tarakany, klopy, krysy, myshi) → return `false`
+- Ссылка не попадёт ни в один блок
+
+**Пример 3**: Почему current page исключена
+- `getRelatedServices('dezinsekciya', 'klopy')` перебирает `pest.relatedPests` — там нет самого `klopy`
+- Parent hub `/uslugi/dezinsekciya/` — это другая страница
+- Дополнительно: если pest page сама = current, она не в своём `relatedPests` массиве
+
+## 8. ЧТО ОСТАЛОСЬ НА PHASE 2
+
+| Задача | Статус |
+|--------|--------|
+| `/sluzhba-dezinsekcii/` — заменить InternalLinks на RelatedServices + RelatedGeoLinks | Не сделано |
+| RelatedBlogLinks — подключить на ServicePage и ServicePestPage (где нет дублирования с existing related articles) | Не сделано |
+| FAQ с контекстными ссылками | Не сделано |
+| RelatedObjects на service hubs | Не сделано |
+| Body/CTA links в top pages | Не сделано |
+
+Phase 1 реализована. Система работает, фильтрация корректна, SEO-архитектура сохранена.
 
