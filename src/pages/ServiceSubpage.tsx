@@ -375,7 +375,7 @@ const ServiceSubpage = () => {
               })}
             </div>
             <div className="text-center mt-6">
-              <Link to="/uslugi/po-okrugam-moskvy" className="text-primary hover:underline font-medium">
+              <Link to="/uslugi/po-okrugam-moskvy/" className="text-primary hover:underline font-medium">
                 Все округа Москвы →
               </Link>
             </div>
