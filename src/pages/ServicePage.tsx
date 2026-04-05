@@ -157,12 +157,6 @@ const ServicePage = () => {
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Услуги",
-        "item": "https://goruslugimsk.ru/#services"
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
         "name": service.title
       }
     ]
