@@ -15,6 +15,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import AnimatedSection from '@/components/AnimatedSection';
 import RelatedServices from '@/components/RelatedServices';
 import RelatedGeoLinks from '@/components/RelatedGeoLinks';
+import RelatedBlogLinks from '@/components/RelatedBlogLinks';
 import ServiceQuiz from '@/components/ServiceQuiz';
 import ServiceTariffs from '@/components/ServiceTariffs';
 import WhyProblemReturns from '@/components/WhyProblemReturns';
