@@ -109,12 +109,29 @@ export function validateAndFormatMetadata(
  * Генерирует метаданные для главной страницы
  */
 export function generateIndexMetadata(): PageMetadata {
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "ГорУслуги — Санитарные Решения",
+    "url": "https://goruslugimsk.ru/",
+    "telephone": "+74950181817",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Москва",
+      "addressCountry": "RU"
+    },
+    "areaServed": ["Москва", "Московская область"],
+    "serviceType": ["Дезинсекция", "Дератизация", "Дезинфекция"],
+    "openingHours": "Mo-Su 00:00-23:59"
+  };
+
   return validateAndFormatMetadata({
     title: 'Дезинфекция, дезинсекция, дератизация в Москве',
     description: 'Профессиональная СЭС служба в Москве • Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 3 лет • 8-495-018-18-17',
     h1: 'Профессиональная служба СЭС в Москве и области',
     canonical: 'https://goruslugimsk.ru/',
     keywords: ['дезинфекция москва', 'дезинсекция москва', 'дератизация москва', 'сэс москва'],
+    schema: [localBusinessSchema],
   }).metadata;
 }
 
