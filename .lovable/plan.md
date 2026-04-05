@@ -1,69 +1,93 @@
 
 
-# Fix: SSG validation блокирует сотни страниц
+# Fix: SSG plugin crash — Vite `closeBundle` проглатывает ошибки
 
-## Найдены ДВЕ проблемы
+## Корневая причина
 
-### Проблема 1: Баг в `useParams` — MoscowRegionServicePage (корневая причина)
+**Vite 5 не пробрасывает ошибки из `closeBundle` hook.** Это значит:
 
-**`MoscowRegionServicePage.tsx` строка 34:**
-```typescript
-const { city: citySlug, service: serviceSlug } = useParams<{ city: string; service: string }>();
+1. SSG plugin запускается в `closeBundle()`
+2. Что-то падает (SSR bundle build, `getAllSSGRoutes()`, или рендер страниц)
+3. Код бросает `throw new Error(...)` 
+4. **Vite перехватывает ошибку и продолжает** — `npm run build` завершается с exit code 0
+5. В `dist/` остаются только файлы из `public/` (107 штук)
+6. Dockerfile gate ловит `107 < 500` и падает — но уже не понятно ПОЧЕМУ
+
+Это подтверждается тем, что `npm run build` "проходит без ошибок" — ошибка есть, но Vite её съедает.
+
+### Дополнительная проблема: regex в `replaceHeadTags`
+
+Строка 128 `vite-plugin-ssg.ts`:
+```javascript
+html = html.replace(/<title>.*?<\/title>/, helmet.title);
 ```
-
-**Роут в `AppSSR.tsx` строка 62:**
-```
-/moscow-oblast/:citySlug/:serviceSlug
-```
-
-Несовпадение имён параметров: роут отдаёт `{ citySlug, serviceSlug }`, а компонент ищет `{ city, service }` → оба `undefined` → ранний return `<NotFound />` → **Helmet не рендерится** → нет `<title>`, нет `<meta description>` → валидатор отклоняет страницу.
-
-Это затрагивает **все ~71 MO service pages** (23 города × 3 услуги + бонусные).
-
-### Проблема 2: Валидатор слишком строгий
-
-`validateHtml()` в `vite-plugin-ssg.ts` ставит Missing `<title>` и Missing `meta description` как **errors** (блокирует запись). Для устойчивости сборки это должны быть **warnings** — страница записывается, но помечается в логе. Жёсткий блок только для: HTML < 2KB или пустой контент.
-
-Дополнительно: regex `extractTitle` не поддерживает атрибуты (`<title data-rh="true">`) — react-helmet-async добавляет `data-rh`, и regex может не сработать.
+`react-helmet-async` генерирует `<title data-rh="true">...`, а regex ожидает `<title>` без атрибутов. Замена **молча не срабатывает** → title не обновляется.
 
 ## Изменения
 
-### Файл 1: `src/pages/MoscowRegionServicePage.tsx`
-**Строка 34** — исправить destructuring:
+### Файл 1: `vite-plugin-ssg.ts`
+
+**1. Заменить `throw` на `process.exit(1)` в CI-путях** (строки 489-494, 496-503):
+
+Вместо:
+```typescript
+throw new Error('SSG generated 0 pages...');
+```
+Делаем:
+```typescript
+console.error('FATAL: SSG generated 0 pages...');
+process.exit(1);
+```
+
+Это **гарантирует** что build упадёт, независимо от того как Vite обрабатывает ошибки в `closeBundle`.
+
+Применить ко всем трём точкам выхода:
+- `successCount === 0` (строка 489)
+- `errorCount > 0` (строка 492)  
+- Внешний `catch` (строка 496-502)
+
+**2. Добавить пошаговое логирование** — чтобы в CI-логе было видно на каком именно этапе упало:
+
+```
+[SSG:1/5] Reading template...
+[SSG:2/5] Building SSR bundle...
+[SSG:3/5] Loading SSR module...
+[SSG:4/5] Getting routes... (got N routes)
+[SSG:5/5] Rendering N pages...
+```
+
+**3. Исправить regex замены title** (строка 128):
+
 ```typescript
 // БЫЛО:
-const { city: citySlug, service: serviceSlug } = useParams<{ city: string; service: string }>();
+html = html.replace(/<title>.*?<\/title>/, helmet.title);
 // СТАЛО:
-const { citySlug, serviceSlug } = useParams<{ citySlug: string; serviceSlug: string }>();
+html = html.replace(/<title[^>]*>.*?<\/title>/i, helmet.title);
 ```
-Одна строка, исправляет все 71 MO service page.
 
-### Файл 2: `vite-plugin-ssg.ts`
+Аналогично `extractTitle` который уже исправлен на строке 26.
 
-1. **`extractTitle` (строка 25-27)** — regex должен поддерживать атрибуты:
+**4. Вокруг SSR build добавить детальный catch** (строка 212):
+
 ```typescript
-// БЫЛО: /<title>([^<]+)<\/title>/i
-// СТАЛО: /<title[^>]*>([^<]+)<\/title>/i
+try {
+  await build({...});
+  console.log('[SSG:2/5] ✓ SSR bundle built');
+} catch (buildError) {
+  console.error('FATAL: SSR bundle build failed:', buildError);
+  if (isCI) process.exit(1);
+}
 ```
 
-2. **`extractDescription` (строка 31-33)** — regex должен поддерживать `data-rh` перед `name`:
-```typescript
-// БЫЛО: /<meta\s+name="description"\s+content="([^"]+)"/i
-// СТАЛО: /<meta[^>]*name="description"[^>]*content="([^"]+)"/i
-```
+### Файл 2: Без изменений
 
-3. **`validateHtml` (строки 87, 101)** — перевести Missing title/description из `errors` в `warnings`:
-```typescript
-// строка 87: errors.push → warnings.push
-// строка 101: errors.push → warnings.push
-```
-
-Итого: жёсткий блок остаётся только для HTML < 2KB, незакрытые комментарии, отсутствие базовых тегов, незаменённый placeholder.
+Остальные файлы (`seoRoutes.ts`, `Dockerfile`, `entry-server.tsx`) не требуют правок — архитектура маршрутов корректна, проблема только в том что Vite проглатывает ошибки.
 
 ## Результат
 
-- 71 MO service page начнут рендерить правильный Helmet → title + description появятся
-- Остальные страницы без title (если есть) всё равно запишутся в dist/ с warning
-- Сборка пройдёт порог 500+ страниц
-- Качество мета-тегов отслеживается в логе как warnings для последующей работы
+- `process.exit(1)` гарантирует провал сборки при любой ошибке SSG
+- Пошаговые логи показывают ТОЧНО где упало
+- Title replacement работает с `data-rh` атрибутами от helmet
+- Если проблема в `validateAllRoutes` — мы увидим конкретную ошибку в логе
+- Если проблема в SSR bundle build — тоже увидим
 
