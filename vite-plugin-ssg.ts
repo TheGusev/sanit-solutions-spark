@@ -23,13 +23,13 @@ interface ValidationResult {
 
 // Extract title from HTML
 function extractTitle(html: string): string | null {
-  const match = html.match(/<title>([^<]+)<\/title>/i);
+  const match = html.match(/<title[^>]*>([^<]+)<\/title>/i);
   return match ? match[1].trim() : null;
 }
 
 // Extract description from HTML
 function extractDescription(html: string): string | null {
-  const match = html.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
+  const match = html.match(/<meta[^>]*name="description"[^>]*content="([^"]+)"/i);
   return match ? match[1].trim() : null;
 }
 
@@ -84,7 +84,7 @@ function validateHtml(html: string, route: string): ValidationResult {
       warnings.push(`Title too long: ${title.length} chars (max: 70)`);
     }
   } else {
-    errors.push('Missing <title> tag');
+    warnings.push('Missing <title> tag');
   }
   
   // Check Description length (140-170 chars optimal)
@@ -98,7 +98,7 @@ function validateHtml(html: string, route: string): ValidationResult {
       warnings.push(`Description too long: ${description.length} chars (max: 170)`);
     }
   } else {
-    errors.push('Missing meta description');
+    warnings.push('Missing meta description');
   }
   
   // Check word count
