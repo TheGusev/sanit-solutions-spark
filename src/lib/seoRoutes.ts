@@ -30,8 +30,7 @@ export const servicesSlugs = [
 
 // Подстраницы услуг (коммерческие страницы высокого приоритета)
 export const serviceSubpageRoutes = [
-  { parent: 'dezinfekciya', sub: 'kvartir' },
-  { parent: 'dezinfekciya', sub: 'ofisov' },
+  // dezinfekciya/kvartir and dezinfekciya/ofisov — generated via servicesForObjects × objectSlugs (line 206)
   { parent: 'dezinsekciya', sub: 'unichtozhenie-klopov' },
   { parent: 'dezinsekciya', sub: 'unichtozhenie-tarakanov' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-krys' },
