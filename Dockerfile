@@ -14,6 +14,7 @@ COPY . .
 
 # Собираем приложение
 ENV DOCKER_BUILD=true
+ARG CACHEBUST=1
 RUN npm run build 2>&1 | tee /tmp/build-output.log; echo "EXIT:$?" && grep -E '(Error|❌|MISSING|error TS)' /tmp/build-output.log | head -50 || true
 RUN find /app/dist -name "index.html" | wc -l && echo "=== SSG page count above ==="
 
