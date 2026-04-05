@@ -40,10 +40,24 @@ export default function ServicePestPage() {
   const pestSlug = params.pest || params.subSlug;
   
   const [showCalculator, setShowCalculator] = useState(false);
+  const [reviews, setReviews] = useState(staticReviews);
   
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [service, pestSlug]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const { data } = await supabase
+        .from('public_reviews')
+        .select('rating')
+        .order('created_at', { ascending: false });
+      if (data && data.length > 0) {
+        setReviews(data as any);
+      }
+    };
+    fetchReviews();
+  }, []);
   
   const validServices = ['dezinsekciya', 'deratizaciya'];
   if (!service || !validServices.includes(service) || !pestSlug) {
