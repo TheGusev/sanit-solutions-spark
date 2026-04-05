@@ -283,11 +283,8 @@ export function getBreadcrumbItems(pathname: string): BreadcrumbItemData[] {
   return items;
 }
 
-// ============================================================
-// BreadcrumbList JSON-LD schema generation
-// ============================================================
 
-// ============================================================
+//
 // Related mole cities (3-5 neighboring cities for borba-s-krotami)
 // ============================================================
 
