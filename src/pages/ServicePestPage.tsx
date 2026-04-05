@@ -405,7 +405,8 @@ export default function ServicePestPage() {
                       Безопасна ли обработка для детей и животных?
                     </AccordionTrigger>
                     <AccordionContent>
-                      Да, мы используем сертифицированные препараты IV класса опасности (малоопасные). После проветривания помещение полностью безопасно.
+                      Да, мы используем сертифицированные препараты IV класса опасности (малоопасные). После проветривания помещение полностью безопасно.{' '}
+                      <Link to="/blog/kak-podgotovit-pomeshchenie/" className="text-primary hover:underline">Как подготовить помещение к обработке</Link>.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="q4">
