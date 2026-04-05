@@ -232,7 +232,7 @@ async function encryptPayload(
   // AES-128-GCM encrypt
   const aesKey = await crypto.subtle.importKey(
     "raw",
-    contentEncryptionKey,
+    contentEncryptionKey.buffer as ArrayBuffer,
     "AES-GCM",
     false,
     ["encrypt"]
