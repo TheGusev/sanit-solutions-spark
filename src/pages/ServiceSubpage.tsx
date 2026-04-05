@@ -390,7 +390,9 @@ const ServiceSubpage = () => {
             </Link>
           </div>
         </section>
-        <InternalLinks currentService={parentSlug} />
+        <RelatedServices serviceSlug={parentSlug || ''} title="Смежные услуги" />
+        <RelatedGeoLinks serviceSlug={parentSlug} />
+        <RelatedBlogLinks serviceSlug={parentSlug} />
       </main>
 
       <Footer />

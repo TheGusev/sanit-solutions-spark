@@ -208,12 +208,9 @@ export default function ServiceDistrictPage() {
           </div>
         </AnimatedSection>
         
-        <InternalLinks 
-          currentService={serviceSlug} 
-          currentNeighborhood={districtSlug}
-          variant="grid" 
-          title="Смотрите также" 
-        />
+        <RelatedServices serviceSlug={serviceSlug || ''} title="Смотрите также" />
+        <RelatedGeoLinks serviceSlug={serviceSlug} />
+        <RelatedBlogLinks serviceSlug={serviceSlug} />
       </main>
       
       <Footer />

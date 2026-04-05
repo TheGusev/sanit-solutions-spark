@@ -588,13 +588,9 @@ export default function NchPage() {
           </div>
         </AnimatedSection>
         
-        {/* Internal Links */}
-        <InternalLinks
-          currentService={service}
-          currentPest={pestSlug}
-          currentNeighborhood={neighborhoodSlug}
-          title="Смотрите также"
-        />
+        <RelatedServices serviceSlug={service} pestSlug={pestSlug} title="Смотрите также" />
+        <RelatedGeoLinks serviceSlug={service} pestSlug={pestSlug} />
+        <RelatedBlogLinks serviceSlug={service} pestSlug={pestSlug} />
       </main>
       
       <Footer />

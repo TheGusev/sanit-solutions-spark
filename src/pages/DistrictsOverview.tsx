@@ -165,7 +165,8 @@ const DistrictsOverview = () => {
             </div>
           </section>
         </div>
-        <InternalLinks />
+        <RelatedServices serviceSlug="dezinsekciya" title="Популярные услуги" />
+        <RelatedBlogLinks serviceSlug="dezinsekciya" title="Полезные статьи" />
       </main>
 
       <Footer />

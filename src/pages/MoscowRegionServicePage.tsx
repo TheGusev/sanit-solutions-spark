@@ -336,12 +336,26 @@ export default function MoscowRegionServicePage() {
           </div>
         </AnimatedSection>
         
-        {/* Internal Links */}
-        <InternalLinks
-          currentService={serviceSlug}
-          currentCity={citySlug}
-          title="Другие услуги"
-        />
+        <RelatedServices serviceSlug={serviceSlug || ''} title={`Другие услуги ${city.prepositional}`} />
+        <RelatedGeoLinks title="Районы Москвы" />
+        <RelatedBlogLinks serviceSlug={serviceSlug} />
+        {(() => {
+          const moLinks = getRelatedMoCitiesForService(serviceSlug || '', citySlug || '');
+          return moLinks.length > 0 ? (
+            <section className="py-8">
+              <div className="container mx-auto px-4 text-center">
+                <h3 className="text-lg font-bold mb-4">{serviceData.title} в других городах МО</h3>
+                <div className="flex flex-wrap justify-center gap-3">
+                  {moLinks.map(link => (
+                    <Link key={link.url} to={link.url} className="px-4 py-2 bg-muted hover:bg-primary hover:text-primary-foreground rounded-full transition-colors text-sm font-medium">
+                      {link.text}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </section>
+          ) : null;
+        })()}
       </main>
       
       <Footer />

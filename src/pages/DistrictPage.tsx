@@ -392,7 +392,9 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
           </div>
         </section>
 
-        <InternalLinks currentService={svc.currentService} currentDistrict={district.id} title="Другие услуги в Москве" maxLinks={12} />
+        <RelatedServices serviceSlug={serviceType} title={`Услуги в ${district.name}`} />
+        <RelatedGeoLinks serviceSlug={serviceType} title="Работаем по районам Москвы" />
+        <RelatedBlogLinks serviceSlug={serviceType} />
       </main>
 
       <Footer />
