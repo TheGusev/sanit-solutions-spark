@@ -374,16 +374,10 @@ export function sitemapPlugin(): Plugin {
       // ========== SITEMAP-NCH.XML (НЧ-страницы: tiered model ~774 URL) ==========
       const nchUrls: SitemapUrl[] = [];
       
-<<<<<<< Updated upstream
       // Tier 1: top 4 pests × all neighborhoods
       tier1Pests.forEach(pestSlug => {
         const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
         neighborhoodSlugs.forEach(nhoodSlug => {
-=======
-      // Дезинсекция + вредитель + все 130 районов
-      dezinsekciyaPestSlugs.forEach(pestSlug => {
-        topNeighborhoods.forEach(neighborhoodSlug => {
->>>>>>> Stashed changes
           nchUrls.push({
             loc: `/uslugi/${service}/${pestSlug}/${nhoodSlug}/`,
             lastmod: currentDate,
@@ -393,21 +387,7 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
-<<<<<<< Updated upstream
       // Tier 2+3: removed from sitemap (noindex pages — doorway/thin content risk)
-=======
-      // Дератизация + вредитель + все 130 районов
-      deratizaciyaPestSlugs.forEach(pestSlug => {
-        topNeighborhoods.forEach(neighborhoodSlug => {
-          nchUrls.push({
-            loc: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/`,
-            lastmod: currentDate,
-            changefreq: 'monthly',
-            priority: '0.7',
-          });
-        });
-      });
->>>>>>> Stashed changes
       
       // ========== SITEMAP-SERVICES-OBJECT.XML (услуга + объект = 24 URL) ==========
       const serviceObjectUrls: SitemapUrl[] = [];
