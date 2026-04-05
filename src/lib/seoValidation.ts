@@ -113,7 +113,7 @@ export function countWordsInHtml(html: string): number {
  * Извлекает Title из HTML
  */
 export function extractTitle(html: string): string | null {
-  const match = html.match(/<title>([^<]+)<\/title>/i);
+  const match = html.match(/<title[^>]*>([^<]+)<\/title>/i);
   return match ? match[1].trim() : null;
 }
 
