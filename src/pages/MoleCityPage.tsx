@@ -16,7 +16,7 @@ import ServiceQuiz from '@/components/ServiceQuiz';
 import RelatedServices from '@/components/RelatedServices';
 import RelatedGeoLinks from '@/components/RelatedGeoLinks';
 import { getRelatedMoleCities } from '@/lib/internalLinking';
-import { Link as RouterLink } from 'react-router-dom';
+
 import CalculatorModal from '@/components/CalculatorModal';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
