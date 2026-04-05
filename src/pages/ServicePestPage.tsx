@@ -212,7 +212,7 @@ export default function ServicePestPage() {
           )}
           
           <div className="container mx-auto px-4 relative z-10">
-            <Breadcrumbs items={breadcrumbItems} />
+            <Breadcrumbs items={breadcrumbItems} showSchema={false} />
             
             <div className="mt-6 grid md:grid-cols-2 gap-8 items-center">
               <div>
