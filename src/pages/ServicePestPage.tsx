@@ -25,6 +25,8 @@ import { getPestBySlug, pests } from '@/data/pests';
 import { IconFromKey, getIconKeyFromEmoji } from '@/lib/iconMap';
 import { getPestImage } from '@/data/pestImages';
 import { servicePages, getRelatedArticlesForPest } from '@/data/services';
+import { staticReviews } from '@/data/reviews';
+import { supabase } from '@/lib/supabaseClient';
 import { topNeighborhoods } from '@/data/nchSeeds';
 import { neighborhoods } from '@/data/neighborhoods';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
@@ -38,10 +40,24 @@ export default function ServicePestPage() {
   const pestSlug = params.pest || params.subSlug;
   
   const [showCalculator, setShowCalculator] = useState(false);
+  const [reviews, setReviews] = useState(staticReviews);
   
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [service, pestSlug]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const { data } = await supabase
+        .from('public_reviews')
+        .select('rating')
+        .order('created_at', { ascending: false });
+      if (data && data.length > 0) {
+        setReviews(data as any);
+      }
+    };
+    fetchReviews();
+  }, []);
   
   const validServices = ['dezinsekciya', 'deratizaciya'];
   if (!service || !validServices.includes(service) || !pestSlug) {
@@ -71,6 +87,11 @@ export default function ServicePestPage() {
     { label: pest.name }
   ];
   
+  const avgRating = reviews.length > 0
+    ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length).toFixed(1)
+    : '4.9';
+  const reviewCount = reviews.length || staticReviews.length;
+
   const schemaMarkup = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -91,6 +112,13 @@ export default function ServicePestPage() {
         priceCurrency: 'RUB',
         minPrice: pest.priceFrom
       }
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: avgRating,
+      reviewCount: reviewCount,
+      bestRating: 5,
+      worstRating: 1
     }
   };
   
