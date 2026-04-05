@@ -121,7 +121,7 @@ export function extractTitle(html: string): string | null {
  * Извлекает Description из HTML
  */
 export function extractDescription(html: string): string | null {
-  const match = html.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
+  const match = html.match(/<meta[^>]*name="description"[^>]*content="([^"]+)"/i);
   return match ? match[1].trim() : null;
 }
 
