@@ -239,10 +239,24 @@ export function ssgPlugin(): Plugin {
         
         // Import the SSR bundle
         const serverEntryPath = pathToFileURL(resolve(distDir, 'server/entry-server.js')).href;
-        const { render, getAllSSGRoutes } = await import(serverEntryPath);
+        const ssrModule = await import(serverEntryPath);
+        
+        if (!ssrModule.render || !ssrModule.getAllSSGRoutes) {
+          throw new Error('SSR bundle missing required exports: render and/or getAllSSGRoutes');
+        }
+        
+        const { render, getAllSSGRoutes } = ssrModule;
         
         // Get all routes to prerender (from seoRoutes.ts — single source of truth)
-        const routes = getAllSSGRoutes();
+        let routes;
+        try {
+          routes = getAllSSGRoutes();
+        } catch (routeError) {
+          console.error('❌ getAllSSGRoutes() threw an error:');
+          console.error(routeError);
+          throw routeError; // Re-throw — do NOT silently continue
+        }
+        
         let successCount = 0;
         let errorCount = 0;
         let warningCount = 0;
@@ -470,8 +484,22 @@ export function ssgPlugin(): Plugin {
           console.log('✅ SSG prerendering complete! Static HTML files generated in dist/\n');
         }
         
+        // Fail-fast in CI/Docker if no pages were generated
+        const isCI = process.env.GITHUB_ACTIONS === 'true' || process.env.DOCKER_BUILD === 'true' || process.env.CI === 'true';
+        if (isCI && successCount === 0) {
+          throw new Error('SSG generated 0 pages in CI — build cannot continue');
+        }
+        if (isCI && errorCount > 0) {
+          throw new Error(`SSG had ${errorCount} rendering errors in CI — build cannot continue`);
+        }
+        
       } catch (error) {
         console.error('❌ SSG prerendering failed:', error);
+        // Re-throw in CI so the build actually fails
+        const isCI = process.env.GITHUB_ACTIONS === 'true' || process.env.DOCKER_BUILD === 'true' || process.env.CI === 'true';
+        if (isCI) {
+          throw error;
+        }
       }
     }
   };

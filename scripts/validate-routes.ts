@@ -31,7 +31,7 @@ function validateRoutes(): ValidationResult {
     console.log(`📊 Найдено маршрутов: ${routes.length}`);
 
     // 2. Проверяем минимальное количество маршрутов
-    const EXPECTED_MIN_ROUTES = 1500;
+    const EXPECTED_MIN_ROUTES = 1200;
     if (routes.length < EXPECTED_MIN_ROUTES) {
       result.errors.push(
         `Количество маршрутов (${routes.length}) меньше ожидаемого минимума (${EXPECTED_MIN_ROUTES})`

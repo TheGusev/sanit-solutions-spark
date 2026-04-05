@@ -30,8 +30,7 @@ export const servicesSlugs = [
 
 // Подстраницы услуг (коммерческие страницы высокого приоритета)
 export const serviceSubpageRoutes = [
-  { parent: 'dezinfekciya', sub: 'kvartir' },
-  { parent: 'dezinfekciya', sub: 'ofisov' },
+  // dezinfekciya/kvartir and dezinfekciya/ofisov — generated via servicesForObjects × objectSlugs (line 206)
   { parent: 'dezinsekciya', sub: 'unichtozhenie-klopov' },
   { parent: 'dezinsekciya', sub: 'unichtozhenie-tarakanov' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-krys' },
@@ -298,7 +297,7 @@ export function getAllSSGRoutes() {
     // ===== Legacy статьи (50) =====
     'kak-podgotovit-pomeshchenie', 'vidy-dezinfekcii', 'borba-s-tarakanami', 'ozonirovaniye-pomeshcheniy',
     'gryzuny-v-dome', 'sezonnost-vreditelej', 'dezinfekciya-ofisa', 'klopy-v-kvartire',
-    'narodnye-sredstva-ot-tarakanov', 'otkuda-berutsya-klopy', 'priznaki-gryzunov-v-dome',
+    'narodnye-sredstva-ot-tarakanov', 'priznaki-gryzunov-v-dome',
     'kak-izbavitsya-ot-muravyev', 'chernaya-plesen-chem-opasna', 'blohi-v-kvartire-otkuda',
     'mol-v-kvartire', 'kak-podgotovit-kvartiru-k-obrabotke', 'zapakh-posle-gryzunov',
     'dezinfekciya-posle-remonta', 'pochemu-vozvrashchayutsya-tarakany', 'dezinsekciya-dlya-biznesa',
