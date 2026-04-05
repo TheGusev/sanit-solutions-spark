@@ -125,7 +125,7 @@ function validateHtml(html: string, route: string): ValidationResult {
 function replaceHeadTags(html: string, helmet: { title: string; meta: string; link: string; script: string }): string {
   // 1. Replace title
   if (helmet.title) {
-    html = html.replace(/<title>.*?<\/title>/, helmet.title);
+    html = html.replace(/<title[^>]*>.*?<\/title>/i, helmet.title);
   }
   
   // 2. Remove conflicting meta tags before inserting new ones
@@ -192,23 +192,27 @@ export function ssgPlugin(): Plugin {
     },
     
     async closeBundle() {
+      const isCI = process.env.GITHUB_ACTIONS === 'true' || process.env.DOCKER_BUILD === 'true' || process.env.CI === 'true';
       console.log('\n🚀 Starting SSG prerendering...\n');
       
       try {
-        // Read the template HTML
+        // [SSG:1/5] Read template
+        console.log('[SSG:1/5] Reading template...');
         const templatePath = resolve(distDir, 'index.html');
         if (!existsSync(templatePath)) {
-          console.error('❌ Template index.html not found in dist/');
+          console.error('FATAL: Template index.html not found in dist/');
+          if (isCI) process.exit(1);
           return;
         }
         
         const template = readFileSync(templatePath, 'utf-8');
+        console.log('[SSG:1/5] ✓ Template loaded');
         
-        // Build SSR bundle
+        // [SSG:2/5] Build SSR bundle
+        console.log('[SSG:2/5] Building SSR bundle...');
         const { build } = await import('vite');
         
-        console.log('📦 Building SSR bundle...');
-        
+        try {
         await build({
           configFile: false,
           build: {
@@ -234,38 +238,48 @@ export function ssgPlugin(): Plugin {
           },
           logLevel: 'warn'
         });
+        } catch (buildError) {
+          console.error('FATAL: SSR bundle build failed:', buildError);
+          if (isCI) process.exit(1);
+          return;
+        }
+        console.log('[SSG:2/5] ✓ SSR bundle built');
         
-        console.log('✓ SSR bundle built\n');
-        
-        // Import the SSR bundle
+        // [SSG:3/5] Load SSR module
+        console.log('[SSG:3/5] Loading SSR module...');
         const serverEntryPath = pathToFileURL(resolve(distDir, 'server/entry-server.js')).href;
         const ssrModule = await import(serverEntryPath);
         
         if (!ssrModule.render || !ssrModule.getAllSSGRoutes) {
-          throw new Error('SSR bundle missing required exports: render and/or getAllSSGRoutes');
+          console.error('FATAL: SSR bundle missing required exports: render and/or getAllSSGRoutes');
+          if (isCI) process.exit(1);
+          return;
         }
         
         const { render, getAllSSGRoutes } = ssrModule;
+        console.log('[SSG:3/5] ✓ SSR module loaded');
         
-        // Get all routes to prerender (from seoRoutes.ts — single source of truth)
+        // [SSG:4/5] Get routes
+        console.log('[SSG:4/5] Getting routes...');
         let routes;
         try {
           routes = getAllSSGRoutes();
         } catch (routeError) {
-          console.error('❌ getAllSSGRoutes() threw an error:');
+          console.error('FATAL: getAllSSGRoutes() threw an error:');
           console.error(routeError);
-          throw routeError; // Re-throw — do NOT silently continue
+          if (isCI) process.exit(1);
+          return;
         }
+        console.log(`[SSG:4/5] ✓ Got ${routes.length} routes`);
         
+        // [SSG:5/5] Render pages
         let successCount = 0;
         let errorCount = 0;
         let warningCount = 0;
-        
-        // Track duplicates
         const titleMap = new Map<string, string[]>();
         const descriptionMap = new Map<string, string[]>();
         
-        console.log(`📄 Prerendering ${routes.length} pages...\n`);
+        console.log(`[SSG:5/5] Rendering ${routes.length} pages...\n`);
         
         for (const route of routes) {
           try {
@@ -484,21 +498,19 @@ export function ssgPlugin(): Plugin {
           console.log('✅ SSG prerendering complete! Static HTML files generated in dist/\n');
         }
         
-        // Fail-fast in CI/Docker if no pages were generated
-        const isCI = process.env.GITHUB_ACTIONS === 'true' || process.env.DOCKER_BUILD === 'true' || process.env.CI === 'true';
         if (isCI && successCount === 0) {
-          throw new Error('SSG generated 0 pages in CI — build cannot continue');
+          console.error('FATAL: SSG generated 0 pages in CI — build cannot continue');
+          process.exit(1);
         }
         if (isCI && errorCount > 0) {
-          throw new Error(`SSG had ${errorCount} rendering errors in CI — build cannot continue`);
+          console.error(`FATAL: SSG had ${errorCount} rendering errors in CI — build cannot continue`);
+          process.exit(1);
         }
         
       } catch (error) {
         console.error('❌ SSG prerendering failed:', error);
-        // Re-throw in CI so the build actually fails
-        const isCI = process.env.GITHUB_ACTIONS === 'true' || process.env.DOCKER_BUILD === 'true' || process.env.CI === 'true';
         if (isCI) {
-          throw error;
+          process.exit(1);
         }
       }
     }
