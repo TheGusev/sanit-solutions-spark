@@ -1,47 +1,117 @@
 
+# Fix plan: SSG не “не импортируется”, а тихо падает до пререндеринга
 
-# AggregateRating на pest pages с реальными данными из reviews
+## Что реально происходит
 
-## Что делаем
+Глубокая проверка кода показывает, что проблема почти наверняка не в самом `import()` SSR bundle, а на следующем шаге:
 
-Добавляем `AggregateRating` в существующую Service schema на каждой pest page (`/uslugi/dezinsekciya/klopy`, `/uslugi/deratizaciya/krysy` и т.д.). Рейтинг рассчитывается из реальных отзывов в таблице `reviews` (approved), с fallback на статические данные из `src/data/reviews.ts` для SSR.
+1. `vite-plugin-ssg.ts` успешно доходит до `await import(serverEntryPath)`
+2. затем вызывает `getAllSSGRoutes()`
+3. `getAllSSGRoutes()` внутри `src/lib/seoRoutes.ts` вызывает `validateAllRoutes(...)`
+4. в Docker/CI (`DOCKER_BUILD=true`) валидатор бросает `Error`, если есть дубли
+5. `vite-plugin-ssg.ts` ловит эту ошибку в общем `catch`, печатает лог и **не пробрасывает её дальше**
+6. build формально “зелёный”, но SSG-файлы не пишутся
+7. в `dist/` остаются только HTML из `public/` — отсюда ваши `107`
 
-## Изменения
+То есть сейчас у вас “false green build”: `npm run build` проходит, но пререндер фактически не происходит.
 
-### Файл 1: `src/pages/ServicePestPage.tsx`
+## Найденный корень проблемы
 
-1. Импортировать `staticReviews` из `@/data/reviews` и `supabase` из `@/lib/supabaseClient`
-2. Добавить `useEffect` + `useState` для загрузки approved reviews из БД (client-side), с fallback на `staticReviews`
-3. Вычислить `ratingValue` и `reviewCount` из загруженных отзывов
-4. Расширить существующий `schemaMarkup` (строки 74-95) — добавить `aggregateRating` блок:
+В `src/lib/seoRoutes.ts` есть 3 дублирующихся маршрута, которые и валят `validateAllRoutes()`:
 
-```typescript
-const avgRating = reviews.length > 0
-  ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-  : '4.9';
-const reviewCount = reviews.length || staticReviews.length;
+- `/uslugi/dezinfekciya/kvartir/`
+- `/uslugi/dezinfekciya/ofisov/`
+- `/blog/otkuda-berutsya-klopy/`
 
-const schemaMarkup = {
-  '@context': 'https://schema.org',
-  '@type': 'Service',
-  name: `Уничтожение ${pest.genitive}`,
-  // ...existing fields...
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: avgRating,
-    reviewCount: reviewCount,
-    bestRating: 5,
-    worstRating: 1
-  }
-};
-```
+### Откуда берутся дубли
 
-Важно: для SSR (первый рендер) используются `staticReviews` — бот всегда видит рейтинг. На клиенте данные обновляются из БД.
+- `dezinfekciya/kvartir` и `dezinfekciya/ofisov`
+  - есть в `serviceSubpageRoutes`
+  - и одновременно генерируются через `servicesForObjects × objectSlugs`
+- `blog/otkuda-berutsya-klopy`
+  - есть в legacy-списке blog slugs
+  - и ещё раз в блоке pest-articles
 
-## Результат
+Важно: это не “сокращение страниц”. Это удаление **повторных объявлений** тех же URL. Реальных уникальных страниц меньше не станет.
 
-- Все pest pages получают `AggregateRating` в JSON-LD
-- Рейтинг основан на реальных approved отзывах из БД
-- SSR fallback гарантирует что бот видит разметку без JS
-- Один файл изменяется, ~15 строк кода
+## Дополнительный вывод по коду
 
+Есть ещё одна системная проблема: `vite-plugin-sitemap.ts` до сих пор живёт на своём отдельном хардкоде маршрутов и уже тоже рассинхронизирован с `seoRoutes.ts`. Даже если SSG починить, sitemap останется источником будущих дублей и расхождений.
+
+Также `scripts/validate-routes.ts` ожидает минимум `1500` маршрутов — это уже не соответствует текущей архитектуре и может давать ложные тревоги.
+
+## Что я изменю
+
+### 1) `src/lib/seoRoutes.ts`
+Уберу 3 дублирующие записи:
+- `dezinfekciya/kvartir`
+- `dezinfekciya/ofisov`
+- `blog/otkuda-berutsya-klopy`
+
+Это разблокирует `validateAllRoutes()` в Docker/CI.
+
+Примечание: для `dezinfekciya/kvartir` и `dezinfekciya/ofisov` в проекте есть ещё и логическое пересечение моделей (`ServiceSubpage` vs `ServiceObjectPage`). Сейчас роутер всё равно приоритетно отдаёт `ServiceSubpage`, так что поведение URL не изменится — исчезнет только дубль в генераторе маршрутов.
+
+### 2) `vite-plugin-ssg.ts`
+Сделаю SSG действительно fail-fast:
+
+- отдельно провалидирую импорт SSR bundle:
+  - есть ли `render`
+  - есть ли `getAllSSGRoutes`
+- отдельно провалидирую загрузку маршрутов:
+  - если `getAllSSGRoutes()` падает — сборка должна падать, а не молча продолжаться
+- если `successCount === 0` или есть ошибки в CI/Docker — бросать `Error`
+- сохраню подробный лог: на каком этапе упало
+- не буду больше проглатывать корневую ошибку общим `catch`
+
+Итог: следующая подобная проблема будет падать сразу по настоящей причине, а не маскироваться как “107 страниц”.
+
+### 3) `Dockerfile`
+Добавлю запрошенную вами отладку вокруг build gate, чтобы при провале сразу было видно содержимое `dist` и хвост лога.
+
+Лучше сделать это в одном `RUN`, чтобы диагностика печаталась именно при неуспехе threshold-проверки:
+- список `/app/dist`
+- наличие `/app/dist/uslugi`
+- `tail -100 /tmp/build-output.log`
+
+Это даст понятный CI-лог без ручного гадания.
+
+### 4) `vite-plugin-sitemap.ts`
+Параллельно уберу те же дубли из sitemap-логики и приведу её в соответствие с каноническими маршрутами, чтобы:
+- sitemap не содержал повторов
+- SSG и sitemap не расходились снова
+
+Если увижу безопасный способ быстро перевести sitemap на единый источник истины — заложу это сразу. Если нет, хотя бы очищу текущие дубли и отмечу место для следующего рефактора.
+
+### 5) `scripts/validate-routes.ts`
+Обновлю ожидаемый минимум маршрутов или переведу его на более реалистичную проверку, чтобы ручной аудит не показывал ложный “провал” на здоровой сборке.
+
+## Что ожидаю после фикса
+
+После исправления должно быть так:
+
+- `npm run build` либо:
+  - реально генерирует SSG-страницы, либо
+  - падает по настоящей причине
+- в `dist/` появятся каталоги вроде:
+  - `uslugi/...`
+  - `rajony/...`
+  - `moscow-oblast/...`
+  - `blog/...`
+- счётчик `SSG pages` станет значительно выше `500`
+- критические smoke-check страницы снова будут существовать как `index.html`
+- если любой маршрут сломается, сборка упадёт сразу, а не уйдёт в “тихий 107”
+
+## Технические детали
+
+- Источник `107` — это, судя по структуре проекта, HTML из `public/`, а не результат SSG
+- текущий `entry-server.tsx` выглядит корректно: `getAllSSGRoutes` действительно реэкспортируется
+- текущий `AppSSR.tsx` покрывает основные публичные маршруты; главный блокер сейчас не роутинг, а silent-failure в `vite-plugin-ssg.ts`
+- проблема с SSG проявилась именно потому, что архитектура стала строже: раньше дубли были “скрытой грязью”, теперь валидатор их справедливо рубит в CI, но плагин ошибку скрывает
+
+## Результат после внедрения
+
+- SSG снова начнёт писать реальные страницы, а не только копировать `public/`
+- Docker gate перестанет ловить “следствие”, а будет получать нормальный fail-fast по “причине”
+- 3 дубля будут убраны без потери уникальных посадочных
+- риск повторного рассинхрона между SSG и sitemap будет снижен
