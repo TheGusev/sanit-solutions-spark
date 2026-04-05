@@ -125,7 +125,7 @@ function validateHtml(html: string, route: string): ValidationResult {
 function replaceHeadTags(html: string, helmet: { title: string; meta: string; link: string; script: string }): string {
   // 1. Replace title
   if (helmet.title) {
-    html = html.replace(/<title>.*?<\/title>/, helmet.title);
+    html = html.replace(/<title[^>]*>.*?<\/title>/i, helmet.title);
   }
   
   // 2. Remove conflicting meta tags before inserting new ones
