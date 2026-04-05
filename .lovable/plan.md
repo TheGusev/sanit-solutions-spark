@@ -1,71 +1,60 @@
 
 
-# Переключение Push на собственный push-server (`/api/push/`)
+# Fix: SSG генерирует 107 вместо 1,249+ страниц
 
-## Ситуация
+## Корень проблемы
 
-На сервере уже работает Node.js push-server с тремя эндпоинтами (`/api/push/vapid-public-key`, `/subscribe`, `/send`). Supabase Edge Function `send-push-notification` не работает (403 BadJwtToken от Apple + 7 TS build ошибок). Самое надёжное решение — переключить фронтенд на работающий push-server.
+**`vite-plugin-ssg.ts` строка 570 вызывает локальную `getAllRoutes()` (строка 191) — устаревший хардкод из ~350 строк.** Канонический источник `getAllSSGRoutes()` в `src/lib/seoRoutes.ts` содержит полный актуальный список, но плагин его не использует.
 
-## Изменения
+Расхождения между `getAllRoutes()` (плагин) и `getAllSSGRoutes()` (seoRoutes):
 
-### 1. `src/hooks/usePushNotifications.ts` — переключить на `/api/push/`
+| Что отсутствует в плагине | Страниц |
+|---|---|
+| `/sluzhba-dezinsekcii/`, `/team/`, `/otzyvy/`, `/terms/`, `/uslugi/obrabotka-uchastkov/` | 5 |
+| `/uslugi/borba-s-krotami/` + 23 города кротов МО | 24 |
+| Блог: 207 статей вместо 50 | +157 |
+| Округа: dezinsekciya + deratizaciya (только dezinfekciya есть) | +24 |
+| Подстраницы: 17 вместо 6 | +11 |
+| Пести: komary, muhi, osy-shershni, cheshuynitsy, kleshchi, mokricy | +6 |
+| NCH tiered (734) вместо flat (910 некорректных) | пересчёт |
+| Object slugs: 11 вместо 6 | +25 |
+| Trailing slashes на path | все пути |
 
-- Заменить VAPID ключ на новый: `BAPBq6a7TvmD4jlXMCRl22dxxueotpco5R_H0JKirwOuC1poOoOjfNNMQL0Eq1eQBZXDyCava8qhrElM3I4JSDo`
-- `subscribeToPush()`: вместо `supabase.functions.invoke('save-push-subscription')` → `fetch('/api/push/subscribe', { method: 'POST', body: { endpoint, keys } })`
-- `unsubscribeFromPush()`: аналогично, POST на `/api/push/subscribe` (push-server делает REPLACE, отписка — через PushManager)
-- `sendTestPush()`: вместо `supabase.functions.invoke('send-push-notification')` → `fetch('/api/push/send', { method: 'POST', body: { title, body, url } })`
-- Убрать импорт `supabase` из этого файла
+Вторая проблема: **Dockerfile строка 17** использует `;` вместо `&&`, поэтому если `npm run build` падает, Docker всё равно продолжает сборку.
 
-### 2. `supabase/functions/handle-lead/index.ts` — отправка push при новой заявке
+## План изменений
 
-После успешного сохранения лида в БД (строка ~308), добавить вызов push-server:
+### Файл 1: `src/entry-server.tsx`
+Добавить экспорт `getAllSSGRoutes` из seoRoutes:
 ```typescript
-try {
-  await fetch('https://goruslugimsk.ru/api/push/send', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      title: '🔔 Новая заявка!',
-      body: `${leadData.phone} — ${leadData.source || 'сайт'}`,
-      url: '/admin/'
-    })
-  });
-} catch (e) { console.error('Push send error:', e); }
+export { getAllSSGRoutes } from './lib/seoRoutes';
 ```
 
-Это **заменяет** DB trigger `on_new_lead` → edge function цепочку на прямой HTTP вызов.
+### Файл 2: `vite-plugin-ssg.ts`
+1. **Удалить строки 27-347** — весь блок хардкоженных маршрутов (`staticRoutes`, `servicesSlugs`, `neighborhoodSlugs`, `blogSlugs`, `getAllRoutes()`)
+2. **Строка 570**: заменить `getAllRoutes()` на динамический импорт из SSR bundle:
+```typescript
+const { render, getAllSSGRoutes } = await import(serverEntryPath);
+const routes = getAllSSGRoutes();
+```
+3. Оставить без изменений: `validateHtml`, `replaceHeadTags`, `extractTitle`, `extractDescription`, `countWordsInHtml`, весь `closeBundle` кроме источника маршрутов.
 
-### 3. `supabase/functions/send-push-notification/index.ts` — исправить TS ошибки
+### Файл 3: `Dockerfile`
+Заменить строку 17 (сборка) на fail-fast вариант:
+```dockerfile
+RUN npm run build 2>&1 | tee /tmp/build-output.log && \
+    SSG_COUNT=$(find /app/dist -name "index.html" | wc -l) && \
+    echo "SSG pages: $SSG_COUNT" && \
+    test "$SSG_COUNT" -ge 500 || (echo "FAIL: only $SSG_COUNT pages" && exit 1)
+```
+Удалить строку 18 (отдельный `find ... | wc -l` — теперь встроен в строку выше).
 
-Все 7 ошибок — `Uint8Array` не assignable to `BufferSource` в Deno strict mode. Фикс: везде где передаётся `Uint8Array` в `crypto.subtle`, оборачивать в `.buffer`:
-- `crypto.subtle.importKey("pkcs8", pkcs8.buffer, ...)` (строка 71)
-- `crypto.subtle.importKey("raw", salt..., ...)` → добавить `.buffer` (строка 137)
-- `crypto.subtle.sign("HMAC", saltKey, ikm.buffer)` (строка 138)
-- `crypto.subtle.sign("HMAC", prkKey, infoWithCounter.buffer)` (строка 142)
-- `crypto.subtle.importKey("raw", clientPublicKey.buffer, ...)` (строка 193)
-- `crypto.subtle.importKey("raw", contentEncryptionKey.buffer, ...)` (строка 233)
-- `{ name: "AES-GCM", iv: nonce.buffer }` (строка 243)
-
-Также удалить неиспользуемую `keyData` (строка 60).
-
-Это нужно чтобы build проходил, даже если эта функция больше не основной путь доставки push.
-
-### 4. Dashboard — без изменений
-
-Баннер подписки в `/admin/` и компонент `PushNotificationSettings` в настройках уже подключены к хуку. После смены хука всё заработает автоматически.
-
-## Итого файлов
-
-| Файл | Действие |
-|------|----------|
-| `src/hooks/usePushNotifications.ts` | Переключить на `/api/push/` + новый VAPID key |
-| `supabase/functions/handle-lead/index.ts` | Добавить POST на push-server после сохранения лида |
-| `supabase/functions/send-push-notification/index.ts` | Фикс 7 TS ошибок (`.buffer`) |
+### Файл 4: `.github/workflows/docker-build.yml`
+Добавить в smoke check проверку `blog/klopy-v-kvartire/index.html` (blog route — подтверждает что блог тоже рендерится). Остальные проверки корректны.
 
 ## Результат
-
-- Подписка идёт через `/api/push/subscribe` → SQLite на сервере
-- При новой заявке `handle-lead` → POST `/api/push/send` → web-push → iPhone
-- Build проходит без ошибок
-- Supabase Edge Function остаётся как fallback (можно будет удалить позже)
+- Единый источник маршрутов: `seoRoutes.ts` → `entry-server.tsx` → `vite-plugin-ssg.ts`
+- ~1,249 страниц генерируются при каждой сборке
+- Dockerfile fail-fast при <500 страниц
+- Smoke check в CI подтверждает критические категории
 
