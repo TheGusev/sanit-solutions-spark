@@ -43,47 +43,47 @@ const Footer = memo(() => {
           <div>
             <h4 className="font-bold mb-4">Услуги</h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><Link to="/uslugi/dezinfekciya" className="hover:opacity-100">• Дезинфекция помещений</Link></li>
-              <li><Link to="/uslugi/dezinsekciya" className="hover:opacity-100">• Дезинсекция (уничтожение насекомых)</Link></li>
-              <li><Link to="/uslugi/deratizaciya" className="hover:opacity-100">• Дератизация (борьба с грызунами)</Link></li>
-              <li><Link to="/uslugi/ozonirovanie" className="hover:opacity-100">• Озонирование</Link></li>
-              <li><Link to="/uslugi/dezodoraciya" className="hover:opacity-100">• Дезодорация</Link></li>
-              <li><Link to="/uslugi/demerkurizaciya" className="hover:opacity-100">• Демеркуризация</Link></li>
-              <li><Link to="/uslugi/borba-s-krotami" className="hover:opacity-100">• Борьба с кротами</Link></li>
-              <li><Link to="/uslugi/obrabotka-uchastkov" className="hover:opacity-100">• Обработка участков</Link></li>
-              <li><Link to="/sluzhba-dezinsekcii" className="hover:opacity-100">• Служба дезинсекции</Link></li>
+              <li><Link to="/uslugi/dezinfekciya/" className="hover:opacity-100">• Дезинфекция помещений</Link></li>
+              <li><Link to="/uslugi/dezinsekciya/" className="hover:opacity-100">• Дезинсекция (уничтожение насекомых)</Link></li>
+              <li><Link to="/uslugi/deratizaciya/" className="hover:opacity-100">• Дератизация (борьба с грызунами)</Link></li>
+              <li><Link to="/uslugi/ozonirovanie/" className="hover:opacity-100">• Озонирование</Link></li>
+              <li><Link to="/uslugi/dezodoraciya/" className="hover:opacity-100">• Дезодорация</Link></li>
+              <li><Link to="/uslugi/demerkurizaciya/" className="hover:opacity-100">• Демеркуризация</Link></li>
+              <li><Link to="/uslugi/borba-s-krotami/" className="hover:opacity-100">• Борьба с кротами</Link></li>
+              <li><Link to="/uslugi/obrabotka-uchastkov/" className="hover:opacity-100">• Обработка участков</Link></li>
+              <li><Link to="/sluzhba-dezinsekcii/" className="hover:opacity-100">• Служба дезинсекции</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-bold mb-4">Информация</h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><Link to="/uslugi/po-okrugam-moskvy" className="hover:opacity-100">• По округам Москвы</Link></li>
-              <li><Link to="/uslugi/po-okrugam-moskvy" className="hover:opacity-100">• Дезинсекция по округам</Link></li>
-              <li><Link to="/uslugi/po-okrugam-moskvy" className="hover:opacity-100">• Дератизация по округам</Link></li>
-              <li><Link to="/rajony" className="hover:opacity-100">• Районы Москвы</Link></li>
-              <li><Link to="/blog" className="hover:opacity-100">• Блог и статьи</Link></li>
-              <li><Link to="/blog/kak-podgotovit-pomeshchenie" className="hover:opacity-100">• Подготовка к дезинфекции</Link></li>
+              <li><Link to="/uslugi/po-okrugam-moskvy/" className="hover:opacity-100">• По округам Москвы</Link></li>
+              <li><Link to="/uslugi/po-okrugam-moskvy/" className="hover:opacity-100">• Дезинсекция по округам</Link></li>
+              <li><Link to="/uslugi/po-okrugam-moskvy/" className="hover:opacity-100">• Дератизация по округам</Link></li>
+              <li><Link to="/rajony/" className="hover:opacity-100">• Районы Москвы</Link></li>
+              <li><Link to="/blog/" className="hover:opacity-100">• Блог и статьи</Link></li>
+              <li><Link to="/blog/kak-podgotovit-pomeshchenie/" className="hover:opacity-100">• Подготовка к дезинфекции</Link></li>
               <li><Link to="/#faq" className="hover:opacity-100">• Частые вопросы</Link></li>
-              <li><Link to="/privacy" className="hover:opacity-100">• Политика конфиденциальности</Link></li>
-              <li><Link to="/terms" className="hover:opacity-100">• Пользовательское соглашение</Link></li>
-              <li><Link to="/contacts" className="hover:opacity-100">• Контакты и реквизиты</Link></li>
-              <li><Link to="/team" className="hover:opacity-100">• Наша команда</Link></li>
-              <li><Link to="/otzyvy" className="hover:opacity-100">• Отзывы клиентов</Link></li>
+              <li><Link to="/privacy/" className="hover:opacity-100">• Политика конфиденциальности</Link></li>
+              <li><Link to="/terms/" className="hover:opacity-100">• Пользовательское соглашение</Link></li>
+              <li><Link to="/contacts/" className="hover:opacity-100">• Контакты и реквизиты</Link></li>
+              <li><Link to="/team/" className="hover:opacity-100">• Наша команда</Link></li>
+              <li><Link to="/otzyvy/" className="hover:opacity-100">• Отзывы клиентов</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-bold mb-4">Московская область</h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><Link to="/moscow-oblast" className="hover:opacity-100">• Все города МО</Link></li>
-              <li><Link to="/moscow-oblast/khimki" className="hover:opacity-100">• Химки</Link></li>
-              <li><Link to="/moscow-oblast/mytishchi" className="hover:opacity-100">• Мытищи</Link></li>
-              <li><Link to="/moscow-oblast/balashikha" className="hover:opacity-100">• Балашиха</Link></li>
-              <li><Link to="/moscow-oblast/krasnogorsk" className="hover:opacity-100">• Красногорск</Link></li>
-              <li><Link to="/moscow-oblast/podolsk" className="hover:opacity-100">• Подольск</Link></li>
-              <li><Link to="/moscow-oblast/domodedovo" className="hover:opacity-100">• Домодедово</Link></li>
-              <li><Link to="/moscow-oblast/ramenskoe" className="hover:opacity-100">• Раменское</Link></li>
+              <li><Link to="/moscow-oblast/" className="hover:opacity-100">• Все города МО</Link></li>
+              <li><Link to="/moscow-oblast/khimki/" className="hover:opacity-100">• Химки</Link></li>
+              <li><Link to="/moscow-oblast/mytishchi/" className="hover:opacity-100">• Мытищи</Link></li>
+              <li><Link to="/moscow-oblast/balashikha/" className="hover:opacity-100">• Балашиха</Link></li>
+              <li><Link to="/moscow-oblast/krasnogorsk/" className="hover:opacity-100">• Красногорск</Link></li>
+              <li><Link to="/moscow-oblast/podolsk/" className="hover:opacity-100">• Подольск</Link></li>
+              <li><Link to="/moscow-oblast/domodedovo/" className="hover:opacity-100">• Домодедово</Link></li>
+              <li><Link to="/moscow-oblast/ramenskoe/" className="hover:opacity-100">• Раменское</Link></li>
             </ul>
           </div>
 

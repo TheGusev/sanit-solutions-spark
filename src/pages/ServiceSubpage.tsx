@@ -114,7 +114,7 @@ const ServiceSubpage = () => {
               <BreadcrumbList className="text-white/80">
                 <BreadcrumbItem><BreadcrumbLink asChild><Link to="/" className="hover:text-white">Главная</Link></BreadcrumbLink></BreadcrumbItem>
                 <BreadcrumbSeparator className="text-white/60" />
-                <BreadcrumbItem><BreadcrumbLink asChild><Link to={`/uslugi/${parentSlug}`} className="hover:text-white">{parentService?.title || 'Услуги'}</Link></BreadcrumbLink></BreadcrumbItem>
+                <BreadcrumbItem><BreadcrumbLink asChild><Link to={`/uslugi/${parentSlug}/`} className="hover:text-white">{parentService?.title || 'Услуги'}</Link></BreadcrumbLink></BreadcrumbItem>
                 <BreadcrumbSeparator className="text-white/60" />
                 <BreadcrumbItem><BreadcrumbPage className="text-white">{subpage.title}</BreadcrumbPage></BreadcrumbItem>
               </BreadcrumbList>
@@ -375,7 +375,7 @@ const ServiceSubpage = () => {
               })}
             </div>
             <div className="text-center mt-6">
-              <Link to="/uslugi/po-okrugam-moskvy" className="text-primary hover:underline font-medium">
+              <Link to="/uslugi/po-okrugam-moskvy/" className="text-primary hover:underline font-medium">
                 Все округа Москвы →
               </Link>
             </div>
@@ -385,7 +385,7 @@ const ServiceSubpage = () => {
         {/* Back to parent service */}
         <section className="py-8">
           <div className="container mx-auto px-4 text-center">
-            <Link to={`/uslugi/${parentSlug}`} className="inline-flex items-center text-primary hover:underline font-medium">
+            <Link to={`/uslugi/${parentSlug}/`} className="inline-flex items-center text-primary hover:underline font-medium">
               ← Вернуться к услуге {parentService?.title || 'Услуги'}
             </Link>
           </div>

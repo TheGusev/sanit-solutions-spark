@@ -39,17 +39,16 @@ const faqSchema = {
 
 const DistrictsOverview = () => {
   const breadcrumbItems = [
-    { label: "Услуги", href: "/#services" },
     { label: "По округам Москвы" }
   ];
 
   const services = [
-    { title: "Дезинфекция", href: "/uslugi/dezinfekciya", price: "от 1000₽" },
-    { title: "Дезинсекция", href: "/uslugi/dezinsekciya", price: "от 1200₽" },
-    { title: "Дератизация", href: "/uslugi/deratizaciya", price: "от 1400₽" },
-    { title: "Озонирование", href: "/uslugi/ozonirovanie", price: "от 1500₽" },
-    { title: "Дезодорация", href: "/uslugi/dezodoraciya", price: "от 1000₽" },
-    { title: "Демеркуризация", href: "/uslugi/demerkurizaciya", price: "от 3000₽" },
+    { title: "Дезинфекция", href: "/uslugi/dezinfekciya/", price: "от 1000₽" },
+    { title: "Дезинсекция", href: "/uslugi/dezinsekciya/", price: "от 1200₽" },
+    { title: "Дератизация", href: "/uslugi/deratizaciya/", price: "от 1400₽" },
+    { title: "Озонирование", href: "/uslugi/ozonirovanie/", price: "от 1500₽" },
+    { title: "Дезодорация", href: "/uslugi/dezodoraciya/", price: "от 1000₽" },
+    { title: "Демеркуризация", href: "/uslugi/demerkurizaciya/", price: "от 3000₽" },
   ];
 
   return (
@@ -95,7 +94,7 @@ const DistrictsOverview = () => {
                 const bgImage = getDistrictImage(district.id);
                 return (
                   <div key={district.id}>
-                    <Link to={`/uslugi/${district.slug}`}>
+                    <Link to={`/uslugi/${district.slug}/`}>
                       <div 
                         className="relative h-56 rounded-xl overflow-hidden group cursor-pointer"
                         style={{ backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}

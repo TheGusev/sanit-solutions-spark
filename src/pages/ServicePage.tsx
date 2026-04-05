@@ -157,12 +157,6 @@ const ServicePage = () => {
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Услуги",
-        "item": "https://goruslugimsk.ru/#services"
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
         "name": service.title
       }
     ]
@@ -800,7 +794,7 @@ const ServicePage = () => {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {displayServices.map((otherService, idx) => (
                 <AnimatedSection key={otherService.slug} animation="fade-up" delay={idx * 100}>
-                  <Link to={`/uslugi/${otherService.slug}`}>
+                  <Link to={`/uslugi/${otherService.slug}/`}>
                     <Card className="hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer">
                       <CardContent className="p-6 flex items-center justify-between">
                         <div>
