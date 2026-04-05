@@ -143,18 +143,6 @@ const ServicePage = () => {
     }
   };
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": service.faq.map(item => ({
-      "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.answer
-      }
-    }))
-  };
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
