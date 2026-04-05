@@ -16,9 +16,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-<<<<<<< Updated upstream
-=======
-      start_period: 30s
 
   push-server:
     image: node:20-alpine
@@ -38,4 +35,3 @@ services:
 
 volumes:
   push-data:
->>>>>>> Stashed changes
