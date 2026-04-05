@@ -41,8 +41,8 @@ const metadata: PageMetadata = {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Главная", item: "https://goruslugimsk.ru" },
-        { "@type": "ListItem", position: 2, name: "Служба дезинсекции", item: "https://goruslugimsk.ru/sluzhba-dezinsekcii/" },
+        { "@type": "ListItem", position: 1, name: "Главная", item: "https://goruslugimsk.ru/" },
+        { "@type": "ListItem", position: 2, name: "Служба дезинсекции" },
       ],
     },
   ],

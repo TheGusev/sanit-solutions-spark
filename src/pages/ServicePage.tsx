@@ -143,18 +143,6 @@ const ServicePage = () => {
     }
   };
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": service.faq.map(item => ({
-      "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.answer
-      }
-    }))
-  };
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -164,7 +152,7 @@ const ServicePage = () => {
         "@type": "ListItem",
         "position": 1,
         "name": "Главная",
-        "item": "https://goruslugimsk.ru"
+        "item": "https://goruslugimsk.ru/"
       },
       {
         "@type": "ListItem",
@@ -175,13 +163,44 @@ const ServicePage = () => {
       {
         "@type": "ListItem",
         "position": 3,
-        "name": service.title,
-        "item": `https://goruslugimsk.ru/uslugi/${service.slug}`
+        "name": service.title
       }
     ]
   };
 
-  metadata.schema = [schemaMarkup, faqSchema, breadcrumbSchema];
+  // Contextual FAQ additions with internal links for key service hubs
+  const contextualFaqMap: Record<string, Array<{ question: string; answer: string }>> = {
+    dezinsekciya: [
+      { question: "Работаете ли вы по всей Москве?", answer: "Да, охватываем все районы Москвы и Московскую область. Выберите ваш район на странице районов." },
+    ],
+    deratizaciya: [
+      { question: "Выезжаете в Московскую область?", answer: "Да, работаем по всему МО. Подробнее — на странице городов Московской области." },
+    ],
+    'borba-s-krotami': [
+      { question: "Совмещаете ли с обработкой участка?", answer: "Да, можно заказать комплексно с обработкой участка от других вредителей." },
+    ],
+  };
+
+  const contextualFaqItems = contextualFaqMap[service.slug] || [];
+  const allFaqForSchema = [
+    ...service.faq,
+    ...contextualFaqItems,
+  ];
+
+  const faqSchemaFull = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": allFaqForSchema.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  };
+
+  metadata.schema = [schemaMarkup, faqSchemaFull, breadcrumbSchema];
 
   return (
     <>
@@ -648,6 +667,43 @@ const ServicePage = () => {
                       </AccordionItem>
                     </AnimatedSection>
                   ))}
+                  {/* Contextual FAQ with internal links */}
+                  {service.slug === 'dezinsekciya' && (
+                    <AnimatedSection animation="fade-up" delay={service.faq.length * 100}>
+                      <AccordionItem value="ctx-1" className="bg-card rounded-xl px-6 border">
+                        <AccordionTrigger className="text-left text-lg hover:no-underline">
+                          Работаете ли вы по всей Москве?
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground text-base">
+                          Да, охватываем все районы Москвы и Московскую область. <Link to="/rajony/" className="text-primary hover:underline">Выберите ваш район</Link> для уточнения сроков выезда.
+                        </AccordionContent>
+                      </AccordionItem>
+                    </AnimatedSection>
+                  )}
+                  {service.slug === 'deratizaciya' && (
+                    <AnimatedSection animation="fade-up" delay={service.faq.length * 100}>
+                      <AccordionItem value="ctx-1" className="bg-card rounded-xl px-6 border">
+                        <AccordionTrigger className="text-left text-lg hover:no-underline">
+                          Выезжаете в Московскую область?
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground text-base">
+                          Да, работаем по всему МО. Подробнее — на странице <Link to="/moscow-oblast/" className="text-primary hover:underline">городов Московской области</Link>.
+                        </AccordionContent>
+                      </AccordionItem>
+                    </AnimatedSection>
+                  )}
+                  {service.slug === 'borba-s-krotami' && (
+                    <AnimatedSection animation="fade-up" delay={service.faq.length * 100}>
+                      <AccordionItem value="ctx-1" className="bg-card rounded-xl px-6 border">
+                        <AccordionTrigger className="text-left text-lg hover:no-underline">
+                          Совмещаете ли с обработкой участка?
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground text-base">
+                          Да, можно заказать комплексно с <Link to="/uslugi/obrabotka-uchastkov/" className="text-primary hover:underline">обработкой участка</Link> от других вредителей.
+                        </AccordionContent>
+                      </AccordionItem>
+                    </AnimatedSection>
+                  )}
                 </Accordion>
               </div>
             </div>

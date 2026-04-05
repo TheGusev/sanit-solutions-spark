@@ -336,7 +336,7 @@ export function generateBreadcrumbSchema(items: BreadcrumbItemData[]): object {
       '@type': 'ListItem',
       position: 1,
       name: 'Главная',
-      item: SEO_CONFIG.baseUrl,
+      item: SEO_CONFIG.baseUrl + '/',
     },
     ...items.map((item, idx) => ({
       '@type': 'ListItem',

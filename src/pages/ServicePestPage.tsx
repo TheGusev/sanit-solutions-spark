@@ -151,9 +151,9 @@ export default function ServicePestPage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://goruslugimsk.ru' },
-      { '@type': 'ListItem', position: 2, name: serviceName, item: `https://goruslugimsk.ru/uslugi/${service}` },
-      { '@type': 'ListItem', position: 3, name: pest.name, item: `https://goruslugimsk.ru${canonicalPath}` }
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: 'https://goruslugimsk.ru/' },
+      { '@type': 'ListItem', position: 2, name: serviceName, item: `https://goruslugimsk.ru/uslugi/${service}/` },
+      { '@type': 'ListItem', position: 3, name: pest.name }
     ]
   };
 
