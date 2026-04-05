@@ -1,5 +1,5 @@
 # robots.txt for goruslugimsk.ru
-# Last updated: 2026-03-22
+# Last updated: 2026-04-05
 
 # Yandex (основной поисковик для RU)
 User-agent: Yandex
@@ -71,6 +71,7 @@ Disallow: /
 
 User-agent: SemrushBot
 Crawl-delay: 2
+Disallow: /
 
 User-agent: MJ12bot
 Disallow: /
@@ -93,5 +94,5 @@ Disallow: /wp-admin/
 Disallow: /wp-content/
 Disallow: /wp-includes/
 
-# Главный индекс sitemap (10 файлов)
+# Главный индекс sitemap (9 файлов)
 Sitemap: https://goruslugimsk.ru/sitemap-index.xml
