@@ -23,7 +23,7 @@ interface ValidationResult {
 
 // Extract title from HTML
 function extractTitle(html: string): string | null {
-  const match = html.match(/<title>([^<]+)<\/title>/i);
+  const match = html.match(/<title[^>]*>([^<]+)<\/title>/i);
   return match ? match[1].trim() : null;
 }
 
