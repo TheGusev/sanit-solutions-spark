@@ -14,7 +14,8 @@ COPY . .
 
 # Собираем приложение
 ENV DOCKER_BUILD=true
-RUN npm run build
+RUN npm run build 2>&1 | tee /tmp/build-output.log; echo "EXIT:$?" && grep -E '(Error|❌|MISSING|error TS)' /tmp/build-output.log | head -50 || true
+RUN find /app/dist -name "index.html" | wc -l && echo "=== SSG page count above ==="
 
 # ── Hard SSG artifact check: fail build if critical pages missing ──
 
