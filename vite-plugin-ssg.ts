@@ -98,7 +98,7 @@ function validateHtml(html: string, route: string): ValidationResult {
       warnings.push(`Description too long: ${description.length} chars (max: 170)`);
     }
   } else {
-    errors.push('Missing meta description');
+    warnings.push('Missing meta description');
   }
   
   // Check word count

@@ -31,7 +31,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
 
 export default function MoscowRegionServicePage() {
-  const { city: citySlug, service: serviceSlug } = useParams<{ city: string; service: string }>();
+  const { citySlug, serviceSlug } = useParams<{ citySlug: string; serviceSlug: string }>();
   
   useEffect(() => {
     window.scrollTo(0, 0);
