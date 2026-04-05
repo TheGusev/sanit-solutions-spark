@@ -114,7 +114,7 @@ const ServiceSubpage = () => {
               <BreadcrumbList className="text-white/80">
                 <BreadcrumbItem><BreadcrumbLink asChild><Link to="/" className="hover:text-white">Главная</Link></BreadcrumbLink></BreadcrumbItem>
                 <BreadcrumbSeparator className="text-white/60" />
-                <BreadcrumbItem><BreadcrumbLink asChild><Link to={`/uslugi/${parentSlug}`} className="hover:text-white">{parentService?.title || 'Услуги'}</Link></BreadcrumbLink></BreadcrumbItem>
+                <BreadcrumbItem><BreadcrumbLink asChild><Link to={`/uslugi/${parentSlug}/`} className="hover:text-white">{parentService?.title || 'Услуги'}</Link></BreadcrumbLink></BreadcrumbItem>
                 <BreadcrumbSeparator className="text-white/60" />
                 <BreadcrumbItem><BreadcrumbPage className="text-white">{subpage.title}</BreadcrumbPage></BreadcrumbItem>
               </BreadcrumbList>
