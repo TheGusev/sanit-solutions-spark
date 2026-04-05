@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import InternalLinks from "@/components/InternalLinks";
+import RelatedServices from '@/components/RelatedServices';
+import RelatedBlogLinks from '@/components/RelatedBlogLinks';
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { districtPages } from "@/data/districtPages";
 import { getDistrictImage } from "@/data/districtImages";
@@ -164,7 +165,8 @@ const DistrictsOverview = () => {
             </div>
           </section>
         </div>
-        <InternalLinks />
+        <RelatedServices serviceSlug="dezinsekciya" title="Популярные услуги" />
+        <RelatedBlogLinks serviceSlug="dezinsekciya" title="Полезные статьи" />
       </main>
 
       <Footer />

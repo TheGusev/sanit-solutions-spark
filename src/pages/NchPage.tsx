@@ -16,7 +16,9 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import AnimatedSection from '@/components/AnimatedSection';
-import InternalLinks from '@/components/InternalLinks';
+import RelatedServices from '@/components/RelatedServices';
+import RelatedGeoLinks from '@/components/RelatedGeoLinks';
+import RelatedBlogLinks from '@/components/RelatedBlogLinks';
 import { generateLocalBusiness } from '@/components/StructuredData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -586,13 +588,9 @@ export default function NchPage() {
           </div>
         </AnimatedSection>
         
-        {/* Internal Links */}
-        <InternalLinks
-          currentService={service}
-          currentPest={pestSlug}
-          currentNeighborhood={neighborhoodSlug}
-          title="Смотрите также"
-        />
+        <RelatedServices serviceSlug={service} pestSlug={pestSlug} title="Смотрите также" />
+        <RelatedGeoLinks serviceSlug={service} pestSlug={pestSlug} />
+        <RelatedBlogLinks serviceSlug={service} pestSlug={pestSlug} />
       </main>
       
       <Footer />

@@ -4,6 +4,7 @@
  */
 
 import { pests, getPestsByService } from '@/data/pests';
+import { moleCities } from '@/data/moleCities';
 import { objectTypes } from '@/data/objects';
 import { servicePages, getRelatedArticlesForPest, getRelatedArticlesForService } from '@/data/services';
 import { neighborhoods } from '@/data/neighborhoods';
@@ -281,6 +282,48 @@ export function getBreadcrumbItems(pathname: string): BreadcrumbItemData[] {
   }
 
   return items;
+}
+
+
+//
+// Related mole cities (3-5 neighboring cities for borba-s-krotami)
+// ============================================================
+
+
+export function getRelatedMoleCities(currentCitySlug: string): InternalLinkItem[] {
+  const city = moleCities.find(c => c.slug === currentCitySlug);
+  if (!city) return [];
+  return city.relatedCities
+    .slice(0, 5)
+    .map(slug => {
+      const rel = moleCities.find(c => c.slug === slug);
+      return rel ? { url: `/uslugi/borba-s-krotami/${slug}/`, text: rel.name } : null;
+    })
+    .filter((l): l is InternalLinkItem => l !== null);
+}
+
+// ============================================================
+// Related MO city services (other services in same MO city)
+// ============================================================
+
+const MO_SERVICES = ['dezinsekciya', 'deratizaciya', 'dezinfekciya'];
+
+export function getRelatedMoCityServices(citySlug: string, currentServiceSlug: string): InternalLinkItem[] {
+  return MO_SERVICES
+    .filter(s => s !== currentServiceSlug)
+    .map(s => ({ url: `/moscow-oblast/${citySlug}/${s}/`, text: SERVICE_NAMES[s] || s }))
+    .slice(0, 4);
+}
+
+// ============================================================
+// Related MO cities for same service
+// ============================================================
+
+export function getRelatedMoCitiesForService(serviceSlug: string, currentCitySlug: string): InternalLinkItem[] {
+  return moscowRegionCities
+    .filter(c => c.slug !== currentCitySlug)
+    .slice(0, 5)
+    .map(c => ({ url: `/moscow-oblast/${c.slug}/${serviceSlug}/`, text: c.name }));
 }
 
 // ============================================================

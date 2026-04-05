@@ -15,7 +15,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Phone, Clock, Shield, CheckCircle, MapPin, Star } from 'lucide-react';
-import InternalLinks from '@/components/InternalLinks';
+import RelatedServices from '@/components/RelatedServices';
+import RelatedGeoLinks from '@/components/RelatedGeoLinks';
+import RelatedBlogLinks from '@/components/RelatedBlogLinks';
 import { generateLocalBusiness } from '@/components/StructuredData';
 import { neighborhoods } from '@/data/neighborhoods';
 import { servicePages } from '@/data/services';
@@ -206,12 +208,9 @@ export default function ServiceDistrictPage() {
           </div>
         </AnimatedSection>
         
-        <InternalLinks 
-          currentService={serviceSlug} 
-          currentNeighborhood={districtSlug}
-          variant="grid" 
-          title="Смотрите также" 
-        />
+        <RelatedServices serviceSlug={serviceSlug || ''} title="Смотрите также" />
+        <RelatedGeoLinks serviceSlug={serviceSlug} />
+        <RelatedBlogLinks serviceSlug={serviceSlug} />
       </main>
       
       <Footer />
