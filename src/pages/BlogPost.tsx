@@ -9,7 +9,8 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import TableOfContents, { generateContentWithIds, extractHeadings } from "@/components/TableOfContents";
 import RelatedArticles from "@/components/RelatedArticles";
-import InternalLinks from "@/components/InternalLinks";
+import RelatedServices from "@/components/RelatedServices";
+import RelatedGeoLinks from "@/components/RelatedGeoLinks";
 import TLDRBlock from "@/components/blog/TLDRBlock";
 import VisibleFAQ from "@/components/blog/VisibleFAQ";
 import SourcesList from "@/components/blog/SourcesList";
@@ -381,18 +382,18 @@ const BlogPost = () => {
       {/* Compact CTA */}
       <CompactCTA />
 
-      {/* Internal Links for SEO */}
-      <InternalLinks
-        currentService={
+      {/* Related Services + Geo Links */}
+      <RelatedServices
+        serviceSlug={
           post.tags?.some(t => t.toLowerCase().includes('тараканы') || t.toLowerCase().includes('клопы') || t.toLowerCase().includes('блохи'))
             ? 'dezinsekciya'
             : post.tags?.some(t => t.toLowerCase().includes('крыс') || t.toLowerCase().includes('мыш'))
               ? 'deratizaciya'
-              : undefined
+              : 'dezinsekciya'
         }
         title="Полезные ссылки"
-        maxLinks={8}
       />
+      <RelatedGeoLinks />
 
       <Footer />
     </div>

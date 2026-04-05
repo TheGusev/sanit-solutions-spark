@@ -10,7 +10,9 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CalculatorModal from '@/components/CalculatorModal';
-import InternalLinks from '@/components/InternalLinks';
+import RelatedServices from '@/components/RelatedServices';
+import RelatedGeoLinks from '@/components/RelatedGeoLinks';
+import RelatedBlogLinks from '@/components/RelatedBlogLinks';
 import { ImageGallery } from '@/components/ImageGallery';
 import { getNeighborhoodBySlug, getNeighborhoodsByDistrict } from '@/data/neighborhoods';
 import { allBlogArticles } from '@/data/blog';
@@ -703,13 +705,10 @@ const NeighborhoodPage = () => {
           </section>
         )}
 
-        {/* Internal Links for SEO */}
-        <InternalLinks
-          currentNeighborhood={neighborhood.slug}
-          currentService="dezinsekciya"
-          title="Услуги в других районах Москвы"
-          maxLinks={12}
-        />
+        {/* Related Links */}
+        <RelatedServices serviceSlug="dezinsekciya" />
+        <RelatedGeoLinks serviceSlug="dezinsekciya" />
+        <RelatedBlogLinks serviceSlug="dezinsekciya" />
       </main>
 
       <Footer />

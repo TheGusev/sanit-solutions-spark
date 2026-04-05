@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import InternalLinks from "@/components/InternalLinks";
+import RelatedServices from "@/components/RelatedServices";
+import RelatedGeoLinks from "@/components/RelatedGeoLinks";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import { allBlogArticles, blogCategories } from "@/data/blog";
@@ -288,7 +289,8 @@ const Blog = () => {
         </div>
       </section>
 
-      <InternalLinks />
+      <RelatedServices serviceSlug="dezinsekciya" title="Наши услуги" />
+      <RelatedGeoLinks title="Работаем по всей Москве" />
 
       <Footer />
     </div>
