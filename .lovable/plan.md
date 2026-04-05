@@ -1,136 +1,92 @@
 
 
-# POST-DEPLOY QA: Phase 1 + Phase 2 Internal Linking
+# Phase 3: Замена InternalLinks на модульные блоки
 
----
+## Scope — 5 страниц
 
-## 1. SEO QA
+| Страница | Текущее | Замена |
+|----------|---------|--------|
+| `BlogPost.tsx` | `InternalLinks` с tag-detection | `RelatedServices` (по тегам) + `RelatedBlogLinks` (уже есть RelatedArticles — не дублировать) |
+| `Blog.tsx` | `InternalLinks` без параметров | `RelatedServices` для dezinsekciya (основной кластер) + `RelatedGeoLinks` |
+| `NeighborhoodPage.tsx` | `InternalLinks currentNeighborhood + currentService` | `RelatedServices serviceSlug="dezinsekciya"` + `RelatedGeoLinks` + `RelatedBlogLinks` |
+| `MoscowRegionCityPage.tsx` | `InternalLinks currentCity` | `RelatedServices` + `RelatedGeoLinks` (без MO — мы уже на MO странице) |
+| `ServiceLandingUchastkiPage.tsx` | `InternalLinks currentService="obrabotka-uchastkov"` | `RelatedServices serviceSlug="obrabotka-uchastkov"` + `RelatedGeoLinks serviceSlug="obrabotka-uchastkov"` + `RelatedBlogLinks` |
 
-- **Passed**: noindex NCH Tier 2/3 excluded from all related blocks — `isSeoLinkable()` checks `tier1Pests` array (tarakany, klopy, krysy, myshi only)
-- **Passed**: `/privacy/`, `/terms/`, `/admin/*`, `/login` excluded via `EXCLUDED_PREFIXES`
-- **Passed**: canonical untouched — no changes to canonical logic in any page component
-- **Passed**: robots/meta robots untouched — no noindex tags modified
-- **Passed**: title/H1/description untouched across all pages
-- **Passed**: sitemap logic untouched — `seoRoutes.ts` and `vite-plugin-sitemap.ts` not modified in Phase 1/2
-- **Passed**: no new URLs created — only new components added, no routes changed
-- **Passed**: no paid-traffic logic changed — TrafficContext untouched
-- **Passed**: old Districts Links block removed from ServicePestPage (was linking to noindex NCH for Tier 2/3)
-- **Passed**: duplicate BreadcrumbList schema fixed — `showSchema={false}` on ServicePestPage Breadcrumbs (line 215)
-- **Passed**: `sertifikaciya` removed from `SERVICE_NAMES` map
-- **Passed**: SES page has BreadcrumbList JSON-LD in metadata (lines 41-47)
-- **Warning**: SES canonical missing trailing slash: `https://goruslugimsk.ru/sluzhba-dezinsekcii` — should be `https://goruslugimsk.ru/sluzhba-dezinsekcii/` per project standard. **Pre-existing issue, not introduced by Phase 1/2.**
-- **Warning**: `InternalLinks` component still used on: BlogPost, Blog, NeighborhoodPage, MoscowRegionCityPage, ServiceLandingUchastkiPage — these are Phase 3 migration candidates, not regressions
+## Детали по файлам
 
----
+### 1. `src/pages/BlogPost.tsx`
 
-## 2. UI QA
+Заменить строки 384-395 (`InternalLinks` с tag-detection logic):
+```tsx
+<RelatedServices
+  serviceSlug={
+    post.tags?.some(t => t.toLowerCase().includes('тараканы') || t.toLowerCase().includes('клопы') || t.toLowerCase().includes('блохи'))
+      ? 'dezinsekciya'
+      : post.tags?.some(t => t.toLowerCase().includes('крыс') || t.toLowerCase().includes('мыш'))
+        ? 'deratizaciya'
+        : 'dezinsekciya'
+  }
+  title="Полезные ссылки"
+/>
+```
+НЕ добавляем `RelatedBlogLinks` — на строке 374 уже есть `<RelatedArticles>` который делает то же самое. Добавляем `RelatedGeoLinks` без параметров (fallback на `/rajony/` ссылки).
 
-- **Passed**: all 3 components (`RelatedServices`, `RelatedGeoLinks`, `RelatedBlogLinks`) return `null` when `links.length === 0` — no empty blocks
-- **Passed**: no empty headings — headings render only when block renders
-- **Passed**: `RelatedGeoLinks` uses `flex-wrap justify-center gap-3` — wraps on mobile
-- **Passed**: `RelatedServices` and `RelatedBlogLinks` use responsive grid `sm:grid-cols-2 lg:grid-cols-3`
-- **Passed**: no duplicate links — `getRelatedServices` uses `pest.relatedPests` (self excluded); `getRelatedGeoLinks` iterates unique `topNeighborhoods`
-- **Passed**: max link counts enforced — RelatedServices capped at 6, RelatedBlogLinks at 3, RelatedGeoLinks at 8+3
-- **Passed**: FAQ contextual links are inline `<Link>` with `text-primary hover:underline` — consistent styling
-- **Passed**: Breadcrumbs last element is `<span>` with `aria-current="page"`, not a link
+### 2. `src/pages/Blog.tsx`
 
----
+Заменить строку 291 (`<InternalLinks />` без параметров):
+```tsx
+<RelatedServices serviceSlug="dezinsekciya" title="Наши услуги" />
+<RelatedGeoLinks title="Работаем по всей Москве" />
+```
+Blog index — хаб-страница, ей уместно дать 2 блока: услуги (основной коммерческий кластер) + гео.
 
-## 3. PAGE-BY-PAGE QA
+### 3. `src/pages/NeighborhoodPage.tsx`
 
-**Page: `/`**
-- Breadcrumbs: N/A (homepage)
-- RelatedServices: N/A (not added, correct)
-- RelatedGeoLinks: N/A
-- RelatedBlogLinks: N/A
-- Noindex safety: OK
-- Status: **OK**
+Заменить строки 706-712 (`InternalLinks currentNeighborhood + currentService`):
+```tsx
+<RelatedServices serviceSlug="dezinsekciya" />
+<RelatedGeoLinks serviceSlug="dezinsekciya" />
+<RelatedBlogLinks serviceSlug="dezinsekciya" />
+```
+Neighborhood page — гео-страница, линкуем на коммерческие услуги + другие районы + статьи.
 
-**Page: `/uslugi/dezinsekciya/`**
-- Breadcrumbs: Present (shadcn with schema) — OK
-- District links: Uses `service.slug` dynamically (line 699) — **FIXED** from hardcoded `dezinfekciya`
-- RelatedBlogLinks: **ADDED** (line 684) — replaces old inline articles block
-- RelatedGeoLinks: **ADDED** (line 764) — 8 neighborhoods + 3 MO cities
-- Related services: Present (hardcoded `relatedServices` + `displayServices`) — OK
-- Noindex safety: OK
-- Status: **OK**
+### 4. `src/pages/MoscowRegionCityPage.tsx`
 
-**Page: `/uslugi/dezinsekciya/klopy/`**
-- Breadcrumbs: OK, `showSchema={false}` — no duplicate JSON-LD
-- RelatedBlogLinks: **ADDED** (line 453) — 2-3 articles for klopy
-- RelatedServices: **ADDED** (line 475) — related pests + parent hub
-- RelatedGeoLinks: **ADDED** (line 478) — 8 Tier 1 NCH neighborhoods (klopy is tier1 → direct NCH links)
-- Old Districts Links: **REMOVED** — confirmed absent
-- FAQ contextual links: **ADDED** — pricing link to `/uslugi/dezinsekciya/`, prep link to `/blog/kak-podgotovit-pomeshchenie/`
-- Noindex safety: OK (klopy = Tier 1, all NCH links are indexable)
-- Status: **OK**
+Заменить строки 302-306 (`InternalLinks currentCity`):
+```tsx
+<RelatedServices serviceSlug="dezinsekciya" title="Наши услуги в Москве" />
+<RelatedGeoLinks title="Районы Москвы" />
+<RelatedBlogLinks serviceSlug="dezinsekciya" />
+```
+MO city page — гео-страница МО, линкуем на московские услуги + районы + статьи.
 
-**Page: `/uslugi/dezinsekciya/tarakany/`**
-- Same structure as klopy — all fixes applied
-- Status: **OK**
+### 5. `src/pages/ServiceLandingUchastkiPage.tsx`
 
-**Page: `/uslugi/deratizaciya/`**
-- Breadcrumbs: Present (shadcn with schema) — OK
-- District links: Uses `service.slug` dynamically — **FIXED**
-- RelatedBlogLinks: **ADDED**
-- RelatedGeoLinks: **ADDED**
-- Status: **OK**
+Заменить строку 279 (`InternalLinks currentService="obrabotka-uchastkov"`):
+```tsx
+<RelatedServices serviceSlug="obrabotka-uchastkov" />
+<RelatedGeoLinks serviceSlug="obrabotka-uchastkov" />
+<RelatedBlogLinks serviceSlug="obrabotka-uchastkov" />
+```
 
-**Page: `/uslugi/borba-s-krotami/`**
-- RelatedGeoLinks: **ADDED** — links to `/rajony/` neighborhoods (NOT NCH), correctly excludes MO cities (`serviceSlug !== 'borba-s-krotami'` check on line 166)
-- Status: **OK**
+### 6. `src/lib/internalLinking.ts` — без изменений
 
-**Page: `/uslugi/obrabotka-uchastkov/`**
-- RelatedGeoLinks: **ADDED** — neighborhoods + MO cities
-- Status: **OK**
+Все нужные функции (`getRelatedServices`, `getRelatedGeoLinks`, `getRelatedBlogLinks`) уже реализованы.
 
-**Page: `/rajony/`**
-- RelatedServices: **ADDED** — 2 blocks: "Популярные услуги" (dezinsekciya pests) + "Борьба с грызунами" (deratizaciya pests)
-- Not a doorway — only 2 compact blocks with 3-4 links each
-- Status: **OK**
+## Что НЕ меняется
 
-**Page: `/moscow-oblast/`**
-- RelatedServices: **ADDED** — "Наши услуги" (dezinsekciya top 4 pests)
-- Status: **OK**
+- URL, canonical, robots, noindex, sitemap — без изменений
+- Компонент `InternalLinks.tsx` — НЕ удаляем (ещё используется в DistrictPage, NchPage, MoleCityPage, MoscowRegionServicePage, DistrictsOverview, ServiceSubpage — Phase 4)
+- Paid-traffic logic — без изменений
+- Новые страницы не создаются
 
-**Page: `/sluzhba-dezinsekcii/`**
-- Old `InternalLinks`: **REMOVED**, replaced with modular blocks
-- RelatedServices: **ADDED** (line 208) — dezinsekciya pests
-- RelatedGeoLinks: **ADDED** (line 209) — neighborhoods + MO
-- RelatedBlogLinks: **ADDED** (line 210) — dezinsekciya articles
-- FAQ contextual links: **ADDED** — pricing to `/uslugi/dezinsekciya/`, prep to `/blog/kak-podgotovit-pomeshchenie/`
-- BreadcrumbList JSON-LD: Present in metadata (lines 41-47)
-- Noindex safety: OK
-- Status: **OK**
+## Файлы
 
----
-
-## 4. REMAINING `InternalLinks` USAGE (not regressions — Phase 3 candidates)
-
-| Page | Component |
-|------|-----------|
-| `BlogPost.tsx` | `InternalLinks` based on post tags |
-| `Blog.tsx` | `InternalLinks` (no params) |
-| `NeighborhoodPage.tsx` | `InternalLinks` with currentNeighborhood |
-| `MoscowRegionCityPage.tsx` | `InternalLinks` with currentCity |
-| `ServiceLandingUchastkiPage.tsx` | `InternalLinks` for obrabotka-uchastkov |
-
-These are not regressions — they were not in scope for Phase 1/2.
-
----
-
-## 5. PRE-EXISTING ISSUES (not introduced by Phase 1/2)
-
-| Issue | Severity | Detail |
-|-------|----------|--------|
-| SES canonical missing trailing slash | Low | `canonical: "https://goruslugimsk.ru/sluzhba-dezinsekcii"` — should end with `/` |
-| `tier1Pests` duplicated | Low | Defined in both `nchSeeds.ts` and `seoRoutes.ts` — `internalLinking.ts` imports from `nchSeeds.ts` which is correct |
-
----
-
-## 6. FINAL STATUS
-
-### **READY FOR PRODUCTION**
-
-All Phase 1 QA issues (duplicate geo block, duplicate BreadcrumbList schema, deprecated sertifikaciya) have been resolved in Phase 2. The new modular linking system is correctly deployed across all 10 priority pages. No SEO regressions detected. No links to noindex pages. No new URLs created. Canonical, robots, sitemap, and paid-traffic logic untouched.
+| Действие | Файл |
+|----------|------|
+| Изменить | `src/pages/BlogPost.tsx` |
+| Изменить | `src/pages/Blog.tsx` |
+| Изменить | `src/pages/NeighborhoodPage.tsx` |
+| Изменить | `src/pages/MoscowRegionCityPage.tsx` |
+| Изменить | `src/pages/ServiceLandingUchastkiPage.tsx` |
 
