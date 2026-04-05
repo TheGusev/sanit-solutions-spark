@@ -238,38 +238,42 @@ export function ssgPlugin(): Plugin {
           },
           logLevel: 'warn'
         });
+        } catch (buildError) {
+          console.error('FATAL: SSR bundle build failed:', buildError);
+          if (isCI) process.exit(1);
+          return;
+        }
+        console.log('[SSG:2/5] ✓ SSR bundle built');
         
-        console.log('✓ SSR bundle built\n');
-        
-        // Import the SSR bundle
+        // [SSG:3/5] Load SSR module
+        console.log('[SSG:3/5] Loading SSR module...');
         const serverEntryPath = pathToFileURL(resolve(distDir, 'server/entry-server.js')).href;
         const ssrModule = await import(serverEntryPath);
         
         if (!ssrModule.render || !ssrModule.getAllSSGRoutes) {
-          throw new Error('SSR bundle missing required exports: render and/or getAllSSGRoutes');
+          console.error('FATAL: SSR bundle missing required exports: render and/or getAllSSGRoutes');
+          if (isCI) process.exit(1);
+          return;
         }
         
         const { render, getAllSSGRoutes } = ssrModule;
+        console.log('[SSG:3/5] ✓ SSR module loaded');
         
-        // Get all routes to prerender (from seoRoutes.ts — single source of truth)
+        // [SSG:4/5] Get routes
+        console.log('[SSG:4/5] Getting routes...');
         let routes;
         try {
           routes = getAllSSGRoutes();
         } catch (routeError) {
-          console.error('❌ getAllSSGRoutes() threw an error:');
+          console.error('FATAL: getAllSSGRoutes() threw an error:');
           console.error(routeError);
-          throw routeError; // Re-throw — do NOT silently continue
+          if (isCI) process.exit(1);
+          return;
         }
+        console.log(`[SSG:4/5] ✓ Got ${routes.length} routes`);
         
-        let successCount = 0;
-        let errorCount = 0;
-        let warningCount = 0;
-        
-        // Track duplicates
-        const titleMap = new Map<string, string[]>();
-        const descriptionMap = new Map<string, string[]>();
-        
-        console.log(`📄 Prerendering ${routes.length} pages...\n`);
+        // [SSG:5/5] Render pages
+        console.log(`[SSG:5/5] Rendering ${routes.length} pages...\n`);
         
         for (const route of routes) {
           try {
