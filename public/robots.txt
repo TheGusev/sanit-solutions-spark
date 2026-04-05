@@ -71,6 +71,7 @@ Disallow: /
 
 User-agent: SemrushBot
 Crawl-delay: 2
+Disallow: /
 
 User-agent: MJ12bot
 Disallow: /
