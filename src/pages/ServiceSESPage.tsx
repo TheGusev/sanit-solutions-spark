@@ -25,7 +25,7 @@ import type { PageMetadata } from "@/lib/metadata";
 const metadata: PageMetadata = {
   title: "Служба дезинсекции в Москве — вызвать специалиста круглосуточно",
   description: "Профессиональная служба дезинсекции в Москве. Уничтожение тараканов, клопов, блох и других насекомых. Выезд за 30 минут, гарантия до 3 лет.",
-  canonical: "https://goruslugimsk.ru/sluzhba-dezinsekcii",
+  canonical: "https://goruslugimsk.ru/sluzhba-dezinsekcii/",
   schema: [
     {
       "@context": "https://schema.org",
