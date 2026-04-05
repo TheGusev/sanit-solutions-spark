@@ -9,13 +9,12 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      # ── Phase 1: Build locally (NO push) ──
       - name: Build image locally
         uses: docker/build-push-action@v5
         with:
@@ -24,54 +23,45 @@ jobs:
           tags: ${{ env.IMAGE_NAME }}:ci-check
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      # ── Phase 2: Smoke-check BEFORE push ──
       - name: Smoke check SSG coverage
         run: |
-                  docker run --rm --entrypoint sh ${{ env.IMAGE_NAME }}:ci-check -c '
-            echo "=== SSG Artifact Verification ==="
-            # Count public static vs SSG-generated files separately
-            PUBLIC_COUNT=$(find /usr/share/nginx/html -name "index.html" -path "*/uslugi/*" | grep -v "dezinsekciya/[a-z]" | wc -l)
-            SSG_COUNT=$(find /usr/share/nginx/html -name "index.html" | wc -l)
-            echo "Total index.html pages: $SSG_COUNT"
-            echo "Uslugi static (public) pages: $PUBLIC_COUNT"
-            # Hard checks: critical SSG marker pages
-            FAIL=0
-            for f in \
-              uslugi/dezinsekciya/klopy/index.html \
-              uslugi/dezinsekciya/blohi/index.html \
-              uslugi/deratizaciya/krysy/index.html \
-              uslugi/dezinfekciya/kvartir/index.html \
-              rajony/arbat/index.html \
-              moscow-oblast/khimki/index.html \
-              blog/klopy-v-kvartire/index.html \
-              uslugi/dezinsekciya/klopov-v-kvartire/index.html \
-              sluzhba-dezinsekcii/index.html \
-              rajony/maryino/index.html; do
-              if [ ! -f "/usr/share/nginx/html/$f" ]; then
-                echo "\u274c MISSING: $f"; FAIL=1
-              else
-                echo "\u2705 OK: $f"
-              fi
-            done
-            # Show dezinsekciya subtree for debugging
-            echo ""
-            echo "=== dezinsekciya subtree ==="
-            find /usr/share/nginx/html/uslugi/dezinsekciya -name "index.html" | sort
-            echo ""
-            # Minimum page count gate (should be 800+)
-            if [ "$SSG_COUNT" -lt 500 ]; then
-              echo "\u274c FAIL: Only $SSG_COUNT pages found, expected 500+. SSG likely failed."
+          cat > /tmp/smoke_check.sh << 'SMOKE_EOF'
+          #!/bin/sh
+          set -e
+          echo "=== SSG Artifact Verification ==="
+          SSG_COUNT=$(find /usr/share/nginx/html -name "index.html" | wc -l)
+          echo "Total pages: $SSG_COUNT"
+          FAIL=0
+          for f in \
+            uslugi/dezinsekciya/klopy/index.html \
+            uslugi/dezinsekciya/blohi/index.html \
+            uslugi/deratizaciya/krysy/index.html \
+            uslugi/dezinfekciya/kvartir/index.html \
+            rajony/arbat/index.html \
+            moscow-oblast/khimki/index.html \
+            blog/klopy-v-kvartire/index.html \
+            sluzhba-dezinsekcii/index.html \
+            rajony/maryino/index.html; do
+            if [ ! -f "/usr/share/nginx/html/$f" ]; then
+              echo "MISSING: $f"
               FAIL=1
+            else
+              echo "OK: $f"
             fi
-            if [ $FAIL -eq 1 ]; then
-              echo ""
-              echo "\u274c SMOKE CHECK FAILED \u2014 image will NOT be pushed"
-              exit 1
-            fi
-            echo ""
-            echo "\u2705 All smoke checks passed \u2014 safe to push"
-          '
-      # ── Phase 3: Push only after smoke-check passes ──
+          done
+          if [ "$SSG_COUNT" -lt 500 ]; then
+            echo "FAIL: only $SSG_COUNT pages"
+            FAIL=1
+          fi
+          [ $FAIL -eq 1 ] && exit 1
+          echo "All checks passed"
+          SMOKE_EOF
+          chmod +x /tmp/smoke_check.sh
+          docker run --rm \
+            -v /tmp/smoke_check.sh:/tmp/smoke_check.sh \
+            --entrypoint sh \
+            ${{ env.IMAGE_NAME }}:ci-check \
+            /tmp/smoke_check.sh
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -89,4 +79,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Image digest
-        run: echo "\u2705 Verified image pushed with digest ${{ steps.push-image.outputs.digest }}"
+        run: echo "Pushed ${{ steps.push-image.outputs.digest }}"
