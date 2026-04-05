@@ -239,10 +239,10 @@ export function ssgPlugin(): Plugin {
         
         // Import the SSR bundle
         const serverEntryPath = pathToFileURL(resolve(distDir, 'server/entry-server.js')).href;
-        const { render } = await import(serverEntryPath);
+        const { render, getAllSSGRoutes } = await import(serverEntryPath);
         
-        // Get all routes to prerender
-        const routes = getAllRoutes();
+        // Get all routes to prerender (from seoRoutes.ts — single source of truth)
+        const routes = getAllSSGRoutes();
         let successCount = 0;
         let errorCount = 0;
         let warningCount = 0;
