@@ -4,6 +4,7 @@
  */
 
 import { pests, getPestsByService } from '@/data/pests';
+import { moleCities } from '@/data/moleCities';
 import { objectTypes } from '@/data/objects';
 import { servicePages, getRelatedArticlesForPest, getRelatedArticlesForService } from '@/data/services';
 import { neighborhoods } from '@/data/neighborhoods';
