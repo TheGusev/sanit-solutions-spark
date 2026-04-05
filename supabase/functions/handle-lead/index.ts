@@ -348,9 +348,32 @@ serve(async (req) => {
       }
     }
     
+    // Send notifications in parallel: Telegram, CRM, Push
+    const pushNotification = async () => {
+      try {
+        const pushResp = await fetch('https://goruslugimsk.ru/api/push/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: '🔔 Новая заявка!',
+            body: `${leadData.phone} — ${leadData.source || 'сайт'}`,
+            url: '/admin/'
+          })
+        });
+        if (pushResp.ok) {
+          console.log('✅ Push notification sent');
+        } else {
+          console.error('⚠️ Push server responded:', pushResp.status);
+        }
+      } catch (e) {
+        console.error('⚠️ Push send error:', e);
+      }
+    };
+
     await Promise.all([
       sendTelegramNotification(leadData),
-      sendLeadToCrm(leadData)
+      sendLeadToCrm(leadData),
+      pushNotification()
     ]);
     
     return new Response(

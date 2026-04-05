@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 
-// VAPID public key — это публичный ключ, хранить в коде безопасно
-const VAPID_PUBLIC_KEY = 'BDl5Ji02s_G6xfDQmZRRaHpVdQ1zQbM7XrFr73k72Gl8lXuHH2txh2BtSfc1nPx4TcGMhw-2CASLhNEhN1DBIjY';
+const VAPID_PUBLIC_KEY = 'BAPBq6a7TvmD4jlXMCRl22dxxueotpco5R_H0JKirwOuC1poOoOjfNNMQL0Eq1eQBZXDyCava8qhrElM3I4JSDo';
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -25,7 +23,6 @@ export function usePushNotifications() {
     const supported = 'serviceWorker' in navigator && 'PushManager' in window;
     setIsSupported(supported);
 
-    // Check if running as installed PWA
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
       || (navigator as any).standalone === true;
     setIsPWA(isStandalone);
@@ -41,7 +38,7 @@ export function usePushNotifications() {
       const subscription = await registration.pushManager.getSubscription();
       setIsSubscribed(!!subscription);
     } catch (err) {
-      console.error('Error checking push subscription:', err);
+      console.error('[Push] Error checking subscription:', err);
     }
   };
 
@@ -75,20 +72,21 @@ export function usePushNotifications() {
       const subJson = subscription.toJSON();
       console.log('[Push] Subscribed, endpoint:', subJson.endpoint?.slice(0, 60));
 
-      console.log('[Push] Saving to backend...');
-      const { error } = await supabase.functions.invoke('save-push-subscription', {
-        body: {
+      console.log('[Push] Saving to push-server...');
+      const response = await fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           endpoint: subJson.endpoint,
           keys: {
             p256dh: subJson.keys?.p256dh,
             auth: subJson.keys?.auth,
           },
-          userAgent: navigator.userAgent,
-        },
+        }),
       });
 
-      if (error) {
-        console.error('[Push] Backend error:', error);
+      if (!response.ok) {
+        console.error('[Push] Backend error:', response.status, await response.text());
         setIsLoading(false);
         return false;
       }
@@ -112,21 +110,13 @@ export function usePushNotifications() {
       const subscription = await registration.pushManager.getSubscription();
 
       if (subscription) {
-        // Delete from backend
-        await supabase.functions.invoke('save-push-subscription', {
-          body: {
-            endpoint: subscription.endpoint,
-            action: 'unsubscribe',
-          },
-        });
-
         await subscription.unsubscribe();
       }
 
       setIsSubscribed(false);
       localStorage.removeItem('push_subscribed');
     } catch (err) {
-      console.error('Error unsubscribing:', err);
+      console.error('[Push] Error unsubscribing:', err);
     } finally {
       setIsLoading(false);
     }
@@ -135,13 +125,19 @@ export function usePushNotifications() {
   const sendTestPush = useCallback(async () => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.functions.invoke('send-push-notification', {
-        body: { test: true },
+      const response = await fetch('/api/push/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: '🔔 Тестовое уведомление',
+          body: 'Push-уведомления работают корректно!',
+          url: '/admin/',
+        }),
       });
-      if (error) throw error;
+      if (!response.ok) throw new Error(`Push send failed: ${response.status}`);
       return true;
     } catch (err) {
-      console.error('Error sending test push:', err);
+      console.error('[Push] Error sending test:', err);
       return false;
     } finally {
       setIsLoading(false);

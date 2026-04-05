@@ -56,21 +56,20 @@ async function createVapidAuthHeader(
   const payloadB64 = base64UrlEncode(encoder.encode(JSON.stringify(payload)));
   const unsignedToken = `${headerB64}.${payloadB64}`;
 
-  // Import private key for signing
-  const keyData = new Uint8Array(32 + privateKey.length);
-  // Build PKCS8 wrapper for P-256 private key
-  const pkcs8Header = new Uint8Array([
-    0x30, 0x81, 0x87, 0x02, 0x01, 0x00, 0x30, 0x13, 0x06, 0x07, 0x2a, 0x86,
-    0x48, 0xce, 0x3d, 0x02, 0x01, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d,
-    0x03, 0x01, 0x07, 0x04, 0x6d, 0x30, 0x6b, 0x02, 0x01, 0x01, 0x04, 0x20,
-  ]);
-  const pkcs8Middle = new Uint8Array([0xa1, 0x44, 0x03, 0x42, 0x00]);
-
-  const pkcs8 = concatUint8Arrays(pkcs8Header, privateKey, pkcs8Middle, publicKey);
+  // Import private key via JWK (more reliable than manual PKCS8 DER)
+  const x = publicKey.slice(1, 33);
+  const y = publicKey.slice(33, 65);
+  const jwk = {
+    kty: "EC",
+    crv: "P-256",
+    x: base64UrlEncode(x),
+    y: base64UrlEncode(y),
+    d: base64UrlEncode(privateKey),
+  };
 
   const signingKey = await crypto.subtle.importKey(
-    "pkcs8",
-    pkcs8,
+    "jwk",
+    jwk,
     { name: "ECDSA", namedCurve: "P-256" },
     false,
     ["sign"]
@@ -134,12 +133,13 @@ async function hkdf(
   length: number
 ): Promise<Uint8Array> {
   // RFC 5869: HKDF-Extract(salt, IKM) = HMAC-Hash(salt, IKM) — salt is the key, IKM is the data
-  const saltKey = await crypto.subtle.importKey("raw", salt.length > 0 ? salt : new Uint8Array(32), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
-  const prk = new Uint8Array(await crypto.subtle.sign("HMAC", saltKey, ikm));
+  const saltData = salt.length > 0 ? salt.buffer as ArrayBuffer : new Uint8Array(32).buffer as ArrayBuffer;
+  const saltKey = await crypto.subtle.importKey("raw", saltData, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const prk = new Uint8Array(await crypto.subtle.sign("HMAC", saltKey, ikm.buffer as ArrayBuffer));
 
-  const prkKey = await crypto.subtle.importKey("raw", prk, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const prkKey = await crypto.subtle.importKey("raw", prk.buffer as ArrayBuffer, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   const infoWithCounter = concatUint8Arrays(info, new Uint8Array([1]));
-  const okm = new Uint8Array(await crypto.subtle.sign("HMAC", prkKey, infoWithCounter));
+  const okm = new Uint8Array(await crypto.subtle.sign("HMAC", prkKey, infoWithCounter.buffer as ArrayBuffer));
   return okm.slice(0, length);
 }
 
@@ -192,7 +192,7 @@ async function encryptPayload(
   // Import client public key
   const clientKey = await crypto.subtle.importKey(
     "raw",
-    clientPublicKey,
+    clientPublicKey.buffer as ArrayBuffer,
     { name: "ECDH", namedCurve: "P-256" },
     false,
     []
@@ -232,7 +232,7 @@ async function encryptPayload(
   // AES-128-GCM encrypt
   const aesKey = await crypto.subtle.importKey(
     "raw",
-    contentEncryptionKey,
+    contentEncryptionKey.buffer as ArrayBuffer,
     "AES-GCM",
     false,
     ["encrypt"]
@@ -240,7 +240,7 @@ async function encryptPayload(
 
   const encrypted = new Uint8Array(
     await crypto.subtle.encrypt(
-      { name: "AES-GCM", iv: nonce },
+      { name: "AES-GCM", iv: nonce.buffer as ArrayBuffer },
       aesKey,
       paddedPayload
     )
