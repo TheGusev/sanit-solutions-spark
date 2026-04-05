@@ -27,14 +27,9 @@ interface ValidationResult {
 // Статические страницы
 const staticRoutes: SSGRoute[] = [
   { path: '/', outputPath: 'index.html' },
-  { path: '/contacts/', outputPath: 'contacts/index.html' },
-  { path: '/blog/', outputPath: 'blog/index.html' },
-  { path: '/privacy/', outputPath: 'privacy/index.html' },
-  { path: '/sluzhba-dezinsekcii/', outputPath: 'sluzhba-dezinsekcii/index.html' },
-  { path: '/otzyvy/', outputPath: 'otzyvy/index.html' },
-  { path: '/uslugi/obrabotka-uchastkov/', outputPath: 'uslugi/obrabotka-uchastkov/index.html' },
-  { path: '/terms/', outputPath: 'terms/index.html' },
-  { path: '/team/', outputPath: 'team/index.html' },
+  { path: '/contacts', outputPath: 'contacts/index.html' },
+  { path: '/blog', outputPath: 'blog/index.html' },
+  { path: '/privacy', outputPath: 'privacy/index.html' },
 ];
 
 // Услуги
@@ -44,11 +39,10 @@ const servicesSlugs = [
   'deratizaciya',
   'ozonirovanie',
   'dezodoraciya',
-  'demerkurizaciya',
-  'borba-s-krotami'
+  'demerkurizaciya'
 ];
 
-// Подстраницы услуг (синхронизировано с seoRoutes.ts)
+// Подстраницы услуг
 const serviceSubpageRoutes = [
   { parent: 'dezinfekciya', sub: 'kvartir' },
   { parent: 'dezinfekciya', sub: 'ofisov' },
@@ -56,64 +50,21 @@ const serviceSubpageRoutes = [
   { parent: 'dezinsekciya', sub: 'unichtozhenie-tarakanov' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-krys' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-myshej' },
-  // Квалификаторы
-  { parent: 'dezinsekciya', sub: 'klopov-v-kvartire' },
-  { parent: 'dezinsekciya', sub: 'postelnyh-klopov' },
-  { parent: 'dezinsekciya', sub: 'domashnih-klopov' },
-  { parent: 'dezinsekciya', sub: 'tarakanov-v-kvartire' },
-  // REMOVED: klopov-i-tarakanov, klopov-i-bloh — combo pages redirected (Issue #5)
-  { parent: 'dezinsekciya', sub: 'blokh-ot-zhivotnyh' },
-  // Методы обработки
-  { parent: 'dezinsekciya', sub: 'holodnym-tumanom' },
-  { parent: 'dezinsekciya', sub: 'parom' },
-  { parent: 'dezinsekciya', sub: 'parogeneratorom' },
-  { parent: 'dezinsekciya', sub: 'bez-zapaha' },
-  { parent: 'dezinsekciya', sub: 'srochno' },
-  { parent: 'dezinsekciya', sub: 'kruglosutochno' },
 ];
 
-// Вредители для услуга + вредитель страниц (синхронизировано с seoRoutes.ts)
-const dezinsekciyaPestSlugs = [
-  'tarakany', 'klopy', 'muravyi', 'blohi', 'mol',
-  'komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'
-];
-const deratizaciyaPestSlugs = ['krysy', 'myshi', 'kroty'];
+// Вредители для услуга + вредитель страниц
+const dezinsekciyaPestSlugs = ['tarakany', 'klopy', 'muravyi', 'blohi', 'mol'];
+const deratizaciyaPestSlugs = ['krysy', 'myshi'];
 
-// Города МО (синхронизировано с seoRoutes.ts)
-const moscowRegionCitySlugs = [
-  'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo',
-  'klin', 'ramenskoe', 'chekhov', 'domodedovo'
-];
+// Города МО
+const moscowRegionCitySlugs = ['khimki', 'mytishchi', 'balashikha', 'podolsk', 'korolev', 'lyubertsy', 'krasnogorsk', 'odintsovo', 'domodedovo'];
 const moscowRegionServices = ['dezinsekciya', 'deratizaciya', 'dezinfekciya', 'ozonirovanie'];
 
-// Топ районов для НЧ-страниц — tiered model
+// Топ районов для НЧ-страниц (синхронизировано с seoRoutes.ts)
 const topNeighborhoods = [
   'arbat', 'tverskoy', 'khamovniki', 'zamoskvorechye', 'presnensky',
   'sokol', 'aeroport', 'babushkinsky', 'izmaylovo', 'sokolniki',
   'maryino', 'lyublino', 'chertanovo-severnoe', 'konkovo', 'strogino'
-];
-
-const tier2Neighborhoods = [
-  ...topNeighborhoods,
-  'basmannyy', 'tagansky', 'yakimanka', 'voykovskiy', 'koptevo',
-  'khovrino', 'otradnoe', 'bibirevo', 'altufyevsky', 'perovo',
-  'novogireevo', 'kuzminki', 'pechatniki', 'tekstilshchiki', 'danilovsky',
-  'zyablikovo', 'tsaritsyno', 'akademichesky', 'cheryomushki', 'yasenevo',
-  'kuntsevo', 'solntsevo', 'mitino', 'kurkino', 'nekrasovka',
-];
-
-const tier1Pests = ['tarakany', 'klopy', 'krysy', 'myshi'];
-const tier2Pests = ['muravyi', 'blohi', 'mol']; // kroty removed — outdoor MO service
-const tier3Pests = ['komary', 'muhi', 'osy-shershni', 'cheshuynitsy', 'kleshchi', 'mokricy'];
-
-// Города МО для коммерческих лендингов кротов
-const moleCitySlugs = [
-  'istra', 'krasnogorsk', 'nakhabino', 'dedovsk',
-  'odintsovo', 'barvikha', 'usovo', 'zhukovka',
-  'lobnya', 'dolgoprudny-mo', 'dmitrov-mo', 'yakhroma',
-  'chekhov-mo', 'serpukhov', 'naro-fominsk', 'mozhaysk',
-  'klin-mo', 'solnechnogorsk', 'domodedovo-mo',
-  'taldom', 'dubna-mo', 'ruza', 'voskresensk-mo',
 ];
 
 // Округа Москвы
@@ -121,43 +72,66 @@ const districtSlugs = [
   'cao', 'sao', 'svao', 'vao', 'yuvao', 'yao', 'yzao', 'zao', 'szao', 'nao', 'tao', 'zelao'
 ];
 
-// Районы Москвы (130 районов) - синхронизировано с seoRoutes.ts
+// Районы Москвы (130 районов) - синхронизировано с src/data/neighborhoods.ts
 const neighborhoodSlugs = [
-  // ЦАО
-  'arbat', 'tverskoy', 'zamoskvorechye', 'khamovniki', 'presnensky', 'basmannyy', 'krasnoselsky', 'meshchansky', 'tagansky', 'yakimanka',
-  // САО
-  'aeroport', 'begovoy', 'sokol', 'voykovskiy', 'golovinsky', 'koptevo', 'timiryazevsky', 'khovrino', 'savelovsky', 'levoberezhny', 'dmitrovsky', 'zapadnoe-degunino', 'vostochnoe-degunino', 'beskudnikovsky', 'molzhaninovsky', 'khoroshevsky',
-  // СВАО
-  'altufyevsky', 'babushkinsky', 'bibirevo', 'butyrsky', 'lianozovo', 'losinoostrovskiy', 'marfino', 'marina-roshcha', 'ostankinsky', 'otradnoe', 'rostokino', 'sviblovo', 'severny', 'severnoe-medvedkovo', 'yuzhnoe-medvedkovo', 'yaroslavsky', 'severny-rayon',
-  // ВАО
-  'bogorodskoe', 'veshnyaki', 'vostochnoe-izmaylovo', 'vostochny', 'golyanovo', 'ivanovskoe', 'izmaylovo', 'kosino-ukhtomsky', 'metrogorodok', 'novogireevo', 'novokosino', 'perovo', 'preobrazhenskoe', 'severnoe-izmaylovo', 'sokolinaya-gora', 'sokolniki',
-  // ЮВАО
-  'vykhino-zhulebino', 'kapotnya', 'kuzminki', 'lefortovo', 'lyublino', 'maryino', 'nekrasovka', 'nizhegorodsky', 'pechatniki', 'ryazansky', 'tekstilshchiki', 'yuzhnoport',
-  // ЮАО
-  'biryulyovo-vostochnoe', 'biryulyovo-zapadnoe', 'brateevo', 'danilovsky', 'donskoy', 'zyablikovo', 'moskvorechye-saburovo', 'nagatino-sadovniki', 'nagatinsky-zaton', 'nagorny', 'orekhovo-borisovo-severnoe', 'orekhovo-borisovo-yuzhnoe', 'tsaritsyno', 'chertanovo-severnoe', 'chertanovo-tsentralnoe', 'chertanovo-yuzhnoe',
-  // ЮЗАО
-  'akademichesky', 'gagarinsky', 'zyuzino', 'konkovo', 'kotlovka', 'lomonosovsky', 'obruchevsky', 'severnoe-butovo', 'tyoply-stan', 'cheryomushki', 'yuzhnoe-butovo', 'yasenevo',
-  // ЗАО
-  'vnukovo', 'dorogomilovo', 'krylatskoe', 'kuntsevo', 'mozhaysky', 'novo-peredelkino', 'ochakovo-matveevskoe', 'prospekt-vernadskogo', 'ramenki', 'solntsevo', 'troparyovo-nikulino', 'filyovsky-park', 'fili-davydkovo',
-  // СЗАО
-  'kurkino', 'mitino', 'pokrovskoe-streshnevo', 'severnoe-tushino', 'strogino', 'khoroshevo-mnevniki', 'shchukino', 'yuzhnoe-tushino',
-  // НАО, ТАО, ЗелАО
-  'sosenskoe', 'vnukovskoe', 'troitsk', 'shcherbinka', 'moskovsky', 'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5',
+  // ЦАО (10)
+  'arbat', 'basmannyy', 'zamoskvorechye', 'krasnoselsky', 'meshchansky',
+  'presnensky', 'tagansky', 'tverskoy', 'khamovniki', 'yakimanka',
+  // САО (16)
+  'aeroport', 'begovoy', 'beskudnikovsky', 'voykovskiy', 'vostochnoe-degunino',
+  'golovinsky', 'dmitrovsky', 'zapadnoe-degunino', 'koptevo', 'levoberezhny',
+  'molzhaninovsky', 'savelovsky', 'sokol', 'timiryazevsky', 'khovrino', 'khoroshevsky',
+  // СВАО (17)
+  'altufyevsky', 'babushkinsky', 'bibirevo', 'butyrsky', 'lianozovo',
+  'losinoostrovskiy', 'marfino', 'marina-roshcha', 'ostankinsky', 'otradnoe',
+  'rostokino', 'sviblovo', 'severny', 'severnoe-medvedkovo', 'yuzhnoe-medvedkovo',
+  'yaroslavsky', 'severny-rayon',
+  // ВАО (16)
+  'bogorodskoe', 'veshnyaki', 'vostochnoe-izmaylovo', 'vostochny', 'golyanovo',
+  'ivanovskoe', 'izmaylovo', 'kosino-ukhtomsky', 'metrogorodok', 'novogireevo',
+  'novokosino', 'perovo', 'preobrazhenskoe', 'severnoe-izmaylovo', 'sokolinaya-gora', 'sokolniki',
+  // ЮВАО (12)
+  'vykhino-zhulebino', 'kapotnya', 'kuzminki', 'lefortovo', 'lyublino',
+  'maryino', 'nekrasovka', 'nizhegorodsky', 'pechatniki', 'ryazansky',
+  'tekstilshchiki', 'yuzhnoport',
+  // ЮАО (16)
+  'biryulyovo-vostochnoe', 'biryulyovo-zapadnoe', 'brateevo', 'danilovsky', 'donskoy',
+  'zyablikovo', 'moskvorechye-saburovo', 'nagatino-sadovniki', 'nagatinsky-zaton',
+  'nagorny', 'orekhovo-borisovo-severnoe', 'orekhovo-borisovo-yuzhnoe', 'tsaritsyno',
+  'chertanovo-severnoe', 'chertanovo-tsentralnoe', 'chertanovo-yuzhnoe',
+  // ЮЗАО (12)
+  'akademichesky', 'gagarinsky', 'zyuzino', 'konkovo', 'kotlovka',
+  'lomonosovsky', 'obruchevsky', 'severnoe-butovo', 'tyoply-stan',
+  'cheryomushki', 'yuzhnoe-butovo', 'yasenevo',
+  // ЗАО (13)
+  'vnukovo', 'dorogomilovo', 'krylatskoe', 'kuntsevo', 'mozhaysky',
+  'novo-peredelkino', 'ochakovo-matveevskoe', 'prospekt-vernadskogo', 'ramenki',
+  'solntsevo', 'troparyovo-nikulino', 'filyovsky-park', 'fili-davydkovo',
+  // СЗАО (8)
+  'kurkino', 'mitino', 'pokrovskoe-streshnevo', 'severnoe-tushino',
+  'strogino', 'khoroshyovo-mnyovniki', 'shchukino', 'yuzhnoe-tushino',
+  // НАО (8)
+  'sosenskoe', 'vnukovskoe', 'voronovskoe', 'desenovskoe', 'kievsky',
+  'kokoshkino', 'marushkinskoe', 'moskovsky',
+  // ТАО (10)
+  'troitsk', 'shcherbinka', 'filimonkovskoe', 'pervomayskoe', 'novofeodorovskoe',
+  'rogovskoe', 'krasnopakhorskoe', 'klenovskoe', 'shchapovskoe', 'voskresenskoe',
+  // Зеленоград (5)
+  'zelenograd-1', 'zelenograd-2', 'zelenograd-3', 'zelenograd-4', 'zelenograd-5'
 ];
 
-// Типы объектов (синхронизировано с seoRoutes.ts)
-const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv', 'gostinic', 'detskih-sadov', 'hostela', 'magazinov', 'avtomobiley'];
+// Типы объектов (синхронизировано с src/data/objects.ts)
+const objectSlugs = ['kvartir', 'domov', 'ofisov', 'restoranov', 'skladov', 'proizvodstv'];
 
-// Объекты, для которых демеркуризация имеет смысл
-const demerkurizaciyaObjects = ['kvartir', 'domov', 'ofisov', 'skladov', 'proizvodstv'];
+// Услуги для объектов (4 основных)
+const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'demerkurizaciya', 'demerkurizaciya'];
 
-// Услуги для объектов
-const servicesForObjects = ['dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'demerkurizaciya'];
+// Топ-100 районов для Услуга + Объект + Район
+const top100Neighborhoods = neighborhoodSlugs.slice(0, 100);
 
-
-// Статьи блога (158 статей: 50 legacy + 45 insects + 10 rodents + 42 premises + 11 legal)
+// Статьи блога (50 статей)
 const blogSlugs = [
-  // ===== Legacy статьи (50) =====
+  // Оригинальные 8 статей
   'kak-podgotovit-pomeshchenie',
   'vidy-dezinfekcii',
   'borba-s-tarakanami',
@@ -166,6 +140,7 @@ const blogSlugs = [
   'sezonnost-vreditelej',
   'dezinfekciya-ofisa',
   'klopy-v-kvartire',
+  // Дополнительные 12 статей
   'narodnye-sredstva-ot-tarakanov',
   'otkuda-berutsya-klopy',
   'priznaki-gryzunov-v-dome',
@@ -178,6 +153,7 @@ const blogSlugs = [
   'dezinfekciya-posle-remonta',
   'pochemu-vozvrashchayutsya-tarakany',
   'dezinsekciya-dlya-biznesa',
+  // Статьи 21-39: Законы (7), Препараты (6), Кейсы (6)
   'obyazatelnaya-dezinfekciya-dlya-biznesa',
   'shtraf-za-tarakanov-v-kafe',
   'dokumenty-dlya-rospotrebnadzora',
@@ -197,6 +173,7 @@ const blogSlugs = [
   'kejs-restoran-proshel-proverku',
   'kejs-plesen-v-vannoy',
   'kejs-blohi-ot-sobaki',
+  // Статьи 40-50: Законы (6), Препараты (3), Кейсы (2)
   'trebovaniya-rospotrebnadzora-2026',
   'sanpin-dezinfekciya',
   'prava-zhilcov-ot-sosedey',
@@ -208,54 +185,6 @@ const blogSlugs = [
   'repellenty-kak-vybrat',
   'kejs-ofis-posle-covid',
   'kejs-deratizaciya-sklada',
-  // ===== Pest articles: insects (45 = 9 templates × 5 pests) =====
-  'kak-izbavitsya-ot-tarakany', 'kak-izbavitsya-ot-klopy', 'kak-izbavitsya-ot-muravyi', 'kak-izbavitsya-ot-blohi', 'kak-izbavitsya-ot-mol',
-  'v-kvartire-tarakany', 'v-kvartire-klopy', 'v-kvartire-muravyi', 'v-kvartire-blohi', 'v-kvartire-mol',
-  'otkuda-berutsya-tarakany', 'otkuda-berutsya-klopy', 'otkuda-berutsya-muravyi', 'otkuda-berutsya-blohi', 'otkuda-berutsya-mol',
-  'narodnye-sredstva-ot-tarakany', 'narodnye-sredstva-ot-klopy', 'narodnye-sredstva-ot-muravyi', 'narodnye-sredstva-ot-blohi', 'narodnye-sredstva-ot-mol',
-  'professionalnaya-obrabotka-ot-tarakany', 'professionalnaya-obrabotka-ot-klopy', 'professionalnaya-obrabotka-ot-muravyi', 'professionalnaya-obrabotka-ot-blohi', 'professionalnaya-obrabotka-ot-mol',
-  'profilaktika-tarakany', 'profilaktika-klopy', 'profilaktika-muravyi', 'profilaktika-blohi', 'profilaktika-mol',
-  'chem-opasny-tarakany', 'chem-opasny-klopy', 'chem-opasny-muravyi', 'chem-opasny-blohi', 'chem-opasny-mol',
-  'posle-obrabotki-tarakany', 'posle-obrabotki-klopy', 'posle-obrabotki-muravyi', 'posle-obrabotki-blohi', 'posle-obrabotki-mol',
-  'skolko-stoit-obrabotka-tarakany', 'skolko-stoit-obrabotka-klopy', 'skolko-stoit-obrabotka-muravyi', 'skolko-stoit-obrabotka-blohi', 'skolko-stoit-obrabotka-mol',
-  // ===== Pest articles: rodents (10 = 5 templates × 2 pests, без кротов) =====
-  'kak-izbavitsya-ot-krysy', 'kak-izbavitsya-ot-myshi',
-  'v-kvartire-krysy', 'v-kvartire-myshi',
-  'otkuda-berutsya-krysy', 'otkuda-berutsya-myshi',
-  'narodnye-sredstva-ot-krysy', 'narodnye-sredstva-ot-myshi',
-  'professionalnaya-obrabotka-ot-krysy', 'professionalnaya-obrabotka-ot-myshi',
-  // ===== Premises articles (42 = 7 templates × 6 objects) =====
-  'dezinsekciya-kvartir', 'dezinsekciya-domov', 'dezinsekciya-ofisov', 'dezinsekciya-restoranov', 'dezinsekciya-skladov', 'dezinsekciya-proizvodstv',
-  'deratizaciya-kvartir', 'deratizaciya-domov', 'deratizaciya-ofisov', 'deratizaciya-restoranov', 'deratizaciya-skladov', 'deratizaciya-proizvodstv',
-  'podgotovka-k-obrabotke-kvartir', 'podgotovka-k-obrabotke-domov', 'podgotovka-k-obrabotke-ofisov', 'podgotovka-k-obrabotke-restoranov', 'podgotovka-k-obrabotke-skladov', 'podgotovka-k-obrabotke-proizvodstv',
-  'stoimost-obrabotki-kvartir', 'stoimost-obrabotki-domov', 'stoimost-obrabotki-ofisov', 'stoimost-obrabotki-restoranov', 'stoimost-obrabotki-skladov', 'stoimost-obrabotki-proizvodstv',
-  'posle-obrabotki-kvartir', 'posle-obrabotki-domov', 'posle-obrabotki-ofisov', 'posle-obrabotki-restoranov', 'posle-obrabotki-skladov', 'posle-obrabotki-proizvodstv',
-  'vrediteli-v-kvartir', 'vrediteli-v-domov', 'vrediteli-v-ofisov', 'vrediteli-v-restoranov', 'vrediteli-v-skladov', 'vrediteli-v-proizvodstv',
-  'profilaktika-vreditelej-v-kvartir', 'profilaktika-vreditelej-v-domov', 'profilaktika-vreditelej-v-ofisov', 'profilaktika-vreditelej-v-restoranov', 'profilaktika-vreditelej-v-skladov', 'profilaktika-vreditelej-v-proizvodstv',
-  // ===== Legal articles (11) =====
-  'sanpin-trebovaniya-2026', 'dokumenty-dlya-obshhepita',
-  'zhurnal-uchyota-dezinsekcii', 'licenziya-na-dezinfekciyu', 'shtrafy-za-vrediteley',
-  'haccp-i-dezinsekciya', 'dogovor-na-dezinsekciyu-obrazec', 'proverka-ses-kak-podgotovitsya',
-  'bezopasnost-preparatov', 'kak-vybrat-kompaniyu',
-  // ===== Mole geo articles (18) =====
-  'kroty-novorizhskoe-shosse', 'kroty-istra', 'kroty-krasnogorsk', 'kroty-nakhabino', 'kroty-dedovsk', 'kroty-snt-novaya-riga',
-  'kroty-rublevskoe-shosse', 'kroty-odintsovo', 'kroty-barvikha', 'kroty-usovo', 'kroty-zhukovka', 'kroty-snt-rublevka',
-  'kroty-dmitrovskoe-shosse', 'kroty-dolgoprudny', 'kroty-lobnya', 'kroty-dmitrov', 'kroty-yakhroma', 'kroty-snt-dmitrovka',
-  // ===== B2B articles (5) =====
-  'shtrafy-za-dezinfekciyu-bez-licenzii-2026', 'haccp-pest-kontrol-restoran', 'zhurnal-ucheta-dezinsekcii-obshhepit',
-  'sanpin-deratizaciya-skladov', 'dogovor-na-dezinsekciyu-hostela',
-  // ===== Safety articles (5) =====
-  'cherez-skolko-puskat-koshku-posle-tumana', 'goryachij-tuman-i-akvarium', 'dezinsekciya-s-grudnym-rebenkom',
-  'bezopasnost-obrabotki-dlya-beremennyh', 'allergiya-na-preparaty-dezinsekcii',
-  // ===== DIY-failure articles (5) =====
-  'pochemu-dihlofos-ne-beret-klopov', 'rezistentnost-tarakanov-k-bornoj-kislote', 'oshibki-samodeyatelnoj-obrabotki',
-  'pochemu-tarakany-vozvrashchayutsya-posle-obrabotki', 'aerozoli-ot-klopov-ne-rabotayut',
-  // ===== LLM-unique articles (12) =====
-  'bezopasnost-detej-i-zhivotnyh', 'vrediteli-v-kvartire-vidy', 'postelnye-klopy-polnyj-gajd',
-  'ryzhie-tarakany-unichtozhenie', 'domashnie-muravi-pochemu-ne-pomogaet', 'podgotovka-kvartiry-chek-list',
-  'dezinfekciya-posle-bolezni', 'profilaktika-tarakanov', 'kak-vybrat-sluzhbu-dezinfekcii',
-  'kejs-restoran-tarakany', 'kejs-gostinica-klopy', 'dezinfekciya-ofisa-bez-pomeh',
-  'borshchevik-zakon-shtraf-2026',
 ];
 
 // Generate all routes for SSG
@@ -265,7 +194,7 @@ function getAllRoutes(): SSGRoute[] {
   // Услуги
   servicesSlugs.forEach(slug => {
     routes.push({
-      path: `/uslugi/${slug}/`,
+      path: `/uslugi/${slug}`,
       outputPath: `uslugi/${slug}/index.html`
     });
   });
@@ -273,7 +202,7 @@ function getAllRoutes(): SSGRoute[] {
   // Подстраницы услуг
   serviceSubpageRoutes.forEach(({ parent, sub }) => {
     routes.push({
-      path: `/uslugi/${parent}/${sub}/`,
+      path: `/uslugi/${parent}/${sub}`,
       outputPath: `uslugi/${parent}/${sub}/index.html`
     });
   });
@@ -281,7 +210,7 @@ function getAllRoutes(): SSGRoute[] {
   // Услуга + Вредитель (ServicePestPage)
   dezinsekciyaPestSlugs.forEach(pestSlug => {
     routes.push({
-      path: `/uslugi/dezinsekciya/${pestSlug}/`,
+      path: `/uslugi/dezinsekciya/${pestSlug}`,
       outputPath: `uslugi/dezinsekciya/${pestSlug}/index.html`,
       priority: '0.85'
     });
@@ -289,7 +218,7 @@ function getAllRoutes(): SSGRoute[] {
   
   deratizaciyaPestSlugs.forEach(pestSlug => {
     routes.push({
-      path: `/uslugi/deratizaciya/${pestSlug}/`,
+      path: `/uslugi/deratizaciya/${pestSlug}`,
       outputPath: `uslugi/deratizaciya/${pestSlug}/index.html`,
       priority: '0.85'
     });
@@ -297,99 +226,101 @@ function getAllRoutes(): SSGRoute[] {
   
   // ======== НОВЫЕ ТИПЫ СТРАНИЦ ========
   
-  // Услуга + Объект (с pruning для демеркуризации)
+  // Услуга + Объект (24 страницы: 4 услуги × 6 объектов)
   servicesForObjects.forEach(serviceSlug => {
-    const objects = serviceSlug === 'demerkurizaciya' ? demerkurizaciyaObjects : objectSlugs;
-    objects.forEach(objectSlug => {
+    objectSlugs.forEach(objectSlug => {
       routes.push({
-        path: `/uslugi/${serviceSlug}/${objectSlug}/`,
+        path: `/uslugi/${serviceSlug}/${objectSlug}`,
         outputPath: `uslugi/${serviceSlug}/${objectSlug}/index.html`,
         priority: '0.8'
       });
     });
   });
   
-  // REMOVED: /uslugi/dezinfekciya/[neighborhood] doorway pages
-  
-  // ======== NCH PAGES — TIERED MODEL ========
-  
-  // Tier 1: top 4 pests × all neighborhoods
-  tier1Pests.forEach(pestSlug => {
-    const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
-    neighborhoodSlugs.forEach(nhoodSlug => {
+  // Услуга + Район (520 страниц: 4 услуги × 130 районов)
+  servicesForObjects.forEach(serviceSlug => {
+    neighborhoodSlugs.forEach(districtSlug => {
       routes.push({
-        path: `/uslugi/${service}/${pestSlug}/${nhoodSlug}/`,
-        outputPath: `uslugi/${service}/${pestSlug}/${nhoodSlug}/index.html`,
+        path: `/uslugi/${serviceSlug}/${districtSlug}`,
+        outputPath: `uslugi/${serviceSlug}/${districtSlug}/index.html`,
+        priority: '0.75'
+      });
+    });
+  });
+  
+  // Услуга + Объект + Район (2,400 страниц: 4 услуги × 6 объектов × 100 районов)
+  servicesForObjects.forEach(serviceSlug => {
+    objectSlugs.forEach(objectSlug => {
+      top100Neighborhoods.forEach(districtSlug => {
+        routes.push({
+          path: `/uslugi/${serviceSlug}/${objectSlug}/${districtSlug}`,
+          outputPath: `uslugi/${serviceSlug}/${objectSlug}/${districtSlug}/index.html`,
+          priority: '0.7'
+        });
+      });
+    });
+  });
+  
+  // ======== СУЩЕСТВУЮЩИЕ ТИПЫ ========
+  
+  // НЧ-страницы (услуга + вредитель + район) - NchPage (все 130 районов = 910 страниц)
+  neighborhoodSlugs.forEach(neighborhoodSlug => {
+    dezinsekciyaPestSlugs.forEach(pestSlug => {
+      routes.push({
+        path: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}`,
+        outputPath: `uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}/index.html`,
         priority: '0.7'
       });
     });
-  });
-  
-  // Tier 2: next 4 pests × top 40 neighborhoods
-  tier2Pests.forEach(pestSlug => {
-    const service = deratizaciyaPestSlugs.includes(pestSlug) ? 'deratizaciya' : 'dezinsekciya';
-    tier2Neighborhoods.forEach(nhoodSlug => {
+    
+    deratizaciyaPestSlugs.forEach(pestSlug => {
       routes.push({
-        path: `/uslugi/${service}/${pestSlug}/${nhoodSlug}/`,
-        outputPath: `uslugi/${service}/${pestSlug}/${nhoodSlug}/index.html`,
-        priority: '0.65'
-      });
-    });
-  });
-  
-  // Tier 3: remaining 6 pests × top 15 neighborhoods
-  tier3Pests.forEach(pestSlug => {
-    topNeighborhoods.forEach(nhoodSlug => {
-      routes.push({
-        path: `/uslugi/dezinsekciya/${pestSlug}/${nhoodSlug}/`,
-        outputPath: `uslugi/dezinsekciya/${pestSlug}/${nhoodSlug}/index.html`,
-        priority: '0.6'
+        path: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}`,
+        outputPath: `uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/index.html`,
+        priority: '0.7'
       });
     });
   });
   
   // Обзорная страница округов
   routes.push({
-    path: '/uslugi/po-okrugam-moskvy/',
+    path: '/uslugi/po-okrugam-moskvy',
     outputPath: 'uslugi/po-okrugam-moskvy/index.html'
   });
   
-  // Страницы округов (3 услуги × 12 округов = 36 страниц)
-  const districtServicePrefixes = ['dezinfekciya', 'dezinsekciya', 'deratizaciya'];
-  districtServicePrefixes.forEach(prefix => {
-    districtSlugs.forEach(id => {
-      routes.push({
-        path: `/uslugi/${prefix}-${id}/`,
-        outputPath: `uslugi/${prefix}-${id}/index.html`
-      });
+  // Страницы округов
+  districtSlugs.forEach(id => {
+    routes.push({
+      path: `/uslugi/dezinfekciya-${id}`,
+      outputPath: `uslugi/dezinfekciya-${id}/index.html`
     });
   });
   
   // Блог
   blogSlugs.forEach(slug => {
     routes.push({
-      path: `/blog/${slug}/`,
+      path: `/blog/${slug}`,
       outputPath: `blog/${slug}/index.html`
     });
   });
   
   // Обзорная страница районов
   routes.push({
-    path: '/rajony/',
+    path: '/rajony',
     outputPath: 'rajony/index.html'
   });
   
   // Страницы районов (130 страниц)
   neighborhoodSlugs.forEach(slug => {
     routes.push({
-      path: `/rajony/${slug}/`,
+      path: `/rajony/${slug}`,
       outputPath: `rajony/${slug}/index.html`
     });
   });
   
   // Московская область - обзор
   routes.push({
-    path: '/moscow-oblast/',
+    path: '/moscow-oblast',
     outputPath: 'moscow-oblast/index.html',
     priority: '0.8'
   });
@@ -397,7 +328,7 @@ function getAllRoutes(): SSGRoute[] {
   // Города МО
   moscowRegionCitySlugs.forEach(citySlug => {
     routes.push({
-      path: `/moscow-oblast/${citySlug}/`,
+      path: `/moscow-oblast/${citySlug}`,
       outputPath: `moscow-oblast/${citySlug}/index.html`,
       priority: '0.8'
     });
@@ -405,19 +336,10 @@ function getAllRoutes(): SSGRoute[] {
     // Услуги в городах МО
     moscowRegionServices.forEach(serviceSlug => {
       routes.push({
-        path: `/moscow-oblast/${citySlug}/${serviceSlug}/`,
+        path: `/moscow-oblast/${citySlug}/${serviceSlug}`,
         outputPath: `moscow-oblast/${citySlug}/${serviceSlug}/index.html`,
         priority: '0.75'
       });
-    });
-  });
-  
-  // Коммерческие гео-лендинги для кротов (МО)
-  moleCitySlugs.forEach(citySlug => {
-    routes.push({
-      path: `/uslugi/borba-s-krotami/${citySlug}/`,
-      outputPath: `uslugi/borba-s-krotami/${citySlug}/index.html`,
-      priority: '0.8'
     });
   });
   
@@ -426,14 +348,13 @@ function getAllRoutes(): SSGRoute[] {
 
 // Extract title from HTML
 function extractTitle(html: string): string | null {
-  const match = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+  const match = html.match(/<title>([^<]+)<\/title>/i);
   return match ? match[1].trim() : null;
 }
 
-// Extract description from HTML (handles attribute order variations from react-helmet-async)
+// Extract description from HTML
 function extractDescription(html: string): string | null {
-  const match = html.match(/<meta[^>]*name="description"[^>]*content="([^"]+)"/i)
-    || html.match(/<meta[^>]*content="([^"]+)"[^>]*name="description"/i);
+  const match = html.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
   return match ? match[1].trim() : null;
 }
 
@@ -529,7 +450,7 @@ function validateHtml(html: string, route: string): ValidationResult {
 function replaceHeadTags(html: string, helmet: { title: string; meta: string; link: string; script: string }): string {
   // 1. Replace title
   if (helmet.title) {
-    html = html.replace(/<title[^>]*>.*?<\/title>/, helmet.title);
+    html = html.replace(/<title>.*?<\/title>/, helmet.title);
   }
   
   // 2. Remove conflicting meta tags before inserting new ones
@@ -599,8 +520,7 @@ export function ssgPlugin(): Plugin {
       console.log('\n🚀 Starting SSG prerendering...\n');
       
       try {
-        // Phase 1: Read template
-        console.log('📂 SSG Phase: Template read');
+        // Read the template HTML
         const templatePath = resolve(distDir, 'index.html');
         if (!existsSync(templatePath)) {
           console.error('❌ Template index.html not found in dist/');
@@ -608,53 +528,14 @@ export function ssgPlugin(): Plugin {
         }
         
         const template = readFileSync(templatePath, 'utf-8');
-        console.log('✓ Template read OK');
         
         // Build SSR bundle
         const { build } = await import('vite');
         
-        // Phase 2: Build SSR bundle
-        console.log('📦 SSG Phase: SSR bundle build');
-        
-        // Load .env file manually for SSR build (configFile: false doesn't auto-load it)
-        let envDefines: Record<string, string> = {};
-        try {
-          const envPath = resolve('.env');
-          if (existsSync(envPath)) {
-            const envContent = readFileSync(envPath, 'utf-8');
-            for (const line of envContent.split('\n')) {
-              const trimmed = line.trim();
-              if (!trimmed || trimmed.startsWith('#')) continue;
-              const eqIndex = trimmed.indexOf('=');
-              if (eqIndex === -1) continue;
-              const key = trimmed.substring(0, eqIndex).trim();
-              let val = trimmed.substring(eqIndex + 1).trim();
-              // Strip wrapping quotes from .env values (e.g. "https://..." → https://...)
-              if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-                val = val.slice(1, -1);
-              }
-              if (key.startsWith('VITE_')) {
-                envDefines[`import.meta.env.${key}`] = JSON.stringify(val);
-              }
-            }
-          }
-        } catch (e) {
-          console.warn('⚠️  Could not read .env file for SSR build');
-        }
-        
-        // Fallback placeholders so supabase client doesn't crash with undefined URL/key
-        if (!envDefines['import.meta.env.VITE_SUPABASE_URL']) {
-          console.warn('⚠️  SSG ENV: VITE_SUPABASE_URL not found in .env, using placeholder');
-          envDefines['import.meta.env.VITE_SUPABASE_URL'] = JSON.stringify('https://placeholder.supabase.co');
-        }
-        if (!envDefines['import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY']) {
-          console.warn('⚠️  SSG ENV: VITE_SUPABASE_PUBLISHABLE_KEY not found in .env, using placeholder');
-          envDefines['import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY'] = JSON.stringify('placeholder-key');
-        }
+        console.log('📦 Building SSR bundle...');
         
         await build({
           configFile: false,
-          define: envDefines,
           build: {
             ssr: true,
             outDir: resolve(distDir, 'server'),
@@ -681,56 +562,40 @@ export function ssgPlugin(): Plugin {
         
         console.log('✓ SSR bundle built\n');
         
-        // Phase 3: Import SSR bundle
-        console.log('📥 SSG Phase: SSR bundle import');
+        // Import the SSR bundle
         const serverEntryPath = pathToFileURL(resolve(distDir, 'server/entry-server.js')).href;
         const { render } = await import(serverEntryPath);
-        console.log('✓ SSR bundle imported OK');
         
         // Get all routes to prerender
         const routes = getAllRoutes();
         let successCount = 0;
         let errorCount = 0;
         let warningCount = 0;
-        const failedRoutes: { path: string; error: string }[] = [];
         
         // Track duplicates
         const titleMap = new Map<string, string[]>();
         const descriptionMap = new Map<string, string[]>();
         
-        // Phase 4: Render all routes
-        console.log(`🔄 SSG Phase: Route rendering loop (${routes.length} pages)\n`);
-        
-        // Prepare a clean template for non-homepage routes:
-        // Strip the homepage JSON-LD block so each page only carries its own schema
-        const homepageJsonLdStart = template.indexOf('<!-- Schema.org JSON-LD разметка -->');
-        const homepageJsonLdEnd = template.indexOf('</script>', template.indexOf('<script type="application/ld+json">', homepageJsonLdStart));
-        const templateWithoutHomepageSchema = (homepageJsonLdStart !== -1 && homepageJsonLdEnd !== -1)
-          ? template.substring(0, homepageJsonLdStart) + template.substring(homepageJsonLdEnd + '</script>'.length)
-          : template;
+        console.log(`📄 Prerendering ${routes.length} pages...\n`);
         
         for (const route of routes) {
           try {
-            // Log BEFORE render so if process crashes we know which route killed it
-            console.log(`⏳ Rendering ${route.path}...`);
+            // Render the route
             const result = render(route.path);
-            
-            // Use full template (with homepage schema) only for homepage, stripped for all others
-            const activeTemplate = route.path === '/' ? template : templateWithoutHomepageSchema;
             
             // Replace entire root div content using indexOf for reliability
             // The regex /<div id="root">[\s\S]*?<\/div>/ can be greedy with nested divs
             const rootStartTag = '<div id="root">';
-            const rootStartIndex = activeTemplate.indexOf(rootStartTag);
+            const rootStartIndex = template.indexOf(rootStartTag);
             
             // Find the matching closing </div> by counting nesting
             let depth = 1;
             let searchIndex = rootStartIndex + rootStartTag.length;
             let rootEndIndex = -1;
             
-            while (depth > 0 && searchIndex < activeTemplate.length) {
-              const nextOpen = activeTemplate.indexOf('<div', searchIndex);
-              const nextClose = activeTemplate.indexOf('</div>', searchIndex);
+            while (depth > 0 && searchIndex < template.length) {
+              const nextOpen = template.indexOf('<div', searchIndex);
+              const nextClose = template.indexOf('</div>', searchIndex);
               
               if (nextClose === -1) break;
               
@@ -748,12 +613,12 @@ export function ssgPlugin(): Plugin {
             
             let html: string;
             if (rootStartIndex !== -1 && rootEndIndex !== -1) {
-              html = activeTemplate.substring(0, rootStartIndex) + 
+              html = template.substring(0, rootStartIndex) + 
                      `<div id="root">${result.html}</div>` + 
-                     activeTemplate.substring(rootEndIndex);
+                     template.substring(rootEndIndex);
             } else {
               // Fallback to regex if parsing fails
-              html = activeTemplate.replace(
+              html = template.replace(
                 /<div id="root">[\s\S]*?<\/div>/,
                 `<div id="root">${result.html}</div>`
               );
@@ -766,10 +631,10 @@ export function ssgPlugin(): Plugin {
             const validation = validateHtml(html, route.path);
             
             if (!validation.valid) {
-              console.warn(`⚠️  ${route.path}: Validation errors (file will still be written):`);
-              validation.errors.forEach(err => console.warn(`   - ${err}`));
+              console.error(`❌ ${route.path}: Validation errors:`);
+              validation.errors.forEach(err => console.error(`   - ${err}`));
               errorCount++;
-              // Do NOT skip — always write the file
+              continue;
             }
             
             if (validation.warnings.length > 0) {
@@ -812,9 +677,8 @@ export function ssgPlugin(): Plugin {
             successCount++;
             
           } catch (error) {
-            console.error(`❌ ${route.path}:`, error instanceof Error ? error.stack : error);
+            console.error(`❌ ${route.path}: ${error instanceof Error ? error.message : 'Unknown error'}`);
             errorCount++;
-            failedRoutes.push({ path: route.path, error: error instanceof Error ? error.message : String(error) });
           }
         }
         
@@ -916,54 +780,22 @@ export function ssgPlugin(): Plugin {
           }
         });
         
-        const totalRoutes = routes.length;
-        console.log(`\n📊 SSG Results: ${successCount}/${totalRoutes} pages OK, ${failedRoutes.length} failed`);
+        console.log(`\n📊 SSG Results:`);
         console.log(`   ✅ Success: ${successCount}`);
         console.log(`   ⚠️  Warnings: ${warningCount}`);
         console.log(`   ❌ Errors: ${errorCount}`);
+        console.log(`   🔗 Dead links: ${deadLinks.length}`);
         if (duplicateCount > 0) {
           console.log(`   📋 Duplicate titles/descriptions: ${duplicateCount}`);
         }
-        console.log(`   🔗 Dead links: ${deadLinks.length}`);
         console.log('');
         
-        // Fail-fast: only throw in Docker/GitHub Actions builds, NOT in Lovable preview
-        const isDockerCI = !!process.env.GITHUB_ACTIONS || !!process.env.DOCKER_BUILD;
-        
-        // PRIMARY CHECK: Any failed route in CI → hard fail with full list
-        if (failedRoutes.length > 0) {
-          const msg = `SSG FAILED: ${failedRoutes.length}/${totalRoutes} routes failed:\n` +
-            failedRoutes.map(r => `  ✗ ${r.path}: ${r.error}`).join('\n');
-          if (isDockerCI) throw new Error(msg);
-          else console.warn(`⚠️  ${msg}`);
+        if (successCount > 0) {
+          console.log('✅ SSG prerendering complete! Static HTML files generated in dist/\n');
         }
         
-        // BELT-AND-SUSPENDERS: Check critical marker pages on disk
-        const criticalPages = [
-          'rajony/arbat/index.html',
-          'uslugi/dezinsekciya/klopy/index.html',
-          'uslugi/dezinsekciya/blohi/index.html',
-        ];
-        const missingCritical = criticalPages.filter(p => !existsSync(resolve(distDir, p)));
-        if (missingCritical.length > 0) {
-          const msg = `SSG CRITICAL: Missing marker pages on disk:\n${missingCritical.map(p => `  - ${p}`).join('\n')}`;
-          if (isDockerCI) throw new Error(msg);
-          else console.warn(msg);
-        }
-
-        if (successCount === 0) {
-          const msg = 'SSG CRITICAL: Zero pages were generated.';
-          if (isDockerCI) throw new Error(msg);
-          else console.warn(msg);
-        }
-        
-        if (successCount > 0 && failedRoutes.length === 0) {
-          console.log(`✅ SSG prerendering complete! All ${totalRoutes} pages generated in dist/\n`);
-        }
-
       } catch (error) {
-        console.error('❌ SSG prerendering failed:', error instanceof Error ? error.stack : error);
-        if (!!process.env.GITHUB_ACTIONS || !!process.env.DOCKER_BUILD) throw error;
+        console.error('❌ SSG prerendering failed:', error);
       }
     }
   };

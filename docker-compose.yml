@@ -16,3 +16,26 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+<<<<<<< Updated upstream
+=======
+      start_period: 30s
+
+  push-server:
+    image: node:20-alpine
+    container_name: push-server
+    working_dir: /app
+    command: sh -c "npm i && node push-server.js"
+    volumes:
+      - ./push-server.js:/app/push-server.js
+      - ./push-server-package.json:/app/package.json
+      - push-data:/data
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    environment:
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+
+volumes:
+  push-data:
+>>>>>>> Stashed changes
