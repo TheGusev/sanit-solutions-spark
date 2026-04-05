@@ -192,23 +192,27 @@ export function ssgPlugin(): Plugin {
     },
     
     async closeBundle() {
+      const isCI = process.env.GITHUB_ACTIONS === 'true' || process.env.DOCKER_BUILD === 'true' || process.env.CI === 'true';
       console.log('\n🚀 Starting SSG prerendering...\n');
       
       try {
-        // Read the template HTML
+        // [SSG:1/5] Read template
+        console.log('[SSG:1/5] Reading template...');
         const templatePath = resolve(distDir, 'index.html');
         if (!existsSync(templatePath)) {
-          console.error('❌ Template index.html not found in dist/');
+          console.error('FATAL: Template index.html not found in dist/');
+          if (isCI) process.exit(1);
           return;
         }
         
         const template = readFileSync(templatePath, 'utf-8');
+        console.log('[SSG:1/5] ✓ Template loaded');
         
-        // Build SSR bundle
+        // [SSG:2/5] Build SSR bundle
+        console.log('[SSG:2/5] Building SSR bundle...');
         const { build } = await import('vite');
         
-        console.log('📦 Building SSR bundle...');
-        
+        try {
         await build({
           configFile: false,
           build: {
