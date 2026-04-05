@@ -76,7 +76,7 @@ const SERVICE_NAMES: Record<string, string> = {
   'obrabotka-uchastkov': 'Обработка участков',
   'borba-s-krotami': 'Борьба с кротами',
   dezodoraciya: 'Дезодорация',
-  sertifikaciya: 'Сертификация',
+  
 };
 
 /**

@@ -15,6 +15,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import AnimatedSection from '@/components/AnimatedSection';
 import RelatedServices from '@/components/RelatedServices';
 import RelatedGeoLinks from '@/components/RelatedGeoLinks';
+import RelatedBlogLinks from '@/components/RelatedBlogLinks';
 import ServiceQuiz from '@/components/ServiceQuiz';
 import ServiceTariffs from '@/components/ServiceTariffs';
 import WhyProblemReturns from '@/components/WhyProblemReturns';
@@ -211,7 +212,7 @@ export default function ServicePestPage() {
           )}
           
           <div className="container mx-auto px-4 relative z-10">
-            <Breadcrumbs items={breadcrumbItems} />
+            <Breadcrumbs items={breadcrumbItems} showSchema={false} />
             
             <div className="mt-6 grid md:grid-cols-2 gap-8 items-center">
               <div>
@@ -387,7 +388,8 @@ export default function ServicePestPage() {
                       Сколько стоит уничтожение {pest.genitive}?
                     </AccordionTrigger>
                     <AccordionContent>
-                      Стоимость начинается от {pest.priceFrom}₽. Итоговая цена зависит от площади помещения, степени заражения и выбранного метода обработки.
+                      Стоимость начинается от {pest.priceFrom}₽. Итоговая цена зависит от площади помещения, степени заражения и выбранного метода обработки.{' '}
+                      <Link to={`/uslugi/${service}/`} className="text-primary hover:underline">Подробнее о ценах на {serviceName.toLowerCase()}</Link>.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="q2">
@@ -403,7 +405,8 @@ export default function ServicePestPage() {
                       Безопасна ли обработка для детей и животных?
                     </AccordionTrigger>
                     <AccordionContent>
-                      Да, мы используем сертифицированные препараты IV класса опасности (малоопасные). После проветривания помещение полностью безопасно.
+                      Да, мы используем сертифицированные препараты IV класса опасности (малоопасные). После проветривания помещение полностью безопасно.{' '}
+                      <Link to="/blog/kak-podgotovit-pomeshchenie/" className="text-primary hover:underline">Как подготовить помещение к обработке</Link>.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="q4">
@@ -446,77 +449,9 @@ export default function ServicePestPage() {
           )}
         </LazySection>
 
-        {/* Полезные статьи по теме */}
-        {(() => {
-          const relatedArticles = getRelatedArticlesForPest(pestSlug);
-          if (!relatedArticles.length) return null;
-          return (
-            <AnimatedSection className="py-12 bg-muted/30">
-              <div className="container mx-auto px-4">
-                <h2 className="text-2xl md:text-3xl font-bold text-center mb-3">
-                  Полезные статьи по теме
-                </h2>
-                <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
-                  Читайте материалы для более глубокого понимания вопроса
-                </p>
-                <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                  {relatedArticles.map((article) => (
-                    <Link
-                      key={article.slug}
-                      to={`/blog/${article.slug}`}
-                      className="group"
-                    >
-                      <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50 bg-card">
-                        <CardContent className="p-5">
-                          <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
-                            {article.category}
-                          </span>
-                          <h3 className="text-lg font-bold mt-3 mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                            {article.title}
-                          </h3>
-                          <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-                            {article.excerpt}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground">{article.readTime}</span>
-                            <span className="text-sm font-medium text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
-                              Читать <ChevronRight className="w-4 h-4" />
-                            </span>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </AnimatedSection>
-          );
-        })()}
+        {/* Related Blog Links */}
+        <RelatedBlogLinks serviceSlug={service} pestSlug={pestSlug} />
         
-        {/* Districts Links */}
-        <AnimatedSection className="py-12">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6 text-center">
-              Уничтожение {pest.genitive} по районам Москвы и МО
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
-              {topNeighborhoodData.map((neighborhood) => neighborhood && (
-                <Link
-                  key={neighborhood.slug}
-                  to={`/uslugi/${service}/${pestSlug}/${neighborhood.slug}`}
-                  className="p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors text-center text-sm font-medium"
-                >
-                  {neighborhood.name}
-                </Link>
-              ))}
-            </div>
-            <div className="text-center mt-6">
-              <Button variant="outline" asChild>
-                <Link to="/rajony">Все районы Москвы →</Link>
-              </Button>
-            </div>
-          </div>
-        </AnimatedSection>
         
         {/* CTA */}
         <AnimatedSection className="py-12 bg-primary text-primary-foreground">

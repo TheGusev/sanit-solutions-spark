@@ -1,9 +1,12 @@
 import { useState } from "react";
-import InternalLinks from "@/components/InternalLinks";
+import { Link } from "react-router-dom";
 import { trackGoal } from "@/lib/analytics";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import RelatedServices from "@/components/RelatedServices";
+import RelatedGeoLinks from "@/components/RelatedGeoLinks";
+import RelatedBlogLinks from "@/components/RelatedBlogLinks";
 import AnimatedSection from "@/components/AnimatedSection";
 import HeroCallbackForm from "@/components/HeroCallbackForm";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -23,16 +26,26 @@ const metadata: PageMetadata = {
   title: "Служба дезинсекции в Москве — вызвать специалиста круглосуточно",
   description: "Профессиональная служба дезинсекции в Москве. Уничтожение тараканов, клопов, блох и других насекомых. Выезд за 30 минут, гарантия до 3 лет.",
   canonical: "https://goruslugimsk.ru/sluzhba-dezinsekcii",
-  schema: {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: "Санитарные Решения — Служба дезинсекции",
-    description: "Профессиональная служба дезинсекции в Москве и МО",
-    url: "https://goruslugimsk.ru/sluzhba-dezinsekcii",
-    telephone: "+74950181817",
-    areaServed: { "@type": "City", name: "Москва" },
-    openingHours: "Mo-Su 00:00-23:59",
-  },
+  schema: [
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      name: "Санитарные Решения — Служба дезинсекции",
+      description: "Профессиональная служба дезинсекции в Москве и МО",
+      url: "https://goruslugimsk.ru/sluzhba-dezinsekcii",
+      telephone: "+74950181817",
+      areaServed: { "@type": "City", name: "Москва" },
+      openingHours: "Mo-Su 00:00-23:59",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Главная", item: "https://goruslugimsk.ru" },
+        { "@type": "ListItem", position: 2, name: "Служба дезинсекции", item: "https://goruslugimsk.ru/sluzhba-dezinsekcii" },
+      ],
+    },
+  ],
 };
 
 const advantages = [
@@ -45,11 +58,11 @@ const advantages = [
 ];
 
 const faq = [
-  { q: "Сколько стоит вызов службы дезинсекции?", a: "Стоимость обработки от 2 500 ₽ за однокомнатную квартиру. Точная цена зависит от площади, типа вредителей и метода обработки." },
+  { q: "Сколько стоит вызов службы дезинсекции?", a: "Стоимость обработки от 2 500 ₽ за однокомнатную квартиру. Точная цена зависит от площади, типа вредителей и метода обработки.", link: { text: "Подробнее о ценах на дезинсекцию", url: "/uslugi/dezinsekciya/" } },
   { q: "Как быстро приедет дезинсектор?", a: "В пределах Москвы — от 30 минут после оформления заявки. Мы работаем круглосуточно без выходных." },
   { q: "Безопасна ли обработка для детей и животных?", a: "Да, мы используем сертифицированные препараты IV класса опасности. После проветривания помещение полностью безопасно." },
   { q: "Нужна ли повторная обработка?", a: "В большинстве случаев достаточно одной обработки. При сильном заражении может потребоваться повторный визит — он входит в гарантию." },
-  { q: "Как подготовить помещение к обработке?", a: "Уберите продукты питания, посуду, личные вещи. Отодвиньте мебель от стен на 10-15 см. Подробную инструкцию дадим при оформлении заявки." },
+  { q: "Как подготовить помещение к обработке?", a: "Уберите продукты питания, посуду, личные вещи. Отодвиньте мебель от стен на 10-15 см.", link: { text: "Читайте подробнее в нашем руководстве", url: "/blog/kak-podgotovit-pomeshchenie/" } },
 ];
 
 const ServiceSESPage = () => {
@@ -162,7 +175,14 @@ const ServiceSESPage = () => {
                 {faq.map((f, i) => (
                   <AccordionItem key={i} value={`faq-${i}`}>
                     <AccordionTrigger>{f.q}</AccordionTrigger>
-                    <AccordionContent>{f.a}</AccordionContent>
+                    <AccordionContent>
+                      {f.a}
+                      {f.link && (
+                        <>
+                          {' '}<Link to={f.link.url} className="text-primary hover:underline">{f.link.text}</Link>.
+                        </>
+                      )}
+                    </AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>
@@ -185,7 +205,9 @@ const ServiceSESPage = () => {
             </div>
           </div>
         </section>
-        <InternalLinks currentService="dezinsekciya" />
+        <RelatedServices serviceSlug="dezinsekciya" />
+        <RelatedGeoLinks serviceSlug="dezinsekciya" />
+        <RelatedBlogLinks serviceSlug="dezinsekciya" />
       </main>
       <Footer />
       <CalculatorModal open={showCalculator} onOpenChange={setShowCalculator} />
