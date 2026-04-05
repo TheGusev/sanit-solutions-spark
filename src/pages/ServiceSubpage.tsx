@@ -22,7 +22,9 @@ import {
 } from "@/components/ui/breadcrumb";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import InternalLinks from "@/components/InternalLinks";
+import RelatedServices from '@/components/RelatedServices';
+import RelatedGeoLinks from '@/components/RelatedGeoLinks';
+import RelatedBlogLinks from '@/components/RelatedBlogLinks';
 import AnimatedSection from "@/components/AnimatedSection";
 import { getSubpageByPath } from "@/data/serviceSubpages";
 import { getServiceBySlug } from "@/data/services";
