@@ -175,7 +175,14 @@ const ServiceSESPage = () => {
                 {faq.map((f, i) => (
                   <AccordionItem key={i} value={`faq-${i}`}>
                     <AccordionTrigger>{f.q}</AccordionTrigger>
-                    <AccordionContent>{f.a}</AccordionContent>
+                    <AccordionContent>
+                      {f.a}
+                      {f.link && (
+                        <>
+                          {' '}<Link to={f.link.url} className="text-primary hover:underline">{f.link.text}</Link>.
+                        </>
+                      )}
+                    </AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>
