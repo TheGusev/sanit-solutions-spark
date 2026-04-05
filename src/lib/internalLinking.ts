@@ -289,7 +289,6 @@ export function getBreadcrumbItems(pathname: string): BreadcrumbItemData[] {
 // Related mole cities (3-5 neighboring cities for borba-s-krotami)
 // ============================================================
 
-import { moleCities } from '@/data/moleCities';
 
 export function getRelatedMoleCities(currentCitySlug: string): InternalLinkItem[] {
   const city = moleCities.find(c => c.slug === currentCitySlug);
