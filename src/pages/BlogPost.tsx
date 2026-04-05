@@ -382,18 +382,18 @@ const BlogPost = () => {
       {/* Compact CTA */}
       <CompactCTA />
 
-      {/* Internal Links for SEO */}
-      <InternalLinks
-        currentService={
+      {/* Related Services + Geo Links */}
+      <RelatedServices
+        serviceSlug={
           post.tags?.some(t => t.toLowerCase().includes('тараканы') || t.toLowerCase().includes('клопы') || t.toLowerCase().includes('блохи'))
             ? 'dezinsekciya'
             : post.tags?.some(t => t.toLowerCase().includes('крыс') || t.toLowerCase().includes('мыш'))
               ? 'deratizaciya'
-              : undefined
+              : 'dezinsekciya'
         }
         title="Полезные ссылки"
-        maxLinks={8}
       />
+      <RelatedGeoLinks />
 
       <Footer />
     </div>

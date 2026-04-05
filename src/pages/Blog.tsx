@@ -289,7 +289,8 @@ const Blog = () => {
         </div>
       </section>
 
-      <InternalLinks />
+      <RelatedServices serviceSlug="dezinsekciya" title="Наши услуги" />
+      <RelatedGeoLinks title="Работаем по всей Москве" />
 
       <Footer />
     </div>

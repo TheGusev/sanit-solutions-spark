@@ -302,10 +302,9 @@ export default function MoscowRegionCityPage() {
         </AnimatedSection>
         
         {/* Internal Links */}
-        <InternalLinks
-          currentCity={citySlug}
-          title="Услуги в Москве"
-        />
+        <RelatedServices serviceSlug="dezinsekciya" title="Наши услуги в Москве" />
+        <RelatedGeoLinks title="Районы Москвы" showMoscowRegion={false} />
+        <RelatedBlogLinks serviceSlug="dezinsekciya" />
       </main>
       
       <Footer />
