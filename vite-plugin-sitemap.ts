@@ -75,8 +75,7 @@ const servicesSlugs = [
 
 // Подстраницы услуг
 const serviceSubpageRoutes = [
-  { parent: 'dezinfekciya', sub: 'kvartir' },
-  { parent: 'dezinfekciya', sub: 'ofisov' },
+  // dezinfekciya/kvartir and dezinfekciya/ofisov — generated via servicesForObjects × objectSlugs
   { parent: 'dezinsekciya', sub: 'unichtozhenie-klopov' },
   { parent: 'dezinsekciya', sub: 'unichtozhenie-tarakanov' },
   { parent: 'deratizaciya', sub: 'unichtozhenie-krys' },
