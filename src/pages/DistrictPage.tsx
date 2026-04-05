@@ -140,10 +140,9 @@ const DistrictPage = ({ districtId: propDistrictId, serviceType = 'dezinfekciya'
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Главная', item: SEO_CONFIG.baseUrl },
-      { '@type': 'ListItem', position: 2, name: 'Услуги', item: `${SEO_CONFIG.baseUrl}/#services` },
-      { '@type': 'ListItem', position: 3, name: 'По округам Москвы', item: `${SEO_CONFIG.baseUrl}/uslugi/po-okrugam-moskvy` },
-      { '@type': 'ListItem', position: 4, name: `${svc.name} в ${district.name}`, item: canonicalUrl },
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: `${SEO_CONFIG.baseUrl}/` },
+      { '@type': 'ListItem', position: 2, name: 'По округам Москвы', item: `${SEO_CONFIG.baseUrl}/uslugi/po-okrugam-moskvy/` },
+      { '@type': 'ListItem', position: 3, name: `${svc.name} в ${district.name}` },
     ],
   };
 
