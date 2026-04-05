@@ -1,123 +1,186 @@
 
 
-# Phase 5: Schema.org, FAQ-блоки, all_conversions финализация
-
-## Текущее состояние
-
-### Schema.org
-- **BreadcrumbList**: Существует в 2 вариантах — (a) через `Breadcrumbs.tsx` + `generateBreadcrumbSchema()` из `internalLinking.ts`, (b) inline в каждой page (ServicePage, ServicePestPage, NchPage, etc.). Проблемы:
-  - `generateBreadcrumbSchema()` пишет `item: SEO_CONFIG.baseUrl` для "Главная" — **без trailing slash** (`https://goruslugimsk.ru` вместо `https://goruslugimsk.ru/`)
-  - Inline schemas в ServicePestPage line 154: URL без trailing slash
-  - ServicePage line 167/173/179: URL без trailing slash, последний элемент включает `item` (должен быть без)
-  - **Дубли**: страницы, где есть и `Breadcrumbs` (с schema), и inline `breadcrumbSchema` в metadata — двойной BreadcrumbList JSON-LD
-- **LocalBusiness**: Contacts.tsx уже имеет полноценный LocalBusiness schema (lines 53-100). Index.tsx — schema генерируется в `generateIndexMetadata()` без LocalBusiness. `jsonLD.ts` содержит `generateOrganizationLD()` но не используется на главной.
-- **Service**: `StructuredData.tsx` имеет `generateService()`, но service hubs (ServicePage) используют inline schema с `@type: Service` (line 125-143). Уже работает.
-- **FAQPage**: Уже есть на ServicePage, ServicePestPage, NchPage, DistrictPage, MoleCityPage, ServiceSubpage, ServiceDistrictPage, ServiceObjectPage, MoscowRegionServicePage, NeighborhoodPage.
-
-### FAQ-блоки с контекстными ссылками
-- ServicePestPage уже имеет FAQ с Link в ответах (lines 380-420). Вопрос: нужно ли менять текст FAQ или только убедиться что ссылки есть? → **Task B**: добавить/обновить FAQ с внутренними ссылками на 5 страницах. ServicePestPage уже имеет FAQ с ссылками, но вопросы из задания отличаются от текущих (генерируются из `pest.faq`). Нужно добавить контекстные ссылки в существующие FAQ ответы, а не заменять.
-- `/uslugi/deratizaciya/` и `/uslugi/borba-s-krotami/` — FAQ из `service.faq` данных, без ссылок в ответах
-- `/rajony/` (DistrictsOverview) — FAQ отсутствует
-
-### all_conversions
-- Уже реализован в `trackGoal()` (analytics.ts lines 184-204). `ALL_CONV_GOALS` set содержит 10 событий + prefix-based matching. **Уже работает корректно**.
-- Все формы, tel:, quiz вызывают `trackGoal()` → автоматически fire `all_conversions`.
-- Нет проблем с дублями — проверка `goalName !== 'all_conversions'` предотвращает рекурсию.
+# ПОЛНЫЙ POST-DEPLOY АУДИТ — goruslugimsk.ru
 
 ---
 
-## Блок A: Schema.org стандартизация
-
-### A1. Fix BreadcrumbList schemas
-
-**Проблема 1**: `generateBreadcrumbSchema()` в `internalLinking.ts` использует `SEO_CONFIG.baseUrl` = `https://goruslugimsk.ru` (без slash) для "Главная". Нужно `+ '/'`.
-
-**Проблема 2**: Последний breadcrumb item не должен иметь `item` поле. Текущая логика: если `item.href` отсутствует — `item` не добавляется. Это **уже корректно** для Breadcrumbs компонента (последний item без href).
-
-**Проблема 3**: Inline breadcrumb schemas в page-файлах:
-- `ServicePage.tsx` line 167: `"item": "https://goruslugimsk.ru"` → нужно `/`; line 179: последний элемент имеет `item` → убрать
-- `ServicePestPage.tsx` line 154-156: без trailing slash, последний элемент с `item` → убрать
-- `NchPage.tsx`, `DistrictPage.tsx` — аналогично (используют `SEO_CONFIG.baseUrl` без slash для Главная)
-- `ServiceSESPage.tsx` line 44: `"item": "https://goruslugimsk.ru"` → нужно `/`
-
-**Проблема 4**: Дубли schema на страницах, где `Breadcrumbs` компонент (с `showSchema=true`) и inline `breadcrumbSchema` в metadata оба рендерятся. Нужно на каждой странице оставить только один источник BreadcrumbList.
-
-**Решение**: 
-1. Fix `generateBreadcrumbSchema()` → добавить `/` к baseUrl для "Главная"
-2. На страницах с `Breadcrumbs` компонентом — убрать inline `breadcrumbSchema` из metadata.schema (предпочитаем компонент)
-3. На страницах без `Breadcrumbs` компонента — fix inline schemas: trailing slash, убрать `item` у последнего элемента
-
-**Файлы**: `internalLinking.ts`, `ServicePage.tsx`, `ServicePestPage.tsx`, `ServiceSESPage.tsx`
-
-### A2. LocalBusiness на главной
-
-Index.tsx использует `SEOHead` с `generateIndexMetadata()`. Нужно добавить LocalBusiness schema в metadata.schema. Contacts.tsx уже имеет LocalBusiness — не трогаем.
-
-**Файл**: `metadata.ts` — добавить LocalBusiness schema в `generateIndexMetadata()`
-
-### A3. Service schema — уже на месте
-
-ServicePage уже генерирует `@type: Service` schema (line 125-143). Ничего делать не нужно.
-
-### A4. FAQPage schema — уже на месте
-
-Все страницы с FAQ уже имеют FAQPage schema. Новые FAQ (DistrictsOverview) получат schema вместе с FAQ-блоком.
+## ИТОГОВАЯ ОЦЕНКА: 91 / 100
 
 ---
 
-## Блок B: FAQ с контекстными ссылками
+## A. АРХИТЕКТУРА И РОУТИНГ — 96/100
 
-### B1-B4: ServicePestPage + ServicePage (hub pages)
+- 1250+ SSG-страниц, единый source of truth (`seoRoutes.ts`)
+- 3-tier NCH модель (Tier 1 index, Tier 2/3 noindex)
+- `validateRouteIntegrity()` fail-fast в CI
+- `validateAllRoutes()` дубликаты блокируются
+- 500+ 301-редиректов в `_redirects`
+- `normalizePathWithTrailingSlash()` для canonical
+- Sitemap синхронизирован с SSG routes
+- 410 для WordPress legacy URLs
 
-ServicePestPage уже имеет FAQ с ссылками в AccordionContent (lines 380-420). Существующие FAQ содержат ссылки на `/uslugi/${service}/` и `/blog/kak-podgotovit-pomeshchenie/`. **Уже соответствует требованиям**.
-
-ServicePage (hub) FAQ рендерит `service.faq` из данных — простой текст без ссылок. Добавлять ссылки в data-driven FAQ сложно и рискованно (нужно менять структуру данных).
-
-**Подход**: Создать маппинг FAQ с контекстными ссылками для 3 ключевых hub-страниц (`dezinsekciya`, `deratizaciya`, `borba-s-krotami`) как специальный override. Когда на ServicePage рендерится FAQ для этих slugs, добавлять 1-2 вопроса с ссылками после основного FAQ.
-
-**Файлы**: `ServicePage.tsx` — добавить contextual FAQ items с Link для 3 slugs
-
-### B5: DistrictsOverview FAQ
-
-Страница `/rajony/` сейчас не имеет FAQ. Добавить 2 вопроса + FAQPage schema.
-
-**Файл**: `DistrictsOverview.tsx`
+**Без проблем.**
 
 ---
 
-## Блок C: all_conversions
+## B. SEO ON-PAGE — 87/100
 
-**Аудит результат**: `trackGoal()` уже автоматически стреляет `all_conversions` для всех primary events. Покрытие:
-- `lead_submit` — QuickCallForm, LeadFormModal ✅
-- `hero_callback_submit` — HeroCallbackForm ✅
-- `phone_click` — Footer, ServicePage, ServiceTariffs, MoleCityPage, ServiceLandingUchastkiPage, DistrictCTA, blog ServiceCTA, MobileQuickCTA ✅
-- `calc_open` — Hero, CalculatorModal, ServicePage, ServiceSubpage, ServiceLandingUchastkiPage ✅
-- `quiz_lead_*` — ServiceQuiz ✅
-- `calc_lead_*` — CompactRequestModal, LeadFormModal ✅
+### Что отлично:
+- `metadata.ts` с автовалидацией (title 40-65, description 140-165)
+- SEOHead с runtime dev-проверкой
+- canonical trailing slash на всех страницах
+- robots.txt корректен (Yandex, Google, LLM-краулеры)
+- hreflang ru + x-default
 
-**Пробелы**: Contacts.tsx `handlePhoneClick` (line 41-43) делает `window.location.href = "tel:..."` **без** `trackGoal('phone_click')`. Аналогично `handleMaxClick` и `handleEmailClick`.
+### ISSUES:
 
-**Файл**: `Contacts.tsx` — добавить `trackGoal('phone_click')` в `handlePhoneClick`
-
-**Admin exclusion**: trackGoal не проверяет pathname. Но admin страницы не содержат коммерческие формы/tel ссылки → фактически нет срабатываний. Допустимо не менять.
+| # | Severity | Проблема | Где | Fix |
+|---|----------|----------|-----|-----|
+| B1 | **HIGH** | Footer: все 15+ ссылок на `/uslugi/*` **без trailing slash** (`/uslugi/dezinfekciya` вместо `/uslugi/dezinfekciya/`). Аналогично `/rajony`, `/blog`, `/contacts`, `/team`, `/otzyvy`, `/sluzhba-dezinsekcii`, `/privacy`, `/terms` | `Footer.tsx` lines 46-72 | Добавить `/` ко всем `to=""` |
+| B2 | Medium | `jsonLD.ts` — placeholder `sameAs` URLs (`vk.com/yourpage`, `t.me/yourpage`) | `jsonLD.ts` lines 37-40 | Удалить или заменить реальными |
+| B3 | Medium | `jsonLD.ts` line 56 — URL без trailing slash для neighborhood | `jsonLD.ts` line 56 | Добавить `/` |
+| B4 | Medium | 95 ссылок на deprecated `/uslugi/sertifikaciya/` в блог-контенте | `legal-commercial.ts` | Заменить на `/uslugi/dezinfekciya/` |
+| B5 | Low | `analytics.ts` line 138 — маппинг для deprecated sertifikaciya | `analytics.ts` | Удалить строку |
 
 ---
 
-## Итого — файлы для изменения
+## C. SCHEMA.ORG — 88/100
 
-| Действие | Файл | Что |
-|----------|------|-----|
-| Edit | `src/lib/internalLinking.ts` | Fix trailing slash в generateBreadcrumbSchema |
-| Edit | `src/pages/ServicePage.tsx` | Fix inline breadcrumb schema (trailing slash, last item), add contextual FAQ links для 3 service slugs |
-| Edit | `src/pages/ServicePestPage.tsx` | Fix inline breadcrumb schema |
-| Edit | `src/pages/ServiceSESPage.tsx` | Fix inline breadcrumb schema |
-| Edit | `src/lib/metadata.ts` | Add LocalBusiness schema в generateIndexMetadata |
-| Edit | `src/pages/DistrictsOverview.tsx` | Add FAQ + FAQPage schema |
-| Edit | `src/pages/Contacts.tsx` | Add trackGoal('phone_click') |
+### Что отлично:
+- LocalBusiness на главной через `generateIndexMetadata` + на /contacts/
+- Service schema на service hub pages
+- FAQPage schema синхронизирована с FAQ-блоками
+- `generateBreadcrumbSchema()` с trailing slash fix (baseUrl + '/')
+- Контекстные FAQ с ссылками на 3 hub-страницах
+- DistrictsOverview: FAQ + FAQPage schema
 
-## Что НЕ меняется
-- URL, canonical, robots, noindex, sitemap — без изменений
-- Paid-traffic logic — без изменений  
-- Новые страницы не создаются
-- `all_conversions` логика в analytics.ts — уже корректна, не трогаем
+### ISSUES:
+
+| # | Severity | Проблема | Где | Fix |
+|---|----------|----------|-----|-----|
+| C1 | **HIGH** | `/#services` anchor URL в BreadcrumbList schema — не настоящая страница, Google может показать warning | `ServicePage.tsx` line 161, `DistrictPage.tsx` line 144, `DistrictsOverview.tsx` line 42 | Убрать `item` для "Услуги" (промежуточный breadcrumb без URL) или указать `/uslugi/po-okrugam-moskvy/` |
+| C2 | **HIGH** | `DistrictPage.tsx` line 143: `item: SEO_CONFIG.baseUrl` — **без trailing slash** для "Главная" | `DistrictPage.tsx` | Добавить `+ '/'` |
+| C3 | Medium | `DistrictPage.tsx` line 145, 146: URL без trailing slash (`/uslugi/po-okrugam-moskvy` вместо `/uslugi/po-okrugam-moskvy/`) | `DistrictPage.tsx` | Добавить `/` |
+| C4 | Medium | `NeighborhoodsOverview.tsx` line 68: `item: SEO_CONFIG.baseUrl` без slash; line 69: `/rajony` без slash | `NeighborhoodsOverview.tsx` | Добавить trailing slashes |
+| C5 | Medium | `NeighborhoodPage.tsx` lines 87-89: все 3 breadcrumb URL без trailing slash (через `generateBreadcrumbLD`) | `jsonLD.ts` `generateBreadcrumbLD` and callers | Fix в `jsonLD.ts` или в вызовах |
+| C6 | Low | `DistrictPage.tsx` line 146: последний breadcrumb элемент имеет `item` — должен быть без | `DistrictPage.tsx` | Убрать `item` |
+
+---
+
+## D. ВНУТРЕННЯЯ ПЕРЕЛИНКОВКА — 95/100
+
+- Централизованная логика в `internalLinking.ts`
+- `isSeoLinkable()` фильтрует noindex, utility, admin, Tier 2/3 NCH
+- Модульные блоки: RelatedServices, RelatedGeoLinks, RelatedBlogLinks
+- `InternalLinks.tsx` полностью удалён (0 импортов)
+- Кластерная фильтрация корректна
+- Все 12+ типов страниц мигрированы
+- Null при пустом списке
+
+**Без проблем.**
+
+---
+
+## E. ANALYTICS — 92/100
+
+- `trackGoal()` автоматически стреляет `all_conversions`
+- Anti-recursion guard работает
+- phone_click покрытие: Footer, ServicePage, Contacts, MobileQuickCTA
+- quiz_lead_*, calc_lead_* — prefix-based matching
+
+**1 minor issue: sertifikaciya mapping (B5).**
+
+---
+
+## F. TRAILING SLASH CONSISTENCY — 82/100
+
+Это самая серьёзная системная проблема. Хотя canonical корректен, **внутренние `<Link to="">` во многих компонентах без trailing slash**:
+
+| Файл | Кол-во ссылок без slash |
+|------|------------------------|
+| `Footer.tsx` | ~15 |
+| `ServicePage.tsx` line 803 | ~6 (other services) |
+| `ServiceSubpage.tsx` line 117, 378, 388 | 3 |
+| `DistrictsOverview.tsx` lines 98, 127-128 | ~15 |
+| `NeighborhoodsOverview.tsx` line 245 | 1 |
+
+React Router обрабатывает оба варианта одинаково, но для SEO-краулеров при SSG-рендеринге это может создавать несоответствие canonical ↔ internal links. Не критично (browser redirect), но идеально — привести в соответствие.
+
+---
+
+## G. ИНФРАСТРУКТУРА — 93/100
+
+- SSR entry point с polyfills
+- Lazy loading non-critical компонентов
+- ErrorBoundary
+- CookieBanner
+- Service Worker
+- Lighthouse CI pipeline
+- Daily monitoring + Telegram alerts
+- IndexNow automation
+- Docker + nginx
+
+**Без проблем.**
+
+---
+
+## H. CONTENT & E-E-A-T — 89/100
+
+- /team/ — 6 экспертов, AuthorBadge
+- 207 blog articles
+- 23 mole city landings
+- Контекстные FAQ с внутренними ссылками
+- LLM-ready (llms.txt, AI crawler rules)
+
+**1 issue: sertifikaciya orphan links в контенте (B4).**
+
+---
+
+## СВОДКА ВСЕХ ISSUES
+
+| # | Sev | Issue | Files |
+|---|-----|-------|-------|
+| B1 | **HIGH** | Footer — 15+ ссылок без trailing slash | `Footer.tsx` |
+| C1 | **HIGH** | `/#services` anchor в BreadcrumbList schema | `ServicePage.tsx`, `DistrictPage.tsx`, `DistrictsOverview.tsx` |
+| C2 | **HIGH** | DistrictPage breadcrumb — baseUrl без trailing slash | `DistrictPage.tsx` |
+| B2 | Medium | jsonLD placeholder sameAs | `jsonLD.ts` |
+| B3 | Medium | jsonLD neighborhood URL без slash | `jsonLD.ts` |
+| B4 | Medium | 95 ссылок на deprecated sertifikaciya | `legal-commercial.ts` |
+| C3 | Medium | DistrictPage breadcrumb URLs без slash | `DistrictPage.tsx` |
+| C4 | Medium | NeighborhoodsOverview breadcrumb без slash | `NeighborhoodsOverview.tsx` |
+| C5 | Medium | NeighborhoodPage breadcrumb URLs без slash | `NeighborhoodPage.tsx` / `jsonLD.ts` |
+| B5 | Low | analytics sertifikaciya mapping | `analytics.ts` |
+| C6 | Low | DistrictPage последний breadcrumb с item | `DistrictPage.tsx` |
+| F1 | Low | ~40 internal links без trailing slash в разных компонентах | `ServicePage.tsx`, `ServiceSubpage.tsx`, `DistrictsOverview.tsx` |
+
+**Всего: 12 issues (3 HIGH, 6 Medium, 3 Low). 0 Critical.**
+
+---
+
+## ОЦЕНКА ПО КАТЕГОРИЯМ
+
+| Категория | Балл |
+|-----------|------|
+| Архитектура и роутинг | 96 |
+| SEO on-page | 87 |
+| Schema.org | 88 |
+| Внутренняя перелинковка | 95 |
+| Analytics | 92 |
+| Trailing slash consistency | 82 |
+| Инфраструктура | 93 |
+| Content & E-E-A-T | 89 |
+| **ИТОГО** | **91** |
+
+---
+
+## РЕКОМЕНДАЦИЯ
+
+Исправление 3 HIGH issues (Footer trailing slashes, `/#services` в schema, DistrictPage baseUrl) и 6 Medium issues поднимет оценку до **95-96/100**.
+
+Приоритет:
+1. **Footer.tsx** — trailing slash на все ссылки (влияет на каждую страницу сайта)
+2. **BreadcrumbList schema** — убрать `/#services`, fix trailing slashes в DistrictPage, NeighborhoodsOverview, NeighborhoodPage
+3. **jsonLD.ts** — удалить placeholder sameAs, fix trailing slash
+4. **legal-commercial.ts** — заменить sertifikaciya ссылки
+5. **analytics.ts** — удалить deprecated mapping
 
