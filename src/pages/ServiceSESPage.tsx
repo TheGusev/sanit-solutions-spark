@@ -32,7 +32,7 @@ const metadata: PageMetadata = {
       "@type": "LocalBusiness",
       name: "Санитарные Решения — Служба дезинсекции",
       description: "Профессиональная служба дезинсекции в Москве и МО",
-      url: "https://goruslugimsk.ru/sluzhba-dezinsekcii",
+      url: "https://goruslugimsk.ru/sluzhba-dezinsekcii/",
       telephone: "+74950181817",
       areaServed: { "@type": "City", name: "Москва" },
       openingHours: "Mo-Su 00:00-23:59",
