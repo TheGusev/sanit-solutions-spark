@@ -391,7 +391,7 @@ export function ssgPlugin(): Plugin {
         
         // Collect all generated paths
         const generatedPaths = new Set<string>();
-        routes.forEach(route => {
+        routes.forEach((route: { path: string; outputPath: string }) => {
           let path = route.path;
           // Normalize: remove trailing slash except for root
           if (path !== '/' && path.endsWith('/')) {

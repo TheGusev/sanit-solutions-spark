@@ -249,7 +249,8 @@ const NeighborhoodsOverview = () => {
             </Link>
           </div>
         </section>
-        <InternalLinks />
+        <RelatedServices serviceSlug="dezinsekciya" title="Популярные услуги" />
+        <RelatedServices serviceSlug="deratizaciya" title="Борьба с грызунами" />
       </main>
 
       <Footer />

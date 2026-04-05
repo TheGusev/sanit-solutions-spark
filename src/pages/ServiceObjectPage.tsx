@@ -234,11 +234,7 @@ export default function ServiceObjectPage() {
           </div>
         </AnimatedSection>
         
-        <InternalLinks 
-          currentService={serviceSlug} 
-          variant="grid" 
-          title="Смотрите также" 
-        />
+        <RelatedServices serviceSlug={serviceSlug!} title="Смотрите также" />
       </main>
       
       <Footer />

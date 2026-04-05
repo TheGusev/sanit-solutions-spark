@@ -536,12 +536,11 @@ export default function ServicePestPage() {
           </div>
         </AnimatedSection>
         
-        {/* Internal Links */}
-        <InternalLinks
-          currentService={service}
-          currentPest={pestSlug}
-          title="Другие услуги"
-        />
+        {/* Related Services */}
+        <RelatedServices serviceSlug={service!} pestSlug={pestSlug} />
+        
+        {/* Geo Links */}
+        <RelatedGeoLinks serviceSlug={service} pestSlug={pestSlug} title={`Уничтожение ${pest.genitive} по районам`} />
         <ServiceStickyBar />
       </main>
       

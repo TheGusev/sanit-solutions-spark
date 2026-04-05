@@ -161,7 +161,7 @@ export default function MoscowRegionOverview() {
             </Button>
           </div>
         </AnimatedSection>
-        <InternalLinks />
+        <RelatedServices serviceSlug="dezinsekciya" title="Наши услуги" />
       </main>
       
       <Footer />
