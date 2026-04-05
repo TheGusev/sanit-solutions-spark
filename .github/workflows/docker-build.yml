@@ -27,7 +27,7 @@ jobs:
       # ── Phase 2: Smoke-check BEFORE push ──
       - name: Smoke check SSG coverage
         run: |
-          docker run --rm ${{ env.IMAGE_NAME }}:ci-check sh -c '
+                  docker run --rm --entrypoint sh ${{ env.IMAGE_NAME }}:ci-check -c '
             echo "=== SSG Artifact Verification ==="
             # Count public static vs SSG-generated files separately
             PUBLIC_COUNT=$(find /usr/share/nginx/html -name "index.html" -path "*/uslugi/*" | grep -v "dezinsekciya/[a-z]" | wc -l)
