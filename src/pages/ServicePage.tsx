@@ -679,6 +679,43 @@ const ServicePage = () => {
                       </AccordionItem>
                     </AnimatedSection>
                   ))}
+                  {/* Contextual FAQ with internal links */}
+                  {service.slug === 'dezinsekciya' && (
+                    <AnimatedSection animation="fade-up" delay={service.faq.length * 100}>
+                      <AccordionItem value="ctx-1" className="bg-card rounded-xl px-6 border">
+                        <AccordionTrigger className="text-left text-lg hover:no-underline">
+                          Работаете ли вы по всей Москве?
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground text-base">
+                          Да, охватываем все районы Москвы и Московскую область. <Link to="/rajony/" className="text-primary hover:underline">Выберите ваш район</Link> для уточнения сроков выезда.
+                        </AccordionContent>
+                      </AccordionItem>
+                    </AnimatedSection>
+                  )}
+                  {service.slug === 'deratizaciya' && (
+                    <AnimatedSection animation="fade-up" delay={service.faq.length * 100}>
+                      <AccordionItem value="ctx-1" className="bg-card rounded-xl px-6 border">
+                        <AccordionTrigger className="text-left text-lg hover:no-underline">
+                          Выезжаете в Московскую область?
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground text-base">
+                          Да, работаем по всему МО. Подробнее — на странице <Link to="/moscow-oblast/" className="text-primary hover:underline">городов Московской области</Link>.
+                        </AccordionContent>
+                      </AccordionItem>
+                    </AnimatedSection>
+                  )}
+                  {service.slug === 'borba-s-krotami' && (
+                    <AnimatedSection animation="fade-up" delay={service.faq.length * 100}>
+                      <AccordionItem value="ctx-1" className="bg-card rounded-xl px-6 border">
+                        <AccordionTrigger className="text-left text-lg hover:no-underline">
+                          Совмещаете ли с обработкой участка?
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground text-base">
+                          Да, можно заказать комплексно с <Link to="/uslugi/obrabotka-uchastkov/" className="text-primary hover:underline">обработкой участка</Link> от других вредителей.
+                        </AccordionContent>
+                      </AccordionItem>
+                    </AnimatedSection>
+                  )}
                 </Accordion>
               </div>
             </div>
