@@ -273,6 +273,12 @@ export function ssgPlugin(): Plugin {
         console.log(`[SSG:4/5] ✓ Got ${routes.length} routes`);
         
         // [SSG:5/5] Render pages
+        let successCount = 0;
+        let errorCount = 0;
+        let warningCount = 0;
+        const titleMap = new Map<string, string[]>();
+        const descriptionMap = new Map<string, string[]>();
+        
         console.log(`[SSG:5/5] Rendering ${routes.length} pages...\n`);
         
         for (const route of routes) {
