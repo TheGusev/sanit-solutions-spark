@@ -484,8 +484,22 @@ export function ssgPlugin(): Plugin {
           console.log('✅ SSG prerendering complete! Static HTML files generated in dist/\n');
         }
         
+        // Fail-fast in CI/Docker if no pages were generated
+        const isCI = process.env.GITHUB_ACTIONS === 'true' || process.env.DOCKER_BUILD === 'true' || process.env.CI === 'true';
+        if (isCI && successCount === 0) {
+          throw new Error('SSG generated 0 pages in CI — build cannot continue');
+        }
+        if (isCI && errorCount > 0) {
+          throw new Error(`SSG had ${errorCount} rendering errors in CI — build cannot continue`);
+        }
+        
       } catch (error) {
         console.error('❌ SSG prerendering failed:', error);
+        // Re-throw in CI so the build actually fails
+        const isCI = process.env.GITHUB_ACTIONS === 'true' || process.env.DOCKER_BUILD === 'true' || process.env.CI === 'true';
+        if (isCI) {
+          throw error;
+        }
       }
     }
   };
