@@ -25,14 +25,14 @@ import type { PageMetadata } from "@/lib/metadata";
 const metadata: PageMetadata = {
   title: "Служба дезинсекции в Москве — вызвать специалиста круглосуточно",
   description: "Профессиональная служба дезинсекции в Москве. Уничтожение тараканов, клопов, блох и других насекомых. Выезд за 30 минут, гарантия до 3 лет.",
-  canonical: "https://goruslugimsk.ru/sluzhba-dezinsekcii",
+  canonical: "https://goruslugimsk.ru/sluzhba-dezinsekcii/",
   schema: [
     {
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
       name: "Санитарные Решения — Служба дезинсекции",
       description: "Профессиональная служба дезинсекции в Москве и МО",
-      url: "https://goruslugimsk.ru/sluzhba-dezinsekcii",
+      url: "https://goruslugimsk.ru/sluzhba-dezinsekcii/",
       telephone: "+74950181817",
       areaServed: { "@type": "City", name: "Москва" },
       openingHours: "Mo-Su 00:00-23:59",
@@ -42,7 +42,7 @@ const metadata: PageMetadata = {
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Главная", item: "https://goruslugimsk.ru" },
-        { "@type": "ListItem", position: 2, name: "Служба дезинсекции", item: "https://goruslugimsk.ru/sluzhba-dezinsekcii" },
+        { "@type": "ListItem", position: 2, name: "Служба дезинсекции", item: "https://goruslugimsk.ru/sluzhba-dezinsekcii/" },
       ],
     },
   ],
