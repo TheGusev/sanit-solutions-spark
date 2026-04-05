@@ -39,7 +39,6 @@ const faqSchema = {
 
 const DistrictsOverview = () => {
   const breadcrumbItems = [
-    { label: "Услуги", href: "/#services" },
     { label: "По округам Москвы" }
   ];
 
