@@ -387,6 +387,30 @@ export function sitemapPlugin(): Plugin {
         });
       });
       
+      // Дезинсекция + вредитель + все 130 районов
+    dezinsekciyaPestSlugs.forEach(pestSlug => {
+      topNeighborhoods.forEach(neighborhoodSlug => {
+          nchUrls.push({
+            loc: `/uslugi/dezinsekciya/${pestSlug}/${neighborhoodSlug}/`,
+            lastmod: currentDate,
+            changefreq: 'monthly',
+            priority: '0.7',
+          });
+        });
+      });
+
+    // Дератизация + вредитель + все 130 районов
+    deratizaciyaPestSlugs.forEach(pestSlug => {
+      topNeighborhoods.forEach(neighborhoodSlug => {
+        nchUrls.push({
+          loc: `/uslugi/deratizaciya/${pestSlug}/${neighborhoodSlug}/`,
+          lastmod: currentDate,
+          changefreq: 'monthly',
+          priority: '0.7',
+        });
+      });
+    });
+
       // Tier 2+3: removed from sitemap (noindex pages — doorway/thin content risk)
       
       // ========== SITEMAP-SERVICES-OBJECT.XML (услуга + объект = 24 URL) ==========
