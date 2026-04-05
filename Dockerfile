@@ -18,7 +18,13 @@ ARG CACHEBUST=1
 RUN npm run build 2>&1 | tee /tmp/build-output.log && \
     SSG_COUNT=$(find /app/dist -name "index.html" | wc -l) && \
     echo "SSG pages: $SSG_COUNT" && \
-    test "$SSG_COUNT" -ge 500 || (echo "FAIL: only $SSG_COUNT pages" && exit 1)
+    if [ "$SSG_COUNT" -lt 500 ]; then \
+      echo "=== FAIL: only $SSG_COUNT pages (threshold: 500) ===" && \
+      echo "--- dist/ top-level ---" && ls -la /app/dist/ | head -30 && \
+      echo "--- dist/uslugi/ ---" && ls /app/dist/uslugi/ 2>/dev/null | head -20 || echo "NO uslugi dir" && \
+      echo "--- build log tail ---" && tail -100 /tmp/build-output.log && \
+      exit 1; \
+    fi
 
 # Этап 2: Production с Nginx
 FROM nginx:alpine
