@@ -4,6 +4,12 @@ import { MapPin, Clock, Car, Shield, Phone } from "lucide-react";
 import { trackGoal } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RelatedServices from '@/components/RelatedServices';
@@ -12,6 +18,24 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import { districtPages } from "@/data/districtPages";
 import { getDistrictImage } from "@/data/districtImages";
 import SectionHeading from "@/components/ui/SectionHeading";
+
+const faqItems = [
+  { question: "Как быстро специалист приедет в мой район?", answer: "По большинству районов Москвы — в течение 2 часов. Уточните при заказе." },
+  { question: "Стоимость одинакова для всех районов?", answer: "Да, цены единые по всей Москве." },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer
+    }
+  }))
+};
 
 const DistrictsOverview = () => {
   const breadcrumbItems = [
@@ -35,6 +59,7 @@ const DistrictsOverview = () => {
         <meta name="description" content="Профессиональная дезинфекция, дезинсекция и дератизация во всех округах Москвы: ЦАО, САО, СВАО, ВАО, ЮВАО, ЮАО, ЮЗАО, ЗАО, СЗАО. Выезд от 15 минут." />
         <link rel="canonical" href="https://goruslugimsk.ru/uslugi/po-okrugam-moskvy/" />
         <meta name="robots" content="index, follow" />
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </Helmet>
 
       <Header />
@@ -120,6 +145,31 @@ const DistrictsOverview = () => {
                   </div>
                 </Link>
               ))}
+            </div>
+          </section>
+
+          {/* FAQ */}
+          <section className="mb-16">
+            <SectionHeading label="ВОПРОСЫ И ОТВЕТЫ" title="Часто задаваемые вопросы" />
+            <div className="max-w-3xl mx-auto">
+              <Accordion type="single" collapsible className="space-y-4">
+                <AccordionItem value="faq-1" className="bg-card rounded-xl px-6 border">
+                  <AccordionTrigger className="text-left text-lg hover:no-underline">
+                    Как быстро специалист приедет в мой район?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground text-base">
+                    По большинству районов Москвы — в течение 2 часов. Уточните при заказе.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="faq-2" className="bg-card rounded-xl px-6 border">
+                  <AccordionTrigger className="text-left text-lg hover:no-underline">
+                    Стоимость одинакова для всех районов?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground text-base">
+                    Да, цены единые по всей Москве. <Link to="/uslugi/dezinsekciya/" className="text-primary hover:underline">Прайс на дезинсекцию</Link>.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
           </section>
 
