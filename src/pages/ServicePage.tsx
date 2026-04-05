@@ -734,7 +734,7 @@ const ServicePage = () => {
                 return (
                   <Link 
                     key={idx} 
-                    to={`/uslugi/dezinfekciya-${slugs[idx]}`}
+                    to={`/uslugi/${['dezinfekciya', 'dezinsekciya', 'deratizaciya'].includes(service.slug) ? service.slug : 'dezinfekciya'}-${slugs[idx]}`}
                     className="px-4 py-2 bg-muted hover:bg-primary hover:text-primary-foreground rounded-full transition-colors text-sm font-medium"
                   >
                     {name}
