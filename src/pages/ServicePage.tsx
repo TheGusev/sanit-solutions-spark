@@ -29,6 +29,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RelatedGeoLinks from "@/components/RelatedGeoLinks";
+import RelatedBlogLinks from "@/components/RelatedBlogLinks";
 import WorkProcess from "@/components/WorkProcess";
 import AnimatedSection from "@/components/AnimatedSection";
 import { getServiceBySlug, servicePages, getRelatedArticlesForService } from "@/data/services";
