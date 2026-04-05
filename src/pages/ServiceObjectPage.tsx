@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Phone, Clock, Shield, CheckCircle, Building, Star, Ruler } from 'lucide-react';
-import InternalLinks from '@/components/InternalLinks';
+import RelatedServices from '@/components/RelatedServices';
 import { getObjectBySlug } from '@/data/objects';
 import { servicePages } from '@/data/services';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
