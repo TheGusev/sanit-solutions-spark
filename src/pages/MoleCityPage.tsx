@@ -15,6 +15,7 @@ import ServiceTariffs from '@/components/ServiceTariffs';
 import ServiceQuiz from '@/components/ServiceQuiz';
 import RelatedServices from '@/components/RelatedServices';
 import RelatedGeoLinks from '@/components/RelatedGeoLinks';
+import RelatedBlogLinks from '@/components/RelatedBlogLinks';
 import { getRelatedMoleCities } from '@/lib/internalLinking';
 
 import CalculatorModal from '@/components/CalculatorModal';
@@ -299,6 +300,7 @@ export default function MoleCityPage() {
         )}
 
         <RelatedServices serviceSlug="borba-s-krotami" title="Смежные услуги" />
+        <RelatedBlogLinks serviceSlug="borba-s-krotami" />
         <RelatedGeoLinks serviceSlug="borba-s-krotami" />
         {(() => {
           const relatedMoleCityLinks = getRelatedMoleCities(city.slug);

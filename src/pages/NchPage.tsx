@@ -197,7 +197,6 @@ export default function NchPage() {
         <meta name="twitter:description" content={seoMeta.ogDescription} />
         <meta name="twitter:image" content={seoMeta.ogImage} />
         <script type="application/ld+json">{JSON.stringify(schemaMarkup)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
       </Helmet>

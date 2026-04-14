@@ -135,6 +135,18 @@ export function generateIndexMetadata(): PageMetadata {
     }]
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Как долго действует обработка?", "acceptedAnswer": { "@type": "Answer", "text": "Эффект от профессиональной обработки сохраняется до 3 лет в зависимости от типа услуги и условий помещения." } },
+      { "@type": "Question", "name": "Безопасно ли для людей и животных?", "acceptedAnswer": { "@type": "Answer", "text": "Да, мы используем только сертифицированные препараты, одобренные Роспотребнадзором. Помещение безопасно через 2-4 часа проветривания." } },
+      { "@type": "Question", "name": "Сколько времени занимает обработка?", "acceptedAnswer": { "@type": "Answer", "text": "Обычно от 30 минут до 2 часов в зависимости от площади и типа услуги." } },
+      { "@type": "Question", "name": "Есть ли гарантия на услуги?", "acceptedAnswer": { "@type": "Answer", "text": "Да, гарантия до 3 лет. При необходимости проводим повторную обработку бесплатно." } },
+      { "@type": "Question", "name": "Какие документы вы предоставляете?", "acceptedAnswer": { "@type": "Answer", "text": "Акт выполненных работ, гарантийный талон и сертификат соответствия на препараты." } },
+    ]
+  };
+
   return validateAndFormatMetadata({
     title: 'Дезинфекция, дезинсекция, дератизация в Москве — от 1000₽ | Санитарные Решения',
     description: 'СЭС служба в Москве: дезинфекция, дезинсекция, дератизация. Лицензия Роспотребнадзора. Гарантия до 3 лет. Выезд за 15 минут.',
@@ -142,7 +154,7 @@ export function generateIndexMetadata(): PageMetadata {
     canonical: 'https://goruslugimsk.ru/',
     ogImage: 'https://goruslugimsk.ru/og-image.jpg',
     keywords: ['дезинфекция москва', 'дезинсекция москва', 'дератизация москва', 'сэс москва'],
-    schema: [localBusinessSchema, breadcrumbSchema],
+    schema: [localBusinessSchema, breadcrumbSchema, faqSchema],
   }).metadata;
 }
 
