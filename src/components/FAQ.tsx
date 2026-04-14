@@ -99,11 +99,7 @@ const FAQ = () => {
 
   return (
     <section id="faq" className="py-8 md:py-24 bg-muted/30">
-      {/* FAQPage Schema for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(generateFAQSchema()) }}
-      />
+      {/* FAQPage Schema managed centrally via metadata.ts / SEOHead */}
       
       <div className="container mx-auto px-4">
         <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto">

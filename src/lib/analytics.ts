@@ -212,7 +212,8 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
         'popup_submit': 'lead',
         'calc_open': 'lead',
         'phone_click': 'contact',
-        'telegram_click': 'contact'
+        'telegram_click': 'contact',
+        'messenger_click': 'contact'
       };
       
       const vkEvent = vkEventMap[goalName];
@@ -233,8 +234,8 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
         'popup_submit': 'lead',
         'calc_open': 'lead',
         'phone_click': 'contact',
-        
-        'telegram_click': 'contact'
+        'telegram_click': 'contact',
+        'messenger_click': 'contact'
       };
       
       const tmrGoal = tmrGoalMap[goalName];
