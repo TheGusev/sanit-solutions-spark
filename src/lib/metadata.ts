@@ -125,13 +125,24 @@ export function generateIndexMetadata(): PageMetadata {
     "openingHours": "Mo-Su 00:00-23:59"
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Главная"
+    }]
+  };
+
   return validateAndFormatMetadata({
-    title: 'Дезинфекция, дезинсекция, дератизация в Москве',
-    description: 'Профессиональная СЭС служба в Москве • Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 3 лет • 8-495-018-18-17',
+    title: 'Дезинфекция, дезинсекция, дератизация в Москве — от 1000₽ | Санитарные Решения',
+    description: 'СЭС служба в Москве: дезинфекция, дезинсекция, дератизация. Лицензия Роспотребнадзора. Гарантия до 3 лет. Выезд за 15 минут.',
     h1: 'Профессиональная служба СЭС в Москве и области',
     canonical: 'https://goruslugimsk.ru/',
+    ogImage: 'https://goruslugimsk.ru/og-image.jpg',
     keywords: ['дезинфекция москва', 'дезинсекция москва', 'дератизация москва', 'сэс москва'],
-    schema: [localBusinessSchema],
+    schema: [localBusinessSchema, breadcrumbSchema],
   }).metadata;
 }
 

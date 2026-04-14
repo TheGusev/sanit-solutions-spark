@@ -24,15 +24,16 @@ const IndexSSR = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Санитарные Решения — Дезинфекция в Москве и МО | От 1000₽</title>
-        <meta name="description" content="Профессиональная дезинфекция, дезинсекция и дератизация в Москве и Московской области. Уничтожение тараканов, клопов, грызунов. Гарантия результата. Выезд за 15 минут." />
+        <title>Дезинфекция, дезинсекция, дератизация в Москве — от 1000₽ | Санитарные Решения</title>
+        <meta name="description" content="СЭС служба в Москве: дезинфекция, дезинсекция, дератизация. Лицензия Роспотребнадзора. Гарантия до 3 лет. Выезд за 15 минут." />
         <meta name="keywords" content="дезинфекция, дезинсекция, дератизация, Москва, МО, уничтожение тараканов, уничтожение клопов, санитарная обработка" />
         <link rel="canonical" href="https://goruslugimsk.ru/" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Санитарные Решения — Дезинфекция в Москве" />
-        <meta property="og:description" content="Профессиональная дезинфекция, дезинсекция и дератизация. Гарантия результата." />
+        <meta property="og:title" content="Дезинфекция, дезинсекция, дератизация в Москве — Санитарные Решения" />
+        <meta property="og:description" content="СЭС служба в Москве: дезинфекция, дезинсекция, дератизация. Лицензия Роспотребнадзора. Гарантия до 3 лет." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://goruslugimsk.ru/" />
+        <meta property="og:image" content="https://goruslugimsk.ru/og-image.jpg" />
         <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/" />
         <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/" />
       </Helmet>
