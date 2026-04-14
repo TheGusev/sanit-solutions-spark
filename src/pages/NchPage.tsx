@@ -155,18 +155,7 @@ export default function NchPage() {
       }
     }
   };
-  
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Главная', item: SEO_CONFIG.baseUrl },
-      { '@type': 'ListItem', position: 2, name: serviceName, item: `${SEO_CONFIG.baseUrl}/uslugi/${service}` },
-      { '@type': 'ListItem', position: 3, name: pest.name, item: `${SEO_CONFIG.baseUrl}/uslugi/${service}/${pestSlug}` },
-      { '@type': 'ListItem', position: 4, name: neighborhood.name, item: seoMeta.canonical }
-    ]
-  };
-  
+
   const faqSchema = generateFAQSchema(faqItems);
   
   const localBusinessSchema = generateLocalBusiness(
