@@ -185,7 +185,8 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
   const ALL_CONV_GOALS = new Set([
     'final_cta_call', 'final_cta_calculator', 'calc_open',
     'calc_interact', 'calc_price_view', 'service_sticky_call',
-    'calc_calculate', 'lead_submit', 'hero_callback_submit', 'phone_click'
+    'calc_calculate', 'lead_submit', 'hero_callback_submit', 'phone_click',
+    'telegram_click', 'messenger_click'
   ]);
 
   const isConversion = ALL_CONV_GOALS.has(goalName) ||
