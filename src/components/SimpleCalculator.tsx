@@ -247,8 +247,8 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
   if (formStatus === "success") {
     return (
       <div className="flex flex-col items-center justify-center py-12 px-4 text-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-          <Check className="w-8 h-8 text-green-600" />
+        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+          <Check className="w-8 h-8 text-primary" />
         </div>
         <h3 className="text-xl font-bold text-foreground">Заявка отправлена!</h3>
         <p className="text-muted-foreground max-w-sm">
