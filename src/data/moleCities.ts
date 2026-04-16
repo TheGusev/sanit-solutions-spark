@@ -421,6 +421,7 @@ export const moleCities: MoleCity[] = [
     ],
     relatedCities: ['dmitrov-mo', 'yakhroma', 'lobnya'],
     cityTier: 'thin',
+    methodNotes: 'Торфяно-болотистая почва поглощает газ быстрее — увеличиваем концентрацию и дополняем механическими кротоловками на активных выходах.',
   },
   {
     slug: 'dubna-mo',
@@ -438,6 +439,7 @@ export const moleCities: MoleCity[] = [
     ],
     relatedCities: ['taldom', 'dmitrov-mo', 'yakhroma'],
     cityTier: 'thin',
+    methodNotes: 'Аллювиальная супесь пропускает газ — акцент на кротоловки в активных тоннелях и барьерную защиту по границе участка.',
   },
   // ===== МИНСКОЕ / МОЖАЙСКОЕ ШОССЕ =====
   {
@@ -456,6 +458,7 @@ export const moleCities: MoleCity[] = [
     ],
     relatedCities: ['mozhaysk', 'naro-fominsk', 'istra'],
     cityTier: 'thin',
+    methodNotes: 'Лесной суглинок с высоким гумусом привлекает червей — кроты особенно активны, применяем комплекс газации и усиленного барьера.',
   },
   // ===== НОВОРЯЗАНСКОЕ ШОССЕ =====
   {
