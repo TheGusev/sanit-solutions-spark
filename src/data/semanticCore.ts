@@ -353,7 +353,7 @@ const moServiceNames: Record<string, string> = {
 const moCities = [
   { slug: 'khimki', name: 'химки' }, { slug: 'mytishchi', name: 'мытищи' },
   { slug: 'balashikha', name: 'балашиха' }, { slug: 'krasnogorsk', name: 'красногорск' },
-  { slug: 'podolsk', name: 'подольск' }, { slug: 'korolyov', name: 'королёв' },
+  { slug: 'podolsk', name: 'подольск' }, { slug: 'korolev', name: 'королёв' },
   { slug: 'lyubertsy', name: 'люберцы' }, { slug: 'odintsovo', name: 'одинцово' },
   { slug: 'dolgoprudny', name: 'долгопрудный' }, { slug: 'shchyolkovo', name: 'щёлково' },
   { slug: 'klin', name: 'клин' }, { slug: 'ramenskoe', name: 'раменское' },
