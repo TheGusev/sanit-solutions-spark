@@ -1,82 +1,55 @@
 
 
-# Phase 2 — Strong Near-MO: Exact Change Plan
+# Phase 3 — Mid-Market Batch: Exact Change Plan
 
-## Current State (already done in Phase 1)
+## Current State
 
-| Город | cityTier | methodNotes | objectContext | FAQ count |
-|-------|----------|-------------|---------------|-----------|
-| Красногорск | ✅ strong | ✅ | ✅ | 4 ✅ |
-| Нахабино | ✅ strong | ✅ | ✅ | 4 ✅ |
-| Истра | ✅ strong | ✅ | ✅ | 4 ✅ |
-| Дедовск | ✅ strong | ✅ | ❌ missing | 3 (needs +1) |
-| Лобня | ✅ strong | ✅ | ❌ missing | 3 (needs +1) |
-| Долгопрудный | ✅ strong | ✅ | ❌ missing | 3 (needs +1) |
-| Домодедово | ✅ strong | ✅ | ✅ | 3 (needs +1) |
+| Город | cityTier | methodNotes | FAQ count | Distance FAQ? |
+|-------|----------|-------------|-----------|---------------|
+| Дмитров (65 км) | ✅ mid | ✅ | 3 | ✅ «Выезжаете ли в Дмитров?» |
+| Яхрома (55 км) | ✅ mid | ✅ | 3 | ❌ missing |
+| Чехов (52 км) | ✅ mid | ✅ | 3 | ✅ «Выезжаете ли в Чехов?» |
+| Серпухов (73 км) | ✅ mid | ✅ | 4 ✅ | ✅ «Далеко ли ехать?» |
+| Наро-Фоминск (50 км) | ✅ mid | ✅ | 3 | ✅ «Обслуживаете ли район?» |
+| Клин (65 км) | ✅ mid | ✅ | 3 | ❌ missing |
+| Солнечногорск (44 км) | ✅ mid | ✅ | 3 | N/A (<50 км) |
+
+All 7 cities already have `cityTier: 'mid'` and `methodNotes` from Phase 1. No `objectContext` needed for mid-tier per plan rules.
 
 ## Remaining Work — Data Only (`src/data/moleCities.ts`)
 
-No template changes needed — conditional rendering already in place from Phase 1.
+Per plan rules: +0-1 FAQ only for cities >50 km without a distance/travel FAQ.
 
-### A. Add `objectContext` (3 cities)
+**Two cities qualify: Яхрома and Клин.**
 
-**Дедовск** (line ~106, after `blogSlug`):
+### Яхрома — add 4th FAQ (line ~269, append to faq array):
 ```
-objectContext: 'Дачные участки и СНТ вдоль реки Истры — частный сектор и огороды от 6 до 15 соток.',
+{ question: 'Как долго ехать до Яхромы?', answer: 'Около 55 км от МКАД, приезжаем за 1 час. Выезд бесплатный при заказе обработки.' }
 ```
+Intent: расстояние, барьер выезда.
 
-**Лобня** (line ~211, after `methodNotes`):
+### Клин — add 4th FAQ (line ~362, append to faq array):
 ```
-objectContext: 'Частные дома и дачные участки у озера Киово, огороды и садовые товарищества.',
+{ question: 'Выезжаете ли в Клин (65 км)?', answer: 'Да, Клин в зоне обслуживания по Ленинградскому шоссе. Выезд бесплатный, приезжаем в день обращения.' }
 ```
-
-**Долгопрудный** (line ~230, after `methodNotes`):
-```
-objectContext: 'Частные участки и дачи в пригородной зоне вдоль канала имени Москвы.',
-```
-
-### B. Add +1 FAQ (4 cities)
-
-**Дедовск** — добавить 4-й FAQ:
-```
-{ question: 'Можно ли обработать участок рядом с рекой Истрой?', answer: 'Да, используем препараты, сертифицированные для применения вблизи водоёмов. Безопасно для экосистемы реки.' }
-```
-Intent: «обработка от кротов у реки», локальная привязка к Истре.
-
-**Лобня** — добавить 4-й FAQ:
-```
-{ question: 'Когда лучше всего обрабатывать участок в Лобне?', answer: 'Оптимально — с апреля по июнь, когда торфяные почвы просыхают и кроты активно строят тоннели ближе к поверхности.' }
-```
-Intent: сезонность, soilType-привязка.
-
-**Долгопрудный** — добавить 4-й FAQ:
-```
-{ question: 'Обрабатываете ли участки в СНТ Долгопрудного?', answer: 'Да, работаем со всеми СНТ и ДНП. При групповом заказе от 3 участков — скидка 15% каждому.' }
-```
-Intent: «кроты в СНТ», групповой заказ.
-
-**Домодедово** — добавить 4-й FAQ:
-```
-{ question: 'Влияет ли близость Пахры на выбор метода?', answer: 'Да, у реки кроты особенно активны из-за плодородного грунта. Применяем комплексную обработку с усиленным барьером по границе участка со стороны реки.' }
-```
-Intent: waterfront specifics, method choice.
+Intent: расстояние, барьер выезда.
 
 ## What Changes
 - 1 file: `src/data/moleCities.ts`
-- 3 cities get `objectContext` (1 sentence each)
-- 4 cities get +1 FAQ (total FAQ per city: 4)
+- 2 cities get +1 FAQ (total: 4 each)
+- 5 remaining mid-market cities: NO CHANGE (already complete)
 
 ## What Does NOT Change
 - URL, slug, canonical, indexability, sitemap — untouched
-- Template (`MoleCityPage.tsx`) — no changes, conditional rendering already works
+- Template (`MoleCityPage.tsx`) — no changes
 - H1, title, description — untouched
 - relatedCities topology — untouched
 - No new routes, pages, or service entities
+- Можайск (thin) — not in this phase
 
 ## Why Safe
-- Only data additions to existing optional fields
-- Template already renders these conditionally (Phase 1)
-- FAQ questions are unique per city, tied to local landmarks/soil
-- objectContext tied to real geography — no spam
+- Only 2 FAQ additions to existing arrays
+- Questions address real user concern (distance barrier) with factual answers
 - Max 4 FAQ per city — no inflation
+- No structural or template changes
 
