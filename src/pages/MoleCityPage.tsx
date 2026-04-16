@@ -22,7 +22,7 @@ import CalculatorModal from '@/components/CalculatorModal';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Phone, Clock, Shield, MapPin, CheckCircle, Award } from 'lucide-react';
+import { Phone, Clock, Shield, MapPin, CheckCircle, Award, Gem } from 'lucide-react';
 import { getMoleCityBySlug, moleCities } from '@/data/moleCities';
 import { getPestBySlug } from '@/data/pests';
 import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
