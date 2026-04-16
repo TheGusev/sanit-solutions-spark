@@ -1,55 +1,64 @@
 
 
-# Phase 3 — Mid-Market Batch: Exact Change Plan
+# Phase 4 — Thin-Risk Batch: Exact Change Plan
 
 ## Current State
 
-| Город | cityTier | methodNotes | FAQ count | Distance FAQ? |
-|-------|----------|-------------|-----------|---------------|
-| Дмитров (65 км) | ✅ mid | ✅ | 3 | ✅ «Выезжаете ли в Дмитров?» |
-| Яхрома (55 км) | ✅ mid | ✅ | 3 | ❌ missing |
-| Чехов (52 км) | ✅ mid | ✅ | 3 | ✅ «Выезжаете ли в Чехов?» |
-| Серпухов (73 км) | ✅ mid | ✅ | 4 ✅ | ✅ «Далеко ли ехать?» |
-| Наро-Фоминск (50 км) | ✅ mid | ✅ | 3 | ✅ «Обслуживаете ли район?» |
-| Клин (65 км) | ✅ mid | ✅ | 3 | ❌ missing |
-| Солнечногорск (44 км) | ✅ mid | ✅ | 3 | N/A (<50 км) |
+| Город | Distance | cityTier | methodNotes | FAQ count | Distance FAQ? |
+|-------|----------|----------|-------------|-----------|---------------|
+| Можайск (90 км) | 90 км | ✅ thin | ✅ | 3 | ✅ «Выезжаете ли за 80 км?» |
+| Талдом (110 км) | 110 км | ✅ thin | ❌ missing | 3 | ✅ «Выезжаете ли в Талдом?» |
+| Дубна (120 км) | 120 км | ✅ thin | ❌ missing | 3 | ✅ «Далеко ли ехать?» |
+| Руза (80 км) | 80 км | ✅ thin | ❌ missing | 3 | ✅ implicit in FAQ |
+| Воскресенск (80 км) | 80 км | ✅ thin | ✅ | 3 | ✅ «Выезжаете ли?» |
 
-All 7 cities already have `cityTier: 'mid'` and `methodNotes` from Phase 1. No `objectContext` needed for mid-tier per plan rules.
+All 5 cities already have `cityTier: 'thin'`. Per the plan rules, thin-tier cities get `methodNotes` only (no `objectContext`, no extra FAQ beyond what exists).
 
 ## Remaining Work — Data Only (`src/data/moleCities.ts`)
 
-Per plan rules: +0-1 FAQ only for cities >50 km without a distance/travel FAQ.
+**Three cities need `methodNotes` added: Талдом, Дубна, Руза.**
 
-**Two cities qualify: Яхрома and Клин.**
+### Талдом — add `methodNotes` (after line 423, `cityTier: 'thin'`):
+```
+methodNotes: 'Торфяно-болотистая почва поглощает газ быстрее — увеличиваем концентрацию и дополняем механическими кротоловками на активных выходах.',
+```
 
-### Яхрома — add 4th FAQ (line ~269, append to faq array):
+### Дубна — add `methodNotes` (after line 440, `cityTier: 'thin'`):
 ```
-{ question: 'Как долго ехать до Яхромы?', answer: 'Около 55 км от МКАД, приезжаем за 1 час. Выезд бесплатный при заказе обработки.' }
+methodNotes: 'Аллювиальная супесь пропускает газ — акцент на кротоловки в активных тоннелях и барьерную защиту по границе участка.',
 ```
-Intent: расстояние, барьер выезда.
 
-### Клин — add 4th FAQ (line ~362, append to faq array):
+### Руза — add `methodNotes` (after line 458, `cityTier: 'thin'`):
 ```
-{ question: 'Выезжаете ли в Клин (65 км)?', answer: 'Да, Клин в зоне обслуживания по Ленинградскому шоссе. Выезд бесплатный, приезжаем в день обращения.' }
+methodNotes: 'Лесной суглинок с высоким гумусом привлекает червей — кроты особенно активны, применяем комплекс газации и усиленного барьера.',
 ```
-Intent: расстояние, барьер выезда.
 
 ## What Changes
 - 1 file: `src/data/moleCities.ts`
-- 2 cities get +1 FAQ (total: 4 each)
-- 5 remaining mid-market cities: NO CHANGE (already complete)
+- 3 cities get `methodNotes` (1 sentence each)
+- 2 remaining thin cities (Можайск, Воскресенск): NO CHANGE (already have `methodNotes`)
 
 ## What Does NOT Change
 - URL, slug, canonical, indexability, sitemap — untouched
-- Template (`MoleCityPage.tsx`) — no changes
+- Template (`MoleCityPage.tsx`) — no changes (conditional rendering already works)
 - H1, title, description — untouched
 - relatedCities topology — untouched
+- FAQ arrays — untouched (no additions for thin tier)
 - No new routes, pages, or service entities
-- Можайск (thin) — not in this phase
 
 ## Why Safe
-- Only 2 FAQ additions to existing arrays
-- Questions address real user concern (distance barrier) with factual answers
-- Max 4 FAQ per city — no inflation
-- No structural or template changes
+- Only 3 `methodNotes` additions to existing data entries
+- Each note is factual, tied to the city's `soilType` field
+- Template already renders `methodNotes` conditionally (Phase 1)
+- No content inflation — thin cities stay minimal by design
+- Differentiation from generic template by adding soil-specific method rationale
+
+## Post-Phase 4 Status: All 23 Mole Cities Complete
+
+After this phase, every mole city will have:
+- ✅ `cityTier` assigned
+- ✅ `methodNotes` with soil-specific method rationale
+- ✅ Distance FAQ for cities >50 km
+- ✅ `objectContext` for premium and strong tiers
+- ✅ 4+ FAQ for premium/strong/mid tiers
 
