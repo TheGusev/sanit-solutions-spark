@@ -1,160 +1,82 @@
 
 
-# SAFE ENHANCEMENT PASS — MO + Mole Cluster + Premium-West
+# Phase 2 — Strong Near-MO: Exact Change Plan
 
-## Scope
+## Current State (already done in Phase 1)
 
-Усиление 23 существующих mole city pages (`MoleCityPage.tsx`) через данные в `moleCities.ts` и минимальные template-изменения. Никаких новых URL, routes, slugs, canonical, sitemap, indexability изменений.
+| Город | cityTier | methodNotes | objectContext | FAQ count |
+|-------|----------|-------------|---------------|-----------|
+| Красногорск | ✅ strong | ✅ | ✅ | 4 ✅ |
+| Нахабино | ✅ strong | ✅ | ✅ | 4 ✅ |
+| Истра | ✅ strong | ✅ | ✅ | 4 ✅ |
+| Дедовск | ✅ strong | ✅ | ❌ missing | 3 (needs +1) |
+| Лобня | ✅ strong | ✅ | ❌ missing | 3 (needs +1) |
+| Долгопрудный | ✅ strong | ✅ | ❌ missing | 3 (needs +1) |
+| Домодедово | ✅ strong | ✅ | ✅ | 3 (needs +1) |
 
----
+## Remaining Work — Data Only (`src/data/moleCities.ts`)
 
-## PHASE 0 — PRE-IMPLEMENTATION QA
+No template changes needed — conditional rendering already in place from Phase 1.
 
-### Template bugs to check/fix first
+### A. Add `objectContext` (3 cities)
 
-1. **Methods block**: 4 карточки hardcoded inline в `MoleCityPage.tsx:196-201` — **идентичны на всех 23 страницах**. Это главный doorway-сигнал. Нужно вынести в данные и сделать город-зависимыми.
-
-2. **MoleCity interface**: нет поля для город-специфичных методов и нет поля для типа города (premium/strong/mid/thin). Нужно расширить интерфейс.
-
-3. **SEO check**: H1 ✅ (один), canonical ✅ (trailing slash через `generateSEOMeta`), BreadcrumbList ✅ (один, через `Breadcrumbs.tsx`), FAQPage ✅ (один, через inline JSON-LD). Всё чисто.
-
-4. **Linking check**: RelatedServices ✅, RelatedGeoLinks ✅, RelatedBlogLinks ✅, relatedCities ✅. Нет ссылок на noindex/admin.
-
----
-
-## PHASE 1 — PREMIUM-WEST (Барвиха, Жуковка, Усово, Одинцово)
-
-### Что меняется
-
-**A. Data layer (`moleCities.ts`)**
-
-Расширить `MoleCity` interface:
-```typescript
-interface MoleCity {
-  // ...existing fields...
-  cityTier?: 'premium' | 'strong' | 'mid' | 'thin';
-  methodNotes?: string; // 1 предложение, город-специфичное уточнение к методам
-  objectContext?: string; // тип объектов: "коттеджные участки 20-50 соток", "дачи и СНТ" и т.п.
-}
+**Дедовск** (line ~106, after `blogSlug`):
+```
+objectContext: 'Дачные участки и СНТ вдоль реки Истры — частный сектор и огороды от 6 до 15 соток.',
 ```
 
-Для 4 premium городов добавить:
-- `cityTier: 'premium'`
-- `methodNotes` — короткое уточнение про деликатную обработку (1 предложение)
-- `objectContext` — тип объектов premium сегмента
+**Лобня** (line ~211, after `methodNotes`):
+```
+objectContext: 'Частные дома и дачные участки у озера Киово, огороды и садовые товарищества.',
+```
 
-Добавить 1-2 FAQ на город (max 5 FAQ итого):
-- Барвиха: вопрос про рулонный газон
-- Жуковка: вопрос про абонемент для КП
-- Усово: вопрос про сезонность у реки
-- Одинцово: вопрос про обработку большого участка
+**Долгопрудный** (line ~230, after `methodNotes`):
+```
+objectContext: 'Частные участки и дачи в пригородной зоне вдоль канала имени Москвы.',
+```
 
-**B. Template layer (`MoleCityPage.tsx`)**
+### B. Add +1 FAQ (4 cities)
 
-1. **Секция «Специфика района»** (строки 162-185): после существующих абзацев — условный абзац из `city.objectContext` (если есть). Max 2 предложения.
+**Дедовск** — добавить 4-й FAQ:
+```
+{ question: 'Можно ли обработать участок рядом с рекой Истрой?', answer: 'Да, используем препараты, сертифицированные для применения вблизи водоёмов. Безопасно для экосистемы реки.' }
+```
+Intent: «обработка от кротов у реки», локальная привязка к Истре.
 
-2. **Секция «Методы»** (строки 187-214): после 4 карточек — условный абзац `city.methodNotes` (если есть). Не новая карточка, а пояснение под карточками. Формат: `<p>` в `text-muted-foreground`.
+**Лобня** — добавить 4-й FAQ:
+```
+{ question: 'Когда лучше всего обрабатывать участок в Лобне?', answer: 'Оптимально — с апреля по июнь, когда торфяные почвы просыхают и кроты активно строят тоннели ближе к поверхности.' }
+```
+Intent: сезонность, soilType-привязка.
 
-3. **Visual refinement**: для `cityTier === 'premium'` — добавить subtle badge в hero (например, иконка `Gem` + «Деликатная обработка»). Один chip, без агрессии.
+**Долгопрудный** — добавить 4-й FAQ:
+```
+{ question: 'Обрабатываете ли участки в СНТ Долгопрудного?', answer: 'Да, работаем со всеми СНТ и ДНП. При групповом заказе от 3 участков — скидка 15% каждому.' }
+```
+Intent: «кроты в СНТ», групповой заказ.
 
-### Лимиты
-- +1 абзац в специфике (через `objectContext`)
-- +1 абзац под методами (через `methodNotes`)
-- +1-2 FAQ
-- +1 trust chip в hero
-- Никаких новых секций, URL, routes
+**Домодедово** — добавить 4-й FAQ:
+```
+{ question: 'Влияет ли близость Пахры на выбор метода?', answer: 'Да, у реки кроты особенно активны из-за плодородного грунта. Применяем комплексную обработку с усиленным барьером по границе участка со стороны реки.' }
+```
+Intent: waterfront specifics, method choice.
 
-### Почему безопасно
-- Данные добавляются в существующие поля `moleCities.ts`
-- Template рендерит условно — пустые поля = нет изменений
-- Doorway-сигнал снижается (методы перестают быть 100% одинаковыми)
-- Каннибализация невозможна — URL, H1, title не меняются
+## What Changes
+- 1 file: `src/data/moleCities.ts`
+- 3 cities get `objectContext` (1 sentence each)
+- 4 cities get +1 FAQ (total FAQ per city: 4)
 
----
+## What Does NOT Change
+- URL, slug, canonical, indexability, sitemap — untouched
+- Template (`MoleCityPage.tsx`) — no changes, conditional rendering already works
+- H1, title, description — untouched
+- relatedCities topology — untouched
+- No new routes, pages, or service entities
 
-## PHASE 2 — STRONG NEAR-MO (Красногорск, Нахабино, Дедовск, Истра, Лобня, Долгопрудный, Домодедово)
-
-### Что меняется
-
-**Data layer**: для 7 городов добавить:
-- `cityTier: 'strong'`
-- `objectContext` — «дачные участки, СНТ, частные дома» (1 предложение)
-- `methodNotes` — уточнение метода под soilType (1 предложение)
-- +1 FAQ на город (сезонность или СНТ-контекст)
-
-### Лимиты
-- +1 абзац в специфике
-- +1 абзац под методами
-- +1 FAQ
-- Никаких visual changes сверх template
-
----
-
-## PHASE 3 — MID-MARKET (Дмитров, Яхрома, Чехов, Серпухов, Наро-Фоминск, Солнечногорск, Клин)
-
-### Что меняется
-
-**Data layer**: для 7 городов:
-- `cityTier: 'mid'`
-- `methodNotes` — 1 предложение про soilType-специфику метода
-- +1 FAQ (про расстояние/выезд) только для городов >50 км без такого вопроса
-
-### Лимиты
-- Только `methodNotes` (1 предложение)
-- +0-1 FAQ
-- Без `objectContext` (не нужен для mid)
-
----
-
-## PHASE 4 — THIN-RISK (Можайск, Талдом, Дубна, Руза, Воскресенск)
-
-### Решение: MINIMAL CHANGE
-
-- `cityTier: 'thin'`
-- `methodNotes` только если FAQ generic (Можайск, Воскресенск) — 1 предложение
-- Без `objectContext`
-- Без новых FAQ
-
----
-
-## PHASE 5 — TEMPLATE CHANGES SUMMARY
-
-### `src/data/moleCities.ts`
-- Расширить `MoleCity` interface (+3 optional поля)
-- Обновить данные для 23 городов (tier + contextual fields)
-
-### `src/pages/MoleCityPage.tsx`
-- Секция специфики: +1 conditional `<p>` из `city.objectContext`
-- Секция методов: +1 conditional `<p>` из `city.methodNotes`
-- Hero: +1 conditional chip для premium tier
-- Всё conditional — пустые поля = нет изменений = backward compatible
-
-### Не меняется
-- URL, slug, canonical, indexability, sitemap
-- routing, seoRoutes, SSG logic
-- H1, title, description logic
-- BreadcrumbList, FAQPage schema
-- RelatedServices, RelatedGeoLinks, RelatedBlogLinks
-- relatedCities topology
-- ServiceTariffs (остаётся pest.tariffs — одинаковый)
-- ServiceQuiz
-- robots.txt
-- Блог
-
----
-
-## Execution order
-
-1. Template QA pass (verify no existing bugs)
-2. Extend `MoleCity` interface
-3. Premium-west data + template conditional blocks
-4. Verify premium-west (self-check)
-5. Strong near-MO data
-6. Verify strong (self-check)
-7. Mid-market data
-8. Verify mid (self-check)
-9. Thin-risk data
-10. Final verification pass
-
-Each batch: exact changes → implementation → diff → self-check → next.
+## Why Safe
+- Only data additions to existing optional fields
+- Template already renders these conditionally (Phase 1)
+- FAQ questions are unique per city, tied to local landmarks/soil
+- objectContext tied to real geography — no spam
+- Max 4 FAQ per city — no inflation
 
