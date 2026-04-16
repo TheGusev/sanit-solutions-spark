@@ -28,18 +28,10 @@ declare global {
       identify: (id: string, props: Record<string, unknown>) => void;
     };
     _hjSettings?: { hjid: number; hjsv: number };
-    VK?: {
-      Retargeting: {
-        Init: (pixelId: string) => void;
-        Hit: () => void;
-        Event: (eventName: string) => void;
-      };
-    };
-    _tmr?: Array<{id: string; type: string; goal?: string; [key: string]: unknown}>;
   }
 }
 
-const TOP_MAIL_RU_ID = '3728465';
+
 
 let analyticsInitialized = false;
 
@@ -204,49 +196,6 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
     }
   }
   
-  // VK Pixel - отправка конверсий
-  if (window.VK?.Retargeting?.Event) {
-    try {
-      const vkEventMap: Record<string, string> = {
-        'lead_submit': 'lead',
-        'popup_submit': 'lead',
-        'calc_open': 'lead',
-        'phone_click': 'contact',
-        'telegram_click': 'contact',
-        'messenger_click': 'contact'
-      };
-      
-      const vkEvent = vkEventMap[goalName];
-      if (vkEvent) {
-        window.VK.Retargeting.Event(vkEvent);
-        console.log(`VK event tracked: ${vkEvent}`);
-      }
-    } catch (err) {
-      console.debug('VK Pixel error:', err);
-    }
-  }
-  
-  // Top.Mail.Ru - отправка конверсий
-  if (window._tmr) {
-    try {
-      const tmrGoalMap: Record<string, string> = {
-        'lead_submit': 'lead',
-        'popup_submit': 'lead',
-        'calc_open': 'lead',
-        'phone_click': 'contact',
-        'telegram_click': 'contact',
-        'messenger_click': 'contact'
-      };
-      
-      const tmrGoal = tmrGoalMap[goalName];
-      if (tmrGoal) {
-        window._tmr.push({ id: TOP_MAIL_RU_ID, type: 'reachGoal', goal: tmrGoal });
-        console.log(`Top.Mail.Ru goal tracked: ${tmrGoal}`);
-      }
-    } catch (err) {
-      console.debug('Top.Mail.Ru error:', err);
-    }
-  }
 }
 
 // Трекинг просмотров страниц с параметрами
