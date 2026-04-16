@@ -107,7 +107,7 @@ export const neighborhoodSlugs = [
 
 // Города Московской области
 export const moscowRegionCitySlugs = [
-  'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo',
+  'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 'korolev', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo',
   'klin', 'ramenskoe', 'chekhov', 'domodedovo'
 ];
 

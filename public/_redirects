@@ -47,6 +47,12 @@
 
 # 301 Redirects — old geo URLs → new /rajony/ hubs
 
+# Редирект старого slug Королёва
+/moscow-oblast/korolyov/                /moscow-oblast/korolev/                301
+/moscow-oblast/korolyov/dezinsekciya/   /moscow-oblast/korolev/dezinsekciya/   301
+/moscow-oblast/korolyov/dezinfekciya/   /moscow-oblast/korolev/dezinfekciya/   301
+/moscow-oblast/korolyov/deratizaciya/   /moscow-oblast/korolev/deratizaciya/   301
+/moscow-oblast/korolyov/ozonirovanie/   /moscow-oblast/korolev/ozonirovanie/   301
 
 # 301 Redirects — районные doorway-страницы → /rajony/ хабы
 # Все 130 районов × 3 услуги. Яндекс получит HTTP 301.
