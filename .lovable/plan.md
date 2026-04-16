@@ -1,64 +1,118 @@
 
 
-# Phase 4 — Thin-Risk Batch: Exact Change Plan
+# Финальная сводка: 23 Mole City Pages + Full Project Verification Plan
 
-## Current State
+## SUMMARY TABLE — All 23 Cities
 
-| Город | Distance | cityTier | methodNotes | FAQ count | Distance FAQ? |
-|-------|----------|----------|-------------|-----------|---------------|
-| Можайск (90 км) | 90 км | ✅ thin | ✅ | 3 | ✅ «Выезжаете ли за 80 км?» |
-| Талдом (110 км) | 110 км | ✅ thin | ❌ missing | 3 | ✅ «Выезжаете ли в Талдом?» |
-| Дубна (120 км) | 120 км | ✅ thin | ❌ missing | 3 | ✅ «Далеко ли ехать?» |
-| Руза (80 км) | 80 км | ✅ thin | ❌ missing | 3 | ✅ implicit in FAQ |
-| Воскресенск (80 км) | 80 км | ✅ thin | ✅ | 3 | ✅ «Выезжаете ли?» |
+```text
+┌─────────────────┬──────────┬─────┬──────────────┬──────────────┬─────┐
+│ Город           │ Tier     │ FAQ │ methodNotes  │ objectContext│ Dist│
+├─────────────────┼──────────┼─────┼──────────────┼──────────────┼─────┤
+│ PREMIUM (4 cities)                                                  │
+│ Одинцово        │ premium  │  4  │ ✅           │ ✅           │ 12  │
+│ Барвиха         │ premium  │  4  │ ✅           │ ✅           │  8  │
+│ Усово           │ premium  │  4  │ ✅           │ ✅           │ 15  │
+│ Жуковка         │ premium  │  4  │ ✅           │ ✅           │ 10  │
+├─────────────────┼──────────┼─────┼──────────────┼──────────────┼─────┤
+│ STRONG (7 cities)                                                   │
+│ Истра           │ strong   │  4  │ ✅           │ ✅           │ 45  │
+│ Красногорск     │ strong   │  4  │ ✅           │ ✅           │  5  │
+│ Нахабино        │ strong   │  4  │ ✅           │ ✅           │ 18  │
+│ Дедовск         │ strong   │  4  │ ✅           │ ✅           │ 18  │
+│ Лобня           │ strong   │  4  │ ✅           │ ✅           │ 14  │
+│ Долгопрудный    │ strong   │  4  │ ✅           │ ✅           │  6  │
+│ Домодедово      │ strong   │  4  │ ✅           │ ✅           │ 22  │
+├─────────────────┼──────────┼─────┼──────────────┼──────────────┼─────┤
+│ MID (7 cities)                                                      │
+│ Дмитров         │ mid      │  3  │ ✅           │ —            │ 65  │
+│ Яхрома          │ mid      │  4  │ ✅           │ —            │ 55  │
+│ Чехов           │ mid      │  3  │ ✅           │ —            │ 52  │
+│ Серпухов        │ mid      │  4  │ ✅           │ —            │ 73  │
+│ Наро-Фоминск    │ mid      │  3  │ ✅           │ —            │ 50  │
+│ Клин            │ mid      │  4  │ ✅           │ —            │ 65  │
+│ Солнечногорск   │ mid      │  3  │ ✅           │ —            │ 44  │
+├─────────────────┼──────────┼─────┼──────────────┼──────────────┼─────┤
+│ THIN (5 cities)                                                     │
+│ Можайск         │ thin     │  3  │ ✅           │ —            │ 90  │
+│ Талдом          │ thin     │  3  │ ✅           │ —            │110  │
+│ Дубна           │ thin     │  3  │ ✅           │ —            │120  │
+│ Руза            │ thin     │  3  │ ✅           │ —            │ 80  │
+│ Воскресенск     │ thin     │  3  │ ✅           │ —            │ 80  │
+└─────────────────┴──────────┴─────┴──────────────┴──────────────┴─────┘
 
-All 5 cities already have `cityTier: 'thin'`. Per the plan rules, thin-tier cities get `methodNotes` only (no `objectContext`, no extra FAQ beyond what exists).
-
-## Remaining Work — Data Only (`src/data/moleCities.ts`)
-
-**Three cities need `methodNotes` added: Талдом, Дубна, Руза.**
-
-### Талдом — add `methodNotes` (after line 423, `cityTier: 'thin'`):
+Total: 23 cities — all have cityTier + methodNotes ✅
+Premium/Strong: all have objectContext ✅
+Premium/Strong: all have 4 FAQ ✅
+Mid (>50km): all have distance FAQ ✅
 ```
-methodNotes: 'Торфяно-болотистая почва поглощает газ быстрее — увеличиваем концентрацию и дополняем механическими кротоловками на активных выходах.',
-```
 
-### Дубна — add `methodNotes` (after line 440, `cityTier: 'thin'`):
-```
-methodNotes: 'Аллювиальная супесь пропускает газ — акцент на кротоловки в активных тоннелях и барьерную защиту по границе участка.',
-```
+## DATA INTEGRITY — Verified from source code
 
-### Руза — add `methodNotes` (after line 458, `cityTier: 'thin'`):
-```
-methodNotes: 'Лесной суглинок с высоким гумусом привлекает червей — кроты особенно активны, применяем комплекс газации и усиленного барьера.',
-```
+- **Interface**: `MoleCity` has `cityTier?`, `methodNotes?`, `objectContext?` — all optional, backward-compatible
+- **Template**: `MoleCityPage.tsx` conditionally renders:
+  - Line 140: Premium badge (`Gem` icon) when `cityTier === 'premium'`
+  - Line 183-185: `objectContext` paragraph when present
+  - Line 217-221: `methodNotes` paragraph when present
+  - Line 94-102: FAQPage JSON-LD from `city.faq` array
+- **SSG slugs**: `moleCitySlugs` (line 485) auto-derived from `moleCities.map(c => c.slug)` — no manual sync needed
 
-## What Changes
-- 1 file: `src/data/moleCities.ts`
-- 3 cities get `methodNotes` (1 sentence each)
-- 2 remaining thin cities (Можайск, Воскресенск): NO CHANGE (already have `methodNotes`)
+## FULL PROJECT VERIFICATION PLAN
 
-## What Does NOT Change
-- URL, slug, canonical, indexability, sitemap — untouched
-- Template (`MoleCityPage.tsx`) — no changes (conditional rendering already works)
-- H1, title, description — untouched
-- relatedCities topology — untouched
-- FAQ arrays — untouched (no additions for thin tier)
-- No new routes, pages, or service entities
+### Step 1: Build verification
+Run `npm run build` and confirm:
+- All 23 mole city SSG pages generated at `dist/uslugi/borba-s-krotami/[slug]/index.html`
+- Total SSG page count ≥ 500 (Dockerfile threshold)
+- Zero TypeScript errors
 
-## Why Safe
-- Only 3 `methodNotes` additions to existing data entries
-- Each note is factual, tied to the city's `soilType` field
-- Template already renders `methodNotes` conditionally (Phase 1)
-- No content inflation — thin cities stay minimal by design
-- Differentiation from generic template by adding soil-specific method rationale
+### Step 2: Spot-check rendered HTML (3 cities, 1 per tier)
+For Барвиха (premium), Лобня (strong), Яхрома (mid):
+- Verify `objectContext` paragraph present (premium/strong) or absent (mid)
+- Verify `methodNotes` paragraph present
+- Verify FAQ count matches table above
+- Verify FAQPage JSON-LD has correct number of questions
+- Verify premium badge appears only for premium tier
 
-## Post-Phase 4 Status: All 23 Mole Cities Complete
+### Step 3: SEO metadata check
+For all 23 pages, validate via build output:
+- Title length 40-65 chars
+- Description length 140-165 chars
+- Canonical URL ends with trailing slash
+- `og:title`, `og:description`, `og:url` present
+- robots = `index, follow`
 
-After this phase, every mole city will have:
-- ✅ `cityTier` assigned
-- ✅ `methodNotes` with soil-specific method rationale
-- ✅ Distance FAQ for cities >50 km
-- ✅ `objectContext` for premium and strong tiers
-- ✅ 4+ FAQ for premium/strong/mid tiers
+### Step 4: JSON-LD schema validation
+- Exactly 1 FAQPage per mole city page
+- Exactly 1 Service schema per page
+- No BreadcrumbList in inline script (should come from centralized component)
+
+### Step 5: Internal linking consistency
+- All `relatedCities` slugs resolve to valid `moleCities` entries
+- No broken `blogSlug` references (verify blog post exists or link is conditional)
+- `getRelatedMoleCities()` returns valid links
+
+### Step 6: Routing integrity
+- No new routes added (23 slugs unchanged)
+- `seoRoutes.ts` generates all 23 mole paths
+- `validateRouteIntegrity` passes for all mole paths
+- Sitemap includes all 23 URLs
+
+### Step 7: Cross-page deduplication
+- No two cities share identical `methodNotes` text
+- No two cities share identical FAQ questions
+- `objectContext` unique across cities that have it
+
+### Step 8: Production smoke test
+- Navigate to 3 mole city pages in preview
+- Verify layout renders correctly (Hero, Methods with methodNotes, FAQ accordion, Related cities)
+- Verify mobile layout (375px viewport)
+
+## Execution
+
+This plan will:
+1. Run `npm run build` to verify compilation
+2. Grep built HTML files for schema counts and SEO metadata
+3. Check for duplicated content strings
+4. Browser-test 3 representative pages
+
+No code changes needed — this is verification only.
 
