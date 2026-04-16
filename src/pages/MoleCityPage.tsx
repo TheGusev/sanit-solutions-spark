@@ -137,6 +137,7 @@ export default function MoleCityPage() {
                   { icon: Shield, text: 'Гарантия 6 мес.' },
                   { icon: MapPin, text: city.highway },
                   { icon: Award, text: 'Договор + акт' },
+                  ...(city.cityTier === 'premium' ? [{ icon: Gem, text: 'Деликатная обработка' }] : []),
                 ].map(({ icon: Icon, text }, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm bg-card rounded-lg px-3 py-2 border">
                     <Icon className="w-4 h-4 text-primary" />
@@ -179,6 +180,9 @@ export default function MoleCityPage() {
                 <p>
                   За сутки один крот прокладывает до 30 метров новых тоннелей, повреждая корневую систему растений, газоны и садовые дорожки.
                 </p>
+                {city.objectContext && (
+                  <p>{city.objectContext}</p>
+                )}
               </div>
             </AnimatedSection>
           </div>
@@ -210,6 +214,11 @@ export default function MoleCityPage() {
                 </AnimatedSection>
               ))}
             </div>
+            {city.methodNotes && (
+              <p className="text-muted-foreground text-center max-w-3xl mx-auto mt-8">
+                {city.methodNotes}
+              </p>
+            )}
           </div>
         </section>
 
