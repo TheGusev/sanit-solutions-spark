@@ -219,11 +219,11 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
       session_id: context?.sessionId || undefined,
       intent: context?.intent || "default",
       variant_id: context?.variantId || undefined,
-      utm_source: context?.utmSource || undefined,
-      utm_medium: context?.utmMedium || undefined,
-      utm_campaign: context?.utmCampaign || undefined,
-      utm_content: context?.utmContent || undefined,
-      utm_term: context?.utmTerm || undefined,
+      utm_source: context?.utm_source || undefined,
+      utm_medium: context?.utm_medium || undefined,
+      utm_campaign: context?.utm_campaign || undefined,
+      utm_content: context?.utm_content || undefined,
+      utm_term: context?.utm_term || undefined,
       device_type: context?.deviceType || undefined,
     };
 
