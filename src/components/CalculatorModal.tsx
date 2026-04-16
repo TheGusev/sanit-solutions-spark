@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import SectionLoader from "@/components/SectionLoader";
 
-const Calculator = lazy(() => import("./Calculator"));
+const Calculator = lazy(() => import("./SimpleCalculator"));
 
 interface CalculatorModalProps {
   open: boolean;
