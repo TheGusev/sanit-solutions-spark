@@ -1,129 +1,160 @@
 
 
-# VALIDATION PASS — Верификация после пересборки контейнера 2026-04-14
+# SAFE ENHANCEMENT PASS — MO + Mole Cluster + Premium-West
+
+## Scope
+
+Усиление 23 существующих mole city pages (`MoleCityPage.tsx`) через данные в `moleCities.ts` и минимальные template-изменения. Никаких новых URL, routes, slugs, canonical, sitemap, indexability изменений.
 
 ---
 
-## 1. VERIFIED IN CODE (подтверждено кодом в репозитории)
+## PHASE 0 — PRE-IMPLEMENTATION QA
 
-| # | Пункт | Статус | Файл:строка | Детали |
-|---|-------|--------|-------------|--------|
-| 1 | NchPage — один BreadcrumbList | ✅ VERIFIED OK | `NchPage.tsx` | Поиск `breadcrumbSchema` и `BreadcrumbList` = 0 результатов. Единственный источник — `Breadcrumbs.tsx` |
-| 2 | DistrictPage — один BreadcrumbList | ✅ VERIFIED OK | `DistrictPage.tsx` | Поиск `breadcrumbSchema` и `BreadcrumbList` = 0 результатов |
-| 3 | MoleCityPage — RelatedBlogLinks | ✅ VERIFIED OK | `MoleCityPage.tsx:303` | `<RelatedBlogLinks serviceSlug="borba-s-krotami" />` |
-| 4 | telegram_click в ALL_CONV_GOALS | ✅ VERIFIED OK | `analytics.ts:189` | В Set |
-| 5 | messenger_click в ALL_CONV_GOALS | ✅ VERIFIED OK | `analytics.ts:189` | В Set |
-| 6 | messenger_click НЕ в vkEventMap | ✅ GAP CONFIRMED | `analytics.ts:210-216` | Отсутствует — только lead_submit, popup_submit, calc_open, phone_click, telegram_click |
-| 7 | messenger_click НЕ в tmrGoalMap | ✅ GAP CONFIRMED | `analytics.ts:231-238` | Аналогично — отсутствует |
-| 8 | ⚠ Двойная FAQPage на главной | ❌ BUG CONFIRMED | `FAQ.tsx:103-106` + `metadata.ts:138-148,157` | **Два разных FAQPage JSON-LD**: FAQ.tsx инжектит inline `<script>` с 6 вопросами из `generateFAQSchema()`, metadata.ts добавляет ещё один с 5 хардкодированными вопросами через SEOHead. Итого 2 блока `@type: FAQPage` с разными наборами вопросов |
-| 9 | InternalLinks удалён | ✅ VERIFIED OK | Весь проект | 0 результатов поиска |
-| 10 | isSeoLinkable фильтрация | ✅ VERIFIED OK | `internalLinking.ts` | Блокирует admin, utility, Tier 2/3 |
+### Template bugs to check/fix first
+
+1. **Methods block**: 4 карточки hardcoded inline в `MoleCityPage.tsx:196-201` — **идентичны на всех 23 страницах**. Это главный doorway-сигнал. Нужно вынести в данные и сделать город-зависимыми.
+
+2. **MoleCity interface**: нет поля для город-специфичных методов и нет поля для типа города (premium/strong/mid/thin). Нужно расширить интерфейс.
+
+3. **SEO check**: H1 ✅ (один), canonical ✅ (trailing slash через `generateSEOMeta`), BreadcrumbList ✅ (один, через `Breadcrumbs.tsx`), FAQPage ✅ (один, через inline JSON-LD). Всё чисто.
+
+4. **Linking check**: RelatedServices ✅, RelatedGeoLinks ✅, RelatedBlogLinks ✅, relatedCities ✅. Нет ссылок на noindex/admin.
 
 ---
 
-## 2. VERIFIED LIVE (подтверждено на production после rebuild)
+## PHASE 1 — PREMIUM-WEST (Барвиха, Жуковка, Усово, Одинцово)
 
-| # | Пункт | Статус | Источник | Детали |
-|---|-------|--------|----------|--------|
-| 1 | robots.txt доступен | ✅ VERIFIED LIVE | `https://goruslugimsk.ru/robots.txt` | Полное совпадение с кодом. `Sitemap: https://goruslugimsk.ru/sitemap-index.xml` ✅ |
-| 2 | sitemap-index.xml — 9 дочерних | ✅ VERIFIED LIVE | `https://goruslugimsk.ru/sitemap-index.xml` | 9 sitemap файлов: main, services, services-pest, services-object, moscow, moscow-region, nch, mole, blog. Все dated 2026-04-14 |
-| 3 | sitemap-nch.xml — Tier 1 only | ✅ VERIFIED LIVE | `https://goruslugimsk.ru/sitemap-nch.xml` | URL начинаются с tarakany/arbat — Tier 1 pest. Длина контента ~43K символов = ~520 URL ✅ |
-| 4 | SSG HTML рендерится | ✅ VERIFIED LIVE | Все проверенные страницы | Полноценный HTML-контент в initial response (не пустой SPA shell) |
-| 5 | Tier 2 noindex страницы доступны | ✅ VERIFIED LIVE | `https://goruslugimsk.ru/uslugi/dezinsekciya/muravyi/arbat/` | Страница отдаёт HTML (для рекламного трафика) |
-| 6 | Rebuild состоялся | ✅ VERIFIED LIVE | HTTP headers | `Last-Modified: Tue, 14 Apr 2026 14:13:31 GMT` — сегодняшний билд |
+### Что меняется
 
----
+**A. Data layer (`moleCities.ts`)**
 
-## 3. NOT YET VERIFIED (требует ручной проверки HTML source)
+Расширить `MoleCity` interface:
+```typescript
+interface MoleCity {
+  // ...existing fields...
+  cityTier?: 'premium' | 'strong' | 'mid' | 'thin';
+  methodNotes?: string; // 1 предложение, город-специфичное уточнение к методам
+  objectContext?: string; // тип объектов: "коттеджные участки 20-50 соток", "дачи и СНТ" и т.п.
+}
+```
 
-| # | Пункт | Почему не верифицировано | Что нужно |
-|---|-------|------------------------|-----------|
-| 1 | Главная — сколько FAQPage JSON-LD в HTML | Fetch tool не даёт доступ к `<head>` и inline `<script type="application/ld+json">` | Открыть `view-source:https://goruslugimsk.ru/` → Ctrl+F → `FAQPage` → посчитать |
-| 2 | NchPage — сколько BreadcrumbList в live HTML | Аналогично | `view-source:https://goruslugimsk.ru/uslugi/dezinsekciya/tarakany/arbat/` → `BreadcrumbList` |
-| 3 | DistrictPage — сколько BreadcrumbList | Аналогично | `view-source:https://goruslugimsk.ru/uslugi/dezinsekciya-cao/` → `BreadcrumbList` |
-| 4 | og:image на главной | Не удалось извлечь из fetched HTML | `view-source:` → `og:image` |
-| 5 | Description длина на главной | Не удалось извлечь | `view-source:` → `<meta name="description"` |
-| 6 | MoleCityPage — RelatedBlogLinks в live HTML | Fetch tool видит контент, но нет возможности search | `view-source:https://goruslugimsk.ru/uslugi/borba-s-krotami/istra/` → ссылки на `/blog/` |
-| 7 | FloatingButtons — Telegram кнопка | Требует JS-рендер | Открыть сайт → нажать кнопку → проверить t.me/one_help |
-| 8 | Tier 2 NCH — noindex в HTML | Не удалось извлечь meta robots из HTML | `view-source:` muravyi/arbat → `noindex` |
+Для 4 premium городов добавить:
+- `cityTier: 'premium'`
+- `methodNotes` — короткое уточнение про деликатную обработку (1 предложение)
+- `objectContext` — тип объектов premium сегмента
 
----
+Добавить 1-2 FAQ на город (max 5 FAQ итого):
+- Барвиха: вопрос про рулонный газон
+- Жуковка: вопрос про абонемент для КП
+- Усово: вопрос про сезонность у реки
+- Одинцово: вопрос про обработку большого участка
 
-## 4. CODE STATE vs LIVE STATE
+**B. Template layer (`MoleCityPage.tsx`)**
 
-| Изменение | Файл | В коде | На live после rebuild 14.04 | Требует ручную проверку |
-|-----------|------|--------|---------------------------|----------------------|
-| Дубль BreadcrumbList удалён (NchPage) | `NchPage.tsx` | ✅ Чисто | ✅ Вероятно ОК (rebuild сегодня) | Да — view-source |
-| Дубль BreadcrumbList удалён (DistrictPage) | `DistrictPage.tsx` | ✅ Чисто | ✅ Вероятно ОК | Да — view-source |
-| telegram_click в ALL_CONV_GOALS | `analytics.ts` | ✅ Есть | ✅ Вероятно ОК | Нет (JS runtime) |
-| messenger_click в ALL_CONV_GOALS | `analytics.ts` | ✅ Есть | ✅ Вероятно ОК | Нет |
-| FAQPage schema в generateIndexMetadata | `metadata.ts` | ✅ Есть | ✅ Вероятно ОК | **Да — проверить что НЕ дубль с FAQ.tsx** |
-| og:image на IndexSSR | `IndexSSR.tsx` | ✅ Есть | ✅ Вероятно ОК | Да — view-source |
-| Title/Description сокращены | `IndexSSR.tsx` | ✅ Есть | ✅ Вероятно ОК | Да — view-source |
-| RelatedBlogLinks на MoleCityPage | `MoleCityPage.tsx` | ✅ Есть | ✅ Вероятно ОК | Да — view-source |
-| FloatingButtons с Telegram | `FloatingButtons.tsx` | ✅ Есть | ✅ Вероятно ОК | Да — кликнуть |
+1. **Секция «Специфика района»** (строки 162-185): после существующих абзацев — условный абзац из `city.objectContext` (если есть). Max 2 предложения.
 
----
+2. **Секция «Методы»** (строки 187-214): после 4 карточек — условный абзац `city.methodNotes` (если есть). Не новая карточка, а пояснение под карточками. Формат: `<p>` в `text-muted-foreground`.
 
-## 5. ОБНАРУЖЕННЫЕ ПРОБЛЕМЫ
+3. **Visual refinement**: для `cityTier === 'premium'` — добавить subtle badge в hero (например, иконка `Gem` + «Деликатная обработка»). Один chip, без агрессии.
 
-### ❌ BUG #1: Двойная FAQPage schema на главной (подтверждено кодом)
+### Лимиты
+- +1 абзац в специфике (через `objectContext`)
+- +1 абзац под методами (через `methodNotes`)
+- +1-2 FAQ
+- +1 trust chip в hero
+- Никаких новых секций, URL, routes
 
-**Серьёзность**: HIGH — Google/Яндекс может показать warning, снижение доверия к structured data
-
-**Источник 1**: `src/components/FAQ.tsx:103-106`
-- Inline `<script type="application/ld+json">` с `@type: FAQPage`
-- 6 вопросов из массива `faqs`
-
-**Источник 2**: `src/lib/metadata.ts:138-148,157`
-- FAQPage schema через SEOHead/Helmet
-- 5 хардкодированных вопросов
-
-**Результат**: 2 JSON-LD блока FAQPage с разными наборами вопросов на одной странице.
-
-### ⚠ GAP #2: messenger_click не в VK/TMR (подтверждено кодом)
-
-**Серьёзность**: LOW-MEDIUM
-
-`messenger_click` попадает в Метрику и all_conversions, но **не отправляется** в VK Pixel (vkEventMap) и Top.Mail.Ru (tmrGoalMap).
+### Почему безопасно
+- Данные добавляются в существующие поля `moleCities.ts`
+- Template рендерит условно — пустые поля = нет изменений
+- Doorway-сигнал снижается (методы перестают быть 100% одинаковыми)
+- Каннибализация невозможна — URL, H1, title не меняются
 
 ---
 
-## 6. POST-DEPLOY VERIFICATION CHECKLIST
+## PHASE 2 — STRONG NEAR-MO (Красногорск, Нахабино, Дедовск, Истра, Лобня, Долгопрудный, Домодедово)
 
-| # | URL | Что проверять | Expected | Failure |
-|---|-----|---------------|----------|---------|
-| 1 | `view-source:https://goruslugimsk.ru/` | Ctrl+F → `FAQPage` | ⚠ **Сейчас будет 2 блока** (BUG #1 не исправлен) | 3+ блоков |
-| 2 | `view-source:https://goruslugimsk.ru/` | `og:image` | `<meta property="og:image" content="...">` | Отсутствует |
-| 3 | `view-source:https://goruslugimsk.ru/` | `<meta name="description"` | ≤150 символов | >160 |
-| 4 | `view-source:https://goruslugimsk.ru/` | `BreadcrumbList` | Ровно 1 блок | 0 или 2+ |
-| 5 | `view-source:.../dezinsekciya/tarakany/arbat/` | `BreadcrumbList` | Ровно 1 блок | 2+ = дубль не удалён |
-| 6 | `view-source:.../dezinsekciya/tarakany/arbat/` | `noindex` | Отсутствует (Tier 1) | noindex = ошибка |
-| 7 | `view-source:.../dezinsekciya-cao/` | `BreadcrumbList` | Ровно 1 блок | 2+ |
-| 8 | `view-source:.../dezinsekciya-cao/` | `FAQPage` | 1 блок | 0 или 2+ |
-| 9 | `view-source:.../borba-s-krotami/istra/` | ссылки на `/blog/` | Присутствуют | Нет = RelatedBlogLinks не задеплоен |
-| 10 | `view-source:.../dezinsekciya/muravyi/arbat/` | `noindex` | `noindex, follow` (Tier 2) | index = утечка |
-| 11 | `https://goruslugimsk.ru/robots.txt` | Sitemap URL | `sitemap-index.xml` | Другой URL |
-| 12 | `https://goruslugimsk.ru/sitemap-index.xml` | Кол-во дочерних | 9 файлов | Другое число |
-| 13 | `https://goruslugimsk.ru/sitemap-nch.xml` | Нет muravyi/blohi/mol | Только tarakany/klopy/krysy/myshi | Tier 2/3 попали |
-| 14 | Live сайт → плавающая кнопка → Telegram | Ссылка | `https://t.me/one_help` | 404 или старые кнопки |
-| 15 | `https://goruslugimsk.ru/admin/` | Доступ | Client-rendered SPA за auth | В sitemap или public |
+### Что меняется
+
+**Data layer**: для 7 городов добавить:
+- `cityTier: 'strong'`
+- `objectContext` — «дачные участки, СНТ, частные дома» (1 предложение)
+- `methodNotes` — уточнение метода под soilType (1 предложение)
+- +1 FAQ на город (сезонность или СНТ-контекст)
+
+### Лимиты
+- +1 абзац в специфике
+- +1 абзац под методами
+- +1 FAQ
+- Никаких visual changes сверх template
 
 ---
 
-## 7. ИТОГОВЫЙ ВЕРДИКТ
+## PHASE 3 — MID-MARKET (Дмитров, Яхрома, Чехов, Серпухов, Наро-Фоминск, Солнечногорск, Клин)
 
-**По коду**: 9 из 10 пунктов — VERIFIED OK. 1 BUG (двойная FAQPage), 1 GAP (messenger_click в VK/TMR).
+### Что меняется
 
-**По live**: robots.txt ✅, sitemap-index ✅ (9 файлов, 2026-04-14), sitemap-nch ✅ (Tier 1 only), SSG rendering ✅, rebuild confirmed ✅.
+**Data layer**: для 7 городов:
+- `cityTier: 'mid'`
+- `methodNotes` — 1 предложение про soilType-специфику метода
+- +1 FAQ (про расстояние/выезд) только для городов >50 км без такого вопроса
 
-**Не верифицировано**: 8 пунктов требуют ручной проверки через `view-source:` (head/schema content недоступен через fetch tool).
+### Лимиты
+- Только `methodNotes` (1 предложение)
+- +0-1 FAQ
+- Без `objectContext` (не нужен для mid)
 
-**Блокер перед SCALE**: BUG #1 — двойная FAQPage schema на главной. Нужно удалить inline `<script>` из `FAQ.tsx:103-106` и оставить единственный источник в `metadata.ts`.
+---
 
-**Действия после ручной проверки view-source**:
-1. Если FAQPage = 2 → исправить (убрать из FAQ.tsx)
-2. Если BreadcrumbList на NCH/District = 1 → VERIFIED LIVE
-3. Если og:image есть → VERIFIED LIVE
-4. Добавить messenger_click в vkEventMap и tmrGoalMap (GAP #2)
+## PHASE 4 — THIN-RISK (Можайск, Талдом, Дубна, Руза, Воскресенск)
+
+### Решение: MINIMAL CHANGE
+
+- `cityTier: 'thin'`
+- `methodNotes` только если FAQ generic (Можайск, Воскресенск) — 1 предложение
+- Без `objectContext`
+- Без новых FAQ
+
+---
+
+## PHASE 5 — TEMPLATE CHANGES SUMMARY
+
+### `src/data/moleCities.ts`
+- Расширить `MoleCity` interface (+3 optional поля)
+- Обновить данные для 23 городов (tier + contextual fields)
+
+### `src/pages/MoleCityPage.tsx`
+- Секция специфики: +1 conditional `<p>` из `city.objectContext`
+- Секция методов: +1 conditional `<p>` из `city.methodNotes`
+- Hero: +1 conditional chip для premium tier
+- Всё conditional — пустые поля = нет изменений = backward compatible
+
+### Не меняется
+- URL, slug, canonical, indexability, sitemap
+- routing, seoRoutes, SSG logic
+- H1, title, description logic
+- BreadcrumbList, FAQPage schema
+- RelatedServices, RelatedGeoLinks, RelatedBlogLinks
+- relatedCities topology
+- ServiceTariffs (остаётся pest.tariffs — одинаковый)
+- ServiceQuiz
+- robots.txt
+- Блог
+
+---
+
+## Execution order
+
+1. Template QA pass (verify no existing bugs)
+2. Extend `MoleCity` interface
+3. Premium-west data + template conditional blocks
+4. Verify premium-west (self-check)
+5. Strong near-MO data
+6. Verify strong (self-check)
+7. Mid-market data
+8. Verify mid (self-check)
+9. Thin-risk data
+10. Final verification pass
+
+Each batch: exact changes → implementation → diff → self-check → next.
 
