@@ -1099,7 +1099,9 @@ def main() -> int:
     md = render_markdown(rep, cache_now, cache_prev, status, decision)
     with open(REPORT_FILE, "w", encoding="utf-8") as f:
         f.write(md)
-    save_cache(cache_now)
+    # _sync contains a set (expected paths) — strip before persisting
+    persist = {k: v for k, v in cache_now.items() if k != "_sync"}
+    save_cache(persist)
 
     send_telegram_if_needed(status, rep)
 
