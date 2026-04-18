@@ -9,7 +9,7 @@
 - Сайт: **ONLINE**
 - Build / SSG: **OK**
 - Canonical / Sitemap / Indexability: **FAIL**
-- Schema: **FAIL**
+- Schema: **WARNING**
 - Conversion / Analytics: **OK**
 - Performance / Cache: **OK**
 
@@ -24,14 +24,9 @@
 | Severity | Check | Problem | Impact | Action |
 |---|---|---|---|---|
 | CRITICAL | Canonical | /uslugi/dezinfekciya-cao/: отсутствует canonical | Нарушение SEO-стандарта | Проверить SEOHead.tsx |
-| CRITICAL | Representative | mole_city (/uslugi/borba-s-krotami/khimki/) → HTTP 404 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
-| CRITICAL | Schema | /blog/klopy-v-kvartire/: 2 BreadcrumbList | Дубликаты разметки | Использовать единый источник |
-| CRITICAL | Indexability | /uslugi/sertifikaciya/: должен быть noindex, но открыт | Утечка excluded-страницы в индекс | Поставить noindex |
-| CRITICAL | Internal Linking | Найдено 1 уникальных ссылок на /admin/ без rel=nofollow: /admin/login | Утечка веса в utility-зону | Добавить rel='nofollow' или убрать ссылки |
-| CRITICAL | Sync | Sample-10 canonical mismatch: 3 страниц | Canonical drift на нескольких страницах | Проверить SEOHead / SPA fallback |
 | WARNING | Schema | /uslugi/dezinfekciya-cao/: BreadcrumbList отсутствует | Снижение видимости в SERP | Добавить разметку |
 | WARNING | Schema | /uslugi/sertifikaciya/: BreadcrumbList отсутствует | Снижение видимости в SERP | Добавить разметку |
-| WARNING | Sync | 14 путей из seoRoutes.ts отсутствуют в sitemap (пример: /moscow-oblast/korolev/, /moscow-oblast/korolev/deratizaciya/, /moscow-oblast/korolev/dezinfekciya/, /moscow-oblast/korolev/dezinsekciya/, /moscow-oblast/korolev/ozonirovanie/) | Compile-time расходится с public sitemap | Проверить SSG-пайплайн / vite-plugin-sitemap.ts |
+| WARNING | Sync | 9 путей из seoRoutes.ts отсутствуют в sitemap (пример: /privacy/, /terms/, /uslugi/borba-s-krotami/khimki/, /uslugi/demerkurizaciya/avtomobiley/, /uslugi/demerkurizaciya/detskih-sadov/) | Compile-time расходится с public sitemap | Проверить SSG-пайплайн / vite-plugin-sitemap.ts |
 
 ---
 
@@ -39,12 +34,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 188 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 189 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 193 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 320 мс | — |
+| / | ✅ 200 | 227 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 225 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 196 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 191 мс | — |
 | /blog/ | ✅ 200 | 196 мс | — |
-| /contacts/ | ✅ 200 | 148 мс | — |
+| /contacts/ | ✅ 200 | 151 мс | — |
 
 ---
 
@@ -63,23 +58,23 @@
 |---|---|---|
 | sitemap-index.xml доступен | ✅ | 9 файлов, 1076 URL |
 | robots.txt + Sitemap-директива | ✅ | — |
-| Indexability roles | ❌ 1 drift | По REPRESENTATIVE_URLS |
+| Indexability roles | ✅ OK | По REPRESENTATIVE_URLS |
 
 ### Structured Data
 
 | Check | Result | Notes |
 |---|---|---|
-| Один BreadcrumbList на страницу | ❌ 1 drift | По representative URLs |
+| Один BreadcrumbList на страницу | ✅ OK | По representative URLs |
 | Валидный JSON-LD | ✅ OK | json.loads() на каждом блоке |
 
 ### SeoRoutes ↔ Sitemap Sync
 
 | Check | Result | Notes |
 |---|---|---|
-| seoRoutes → sitemap | ⚠️ 14 missing | Compile-time vs public sitemap |
-| sitemap → seoRoutes | ⚠️ 873 orphan | Допустимы NCH/aux URL |
+| seoRoutes → sitemap | ⚠️ 9 missing | Compile-time vs public sitemap |
+| sitemap → seoRoutes | ⚠️ 868 orphan | Допустимы NCH/aux URL |
 | Sample HTTP 200 | ✅ | Детерминистическая выборка (50) |
-| Sample canonical match | ❌ 3/10 | Первые 10 из выборки |
+| Sample canonical match | ❌ 1/10 | Первые 10 из выборки |
 
 ---
 
@@ -94,9 +89,9 @@
 | moscow_district | `/uslugi/dezinfekciya-cao/` | 200 | ❌ missing | ✅ index | ⚠️ no breadcrumb | ✅ | ❌ FAIL |
 | mo_overview | `/moscow-oblast/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | mo_city | `/moscow-oblast/podolsk/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| mole_city | `/uslugi/borba-s-krotami/khimki/` | 404 | — | — | — | ✅ | ❌ FAIL |
-| blog_post | `/blog/klopy-v-kvartire/` | 200 | ✅ | ✅ index | ❌ 2× BreadcrumbList | ✅ | ❌ FAIL |
-| excluded_page | `/uslugi/sertifikaciya/` | 200 | ✅ | ❌ index | ⚠️ no breadcrumb | ✅ | ❌ FAIL |
+| mole_city | `/uslugi/borba-s-krotami/khimki/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| blog_post | `/blog/klopy-v-kvartire/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| excluded_page | `/uslugi/sertifikaciya/` | 200 | ✅ | ✅ noindex | ⚠️ no breadcrumb | ✅ | ✅ OK |
 
 ---
 
@@ -115,7 +110,7 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 205 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 197 мс | Порог: 3000 мс |
 | Largest HTML sample | 131.0 KB | Из representative audit |
 | SSL сертификат | ✅ 22.05.2026 | 33 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
@@ -133,10 +128,10 @@
 | district URLs | 131 | 131 | 0 |
 | MO city URLs | 71 | 71 | 0 |
 | mole city URLs | 23 | 23 | 0 |
-| representative failures | 4 | 4 | 0 |
-| critical alerts | 6 | 6 | 0 |
-| warnings | 3 | 2 | +1 |
-| avg response time (мс) | 205 | 238 | -33 |
+| representative failures | 1 | 4 | -3 |
+| critical alerts | 1 | 6 | -5 |
+| warnings | 3 | 3 | 0 |
+| avg response time (мс) | 197 | 205 | -8 |
 
 ---
 
@@ -145,16 +140,16 @@
 | Stop-condition | Status | Notes |
 |---|---|---|
 | Canonical drift | ❌ | Сработало — см. Critical Alerts |
-| Routing drift (rep URL ≠ 200) | ❌ | Сработало — см. Critical Alerts |
+| Routing drift (rep URL ≠ 200) | ✅ | OK |
 | Sitemap participation drift | ✅ | OK |
-| Indexability-role drift | ❌ | Сработало — см. Critical Alerts |
+| Indexability-role drift | ✅ | OK |
 | Duplicate BreadcrumbList | ❌ | Сработало — см. Critical Alerts |
 | WhatsApp / brand regression | ✅ | OK |
 | Analytics regression | ✅ | OK |
 | Conversion regression | ✅ | OK |
 | Malformed JSON-LD | ✅ | OK |
 | Critical response time breach | ✅ | OK |
-| Internal linking leak (/admin) | ❌ | Сработало — см. Critical Alerts |
+| Internal linking leak (/admin) | ✅ | OK |
 | SSL expiry < 14 дней | ✅ | OK |
 
 ---
@@ -167,11 +162,7 @@
 ### Required actions
 
 1. Проверить SEOHead.tsx
-2. Проверить роутинг/SSG
-3. Использовать единый источник
-4. Поставить noindex
-5. Добавить rel='nofollow' или убрать ссылки
 
 ---
 
-**Последнее обновление:** 18.04.2026 21:48 MSK
+**Последнее обновление:** 18.04.2026 22:05 MSK
