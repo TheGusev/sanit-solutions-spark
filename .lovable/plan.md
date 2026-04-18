@@ -1,75 +1,110 @@
 
-Цель: убрать все текущие алерты в MONITORING и синхронизировать runtime/public/monitor логику без ломки core routing.
 
-## Что реально происходит сейчас
+# Полный аудит goruslugimsk.ru — план максимальной проверки
 
-1. `/uslugi/dezinfekciya-cao/`
-- В проекте есть два слоя для этих страниц: React `DistrictPage` и статический `public/uslugi/dezinfekciya-cao/index.html`.
-- На хостинге при наличии реального файла будет отдаваться именно static HTML.
-- У static-файла есть обычный breadcrumb в HTML, но нет JSON-LD `BreadcrumbList`, поэтому warning по schema реален.
-- Alert про missing canonical, скорее всего, вызван либо stale deployed asset, либо несовпадением monitor/runtime; я всё равно нормализую static district pages целиком, чтобы убрать drift.
+Проведу комплексный аудит сайта по всем направлениям с финальной оценкой по 100-балльной шкале.
 
-2. `/uslugi/sertifikaciya/`
-- Это excluded/noindex page.
-- По памяти проекта на noindex/utility страницах breadcrumb schema должна быть подавлена.
-- Значит warning про отсутствующий `BreadcrumbList` тут ложный и должен исчезнуть через правку monitor, а не через добавление schema.
+## Что проверю (10 направлений)
 
-3. `Sync 9 путей отсутствуют в sitemap`
-- Здесь смешаны реальные и ложные расхождения.
-- Ложные:
-  - `/privacy/`, `/terms/` — noindex utility pages, им не место в sitemap.
-  - `/uslugi/demerkurizaciya/avtomobiley/`, `/.../detskih-sadov/` и ещё 4 подобных — monitor сейчас не учитывает pruning для demerkurizaciya-objects.
-- Реальное:
-  - `/uslugi/borba-s-krotami/khimki/` — `seoRoutes.ts` берёт 24 города из `moleCities.ts`, а `vite-plugin-sitemap.ts` всё ещё держит hardcoded список на 23 города.
+### 1. SEO Governance (Monitor v3.1)
+- Запущу `scripts/monitor.py` — свежий прогон всех 13 модулей
+- Проверю: representative URLs (10), sample-50 audit, SeoRoutes↔Sitemap sync, stop-conditions
+- Сравню с предыдущим прогоном (delta)
 
-## План исправления
+### 2. Sitemap & Indexability
+- `sitemap-index.xml` + 9 sub-sitemaps: общее количество URL, дубликаты, redirects
+- `robots.txt`: проверка disallow rules, LLM crawlers
+- Noindex policy: privacy, terms, sertifikaciya, NCH Tier 2/3
 
-### 1) Исправить monitor.py
-Обновлю логику мониторинга так, чтобы он проверял только то, что действительно должно существовать и индексироваться:
-- исключу noindex utility pages (`/privacy/`, `/terms/`, `/uslugi/sertifikaciya/`) из требований к sitemap и breadcrumb schema;
-- добавлю ту же pruning-логику для `demerkurizaciya`, что уже есть в route generation/sitemap logic;
-- сохраню жёсткую проверку `BreadcrumbList` только для indexable public pages;
-- оставлю `khimki` как реальную sync-проверку, пока sitemap не будет исправлен.
+### 3. Structured Data (JSON-LD)
+- BreadcrumbList на всех типах страниц (10 representative)
+- AggregateRating на pest pages
+- Organization, LocalBusiness, FAQPage, BlogPosting
+- Дубликаты схем
 
-Результат: исчезнут ложные warnings/critical из monitor.
+### 4. Canonical & Meta Tags
+- Sample 50 URL: canonical = fetched URL
+- og:url = canonical
+- Trailing slash compliance
+- Meta robots на noindex pages
 
-### 2) Исправить sitemap sync
-Обновлю `vite-plugin-sitemap.ts`, чтобы он использовал тот же источник mole-city slug’ов, что и `seoRoutes.ts`:
-- вместо hardcoded 23 mole cities — данные из `src/data/moleCities.ts`;
-- после этого `khimki` попадёт в sitemap и sync drift уйдёт.
+### 5. HTTP Performance
+- Response time на 10 representative URL
+- 404/500 errors check
+- nginx headers (X-Robots-Tag, Cache-Control)
 
-Это единственное изменение в sitemap-логике, и оно напрямую запрошено пользователем.
+### 6. Build & SSG Integrity
+- `dist/` count vs sitemap count
+- Build guard checks (`scripts/verify-build.js`)
+- Static HTML files на districts (33 файла)
 
-### 3) Исправить district static pages
-Приведу все district static HTML к одному SEO-стандарту:
-- файлы `public/uslugi/{dezinfekciya,dezinsekciya,deratizaciya}-{district}/index.html` (36 страниц);
-- у каждой страницы проверю и нормализую:
-  - self-referencing canonical с trailing slash,
-  - `og:url` = canonical,
-  - JSON-LD `BreadcrumbList` по централизованному стандарту,
-  - отсутствие конфликтов между visual breadcrumbs и schema.
+### 7. Critical Business Logic
+- Контакты (8-495-018-18-17, @one_help, без WhatsApp)
+- Гарантия "до 3 лет"
+- Цены (от 1000₽, синхронизация с servicePrices.ts)
 
-Результат: `/uslugi/dezinfekciya-cao/` перестанет падать по canonical/schema и тот же фикс распространится на весь district cluster, а не только на один URL.
+### 8. Internal Linking
+- Admin links: rel="nofollow"
+- Money pages: 5-15 internal links each
+- Orphan pages detection
 
-## Файлы, которые буду править
+### 9. Backend Health
+- handle-lead edge function status
+- Yandex Metrika ID 105828040 на всех страницах
+- Telegram CTA presence
 
-- `scripts/monitor.py`
-- `vite-plugin-sitemap.ts`
-- `public/uslugi/dezinfekciya-*/index.html`
-- `public/uslugi/dezinsekciya-*/index.html`
-- `public/uslugi/deratizaciya-*/index.html`
+### 10. Memory Standards Compliance
+- Проверка соответствия 80+ memory rules
+- Geographic scope (Москва и МО)
+- Mole control isolation
+- NCH indexing tiers
 
-## Что не трогаю
+## Метод проверки
 
-- `src/lib/seoRoutes.ts`
-- core routing в `App.tsx`
-- SSG pipeline кроме точечной синхронизации sitemap с `moleCities.ts`
+```text
+Phase 1: Monitor.py run (3-5 мин) — automated audit
+Phase 2: Sitemap analysis — curl + xmllint
+Phase 3: Structured data deep-check — 10 sample URLs full GET
+Phase 4: Build verification — dist/ inspection
+Phase 5: Cross-check vs memory standards
+Phase 6: Score calculation per category
+```
 
-## Проверка после правок
+## Финальная оценка
 
-После внедрения прогоню монитор ещё раз и ожидаю:
-- исчезает CRITICAL по `/uslugi/dezinfekciya-cao/`;
-- исчезает warning по `/uslugi/sertifikaciya/`;
-- sync mismatch падает до `0`;
-- `khimki` появляется в sitemap;
-- новый `MONITORING.md` становится без этих текущих алертов.
+Финальная сводка в формате:
+
+```text
+КАТЕГОРИЯ                          БАЛЛЫ    СТАТУС
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. SEO Governance                   __/10   ✅/⚠️/🚨
+2. Sitemap & Indexability           __/10
+3. Structured Data                  __/10
+4. Canonical & Meta Tags            __/10
+5. HTTP Performance                 __/10
+6. Build & SSG Integrity            __/10
+7. Business Logic                   __/10
+8. Internal Linking                 __/10
+9. Backend Health                   __/10
+10. Memory Standards                __/10
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ИТОГО:                              __/100
+```
+
+С разбором каждой найденной проблемы и приоритезацией fix'ов.
+
+## Что НЕ трогаю
+
+- Никаких правок кода в этой фазе
+- Только аудит + отчёт
+- Если найдутся critical issues — отдельный план на фикс
+
+## Deliverable
+
+Один markdown-отчёт с:
+1. Финальная оценка (X/100)
+2. Поматричный разбор по 10 категориям
+3. Список всех найденных проблем (CRITICAL / WARNING / INFO)
+4. Сравнение с baseline трёх дней назад (что улучшилось)
+5. Roadmap до 100/100 (если не достигли)
+
