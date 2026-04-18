@@ -1,65 +1,85 @@
 
 
-Looking at the issue: in mobile accordion of ServiceAreaMap, the layout is District Info Card → Map → District Badges. When user taps a district badge below the map, the info card updates but it's already scrolled out of view above the map. User can't see the change. Plus there's a duplicate "Все 130 районов" — one inside the accordion, another outside (in DesktopStickySidebar or similar component on the home page).
+Пользователь просит полный аудит сайта: функциональность, рассинхроны, актуальность, sitemap/robots, оценка индексации. Это research/audit задача — НЕ implementation. По правилам: "Skip plan for research". Но в plan mode я могу только читать. Поэтому проведу аудит через read-only tools и выдам отчёт прямо в plan-блоке.
 
-Let me verify the duplicate first.
+Дам структурированный план аудита и попрошу одобрения для перехода в default mode для выполнения проверок (build, grep, lighthouse), либо проведу что могу через read-only прямо сейчас.
 
-I'll check what's rendering on the homepage below ServiceAreaMap.
+Лучший подход: предложить структурированный аудит-план с конкретными областями проверки, после approve — переключусь в default mode и выполню реальные проверки (npm run build, grep dist, sitemap parse, schema count, lead delivery test).
 
-Reading screenshots: First screenshot shows collapsed accordion + below it: "Все 130 районов Москвы" card + "Отзывы наших клиентов" card. So those are SEPARATE components on Index page. The accordion ALSO contains "Все 130 районов Москвы" collapsible inside (per ServiceAreaMap.tsx line ~226). That's the duplication.
+# Полный Аудит Проекта — Функциональность, SEO, Индексация
 
-Plan:
+## Что будет проверено (8 областей)
 
-# Mobile ServiceAreaMap UX Fix
+### 1. Build & SSG Integrity
+- `npm run build` — должен пройти без ошибок, сгенерировать ≥1280 страниц
+- TypeScript compile clean
+- Verify-build.js guard pass
+- Подсчёт фактических `dist/**/index.html`
 
-## Problems Identified
+### 2. Sitemap / Robots / Canonical Sync
+- Парсинг `dist/sitemap-index.xml` + всех child sitemaps
+- Подсчёт URL по категориям (services / pests / districts / MO / mole / blog / NCH)
+- Проверка trailing slashes, отсутствия admin/utility/noindex URLs
+- Cross-check canonical в HTML vs sitemap для 10 representative URLs
+- `dist/robots.txt` — соответствие политике (LLM allow, Semrush block)
 
-1. **Order issue**: Inside mobile accordion, the District Info Card is ABOVE the map and badges. When user taps a district badge (below map), the info updates off-screen — invisible feedback.
-2. **Duplicate "Все 130 районов Москвы"**: Appears both inside the accordion AND as a separate card below on the homepage.
-3. **Cluttered**: Accordion has 4 stacked sections (info → map → badges → all-districts collapsible) — too long.
+### 3. Mole Cluster (недавно усиленный)
+- Все 23 города МО — проверка реальной генерации dist HTML
+- Уникальность: cityTier, methodNotes, objectContext в HTML
+- FAQ count по городам
+- Schema (Service + LocalBusiness + FAQPage)
+- canonical/robots/title для всех 23
 
-## Fix (mobile-only, desktop untouched)
+### 4. Representative URL Spot-Checks (12 типов страниц)
+Homepage, service hub, pest, object, district, MO city, mole city, blog index, blog post, NCH, contacts, calculator-bearing page — проверка title/description/canonical/robots/H1/breadcrumb-schema count.
 
-### 1. Reorder mobile accordion to: Selector → Info → Map
-New flow inside accordion:
-- **Top**: Compact district selector (badges for МСК округа + МО) — tap to choose
-- **Middle**: Selected district info card (updates instantly, stays visible right below selector)
-- **Bottom**: Map (visual context, optional scroll)
+### 5. Schema Integrity
+- Подсчёт JSON-LD per page — нет дублей BreadcrumbList/FAQPage
+- Homepage schema isolation policy
+- AggregateRating присутствует на pest pages
+- WhatsApp удалён из sameAs (verify previous fix)
 
-This keeps selection control + result visible together on one screen. No scroll-jump needed.
+### 6. Internal Linking
+- Grep dist на broken links (`/uslugi/sertifikaciya/`, `/admin/`, deprecated paths)
+- RelatedServices/RelatedGeoLinks slug resolution
+- Korolev redirect — verify `/moscow-oblast/korolyov/*` → `/moscow-oblast/korolev/*`
 
-### 2. Remove duplicate "Все 130 районов" from inside accordion
-The standalone card below the section already provides this entry point. Drop the in-accordion `Collapsible` with full neighborhoods list to eliminate duplication and shorten the panel.
+### 7. Calculator & Lead Delivery (recent rework)
+- `SimpleCalculator` все 6 проблем × объекты × room → правильная цена
+- Lead delivery test через `handle-lead` edge function
+- `all_conversions` goal integrity
+- Проверка отсутствия VK/TMR references (post-cleanup)
 
-### 3. Add visual feedback on tap
-- Active badge gets stronger styling (already `default` variant — keep)
-- Info card animates subtly on change (fade) so user notices update
-- Auto-scroll info card into view if it's off-screen after badge tap
+### 8. Indexation Assessment
+- Чтение `MONITORING.md` + `.monitoring-cache.json` — актуальные данные Yandex/Google индексации
+- Sitemap URL count vs ожидаемое (~1085)
+- Tier 1/2/3 NCH policy compliance (Tier 2/3 noindexed)
+- Анализ возможных причин deindexation/slow crawl
 
-## Files Changed (1 file only)
+## Deliverable — Финальный Отчёт
 
-- **`src/components/ServiceAreaMap.tsx`** — restructure mobile `<AccordionContent>` block only:
-  - Move district badges section to top
-  - Move info card to middle (with `ref` + `scrollIntoView` on selection change)
-  - Move map to bottom
-  - Delete the inner `Collapsible` "Все 130 районов" block (lines ~226-273)
+Структурированный отчёт в 8 секциях:
+1. **Build status** — pass/fail, page count, errors
+2. **Sitemap/Robots audit** — URL counts, нарушения если есть
+3. **Mole cluster verification** — все 23 города таблицей
+4. **Representative URL matrix** — 12×7 проверок
+5. **Schema integrity** — дубли, missing, malformed
+6. **Internal linking** — broken links list
+7. **Calculator/Analytics/Leads** — функциональный статус
+8. **Indexation assessment** — текущее состояние + рекомендации
 
-## What Does NOT Change
+## Что НЕ будет меняться
 
-- Desktop layout (`hidden md:block`) — fully preserved
-- `YandexMap` component — untouched
-- Data sources (`moscowDistricts`, `moscowRegion`, `neighborhoods`) — untouched
-- Routes, SEO, schema, analytics — zero impact
-- Standalone "Все 130 районов" + "Отзывы" cards on homepage — kept (they're the canonical entry points)
-- `selectedArea` state logic — unchanged
+Это **read-only аудит**. Никаких правок кода в этой задаче. Если найдутся проблемы — будут зафиксированы в отчёте отдельным списком "Issues to fix" с приоритетами (critical/high/medium/low) для последующих focused-batches с твоим одобрением.
 
-## Verification After Change
+## Инструменты
 
-- Open homepage on 375px mobile viewport
-- Tap "Показать карту и список районов" → accordion opens
-- Tap any МО badge → info card updates visibly without scroll-jump
-- Tap МСК округ badge → same behavior
-- Confirm only ONE "Все 130 районов Москвы" card visible in section
-- Confirm map still renders below info
-- Desktop view unchanged at 1280px+
+- `npm run build` (production build)
+- grep / find в `dist/`
+- Парсинг sitemap XML
+- `supabase--curl_edge_functions` для lead delivery test
+- Чтение MONITORING.md
+- Read-only код-инспекция
+
+После approve — переключусь в default mode и выполню всё последовательно одним большим прогоном, затем отдам единый отчёт.
 
