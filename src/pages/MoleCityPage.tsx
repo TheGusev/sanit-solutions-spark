@@ -241,7 +241,21 @@ export default function MoleCityPage() {
           </div>
         </section>
 
-        {/* Тарифы */}
+        {/* Сезонная специфика */}
+        {city.seasonalNote && (
+          <section className="py-12 md:py-16">
+            <div className="container mx-auto px-4">
+              <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto">
+                <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                  Сезонная специфика обработки {city.prepositional}
+                </h2>
+                <div className="prose prose-lg dark:prose-invert max-w-none">
+                  <p>{city.seasonalNote}</p>
+                </div>
+              </AnimatedSection>
+            </div>
+          </section>
+        )}
         {pest.tariffs && (
           <ServiceTariffs
             tariffs={pest.tariffs}
