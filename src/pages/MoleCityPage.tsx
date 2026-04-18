@@ -63,6 +63,9 @@ export default function MoleCityPage() {
 
   const priceMap = quizPriceMaps['borba-s-krotami'];
 
+  // Объединяем основные FAQ с extraFaq для отображения и schema
+  const mergedFaq = [...city.faq, ...(city.extraFaq ?? [])];
+
   // JSON-LD
   const serviceJsonLd = {
     '@context': 'https://schema.org',
