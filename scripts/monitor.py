@@ -558,10 +558,10 @@ def parse_seoroutes() -> dict:
     neighborhoods = _extract_string_array(content, "neighborhoodSlugs")
     mole_cities = _extract_mole_city_slugs()
 
-    # static
+    # static (only indexable utility hubs — noindex pages excluded by design)
     expected.add("/")
     for path in [
-        "/contacts/", "/blog/", "/privacy/", "/terms/", "/team/", "/otzyvy/",
+        "/contacts/", "/blog/", "/team/", "/otzyvy/",
         "/sluzhba-dezinsekcii/", "/uslugi/obrabotka-uchastkov/",
         "/uslugi/po-okrugam-moskvy/", "/moscow-oblast/",
     ]:
