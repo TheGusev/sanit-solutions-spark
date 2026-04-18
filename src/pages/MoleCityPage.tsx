@@ -191,6 +191,22 @@ export default function MoleCityPage() {
           </div>
         </section>
 
+        {/* Геология и гидрология участков */}
+        {city.geologyDetails && (
+          <section className="py-12 md:py-16 bg-muted/30">
+            <div className="container mx-auto px-4">
+              <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto">
+                <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                  Геология и гидрология участков {city.prepositional}
+                </h2>
+                <div className="prose prose-lg dark:prose-invert max-w-none">
+                  <p>{city.geologyDetails}</p>
+                </div>
+              </AnimatedSection>
+            </div>
+          </section>
+        )}
+
         {/* Методы */}
         <section className="py-12 md:py-16 bg-muted/30">
           <div className="container mx-auto px-4">
