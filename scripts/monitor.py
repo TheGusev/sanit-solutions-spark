@@ -49,8 +49,10 @@ REPRESENTATIVE_URLS: list[tuple[str, str, bool]] = [
     ("homepage",         "/",                                            True),
     ("service_hub",      "/uslugi/dezinsekciya/",                        True),
     ("pest_page",        "/uslugi/dezinsekciya/klopy/",                  True),
-    ("object_page",      "/uslugi/dezinsekciya/kvartira/",               True),
-    ("moscow_district",  "/rajony/cao/",                                 True),
+    # objectSlugs use genitive plural — kvartir, ofisov, etc. (NOT kvartira)
+    ("object_page",      "/uslugi/dezinsekciya/ofisov/",                 True),
+    # /rajony/:slug serves NeighborhoodPage; districts like /uslugi/dezinfekciya-cao/ are the canonical ones
+    ("moscow_district",  "/uslugi/dezinfekciya-cao/",                    True),
     ("mo_overview",      "/moscow-oblast/",                              True),
     ("mo_city",          "/moscow-oblast/podolsk/",                      True),
     ("mole_city",        "/uslugi/borba-s-krotami/khimki/",              True),
@@ -180,8 +182,28 @@ def inspect_page(fr: FetchResult) -> dict:
     viewport = soup.find("meta", attrs={"name": "viewport"})
     out["viewport"] = bool(viewport and viewport.get("content"))
 
+    def _walk(node: Any) -> None:
+        """Recursively walk JSON-LD; count BreadcrumbList anywhere (incl. @graph)."""
+        if isinstance(node, list):
+            for x in node:
+                _walk(x)
+            return
+        if not isinstance(node, dict):
+            return
+        t = node.get("@type")
+        types = t if isinstance(t, list) else [t] if isinstance(t, str) else []
+        for tt in types:
+            out["schema_types"].append(tt)
+            if tt == "BreadcrumbList":
+                out["breadcrumb_count"] += 1
+        graph = node.get("@graph")
+        if graph:
+            _walk(graph)
+
     for s in soup.find_all("script", type="application/ld+json"):
-        raw = s.string or s.get_text() or ""
+        # Use s.string (None for tags with mixed content) then fallback,
+        # but skip empty/whitespace blocks to avoid double-count of placeholders.
+        raw = (s.string if s.string else s.get_text()) or ""
         if not raw.strip():
             continue
         try:
@@ -189,19 +211,7 @@ def inspect_page(fr: FetchResult) -> dict:
         except Exception:
             out["schema_malformed"] = True
             continue
-        items = data if isinstance(data, list) else [data]
-        for item in items:
-            if not isinstance(item, dict):
-                continue
-            t = item.get("@type")
-            if isinstance(t, list):
-                out["schema_types"].extend(t)
-                if "BreadcrumbList" in t:
-                    out["breadcrumb_count"] += 1
-            elif isinstance(t, str):
-                out["schema_types"].append(t)
-                if t == "BreadcrumbList":
-                    out["breadcrumb_count"] += 1
+        _walk(data)
     return out
 
 # ─── Section checks ─────────────────────────────────────────────────────────
@@ -389,8 +399,13 @@ def check_representative(rep: Report) -> None:
 
 
 def check_internal_linking_leaks(rep: Report, html_samples: list[str]) -> None:
-    admin_leak = 0
-    whatsapp_leak = 0
+    """Detect /admin/ and WhatsApp links across sampled pages.
+
+    Dedup by (href) so the same Footer/Header link counted across pages is one leak.
+    Recognise rel="nofollow" robustly (token-based, case-insensitive).
+    """
+    admin_leaks: set[str] = set()
+    whatsapp_leaks: set[str] = set()
     for html in html_samples:
         soup = parse_html(html)
         if not soup:
@@ -398,19 +413,21 @@ def check_internal_linking_leaks(rep: Report, html_samples: list[str]) -> None:
         for a in soup.find_all("a", href=True):
             href = a["href"]
             rel = a.get("rel") or []
-            rel_str = " ".join(rel) if isinstance(rel, list) else str(rel)
-            if "/admin" in href and "nofollow" not in rel_str:
-                admin_leak += 1
-            if "wa.me" in href or "whatsapp" in href.lower():
-                whatsapp_leak += 1
-    if admin_leak:
+            rel_tokens = (rel if isinstance(rel, list) else str(rel).split())
+            rel_lc = {x.lower() for x in rel_tokens}
+            if "/admin" in href and "nofollow" not in rel_lc:
+                admin_leaks.add(href)
+            if "wa.me" in href.lower() or "whatsapp" in href.lower():
+                whatsapp_leaks.add(href)
+    if admin_leaks:
         rep.add("CRITICAL", "Internal Linking",
-                f"Найдено {admin_leak} ссылок на /admin/ без rel=nofollow",
+                f"Найдено {len(admin_leaks)} уникальных ссылок на /admin/ без rel=nofollow: "
+                + ", ".join(sorted(admin_leaks)[:3]),
                 "Утечка веса в utility-зону",
                 "Добавить rel='nofollow' или убрать ссылки")
-    if whatsapp_leak:
+    if whatsapp_leaks:
         rep.add("CRITICAL", "Brand Standard",
-                f"Обнаружены {whatsapp_leak} ссылок на WhatsApp",
+                f"Обнаружены {len(whatsapp_leaks)} ссылок на WhatsApp",
                 "Регресс контактного стандарта (Telegram/MAX only)",
                 "Удалить wa.me ссылки")
 
