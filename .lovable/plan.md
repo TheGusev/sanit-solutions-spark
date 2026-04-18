@@ -1,85 +1,79 @@
 
 
-Пользователь просит полный аудит сайта: функциональность, рассинхроны, актуальность, sitemap/robots, оценка индексации. Это research/audit задача — НЕ implementation. По правилам: "Skip plan for research". Но в plan mode я могу только читать. Поэтому проведу аудит через read-only tools и выдам отчёт прямо в plan-блоке.
+This is a deep audit request — research/diagnosis only, no code changes. The user wants a comprehensive 7-block forensic audit. In plan mode I'm read-only, so I cannot run `npm run build`, `grep dist/`, or `supabase--curl_edge_functions`. To deliver real depth the user demands (line-level evidence, build artifacts, schema counts, lead delivery proof), I need default mode.
 
-Дам структурированный план аудита и попрошу одобрения для перехода в default mode для выполнения проверок (build, grep, lighthouse), либо проведу что могу через read-only прямо сейчас.
+I'll present a tight execution plan, get approval, then run the audit in default mode and deliver one consolidated forensic report.
 
-Лучший подход: предложить структурированный аудит-план с конкретными областями проверки, после approve — переключусь в default mode и выполню реальные проверки (npm run build, grep dist, sitemap parse, schema count, lead delivery test).
+# Полный Forensic Audit — План Выполнения
 
-# Полный Аудит Проекта — Функциональность, SEO, Индексация
+## Что будет проверено (5 блоков аудита)
 
-## Что будет проверено (8 областей)
+### Блок 1 — Architecture / Routing / Sync
+- `seoRoutes.ts`, `vite-plugin-ssg.ts`, `vite-plugin-sitemap.ts` — статический анализ
+- `npm run build` → реальный подсчёт `dist/**/index.html`
+- Сверка: routes в коде ↔ файлы в dist ↔ URLs в sitemap (3-way diff)
+- Trailing slash audit: grep dist на URLs без `/` в canonical/sitemap/internal links
+- Tier 2/3 NCH isolation: все ли noindexed
+- Korolev/korolyov rasync (предыдущая критическая находка) — статус
 
-### 1. Build & SSG Integrity
-- `npm run build` — должен пройти без ошибок, сгенерировать ≥1280 страниц
-- TypeScript compile clean
-- Verify-build.js guard pass
-- Подсчёт фактических `dist/**/index.html`
+### Блок 2 — Content Health / Anti-Doorway
+- Mole cluster (23 города) — diff контента, выявление шаблонного дублирования
+- MO cluster — то же самое
+- Pricing source-of-truth: grep на хардкод цен вне `services.ts` / `servicePrices.ts`
+- Schema audit: JSON-LD count per page, дубли BreadcrumbList/FAQPage
+- Intent cannibalization: `/uslugi/dezinsekciya/klopy/` vs `/uslugi/borba-s-klopami/`
 
-### 2. Sitemap / Robots / Canonical Sync
-- Парсинг `dist/sitemap-index.xml` + всех child sitemaps
-- Подсчёт URL по категориям (services / pests / districts / MO / mole / blog / NCH)
-- Проверка trailing slashes, отсутствия admin/utility/noindex URLs
-- Cross-check canonical в HTML vs sitemap для 10 representative URLs
-- `dist/robots.txt` — соответствие политике (LLM allow, Semrush block)
+### Блок 3 — Internal Linking / Weight Flow
+- `internalLinking.ts` — модули и фильтры
+- Silo isolation: cross-cluster links MO↔Mole↔Districts
+- Money pages link inflow: подсчёт входящих ссылок на 15 priority pages
+- Link leaks: grep на ссылки в `/admin/`, `/sertifikaciya/`, noindex pages
+- Pagination: проверка отсутствия `?page=` URLs в dist
 
-### 3. Mole Cluster (недавно усиленный)
-- Все 23 города МО — проверка реальной генерации dist HTML
-- Уникальность: cityTier, methodNotes, objectContext в HTML
-- FAQ count по городам
-- Schema (Service + LocalBusiness + FAQPage)
-- canonical/robots/title для всех 23
+### Блок 4 — Runtime / Build Health
+- TypeScript compile errors
+- Bundle size analysis (`dist/assets/*.js` по размеру)
+- Mobile layout: viewport overflow risks (grep на `min-width:` хардкоды)
+- Service Worker / cache strategy verification
+- Console errors через browser tools на 3 representative pages
 
-### 4. Representative URL Spot-Checks (12 типов страниц)
-Homepage, service hub, pest, object, district, MO city, mole city, blog index, blog post, NCH, contacts, calculator-bearing page — проверка title/description/canonical/robots/H1/breadcrumb-schema count.
+### Блок 5 — Conversion / Leads / Analytics
+- `SimpleCalculator.tsx` — double-submit guard, state integrity
+- `handle-lead` edge function — реальный test через `supabase--curl_edge_functions`
+- `analytics.ts` — все trackGoal call sites, dispatch integrity post-VK-removal
+- `all_conversions` composite goal — список goals
+- Telegram delivery verification через edge function logs
 
-### 5. Schema Integrity
-- Подсчёт JSON-LD per page — нет дублей BreadcrumbList/FAQPage
-- Homepage schema isolation policy
-- AggregateRating присутствует на pest pages
-- WhatsApp удалён из sameAs (verify previous fix)
+## Deliverable — Единый отчёт в требуемом формате
 
-### 6. Internal Linking
-- Grep dist на broken links (`/uslugi/sertifikaciya/`, `/admin/`, deprecated paths)
-- RelatedServices/RelatedGeoLinks slug resolution
-- Korolev redirect — verify `/moscow-oblast/korolyov/*` → `/moscow-oblast/korolev/*`
+**Раздел А: CRITICAL FAILURES (Красная зона)**
+Все сломанные/расходящиеся/дублированные элементы с точными ссылками `file:line`. Если пусто — "ИДЕАЛЬНО".
 
-### 7. Calculator & Lead Delivery (recent rework)
-- `SimpleCalculator` все 6 проблем × объекты × room → правильная цена
-- Lead delivery test через `handle-lead` edge function
-- `all_conversions` goal integrity
-- Проверка отсутствия VK/TMR references (post-cleanup)
+**Раздел Б: WARNINGS & OPTIMIZATIONS (Жёлтая зона)**
+Мелкие риски, техдолг, шероховатости перелинковки.
 
-### 8. Indexation Assessment
-- Чтение `MONITORING.md` + `.monitoring-cache.json` — актуальные данные Yandex/Google индексации
-- Sitemap URL count vs ожидаемое (~1085)
-- Tier 1/2/3 NCH policy compliance (Tier 2/3 noindexed)
-- Анализ возможных причин deindexation/slow crawl
-
-## Deliverable — Финальный Отчёт
-
-Структурированный отчёт в 8 секциях:
-1. **Build status** — pass/fail, page count, errors
-2. **Sitemap/Robots audit** — URL counts, нарушения если есть
-3. **Mole cluster verification** — все 23 города таблицей
-4. **Representative URL matrix** — 12×7 проверок
-5. **Schema integrity** — дубли, missing, malformed
-6. **Internal linking** — broken links list
-7. **Calculator/Analytics/Leads** — функциональный статус
-8. **Indexation assessment** — текущее состояние + рекомендации
+**Раздел В: ОБЩАЯ ОЦЕНКА И ВЕРДИКТ (Grade /100)**
+- Architecture / SSG: __/20
+- SEO Hygiene: __/25
+- Content Quality: __/15
+- Internal Linking: __/15
+- Performance / Runtime: __/10
+- Conversion Integrity: __/15
+- **TOTAL: __/100**
+- Production-ready verdict: YES / NO с обоснованием
+- "#1 in class" assessment для ниши дезинфекция МСК
 
 ## Что НЕ будет меняться
 
-Это **read-only аудит**. Никаких правок кода в этой задаче. Если найдутся проблемы — будут зафиксированы в отчёте отдельным списком "Issues to fix" с приоритетами (critical/high/medium/low) для последующих focused-batches с твоим одобрением.
+**Read-only audit.** Никаких правок кода. Все найденные проблемы — в отчёт с приоритетами (CRITICAL / HIGH / MEDIUM / LOW). Каждый fix — отдельный focused batch с твоим approval.
 
-## Инструменты
+## Инструменты, которые потребуются (нужен default mode)
 
-- `npm run build` (production build)
-- grep / find в `dist/`
-- Парсинг sitemap XML
-- `supabase--curl_edge_functions` для lead delivery test
-- Чтение MONITORING.md
-- Read-only код-инспекция
+- `code--exec` — `npm run build`, grep, find, wc
+- `supabase--curl_edge_functions` — реальный lead delivery test
+- `supabase--edge_function_logs` — verify Telegram dispatch
+- `browser--read_console_logs` + `browser--screenshot` — runtime audit на 3 pages
+- `code--view`, `code--search_files` — статический анализ
 
-После approve — переключусь в default mode и выполню всё последовательно одним большим прогоном, затем отдам единый отчёт.
+После approve → переключусь в default mode → выполню всё последовательно одним прогоном → отдам единый структурированный отчёт. Никаких partial deliveries, никаких file edits.
 
