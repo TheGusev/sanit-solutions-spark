@@ -1,10 +1,22 @@
 {
-  "date": "04.04.2026",
-  "sitemap_total": 1079,
-  "semantic_total": 90,
-  "ssg_total": 1312,
-  "ps_desktop": 0,
-  "ps_mobile": 0,
-  "idx_yandex": null,
-  "idx_google": null
+  "avg_response_ms": 238,
+  "blog_urls": 203,
+  "critical_alerts": 6,
+  "date": "2026-04-18",
+  "district_urls": 131,
+  "mo_city_urls": 71,
+  "mole_city_urls": 23,
+  "rep_failures": 4,
+  "service_urls": 666,
+  "sitemap_total": 1076,
+  "ssl_days_left": 33,
+  "stop_conditions_triggered": [
+    "Representative",
+    "Canonical",
+    "Representative",
+    "Schema",
+    "Indexability",
+    "Internal Linking"
+  ],
+  "warnings": 2
 }
