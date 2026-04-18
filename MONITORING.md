@@ -1,127 +1,168 @@
-Контекст: автоматизированный мониторинг goruslugimsk.ru. Все данные обновляются ежедневно через GitHub Actions.
+# 🤖 MONITORING.md — goruslugimsk.ru
 
-# 🤖 MONITORING.md — Авто-мониторинг goruslugimsk.ru
-**Дата:** 04.04.2026 | **Статус:** 🟢 ONLINE | **Средний отклик:** 834 мс
+**Дата:** 18.04.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
 
 ---
 
-## 🟢 Статус сайта
+## 1. Executive Summary
 
-| URL | Статус | Время отклика |
-|---|---|---|
-| / | ✅ 200 | 986 мс |
-| /uslugi/dezinfekciya/ | ✅ 200 | 896 мс |
-| /uslugi/dezinsekciya/ | ✅ 200 | 895 мс |
-| /uslugi/deratizaciya/ | ✅ 200 | 931 мс |
-| /blog/ | ✅ 200 | 717 мс |
-| /contacts/ | ✅ 200 | 655 мс |
-| /rajony/arbat/ | ✅ 200 | 873 мс |
-| /moscow-oblast/khimki/ | ✅ 200 | 717 мс |
+- Сайт: **ONLINE**
+- Build / SSG: **OK**
+- Canonical / Sitemap / Indexability: **FAIL**
+- Schema: **FAIL**
+- Conversion / Analytics: **OK**
+- Performance / Cache: **OK**
 
-## 🔐 SSL-сертификат
+### Что изменилось с прошлого запуска
 
-| Параметр | Значение |
-|---|---|
-| Статус | ✅ Активен |
-| Истекает | 22.05.2026 |
-| Дней до истечения | 48 |
-| Предупреждение | — |
+- sitemap URLs: 1079 → 1076 (-3)
+- Появились критичные алерты: 6
 
-## 📄 Контент (из sitemap)
+---
 
-| Категория | Количество URL |
-|---|---|
-| Услуги | 668 |
-| Блог | 204 |
-| Районы Москвы | 131 |
-| Города МО | 71 |
-| НЧ-страницы | 0 |
-| Прочее | 5 |
-| **Всего** | **1079** |
+## 2. Critical Alerts
 
-## 🧠 Семантическое ядро
-
-| Метрика | Значение |
-|---|---|
-| Всего запросов | 90 |
-| Дубли | 0 |
-| P1 (критичные) | 9 |
-| P2 | 28 |
-| P3 | 30 |
-| P4 | 19 |
-| P5 | 5 |
-| Commercial | 39 |
-| Informational | 53 |
-| Navigational | 0 |
-
-**Кластеры:** service:11 | pest:22 | object:1 | district:1 | nch:4 | blog:53
-
-## 📐 SSG маршруты
-
-| Тип страниц | Количество |
-|---|---|
-| Статические | 9 |
-| Услуги | 6 |
-| Подстраницы услуг | 17 |
-| Pest-страницы | 13 |
-| Object-страницы | 55 |
-| НЧ (Pest×Geo) | 770 |
-| Округа (×3 услуги) | 36 |
-| Районы Москвы | 130 |
-| Города МО | 14 |
-| Блог | 203 |
-| **Всего маршрутов** | **1312** |
-
-## 🔍 Рендеринг (SSR/SSG)
-
-| Страница | H1 | JSON-LD | Canonical | Размер |
+| Severity | Check | Problem | Impact | Action |
 |---|---|---|---|---|
-| /uslugi/dezinsekciya/ | ✅ | ✅ | ✅ | 129.9 KB |
-| /uslugi/deratizaciya/ | ✅ | ✅ | ✅ | 124.2 KB |
-| /rajony/arbat/ | ✅ | ✅ | ✅ | 92.4 KB |
-| /blog/borba-s-tarakanami/ | ✅ | ✅ | ✅ | 71.9 KB |
-| /moscow-oblast/khimki/ | ✅ | ✅ | ✅ | 41.4 KB |
-
-## 🗺️ Гео-роутинг (случайная выборка)
-
-| Страница | Статус | H1 | Время отклика |
-|---|---|---|---|
-| /rajony/sokolniki/ | ✅ 200 | «ÐÑÐ¾ÑÐµÑÑÐ¸Ð¾Ð½Ð°Ð»ÑÐ½Ð°Ñ Ð´ÐµÐ·Ð» | 617 мс |
-| /rajony/zamoskvorechye/ | ✅ 200 | «ÐÑÐ¾ÑÐµÑÑÐ¸Ð¾Ð½Ð°Ð»ÑÐ½Ð°Ñ Ð´ÐµÐ·Ð» | 625 мс |
-| /rajony/yuzhnoe-medvedkovo/ | ✅ 200 | «ÐÑÐ¾ÑÐµÑÑÐ¸Ð¾Ð½Ð°Ð»ÑÐ½Ð°Ñ Ð´ÐµÐ·Ð» | 582 мс |
-| /moscow-oblast/mytishchi/ | ✅ 200 | «ÐÑÐ¾ÑÐµÑÑÐ¸Ð¾Ð½Ð°Ð»ÑÐ½Ð°Ñ Ð´ÐµÐ·Ð» | 508 мс |
-| /moscow-oblast/podolsk/ | ✅ 200 | «ÐÑÐ¾ÑÐµÑÑÐ¸Ð¾Ð½Ð°Ð»ÑÐ½Ð°Ñ Ð´ÐµÐ·Ð» | 468 мс |
-
-## 🔍 Индексация
-
-| Поисковик | Страниц | % от sitemap |
-|---|---|---|
-| Яндекс | — | задайте YANDEX_INDEXED |
-| Google | — | задайте GOOGLE_INDEXED |
-
-## ⚙️ PageSpeed (автозамер)
-
-| Метрика | Desktop | Mobile |
-|---|---|---|
-| Performance Score | 0 | 0 |
-| LCP | 0 с | 0 с |
-| CLS | 0 | 0 |
-
-## 📈 Трафик (Яндекс.Метрика, 30 дней)
-
-> ℹ️ Для автоматического обновления добавьте `YANDEX_METRIKA_TOKEN` в GitHub Secrets
-
-## 📉 Тренд (vs предыдущий запуск)
-
-- Страниц в sitemap: 1079 (было 1079)
-- Семантика: 90 (было 90)
-- PSI Desktop: 0 (было 0)
-- PSI Mobile: 0 (было 0)
-- SSG маршрутов: 1312 (было 1312)
-
-## 🚨 Алерты
-
-✅ Нет активных проблем
+| CRITICAL | Representative | object_page (/uslugi/dezinsekciya/kvartira/) → HTTP 404 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Canonical | /rajony/cao/: canonical = https://goruslugimsk.ru/ | Canonical drift — конфликт с маршрутом | Сверить с seoRoutes.ts |
+| CRITICAL | Representative | mole_city (/uslugi/borba-s-krotami/khimki/) → HTTP 404 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Schema | /blog/klopy-v-kvartire/: 2 BreadcrumbList | Дубликаты разметки | Использовать единый источник |
+| CRITICAL | Indexability | /uslugi/sertifikaciya/: должен быть noindex, но открыт | Утечка excluded-страницы в индекс | Поставить noindex |
+| CRITICAL | Internal Linking | Найдено 2 ссылок на /admin/ без rel=nofollow | Утечка веса в utility-зону | Добавить rel='nofollow' или убрать ссылки |
+| WARNING | Schema | /rajony/cao/: BreadcrumbList отсутствует | Снижение видимости в SERP | Добавить разметку |
+| WARNING | Schema | /uslugi/sertifikaciya/: BreadcrumbList отсутствует | Снижение видимости в SERP | Добавить разметку |
 
 ---
-**Последнее обновление:** 04.04.2026 09:52 MSK
+
+## 3. Key URL Health
+
+| URL | HTTP | Response Time | Notes |
+|---|---|---:|---|
+| / | ✅ 200 | 469 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 194 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 200 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 213 мс | — |
+| /blog/ | ✅ 200 | 200 мс | — |
+| /contacts/ | ✅ 200 | 156 мс | — |
+
+---
+
+## 4. Governance Checks
+
+### Routing / Canonical / Trailing Slash
+
+| Check | Result | Notes |
+|---|---|---|
+| Self-referencing canonical | ✅ OK | 10 representative URLs |
+| Trailing slash на canonical | ✅ OK | По canonical comparison |
+
+### Sitemap / Robots / Indexability
+
+| Check | Result | Notes |
+|---|---|---|
+| sitemap-index.xml доступен | ✅ | 9 файлов, 1076 URL |
+| robots.txt + Sitemap-директива | ✅ | — |
+| Indexability roles | ❌ 1 drift | По REPRESENTATIVE_URLS |
+
+### Structured Data
+
+| Check | Result | Notes |
+|---|---|---|
+| Один BreadcrumbList на страницу | ❌ 1 drift | По representative URLs |
+| Валидный JSON-LD | ✅ OK | json.loads() на каждом блоке |
+
+---
+
+## 5. Representative URL Audit
+
+| URL Type | Sample URL | HTTP | Canonical | Indexability | Schema | Mobile | Result |
+|---|---|---|---|---|---|---|---|
+| homepage | `/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| service_hub | `/uslugi/dezinsekciya/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| pest_page | `/uslugi/dezinsekciya/klopy/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| object_page | `/uslugi/dezinsekciya/kvartira/` | 404 | — | — | — | ✅ | ❌ FAIL |
+| moscow_district | `/rajony/cao/` | 200 | ⚠️ mismatch | ✅ index | ⚠️ no breadcrumb | ✅ | ✅ OK |
+| mo_overview | `/moscow-oblast/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| mo_city | `/moscow-oblast/podolsk/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| mole_city | `/uslugi/borba-s-krotami/khimki/` | 404 | — | — | — | ✅ | ❌ FAIL |
+| blog_post | `/blog/klopy-v-kvartire/` | 200 | ✅ | ✅ index | ❌ 2× BreadcrumbList | ✅ | ❌ FAIL |
+| excluded_page | `/uslugi/sertifikaciya/` | 200 | ✅ | ❌ index | ⚠️ no breadcrumb | ✅ | ❌ FAIL |
+
+---
+
+## 6. Conversion & Analytics
+
+| Check | Result | Notes |
+|---|---|---|
+| Telegram CTA на главной | ✅ present | — |
+| all_conversions composite goal | ⚠️ not in HTML | Может быть в JS-bundle |
+| Yandex Metrika counter | ✅ 105828040 | — |
+| handle-lead edge function | ⚠️ 500 | Lead flow может быть нарушен |
+
+---
+
+## 7. Performance & Cache
+
+| Check | Result | Notes |
+|---|---|---|
+| Avg response time (key URLs) | 238 мс | Порог: 3000 мс |
+| Largest HTML sample | 131.0 KB | Из representative audit |
+| SSL сертификат | ✅ 22.05.2026 | 33 дн. до истечения |
+| PageSpeed Insights | unavailable | Источник данных не подключён |
+| Bundle size | unavailable | Не измеряется в runtime-мониторе |
+
+---
+
+## 8. Totals & Deltas
+
+| Metric | Current | Previous | Delta |
+|---|---:|---:|---:|
+| total sitemap URLs | 1076 | 1079 | -3 |
+| service URLs | 666 | — | — |
+| blog URLs | 203 | — | — |
+| district URLs | 131 | — | — |
+| MO city URLs | 71 | — | — |
+| mole city URLs | 23 | — | — |
+| representative failures | 4 | — | — |
+| critical alerts | 6 | — | — |
+| warnings | 2 | — | — |
+| avg response time (мс) | 238 | — | — |
+
+---
+
+## 9. Stop-Conditions
+
+| Stop-condition | Status | Notes |
+|---|---|---|
+| Canonical drift | ❌ | Сработало — см. Critical Alerts |
+| Routing drift (rep URL ≠ 200) | ❌ | Сработало — см. Critical Alerts |
+| Sitemap participation drift | ✅ | OK |
+| Indexability-role drift | ❌ | Сработало — см. Critical Alerts |
+| Duplicate BreadcrumbList | ❌ | Сработало — см. Critical Alerts |
+| WhatsApp / brand regression | ✅ | OK |
+| Analytics regression | ✅ | OK |
+| Conversion regression | ✅ | OK |
+| Malformed JSON-LD | ✅ | OK |
+| Critical response time breach | ✅ | OK |
+| Internal linking leak (/admin) | ❌ | Сработало — см. Critical Alerts |
+| SSL expiry < 14 дней | ✅ | OK |
+
+---
+
+## 10. Final Verdict
+
+**Status:** CRITICAL  
+**Decision:** NOT SAFE UNTIL FIXED
+
+### Required actions
+
+1. Проверить роутинг/SSG
+2. Сверить с seoRoutes.ts
+3. Использовать единый источник
+4. Поставить noindex
+5. Добавить rel='nofollow' или убрать ссылки
+
+---
+
+**Последнее обновление:** 18.04.2026 21:35 MSK
