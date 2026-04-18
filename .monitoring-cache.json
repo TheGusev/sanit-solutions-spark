@@ -1,5 +1,5 @@
 {
-  "avg_response_ms": 197,
+  "avg_response_ms": 199,
   "blog_urls": 203,
   "critical_alerts": 1,
   "date": "2026-04-18",
@@ -9,12 +9,12 @@
   "rep_failures": 1,
   "sample_50_canonical_failures": 1,
   "sample_50_http_failures": 0,
-  "seoroutes_sitemap_diff": 9,
+  "seoroutes_sitemap_diff": 1,
   "service_urls": 666,
   "sitemap_total": 1076,
   "ssl_days_left": 33,
   "stop_conditions_triggered": [
     "Canonical"
   ],
-  "warnings": 3
+  "warnings": 2
 }
