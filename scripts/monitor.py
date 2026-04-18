@@ -49,8 +49,10 @@ REPRESENTATIVE_URLS: list[tuple[str, str, bool]] = [
     ("homepage",         "/",                                            True),
     ("service_hub",      "/uslugi/dezinsekciya/",                        True),
     ("pest_page",        "/uslugi/dezinsekciya/klopy/",                  True),
-    ("object_page",      "/uslugi/dezinsekciya/kvartira/",               True),
-    ("moscow_district",  "/rajony/cao/",                                 True),
+    # objectSlugs use genitive plural — kvartir, ofisov, etc. (NOT kvartira)
+    ("object_page",      "/uslugi/dezinsekciya/ofisov/",                 True),
+    # /rajony/:slug serves NeighborhoodPage; districts like /uslugi/dezinfekciya-cao/ are the canonical ones
+    ("moscow_district",  "/uslugi/dezinfekciya-cao/",                    True),
     ("mo_overview",      "/moscow-oblast/",                              True),
     ("mo_city",          "/moscow-oblast/podolsk/",                      True),
     ("mole_city",        "/uslugi/borba-s-krotami/khimki/",              True),
@@ -180,8 +182,28 @@ def inspect_page(fr: FetchResult) -> dict:
     viewport = soup.find("meta", attrs={"name": "viewport"})
     out["viewport"] = bool(viewport and viewport.get("content"))
 
+    def _walk(node: Any) -> None:
+        """Recursively walk JSON-LD; count BreadcrumbList anywhere (incl. @graph)."""
+        if isinstance(node, list):
+            for x in node:
+                _walk(x)
+            return
+        if not isinstance(node, dict):
+            return
+        t = node.get("@type")
+        types = t if isinstance(t, list) else [t] if isinstance(t, str) else []
+        for tt in types:
+            out["schema_types"].append(tt)
+            if tt == "BreadcrumbList":
+                out["breadcrumb_count"] += 1
+        graph = node.get("@graph")
+        if graph:
+            _walk(graph)
+
     for s in soup.find_all("script", type="application/ld+json"):
-        raw = s.string or s.get_text() or ""
+        # Use s.string (None for tags with mixed content) then fallback,
+        # but skip empty/whitespace blocks to avoid double-count of placeholders.
+        raw = (s.string if s.string else s.get_text()) or ""
         if not raw.strip():
             continue
         try:
@@ -189,19 +211,7 @@ def inspect_page(fr: FetchResult) -> dict:
         except Exception:
             out["schema_malformed"] = True
             continue
-        items = data if isinstance(data, list) else [data]
-        for item in items:
-            if not isinstance(item, dict):
-                continue
-            t = item.get("@type")
-            if isinstance(t, list):
-                out["schema_types"].extend(t)
-                if "BreadcrumbList" in t:
-                    out["breadcrumb_count"] += 1
-            elif isinstance(t, str):
-                out["schema_types"].append(t)
-                if t == "BreadcrumbList":
-                    out["breadcrumb_count"] += 1
+        _walk(data)
     return out
 
 # ─── Section checks ─────────────────────────────────────────────────────────
@@ -255,7 +265,7 @@ def check_key_urls(rep: Report) -> int:
 def parse_sitemap_index(rep: Report) -> dict:
     out = {
         "total": 0, "service": 0, "blog": 0, "district": 0,
-        "mo_city": 0, "mole_city": 0, "other": 0, "files": [],
+        "mo_city": 0, "mole_city": 0, "other": 0, "files": [], "urls": [],
     }
     fr = fetch("/sitemap-index.xml")
     if fr.status != 200:
@@ -291,6 +301,7 @@ def parse_sitemap_index(rep: Report) -> dict:
                 all_urls.append(loc.text.strip())
 
     out["total"] = len(all_urls)
+    out["urls"] = all_urls
     for u in all_urls:
         if "/blog/" in u:
             out["blog"] += 1
@@ -389,8 +400,13 @@ def check_representative(rep: Report) -> None:
 
 
 def check_internal_linking_leaks(rep: Report, html_samples: list[str]) -> None:
-    admin_leak = 0
-    whatsapp_leak = 0
+    """Detect /admin/ and WhatsApp links across sampled pages.
+
+    Dedup by (href) so the same Footer/Header link counted across pages is one leak.
+    Recognise rel="nofollow" robustly (token-based, case-insensitive).
+    """
+    admin_leaks: set[str] = set()
+    whatsapp_leaks: set[str] = set()
     for html in html_samples:
         soup = parse_html(html)
         if not soup:
@@ -398,19 +414,21 @@ def check_internal_linking_leaks(rep: Report, html_samples: list[str]) -> None:
         for a in soup.find_all("a", href=True):
             href = a["href"]
             rel = a.get("rel") or []
-            rel_str = " ".join(rel) if isinstance(rel, list) else str(rel)
-            if "/admin" in href and "nofollow" not in rel_str:
-                admin_leak += 1
-            if "wa.me" in href or "whatsapp" in href.lower():
-                whatsapp_leak += 1
-    if admin_leak:
+            rel_tokens = (rel if isinstance(rel, list) else str(rel).split())
+            rel_lc = {x.lower() for x in rel_tokens}
+            if "/admin" in href and "nofollow" not in rel_lc:
+                admin_leaks.add(href)
+            if "wa.me" in href.lower() or "whatsapp" in href.lower():
+                whatsapp_leaks.add(href)
+    if admin_leaks:
         rep.add("CRITICAL", "Internal Linking",
-                f"Найдено {admin_leak} ссылок на /admin/ без rel=nofollow",
+                f"Найдено {len(admin_leaks)} уникальных ссылок на /admin/ без rel=nofollow: "
+                + ", ".join(sorted(admin_leaks)[:3]),
                 "Утечка веса в utility-зону",
                 "Добавить rel='nofollow' или убрать ссылки")
-    if whatsapp_leak:
+    if whatsapp_leaks:
         rep.add("CRITICAL", "Brand Standard",
-                f"Обнаружены {whatsapp_leak} ссылок на WhatsApp",
+                f"Обнаружены {len(whatsapp_leaks)} ссылок на WhatsApp",
                 "Регресс контактного стандарта (Telegram/MAX only)",
                 "Удалить wa.me ссылки")
 
@@ -482,6 +500,204 @@ def load_cache() -> dict:
             return json.load(f)
     except Exception:
         return {}
+
+# ─── SeoRoutes ↔ Sitemap sync (compile-time vs runtime) ─────────────────────
+
+import random
+import re
+
+SEOROUTES_FILE = os.path.join("src", "lib", "seoRoutes.ts")
+MOLE_CITIES_FILE = os.path.join("src", "data", "moleCities.ts")
+
+
+def _extract_string_array(content: str, name: str) -> list[str]:
+    """Pull a TS literal-string array `export const NAME = [ '...', '...' ];`."""
+    pat = re.compile(
+        rf"export\s+const\s+{re.escape(name)}\s*=\s*\[(.*?)\];",
+        re.DOTALL,
+    )
+    m = pat.search(content)
+    if not m:
+        return []
+    body = m.group(1)
+    # strip block / line comments
+    body = re.sub(r"/\*.*?\*/", "", body, flags=re.DOTALL)
+    body = re.sub(r"//[^\n]*", "", body)
+    return re.findall(r"['\"]([^'\"]+)['\"]", body)
+
+
+def _extract_mole_city_slugs() -> list[str]:
+    """Parse moleCities.ts for `slug: '...'` entries."""
+    if not os.path.exists(MOLE_CITIES_FILE):
+        return []
+    try:
+        content = open(MOLE_CITIES_FILE, encoding="utf-8").read()
+    except Exception:
+        return []
+    return re.findall(r"slug:\s*['\"]([^'\"]+)['\"]", content)
+
+
+def parse_seoroutes() -> dict:
+    """Best-effort parse of expected route paths from src/lib/seoRoutes.ts."""
+    expected: set[str] = set()
+    if not os.path.exists(SEOROUTES_FILE):
+        return {"expected": expected, "available": False, "error": "file not found"}
+    try:
+        content = open(SEOROUTES_FILE, encoding="utf-8").read()
+    except Exception as e:
+        return {"expected": expected, "available": False, "error": str(e)}
+
+    services = _extract_string_array(content, "servicesSlugs")
+    pests_dezi = _extract_string_array(content, "dezinsekciyaPestSlugs")
+    pests_derat = _extract_string_array(content, "deratizaciyaPestSlugs")
+    objects = _extract_string_array(content, "objectSlugs")
+    services_for_objects = _extract_string_array(content, "servicesForObjects")
+    districts = _extract_string_array(content, "districtSlugs")
+    mo_cities = _extract_string_array(content, "moscowRegionCitySlugs")
+    mo_services = _extract_string_array(content, "moscowRegionServices")
+    neighborhoods = _extract_string_array(content, "neighborhoodSlugs")
+    mole_cities = _extract_mole_city_slugs()
+
+    # static
+    expected.add("/")
+    for path in [
+        "/contacts/", "/blog/", "/privacy/", "/terms/", "/team/", "/otzyvy/",
+        "/sluzhba-dezinsekcii/", "/uslugi/obrabotka-uchastkov/",
+        "/uslugi/po-okrugam-moskvy/", "/moscow-oblast/",
+    ]:
+        expected.add(path)
+
+    for s in services:
+        expected.add(f"/uslugi/{s}/")
+    for p in pests_dezi:
+        expected.add(f"/uslugi/dezinsekciya/{p}/")
+    for p in pests_derat:
+        expected.add(f"/uslugi/deratizaciya/{p}/")
+    for s in services_for_objects:
+        for o in objects:
+            expected.add(f"/uslugi/{s}/{o}/")
+    for d in districts:
+        # district hubs surface under /uslugi/{service}-{district}/
+        for svc in ("dezinfekciya", "dezinsekciya", "deratizaciya"):
+            expected.add(f"/uslugi/{svc}-{d}/")
+    for c in mo_cities:
+        expected.add(f"/moscow-oblast/{c}/")
+        for s in mo_services:
+            expected.add(f"/moscow-oblast/{c}/{s}/")
+    for c in mole_cities:
+        expected.add(f"/uslugi/borba-s-krotami/{c}/")
+
+    return {
+        "expected": expected, "available": True,
+        "counts": {
+            "services": len(services), "pests_dezi": len(pests_dezi),
+            "pests_derat": len(pests_derat), "objects": len(objects),
+            "districts": len(districts), "mo_cities": len(mo_cities),
+            "mole_cities": len(mole_cities), "neighborhoods": len(neighborhoods),
+        },
+    }
+
+
+def _normalize(url: str) -> str:
+    """Strip origin and ensure trailing slash for path-only comparison."""
+    p = url.replace(SITE_URL, "")
+    if not p.startswith("/"):
+        p = "/" + p
+    if p != "/" and not p.endswith("/"):
+        p += "/"
+    return p
+
+
+def check_seoroutes_sync(rep: Report, sitemap_urls: list[str]) -> dict:
+    """Compare expected paths from seoRoutes.ts to the live sitemap."""
+    info = parse_seoroutes()
+    result = {
+        "available": info["available"],
+        "missing_in_sitemap": 0, "orphan_in_sitemap": 0,
+        "sample_size": 0, "sample_http_failures": 0,
+        "sample_canonical_failures": 0,
+    }
+    if not info["available"]:
+        rep.add("WARNING", "Sync",
+                f"seoRoutes.ts недоступен: {info.get('error', '?')}",
+                "Не можем сверить compile-time с sitemap",
+                "Проверить путь к src/lib/seoRoutes.ts")
+        return result
+
+    expected = info["expected"]
+    sm_paths = {_normalize(u) for u in sitemap_urls}
+
+    # Expected but missing from sitemap (potential SSG drift)
+    missing = expected - sm_paths
+    # In sitemap but not produced by seoRoutes parser (often ok — NCH tier 1 etc.)
+    orphan = sm_paths - expected
+
+    result["missing_in_sitemap"] = len(missing)
+    result["orphan_in_sitemap"] = len(orphan)
+
+    if missing:
+        # Only flag if material — many static or aux routes may differ
+        sample = sorted(missing)[:5]
+        sev = "CRITICAL" if len(missing) > 15 else "WARNING"
+        rep.add(sev, "Sync",
+                f"{len(missing)} путей из seoRoutes.ts отсутствуют в sitemap "
+                f"(пример: {', '.join(sample)})",
+                "Compile-time расходится с public sitemap",
+                "Проверить SSG-пайплайн / vite-plugin-sitemap.ts")
+
+    # Sample 50 deterministic URLs for HTTP + canonical audit.
+    pool = sorted(expected & sm_paths)
+    if pool:
+        rng = random.Random(20260418)  # fixed seed → no drift between runs
+        sample_size = min(50, len(pool))
+        sample = rng.sample(pool, sample_size)
+        result["sample_size"] = sample_size
+
+        http_fail = 0
+        canon_fail = 0
+        # HEAD all 50 for status; full GET on first 10 for canonical match.
+        for i, path in enumerate(sample):
+            full = SITE_URL + path
+            try:
+                hr = requests.head(full, headers=HEADERS, timeout=TIMEOUT,
+                                   allow_redirects=False)
+                if hr.status_code != 200:
+                    http_fail += 1
+                    continue
+            except Exception:
+                http_fail += 1
+                continue
+            if i < 10:
+                fr = fetch(path)
+                info_p = inspect_page(fr)
+                if not info_p["canonical"]:
+                    canon_fail += 1
+                else:
+                    actual = info_p["canonical"].rstrip("/") + "/"
+                    if actual != full.rstrip("/") + "/":
+                        canon_fail += 1
+        result["sample_http_failures"] = http_fail
+        result["sample_canonical_failures"] = canon_fail
+
+        http_pct = http_fail / sample_size * 100
+        if http_pct > 15:
+            rep.add("CRITICAL", "Sync",
+                    f"Sample-{sample_size}: {http_fail} URL ≠ 200 "
+                    f"({http_pct:.0f}%)",
+                    "Массовый routing drift",
+                    "Проверить SSG / nginx fallback")
+        elif http_pct > 5:
+            rep.add("WARNING", "Sync",
+                    f"Sample-{sample_size}: {http_fail} URL ≠ 200 ({http_pct:.0f}%)",
+                    "Несколько страниц недоступны",
+                    "Проверить дельту seoRoutes.ts vs deployed build")
+        if canon_fail > 1:
+            rep.add("CRITICAL", "Sync",
+                    f"Sample-10 canonical mismatch: {canon_fail} страниц",
+                    "Canonical drift на нескольких страницах",
+                    "Проверить SEOHead / SPA fallback")
+
+    return result
 
 
 def save_cache(data: dict) -> None:
@@ -629,6 +845,24 @@ def render_markdown(rep: Report, cache_now: dict, cache_prev: dict,
     L.append(f"| Один BreadcrumbList на страницу | {'✅ OK' if schema_failures == 0 else f'❌ {schema_failures} drift'} | По representative URLs |")
     malformed = any(a.check == "Schema" and "malformed" in a.problem for a in rep.alerts)
     L.append(f"| Валидный JSON-LD | {'❌ malformed' if malformed else '✅ OK'} | json.loads() на каждом блоке |")
+    L.append("")
+    L.append("### SeoRoutes ↔ Sitemap Sync")
+    L.append("")
+    L.append("| Check | Result | Notes |")
+    L.append("|---|---|---|")
+    sync = cache_now.get("_sync", {})
+    if sync.get("available"):
+        miss = sync.get("missing_in_sitemap", 0)
+        orph = sync.get("orphan_in_sitemap", 0)
+        ss = sync.get("sample_size", 0)
+        sh = sync.get("sample_http_failures", 0)
+        sc = sync.get("sample_canonical_failures", 0)
+        L.append(f"| seoRoutes → sitemap | {'✅' if miss == 0 else f'⚠️ {miss} missing'} | Compile-time vs public sitemap |")
+        L.append(f"| sitemap → seoRoutes | {'✅' if orph < 50 else f'⚠️ {orph} orphan'} | Допустимы NCH/aux URL |")
+        L.append(f"| Sample HTTP 200 | {'✅' if sh == 0 else f'❌ {sh}/{ss}'} | Детерминистическая выборка ({ss}) |")
+        L.append(f"| Sample canonical match | {'✅' if sc == 0 else f'❌ {sc}/10'} | Первые 10 из выборки |")
+    else:
+        L.append("| seoRoutes parse | ⚠️ unavailable | Запуск вне репозитория |")
     L.append("")
     L.append("---")
     L.append("")
@@ -820,6 +1054,8 @@ def main() -> int:
     check_conversion(rep, homepage_html)
     check_pricing_consistency(rep, homepage_html)
 
+    sync_result = check_seoroutes_sync(rep, rep.sitemap.get("urls", []))
+
     rep_failures = sum(1 for r in rep.rep_results if r["result"] != "OK")
     cache_now = {
         "date": datetime.now(MSK).strftime("%Y-%m-%d"),
@@ -834,7 +1070,11 @@ def main() -> int:
         "warnings": rep.warning_count,
         "avg_response_ms": avg_ms,
         "ssl_days_left": rep.ssl.get("days_left"),
+        "sample_50_http_failures": sync_result.get("sample_http_failures", 0),
+        "sample_50_canonical_failures": sync_result.get("sample_canonical_failures", 0),
+        "seoroutes_sitemap_diff": sync_result.get("missing_in_sitemap", 0),
         "stop_conditions_triggered": [a.check for a in rep.alerts if a.severity == "CRITICAL"],
+        "_sync": sync_result,
     }
 
     if cache_prev:
@@ -859,7 +1099,9 @@ def main() -> int:
     md = render_markdown(rep, cache_now, cache_prev, status, decision)
     with open(REPORT_FILE, "w", encoding="utf-8") as f:
         f.write(md)
-    save_cache(cache_now)
+    # _sync contains a set (expected paths) — strip before persisting
+    persist = {k: v for k, v in cache_now.items() if k != "_sync"}
+    save_cache(persist)
 
     send_telegram_if_needed(status, rep)
 

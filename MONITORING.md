@@ -15,8 +15,7 @@
 
 ### Что изменилось с прошлого запуска
 
-- sitemap URLs: 1079 → 1076 (-3)
-- Появились критичные алерты: 6
+Существенных изменений не обнаружено.
 
 ---
 
@@ -24,14 +23,15 @@
 
 | Severity | Check | Problem | Impact | Action |
 |---|---|---|---|---|
-| CRITICAL | Representative | object_page (/uslugi/dezinsekciya/kvartira/) → HTTP 404 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
-| CRITICAL | Canonical | /rajony/cao/: canonical = https://goruslugimsk.ru/ | Canonical drift — конфликт с маршрутом | Сверить с seoRoutes.ts |
+| CRITICAL | Canonical | /uslugi/dezinfekciya-cao/: отсутствует canonical | Нарушение SEO-стандарта | Проверить SEOHead.tsx |
 | CRITICAL | Representative | mole_city (/uslugi/borba-s-krotami/khimki/) → HTTP 404 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
 | CRITICAL | Schema | /blog/klopy-v-kvartire/: 2 BreadcrumbList | Дубликаты разметки | Использовать единый источник |
 | CRITICAL | Indexability | /uslugi/sertifikaciya/: должен быть noindex, но открыт | Утечка excluded-страницы в индекс | Поставить noindex |
-| CRITICAL | Internal Linking | Найдено 2 ссылок на /admin/ без rel=nofollow | Утечка веса в utility-зону | Добавить rel='nofollow' или убрать ссылки |
-| WARNING | Schema | /rajony/cao/: BreadcrumbList отсутствует | Снижение видимости в SERP | Добавить разметку |
+| CRITICAL | Internal Linking | Найдено 1 уникальных ссылок на /admin/ без rel=nofollow: /admin/login | Утечка веса в utility-зону | Добавить rel='nofollow' или убрать ссылки |
+| CRITICAL | Sync | Sample-10 canonical mismatch: 3 страниц | Canonical drift на нескольких страницах | Проверить SEOHead / SPA fallback |
+| WARNING | Schema | /uslugi/dezinfekciya-cao/: BreadcrumbList отсутствует | Снижение видимости в SERP | Добавить разметку |
 | WARNING | Schema | /uslugi/sertifikaciya/: BreadcrumbList отсутствует | Снижение видимости в SERP | Добавить разметку |
+| WARNING | Sync | 14 путей из seoRoutes.ts отсутствуют в sitemap (пример: /moscow-oblast/korolev/, /moscow-oblast/korolev/deratizaciya/, /moscow-oblast/korolev/dezinfekciya/, /moscow-oblast/korolev/dezinsekciya/, /moscow-oblast/korolev/ozonirovanie/) | Compile-time расходится с public sitemap | Проверить SSG-пайплайн / vite-plugin-sitemap.ts |
 
 ---
 
@@ -39,12 +39,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 469 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 194 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 200 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 213 мс | — |
-| /blog/ | ✅ 200 | 200 мс | — |
-| /contacts/ | ✅ 200 | 156 мс | — |
+| / | ✅ 200 | 188 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 189 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 193 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 320 мс | — |
+| /blog/ | ✅ 200 | 196 мс | — |
+| /contacts/ | ✅ 200 | 148 мс | — |
 
 ---
 
@@ -54,8 +54,8 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Self-referencing canonical | ✅ OK | 10 representative URLs |
-| Trailing slash на canonical | ✅ OK | По canonical comparison |
+| Self-referencing canonical | ❌ 1 drift | 10 representative URLs |
+| Trailing slash на canonical | ❌ drift | По canonical comparison |
 
 ### Sitemap / Robots / Indexability
 
@@ -72,6 +72,15 @@
 | Один BreadcrumbList на страницу | ❌ 1 drift | По representative URLs |
 | Валидный JSON-LD | ✅ OK | json.loads() на каждом блоке |
 
+### SeoRoutes ↔ Sitemap Sync
+
+| Check | Result | Notes |
+|---|---|---|
+| seoRoutes → sitemap | ⚠️ 14 missing | Compile-time vs public sitemap |
+| sitemap → seoRoutes | ⚠️ 873 orphan | Допустимы NCH/aux URL |
+| Sample HTTP 200 | ✅ | Детерминистическая выборка (50) |
+| Sample canonical match | ❌ 3/10 | Первые 10 из выборки |
+
 ---
 
 ## 5. Representative URL Audit
@@ -81,8 +90,8 @@
 | homepage | `/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | service_hub | `/uslugi/dezinsekciya/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | pest_page | `/uslugi/dezinsekciya/klopy/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| object_page | `/uslugi/dezinsekciya/kvartira/` | 404 | — | — | — | ✅ | ❌ FAIL |
-| moscow_district | `/rajony/cao/` | 200 | ⚠️ mismatch | ✅ index | ⚠️ no breadcrumb | ✅ | ✅ OK |
+| object_page | `/uslugi/dezinsekciya/ofisov/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| moscow_district | `/uslugi/dezinfekciya-cao/` | 200 | ❌ missing | ✅ index | ⚠️ no breadcrumb | ✅ | ❌ FAIL |
 | mo_overview | `/moscow-oblast/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | mo_city | `/moscow-oblast/podolsk/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | mole_city | `/uslugi/borba-s-krotami/khimki/` | 404 | — | — | — | ✅ | ❌ FAIL |
@@ -106,7 +115,7 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 238 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 205 мс | Порог: 3000 мс |
 | Largest HTML sample | 131.0 KB | Из representative audit |
 | SSL сертификат | ✅ 22.05.2026 | 33 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
@@ -118,16 +127,16 @@
 
 | Metric | Current | Previous | Delta |
 |---|---:|---:|---:|
-| total sitemap URLs | 1076 | 1079 | -3 |
-| service URLs | 666 | — | — |
-| blog URLs | 203 | — | — |
-| district URLs | 131 | — | — |
-| MO city URLs | 71 | — | — |
-| mole city URLs | 23 | — | — |
-| representative failures | 4 | — | — |
-| critical alerts | 6 | — | — |
-| warnings | 2 | — | — |
-| avg response time (мс) | 238 | — | — |
+| total sitemap URLs | 1076 | 1076 | 0 |
+| service URLs | 666 | 666 | 0 |
+| blog URLs | 203 | 203 | 0 |
+| district URLs | 131 | 131 | 0 |
+| MO city URLs | 71 | 71 | 0 |
+| mole city URLs | 23 | 23 | 0 |
+| representative failures | 4 | 4 | 0 |
+| critical alerts | 6 | 6 | 0 |
+| warnings | 3 | 2 | +1 |
+| avg response time (мс) | 205 | 238 | -33 |
 
 ---
 
@@ -157,12 +166,12 @@
 
 ### Required actions
 
-1. Проверить роутинг/SSG
-2. Сверить с seoRoutes.ts
+1. Проверить SEOHead.tsx
+2. Проверить роутинг/SSG
 3. Использовать единый источник
 4. Поставить noindex
 5. Добавить rel='nofollow' или убрать ссылки
 
 ---
 
-**Последнее обновление:** 18.04.2026 21:35 MSK
+**Последнее обновление:** 18.04.2026 21:48 MSK
