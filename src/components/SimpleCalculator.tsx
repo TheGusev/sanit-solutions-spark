@@ -194,6 +194,8 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
   };
 
   const handleSubmit = async () => {
+    // Hard guard: prevent double-submit even if button click fires twice before disabled state propagates
+    if (formStatus === "submitting") return;
     if (!phone || phone.replace(/\D/g, "").length < 10) {
       setErrorMsg("Введите корректный номер телефона");
       return;

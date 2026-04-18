@@ -182,14 +182,15 @@ const BlogPost = () => {
       
       <Header />
 
-      {/* Breadcrumbs */}
+      {/* Breadcrumbs (visual only — JSON-LD already emitted above via StructuredData) */}
       <section className="pt-28 pb-4 px-4 border-b">
         <div className="container mx-auto max-w-4xl">
           <Breadcrumbs 
             items={[
               { label: "Блог", href: "/blog" },
               { label: post.title }
-            ]} 
+            ]}
+            showSchema={false}
           />
           <Link 
             to="/blog" 
