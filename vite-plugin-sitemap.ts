@@ -1,6 +1,7 @@
 import { writeFileSync } from 'fs'
   ;import { resolve } from 'path';
 import type { Plugin } from 'vite';
+import { moleCities } from './src/data/moleCities';
 
 interface SitemapUrl {
   loc: string;
@@ -256,15 +257,10 @@ const blogSlugs = [
   'borshchevik-zakon-shtraf-2026',
 ];
 
-// Города кротов МО (23 города — синхронизировано с src/data/moleCities.ts)
-const moleCitySlugs = [
-  'istra', 'krasnogorsk', 'nakhabino', 'dedovsk',
-  'odintsovo', 'barvikha', 'usovo', 'zhukovka',
-  'lobnya', 'dolgoprudny-mo', 'dmitrov-mo', 'yakhroma',
-  'chekhov-mo', 'serpukhov', 'naro-fominsk', 'mozhaysk',
-  'klin-mo', 'solnechnogorsk', 'domodedovo-mo',
-  'taldom', 'dubna-mo', 'ruza', 'voskresensk-mo',
-];
+// Города кротов МО — единый источник истины: src/data/moleCities.ts
+// (синхронизировано с seoRoutes.ts; гарантирует наличие новых городов
+// типа khimki в sitemap-mole.xml сразу после добавления в data-файл)
+const moleCitySlugs = moleCities.map(c => c.slug);
 
 // Города МО
 const moscowRegionCitySlugs = [
@@ -406,7 +402,7 @@ export function sitemapPlugin(): Plugin {
       
       // УДАЛЕНО: sitemap-services-district.xml (520 doorway-страниц удалены Day 3-4)
       
-      // ========== SITEMAP-MOLE.XML (кроты МО — 23 города) ==========
+      // ========== SITEMAP-MOLE.XML (кроты МО — все города из moleCities.ts) ==========
       const moleUrls: SitemapUrl[] = moleCitySlugs.map(citySlug => ({
         loc: `/uslugi/borba-s-krotami/${citySlug}/`,
         lastmod: currentDate,

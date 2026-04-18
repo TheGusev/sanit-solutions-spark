@@ -375,7 +375,9 @@ def check_representative(rep: Report) -> None:
                 rep.add("CRITICAL", "Schema",
                         f"{path}: {info['breadcrumb_count']} BreadcrumbList",
                         "Дубликаты разметки", "Использовать единый источник")
-            elif info["breadcrumb_count"] == 0 and label != "homepage":
+            elif info["breadcrumb_count"] == 0 and label != "homepage" and expected_indexable:
+                # Noindex/utility pages (privacy, terms, sertifikaciya) intentionally
+                # omit BreadcrumbList — schema is only required for indexable pages.
                 schema_ok = "⚠️ no breadcrumb"
                 rep.add("WARNING", "Schema",
                         f"{path}: BreadcrumbList отсутствует",
@@ -558,14 +560,18 @@ def parse_seoroutes() -> dict:
     neighborhoods = _extract_string_array(content, "neighborhoodSlugs")
     mole_cities = _extract_mole_city_slugs()
 
-    # static
+    # static (only indexable utility hubs — noindex pages excluded by design)
     expected.add("/")
     for path in [
-        "/contacts/", "/blog/", "/privacy/", "/terms/", "/team/", "/otzyvy/",
+        "/contacts/", "/blog/", "/team/", "/otzyvy/",
         "/sluzhba-dezinsekcii/", "/uslugi/obrabotka-uchastkov/",
         "/uslugi/po-okrugam-moskvy/", "/moscow-oblast/",
     ]:
         expected.add(path)
+
+    # Pruning rule mirrored from src/lib/seoRoutes.ts: demerkurizaciya
+    # only applies to a small subset of objects (no avtomobiley, detskih-sadov, etc.)
+    demerkurizaciya_objects = {"kvartir", "domov", "ofisov", "skladov", "proizvodstv"}
 
     for s in services:
         expected.add(f"/uslugi/{s}/")
@@ -574,7 +580,10 @@ def parse_seoroutes() -> dict:
     for p in pests_derat:
         expected.add(f"/uslugi/deratizaciya/{p}/")
     for s in services_for_objects:
-        for o in objects:
+        applicable_objects = (
+            demerkurizaciya_objects if s == "demerkurizaciya" else set(objects)
+        )
+        for o in applicable_objects:
             expected.add(f"/uslugi/{s}/{o}/")
     for d in districts:
         # district hubs surface under /uslugi/{service}-{district}/
