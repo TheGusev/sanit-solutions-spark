@@ -265,7 +265,7 @@ def check_key_urls(rep: Report) -> int:
 def parse_sitemap_index(rep: Report) -> dict:
     out = {
         "total": 0, "service": 0, "blog": 0, "district": 0,
-        "mo_city": 0, "mole_city": 0, "other": 0, "files": [],
+        "mo_city": 0, "mole_city": 0, "other": 0, "files": [], "urls": [],
     }
     fr = fetch("/sitemap-index.xml")
     if fr.status != 200:
@@ -301,6 +301,7 @@ def parse_sitemap_index(rep: Report) -> dict:
                 all_urls.append(loc.text.strip())
 
     out["total"] = len(all_urls)
+    out["urls"] = all_urls
     for u in all_urls:
         if "/blog/" in u:
             out["blog"] += 1
@@ -499,6 +500,204 @@ def load_cache() -> dict:
             return json.load(f)
     except Exception:
         return {}
+
+# ─── SeoRoutes ↔ Sitemap sync (compile-time vs runtime) ─────────────────────
+
+import random
+import re
+
+SEOROUTES_FILE = os.path.join("src", "lib", "seoRoutes.ts")
+MOLE_CITIES_FILE = os.path.join("src", "data", "moleCities.ts")
+
+
+def _extract_string_array(content: str, name: str) -> list[str]:
+    """Pull a TS literal-string array `export const NAME = [ '...', '...' ];`."""
+    pat = re.compile(
+        rf"export\s+const\s+{re.escape(name)}\s*=\s*\[(.*?)\];",
+        re.DOTALL,
+    )
+    m = pat.search(content)
+    if not m:
+        return []
+    body = m.group(1)
+    # strip block / line comments
+    body = re.sub(r"/\*.*?\*/", "", body, flags=re.DOTALL)
+    body = re.sub(r"//[^\n]*", "", body)
+    return re.findall(r"['\"]([^'\"]+)['\"]", body)
+
+
+def _extract_mole_city_slugs() -> list[str]:
+    """Parse moleCities.ts for `slug: '...'` entries."""
+    if not os.path.exists(MOLE_CITIES_FILE):
+        return []
+    try:
+        content = open(MOLE_CITIES_FILE, encoding="utf-8").read()
+    except Exception:
+        return []
+    return re.findall(r"slug:\s*['\"]([^'\"]+)['\"]", content)
+
+
+def parse_seoroutes() -> dict:
+    """Best-effort parse of expected route paths from src/lib/seoRoutes.ts."""
+    expected: set[str] = set()
+    if not os.path.exists(SEOROUTES_FILE):
+        return {"expected": expected, "available": False, "error": "file not found"}
+    try:
+        content = open(SEOROUTES_FILE, encoding="utf-8").read()
+    except Exception as e:
+        return {"expected": expected, "available": False, "error": str(e)}
+
+    services = _extract_string_array(content, "servicesSlugs")
+    pests_dezi = _extract_string_array(content, "dezinsekciyaPestSlugs")
+    pests_derat = _extract_string_array(content, "deratizaciyaPestSlugs")
+    objects = _extract_string_array(content, "objectSlugs")
+    services_for_objects = _extract_string_array(content, "servicesForObjects")
+    districts = _extract_string_array(content, "districtSlugs")
+    mo_cities = _extract_string_array(content, "moscowRegionCitySlugs")
+    mo_services = _extract_string_array(content, "moscowRegionServices")
+    neighborhoods = _extract_string_array(content, "neighborhoodSlugs")
+    mole_cities = _extract_mole_city_slugs()
+
+    # static
+    expected.add("/")
+    for path in [
+        "/contacts/", "/blog/", "/privacy/", "/terms/", "/team/", "/otzyvy/",
+        "/sluzhba-dezinsekcii/", "/uslugi/obrabotka-uchastkov/",
+        "/uslugi/po-okrugam-moskvy/", "/moscow-oblast/",
+    ]:
+        expected.add(path)
+
+    for s in services:
+        expected.add(f"/uslugi/{s}/")
+    for p in pests_dezi:
+        expected.add(f"/uslugi/dezinsekciya/{p}/")
+    for p in pests_derat:
+        expected.add(f"/uslugi/deratizaciya/{p}/")
+    for s in services_for_objects:
+        for o in objects:
+            expected.add(f"/uslugi/{s}/{o}/")
+    for d in districts:
+        # district hubs surface under /uslugi/{service}-{district}/
+        for svc in ("dezinfekciya", "dezinsekciya", "deratizaciya"):
+            expected.add(f"/uslugi/{svc}-{d}/")
+    for c in mo_cities:
+        expected.add(f"/moscow-oblast/{c}/")
+        for s in mo_services:
+            expected.add(f"/moscow-oblast/{c}/{s}/")
+    for c in mole_cities:
+        expected.add(f"/uslugi/borba-s-krotami/{c}/")
+
+    return {
+        "expected": expected, "available": True,
+        "counts": {
+            "services": len(services), "pests_dezi": len(pests_dezi),
+            "pests_derat": len(pests_derat), "objects": len(objects),
+            "districts": len(districts), "mo_cities": len(mo_cities),
+            "mole_cities": len(mole_cities), "neighborhoods": len(neighborhoods),
+        },
+    }
+
+
+def _normalize(url: str) -> str:
+    """Strip origin and ensure trailing slash for path-only comparison."""
+    p = url.replace(SITE_URL, "")
+    if not p.startswith("/"):
+        p = "/" + p
+    if p != "/" and not p.endswith("/"):
+        p += "/"
+    return p
+
+
+def check_seoroutes_sync(rep: Report, sitemap_urls: list[str]) -> dict:
+    """Compare expected paths from seoRoutes.ts to the live sitemap."""
+    info = parse_seoroutes()
+    result = {
+        "available": info["available"],
+        "missing_in_sitemap": 0, "orphan_in_sitemap": 0,
+        "sample_size": 0, "sample_http_failures": 0,
+        "sample_canonical_failures": 0,
+    }
+    if not info["available"]:
+        rep.add("WARNING", "Sync",
+                f"seoRoutes.ts недоступен: {info.get('error', '?')}",
+                "Не можем сверить compile-time с sitemap",
+                "Проверить путь к src/lib/seoRoutes.ts")
+        return result
+
+    expected = info["expected"]
+    sm_paths = {_normalize(u) for u in sitemap_urls}
+
+    # Expected but missing from sitemap (potential SSG drift)
+    missing = expected - sm_paths
+    # In sitemap but not produced by seoRoutes parser (often ok — NCH tier 1 etc.)
+    orphan = sm_paths - expected
+
+    result["missing_in_sitemap"] = len(missing)
+    result["orphan_in_sitemap"] = len(orphan)
+
+    if missing:
+        # Only flag if material — many static or aux routes may differ
+        sample = sorted(missing)[:5]
+        sev = "CRITICAL" if len(missing) > 15 else "WARNING"
+        rep.add(sev, "Sync",
+                f"{len(missing)} путей из seoRoutes.ts отсутствуют в sitemap "
+                f"(пример: {', '.join(sample)})",
+                "Compile-time расходится с public sitemap",
+                "Проверить SSG-пайплайн / vite-plugin-sitemap.ts")
+
+    # Sample 50 deterministic URLs for HTTP + canonical audit.
+    pool = sorted(expected & sm_paths)
+    if pool:
+        rng = random.Random(20260418)  # fixed seed → no drift between runs
+        sample_size = min(50, len(pool))
+        sample = rng.sample(pool, sample_size)
+        result["sample_size"] = sample_size
+
+        http_fail = 0
+        canon_fail = 0
+        # HEAD all 50 for status; full GET on first 10 for canonical match.
+        for i, path in enumerate(sample):
+            full = SITE_URL + path
+            try:
+                hr = requests.head(full, headers=HEADERS, timeout=TIMEOUT,
+                                   allow_redirects=False)
+                if hr.status_code != 200:
+                    http_fail += 1
+                    continue
+            except Exception:
+                http_fail += 1
+                continue
+            if i < 10:
+                fr = fetch(path)
+                info_p = inspect_page(fr)
+                if not info_p["canonical"]:
+                    canon_fail += 1
+                else:
+                    actual = info_p["canonical"].rstrip("/") + "/"
+                    if actual != full.rstrip("/") + "/":
+                        canon_fail += 1
+        result["sample_http_failures"] = http_fail
+        result["sample_canonical_failures"] = canon_fail
+
+        http_pct = http_fail / sample_size * 100
+        if http_pct > 15:
+            rep.add("CRITICAL", "Sync",
+                    f"Sample-{sample_size}: {http_fail} URL ≠ 200 "
+                    f"({http_pct:.0f}%)",
+                    "Массовый routing drift",
+                    "Проверить SSG / nginx fallback")
+        elif http_pct > 5:
+            rep.add("WARNING", "Sync",
+                    f"Sample-{sample_size}: {http_fail} URL ≠ 200 ({http_pct:.0f}%)",
+                    "Несколько страниц недоступны",
+                    "Проверить дельту seoRoutes.ts vs deployed build")
+        if canon_fail > 1:
+            rep.add("CRITICAL", "Sync",
+                    f"Sample-10 canonical mismatch: {canon_fail} страниц",
+                    "Canonical drift на нескольких страницах",
+                    "Проверить SEOHead / SPA fallback")
+
+    return result
 
 
 def save_cache(data: dict) -> None:
