@@ -1,13 +1,11 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { trackGoal } from "@/lib/analytics";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { Link } from "react-router-dom";
 import { moscowDistricts, moscowRegion, ServiceArea } from "@/data/serviceAreas";
-import { neighborhoods, getNeighborhoodsByDistrict } from "@/data/neighborhoods";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { CheckCircle2, Clock, MapPin, Phone, ChevronDown } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, Phone } from "lucide-react";
 import YandexMap from "@/components/YandexMap";
 import {
   Accordion,
@@ -15,30 +13,22 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-
-// District groups for neighborhood listing
-const districtGroups = [
-  { id: 'cao', name: 'ЦАО', fullName: 'Центральный округ' },
-  { id: 'sao', name: 'САО', fullName: 'Северный округ' },
-  { id: 'svao', name: 'СВАО', fullName: 'Северо-Восточный округ' },
-  { id: 'vao', name: 'ВАО', fullName: 'Восточный округ' },
-  { id: 'yuvao', name: 'ЮВАО', fullName: 'Юго-Восточный округ' },
-  { id: 'yao', name: 'ЮАО', fullName: 'Южный округ' },
-  { id: 'yzao', name: 'ЮЗАО', fullName: 'Юго-Западный округ' },
-  { id: 'zao', name: 'ЗАО', fullName: 'Западный округ' },
-  { id: 'szao', name: 'СЗАО', fullName: 'Северо-Западный округ' },
-  { id: 'nao', name: 'НАО', fullName: 'Новомосковский округ' },
-  { id: 'tao', name: 'ТАО', fullName: 'Троицкий округ' },
-  { id: 'zelao', name: 'ЗелАО', fullName: 'Зеленоградский округ' },
-];
 
 const ServiceAreaMap = () => {
   const [selectedArea, setSelectedArea] = useState<ServiceArea>(moscowDistricts[0]);
+  const mobileInfoRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
+
+  // Auto-scroll mobile info card into view when selection changes
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (typeof window !== 'undefined' && window.innerWidth < 768 && mobileInfoRef.current) {
+      mobileInfoRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [selectedArea]);
 
   return (
     <section className="py-10 md:py-20 bg-background" id="service-areas">
@@ -77,8 +67,51 @@ const ServiceAreaMap = () => {
                 </span>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4">
-                {/* Info panel */}
-                <Card className="p-3 mb-4 bg-muted/30">
+                {/* 1. District selector — top, always visible after open */}
+                <div className="space-y-3 mb-4">
+                  <div>
+                    <h3 className="text-xs font-bold text-muted-foreground mb-2 uppercase tracking-wide">
+                      Округа Москвы
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {moscowDistricts.map(district => (
+                        <Badge
+                          key={district.id}
+                          variant={selectedArea.id === district.id ? "default" : "outline"}
+                          className="cursor-pointer hover:bg-russia-red hover:text-white transition-colors text-sm py-1.5 px-3"
+                          onClick={() => setSelectedArea(district)}
+                        >
+                          {district.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xs font-bold text-muted-foreground mb-2 uppercase tracking-wide">
+                      Московская область
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {moscowRegion.map(region => (
+                        <Badge
+                          key={region.id}
+                          variant={selectedArea.id === region.id ? "default" : "outline"}
+                          className="cursor-pointer hover:bg-russia-red hover:text-white transition-colors text-sm py-1.5 px-3"
+                          onClick={() => setSelectedArea(region)}
+                        >
+                          {region.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Info panel — directly under selector, updates instantly */}
+                <Card
+                  ref={mobileInfoRef}
+                  key={selectedArea.id}
+                  className="p-3 mb-4 bg-muted/30 border-russia-red/30 animate-fade-in"
+                >
                   <div className="space-y-3">
                     <div>
                       <Badge variant="secondary" className="mb-2 text-xs">
@@ -111,7 +144,7 @@ const ServiceAreaMap = () => {
                     </div>
 
                     <div className="pt-2 space-y-1.5">
-                      <Button 
+                      <Button
                         className="w-full text-sm whitespace-normal"
                         onClick={() => {
                           const calculatorElement = document.getElementById('calculator');
@@ -122,9 +155,9 @@ const ServiceAreaMap = () => {
                       >
                         Заказать выезд
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        className="w-full text-sm whitespace-normal" 
+                      <Button
+                        variant="outline"
+                        className="w-full text-sm whitespace-normal"
                         onClick={() => { trackGoal('area_map_call'); window.location.href = 'tel:84950181817'; }}
                       >
                         <Phone className="mr-2 h-4 w-4 flex-shrink-0" />
@@ -134,103 +167,15 @@ const ServiceAreaMap = () => {
                   </div>
                 </Card>
 
-                {/* Map */}
-                <Card className="p-0 overflow-hidden bg-muted/30 mb-4">
-                  <YandexMap 
+                {/* 3. Map — bottom, optional visual context */}
+                <Card className="p-0 overflow-hidden bg-muted/30">
+                  <YandexMap
                     selectedArea={selectedArea}
                     onAreaSelect={setSelectedArea}
                     districts={moscowDistricts}
                     regions={moscowRegion}
                   />
                 </Card>
-
-                {/* District badges */}
-                <div className="space-y-4 mb-4">
-                  <div>
-                    <h3 className="text-sm font-bold text-muted-foreground mb-2">
-                      Округа Москвы
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {moscowDistricts.map(district => (
-                        <Badge
-                          key={district.id}
-                          variant={selectedArea.id === district.id ? "default" : "outline"}
-                          className="cursor-pointer hover:bg-russia-red hover:text-white transition-colors"
-                          onClick={() => setSelectedArea(district)}
-                        >
-                          {district.name}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-sm font-bold text-muted-foreground mb-2">
-                      Московская область
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {moscowRegion.map(region => (
-                        <Badge
-                          key={region.id}
-                          variant={selectedArea.id === region.id ? "default" : "outline"}
-                          className="cursor-pointer hover:bg-russia-red hover:text-white transition-colors"
-                          onClick={() => setSelectedArea(region)}
-                        >
-                          {region.name}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* All neighborhoods - ДОБАВЛЕН В МОБИЛКУ! */}
-                <Collapsible>
-                  <CollapsibleTrigger className="w-full flex items-center justify-between bg-muted rounded-lg p-3 border border-border hover:bg-muted/50 hover:border-russia-red/50 transition-colors group">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-russia-red" />
-                      <span className="font-semibold text-sm">Все {neighborhoods?.length || 130} районов Москвы</span>
-                    </div>
-                    <ChevronDown className="w-4 h-4 text-muted-foreground group-data-[state=open]:rotate-180 transition-transform" />
-                  </CollapsibleTrigger>
-                  
-                  <CollapsibleContent className="pt-3">
-                    <div className="bg-card rounded-lg border border-border p-3 space-y-4">
-                      {districtGroups.map(district => {
-                        const districtNeighborhoods = getNeighborhoodsByDistrict(district.id);
-                        if (!districtNeighborhoods || districtNeighborhoods.length === 0) return null;
-                        
-                        return (
-                          <div key={district.id}>
-                            <h4 className="font-bold text-xs mb-2 text-muted-foreground">
-                              {district.name} — {district.fullName} ({districtNeighborhoods.length})
-                            </h4>
-                            <div className="flex flex-wrap gap-1.5">
-                              {districtNeighborhoods.map(n => (
-                                <Link 
-                                  key={n.slug} 
-                                  to={`/rajony/${n.slug}`}
-                                  className="text-xs px-2.5 py-1 bg-muted rounded-full hover:bg-russia-red hover:text-white transition-colors"
-                                >
-                                  {n.name}
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                      
-                      <div className="pt-3 border-t border-border text-center">
-                        <Link 
-                          to="/rajony"
-                          className="inline-flex items-center gap-1 text-russia-red hover:underline font-medium text-sm"
-                        >
-                          Открыть полный каталог районов →
-                        </Link>
-                      </div>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
               </AccordionContent>
             </AccordionItem>
           </Accordion>
