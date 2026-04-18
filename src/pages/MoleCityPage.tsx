@@ -94,10 +94,10 @@ export default function MoleCityPage() {
     },
   };
 
-  const faqJsonLd = city.faq.length > 0 ? {
+  const faqJsonLd = mergedFaq.length > 0 ? {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: city.faq.map(f => ({
+    mainEntity: mergedFaq.map(f => ({
       '@type': 'Question',
       name: f.question,
       acceptedAnswer: { '@type': 'Answer', text: f.answer },
