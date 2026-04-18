@@ -1,13 +1,11 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { trackGoal } from "@/lib/analytics";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { Link } from "react-router-dom";
 import { moscowDistricts, moscowRegion, ServiceArea } from "@/data/serviceAreas";
-import { neighborhoods, getNeighborhoodsByDistrict } from "@/data/neighborhoods";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { CheckCircle2, Clock, MapPin, Phone, ChevronDown } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, Phone } from "lucide-react";
 import YandexMap from "@/components/YandexMap";
 import {
   Accordion,
@@ -15,30 +13,22 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-
-// District groups for neighborhood listing
-const districtGroups = [
-  { id: 'cao', name: 'ЦАО', fullName: 'Центральный округ' },
-  { id: 'sao', name: 'САО', fullName: 'Северный округ' },
-  { id: 'svao', name: 'СВАО', fullName: 'Северо-Восточный округ' },
-  { id: 'vao', name: 'ВАО', fullName: 'Восточный округ' },
-  { id: 'yuvao', name: 'ЮВАО', fullName: 'Юго-Восточный округ' },
-  { id: 'yao', name: 'ЮАО', fullName: 'Южный округ' },
-  { id: 'yzao', name: 'ЮЗАО', fullName: 'Юго-Западный округ' },
-  { id: 'zao', name: 'ЗАО', fullName: 'Западный округ' },
-  { id: 'szao', name: 'СЗАО', fullName: 'Северо-Западный округ' },
-  { id: 'nao', name: 'НАО', fullName: 'Новомосковский округ' },
-  { id: 'tao', name: 'ТАО', fullName: 'Троицкий округ' },
-  { id: 'zelao', name: 'ЗелАО', fullName: 'Зеленоградский округ' },
-];
 
 const ServiceAreaMap = () => {
   const [selectedArea, setSelectedArea] = useState<ServiceArea>(moscowDistricts[0]);
+  const mobileInfoRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
+
+  // Auto-scroll mobile info card into view when selection changes
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (typeof window !== 'undefined' && window.innerWidth < 768 && mobileInfoRef.current) {
+      mobileInfoRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [selectedArea]);
 
   return (
     <section className="py-10 md:py-20 bg-background" id="service-areas">
