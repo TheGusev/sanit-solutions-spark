@@ -1,25 +1,20 @@
 {
-  "avg_response_ms": 205,
+  "avg_response_ms": 197,
   "blog_urls": 203,
-  "critical_alerts": 6,
+  "critical_alerts": 1,
   "date": "2026-04-18",
   "district_urls": 131,
   "mo_city_urls": 71,
   "mole_city_urls": 23,
-  "rep_failures": 4,
-  "sample_50_canonical_failures": 3,
+  "rep_failures": 1,
+  "sample_50_canonical_failures": 1,
   "sample_50_http_failures": 0,
-  "seoroutes_sitemap_diff": 14,
+  "seoroutes_sitemap_diff": 9,
   "service_urls": 666,
   "sitemap_total": 1076,
   "ssl_days_left": 33,
   "stop_conditions_triggered": [
-    "Canonical",
-    "Representative",
-    "Schema",
-    "Indexability",
-    "Internal Linking",
-    "Sync"
+    "Canonical"
   ],
   "warnings": 3
 }
