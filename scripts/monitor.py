@@ -375,7 +375,9 @@ def check_representative(rep: Report) -> None:
                 rep.add("CRITICAL", "Schema",
                         f"{path}: {info['breadcrumb_count']} BreadcrumbList",
                         "Дубликаты разметки", "Использовать единый источник")
-            elif info["breadcrumb_count"] == 0 and label != "homepage":
+            elif info["breadcrumb_count"] == 0 and label != "homepage" and expected_indexable:
+                # Noindex/utility pages (privacy, terms, sertifikaciya) intentionally
+                # omit BreadcrumbList — schema is only required for indexable pages.
                 schema_ok = "⚠️ no breadcrumb"
                 rep.add("WARNING", "Schema",
                         f"{path}: BreadcrumbList отсутствует",
