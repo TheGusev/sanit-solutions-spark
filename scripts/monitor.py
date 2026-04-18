@@ -1054,6 +1054,8 @@ def main() -> int:
     check_conversion(rep, homepage_html)
     check_pricing_consistency(rep, homepage_html)
 
+    sync_result = check_seoroutes_sync(rep, rep.sitemap.get("urls", []))
+
     rep_failures = sum(1 for r in rep.rep_results if r["result"] != "OK")
     cache_now = {
         "date": datetime.now(MSK).strftime("%Y-%m-%d"),
@@ -1068,7 +1070,11 @@ def main() -> int:
         "warnings": rep.warning_count,
         "avg_response_ms": avg_ms,
         "ssl_days_left": rep.ssl.get("days_left"),
+        "sample_50_http_failures": sync_result.get("sample_http_failures", 0),
+        "sample_50_canonical_failures": sync_result.get("sample_canonical_failures", 0),
+        "seoroutes_sitemap_diff": sync_result.get("missing_in_sitemap", 0),
         "stop_conditions_triggered": [a.check for a in rep.alerts if a.severity == "CRITICAL"],
+        "_sync": sync_result,
     }
 
     if cache_prev:
