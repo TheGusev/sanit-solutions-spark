@@ -280,8 +280,24 @@ export default function MoleCityPage() {
           </section>
         )}
 
+        {/* СНТ, КП и дачные посёлки */}
+        {city.sntContext && (
+          <section className="py-12 md:py-16">
+            <div className="container mx-auto px-4">
+              <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto">
+                <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                  СНТ, КП и дачные посёлки {city.prepositional}
+                </h2>
+                <div className="prose prose-lg dark:prose-invert max-w-none">
+                  <p>{city.sntContext}</p>
+                </div>
+              </AnimatedSection>
+            </div>
+          </section>
+        )}
+
         {/* FAQ */}
-        {city.faq.length > 0 && (
+        {mergedFaq.length > 0 && (
           <section className="py-12 md:py-16 bg-muted/30" id="faq">
             <div className="container mx-auto px-4 max-w-3xl">
               <AnimatedSection animation="fade-up" className="text-center mb-8">
@@ -290,7 +306,7 @@ export default function MoleCityPage() {
                 </h2>
               </AnimatedSection>
               <Accordion type="single" collapsible className="space-y-2">
-                {city.faq.map((faq, i) => (
+                {mergedFaq.map((faq, i) => (
                   <AccordionItem key={i} value={`faq-${i}`} className="bg-card border rounded-lg px-4">
                     <AccordionTrigger className="text-left font-medium">{faq.question}</AccordionTrigger>
                     <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
