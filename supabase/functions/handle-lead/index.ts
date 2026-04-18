@@ -98,6 +98,17 @@ const clientTypeLabels: Record<string, string> = {
   company: "Юридическое лицо"
 };
 
+// HTML escape helper for Telegram HTML parse_mode.
+// Telegram HTML mode requires only <, >, & to be escaped.
+// See: https://core.telegram.org/bots/api#html-style
+function escapeHtml(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 async function sendTelegramNotification(lead: LeadData): Promise<boolean> {
   const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
   const chatId = Deno.env.get("TELEGRAM_CHAT_ID");
@@ -109,45 +120,68 @@ async function sendTelegramNotification(lead: LeadData): Promise<boolean> {
   
   const isDiscountPopup = lead.source === "website_discount_popup";
   
+  // Pre-escape all dynamic values
+  const eName = escapeHtml(lead.name);
+  const ePhone = escapeHtml(lead.phone);
+  const ePhoneTel = escapeHtml(lead.phone.replace(/[^+\d]/g, ""));
+  const eEmail = lead.email ? escapeHtml(lead.email) : "";
+  const eObject = lead.object_type ? escapeHtml(objectTypeLabels[lead.object_type] || lead.object_type) : "—";
+  const eService = lead.service ? escapeHtml(serviceLabels[lead.service] || lead.service) : "—";
+  const eServiceDiscount = lead.service ? escapeHtml(serviceLabels[lead.service] || lead.service) : "Не указана";
+  const eMethod = lead.method ? escapeHtml(methodLabels[lead.method] || lead.method) : "—";
+  const eFrequency = lead.frequency ? escapeHtml(frequencyLabels[lead.frequency] || lead.frequency) : "—";
+  const eClientType = lead.client_type ? escapeHtml(clientTypeLabels[lead.client_type] || lead.client_type) : "—";
+  const eUtmSource = escapeHtml(lead.utm_source || "—");
+  const eUtmMedium = escapeHtml(lead.utm_medium || "—");
+  const eUtmCampaign = escapeHtml(lead.utm_campaign || "—");
+  const hasUtm = !!(lead.utm_source || lead.utm_medium || lead.utm_campaign);
+  const timeStr = escapeHtml(new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" }));
+  
   let message: string;
   
   if (isDiscountPopup) {
-    message = `🎁 *ЗАЯВКА НА СКИДКУ*
+    message = `🎁 <b>ЗАЯВКА НА СКИДКУ</b>
 ━━━━━━━━━━━━━━━━━
 
-👤 *Клиент:* ${lead.name}
-📱 *Телефон:* [${lead.phone}](tel:${lead.phone.replace(/[^+\d]/g, "")})
-${lead.email ? `📧 *Email:* ${lead.email}\n` : ""}
-🔧 *Интересует:* ${lead.service ? (serviceLabels[lead.service] || lead.service) : "Не указана"}
+👤 <b>Клиент:</b> ${eName}
+📱 <b>Телефон:</b> <a href="tel:${ePhoneTel}">${ePhone}</a>
+${eEmail ? `📧 <b>Email:</b> ${eEmail}\n` : ""}
+🔧 <b>Интересует:</b> ${eServiceDiscount}
 
 ━━━━━━━━━━━━━━━━━
-📍 *Источник:* Попап со скидкой
-${lead.utm_source || lead.utm_medium || lead.utm_campaign ? `📊 *UTM:* ${lead.utm_source || "—"} / ${lead.utm_medium || "—"} / ${lead.utm_campaign || "—"}\n` : ""}🕐 ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })}`;
+📍 <b>Источник:</b> Попап со скидкой
+${hasUtm ? `📊 <b>UTM:</b> ${eUtmSource} / ${eUtmMedium} / ${eUtmCampaign}\n` : ""}🕐 ${timeStr}`;
   } else {
-    message = `🔔 *НОВАЯ ЗАЯВКА*
+    const basePrice = (lead.base_price || 0).toLocaleString("ru-RU");
+    const discountAmount = (lead.discount_amount || 0).toLocaleString("ru-RU");
+    const finalPrice = (lead.final_price || 0).toLocaleString("ru-RU");
+    const discountPct = lead.discount_percent || 0;
+    const area = lead.area_m2 || 0;
+    
+    message = `🔔 <b>НОВАЯ ЗАЯВКА</b>
 ━━━━━━━━━━━━━━━━━
 
-👤 *Клиент:* ${lead.name}
-📱 *Телефон:* [${lead.phone}](tel:${lead.phone.replace(/[^+\d]/g, "")})
-${lead.email ? `📧 *Email:* ${lead.email}\n` : ""}━━━━━━━━━━━━━━━━━
+👤 <b>Клиент:</b> ${eName}
+📱 <b>Телефон:</b> <a href="tel:${ePhoneTel}">${ePhone}</a>
+${eEmail ? `📧 <b>Email:</b> ${eEmail}\n` : ""}━━━━━━━━━━━━━━━━━
 
-🏠 *Объект:* ${lead.object_type ? (objectTypeLabels[lead.object_type] || lead.object_type) : "—"}
-📐 *Площадь:* ${lead.area_m2 || 0} м²
+🏠 <b>Объект:</b> ${eObject}
+📐 <b>Площадь:</b> ${area} м²
 
-🔧 *Услуга:* ${lead.service ? (serviceLabels[lead.service] || lead.service) : "—"}
-⚙️ *Метод:* ${lead.method ? (methodLabels[lead.method] || lead.method) : "—"}
-📅 *Периодичность:* ${lead.frequency ? (frequencyLabels[lead.frequency] || lead.frequency) : "—"}
-👔 *Тип клиента:* ${lead.client_type ? (clientTypeLabels[lead.client_type] || lead.client_type) : "—"}
-
-━━━━━━━━━━━━━━━━━
-💵 *СТОИМОСТЬ*
-
-💰 Базовая: ${(lead.base_price || 0).toLocaleString("ru-RU")} ₽
-🎁 Скидка: −${lead.discount_percent || 0}% (−${(lead.discount_amount || 0).toLocaleString("ru-RU")} ₽)
-✅ *ИТОГО: ${(lead.final_price || 0).toLocaleString("ru-RU")} ₽*
+🔧 <b>Услуга:</b> ${eService}
+⚙️ <b>Метод:</b> ${eMethod}
+📅 <b>Периодичность:</b> ${eFrequency}
+👔 <b>Тип клиента:</b> ${eClientType}
 
 ━━━━━━━━━━━━━━━━━
-${lead.utm_source || lead.utm_medium || lead.utm_campaign ? `📊 *UTM:* ${lead.utm_source || "—"} / ${lead.utm_medium || "—"} / ${lead.utm_campaign || "—"}\n` : ""}🕐 ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })}`;
+💵 <b>СТОИМОСТЬ</b>
+
+💰 Базовая: ${basePrice} ₽
+🎁 Скидка: −${discountPct}% (−${discountAmount} ₽)
+✅ <b>ИТОГО: ${finalPrice} ₽</b>
+
+━━━━━━━━━━━━━━━━━
+${hasUtm ? `📊 <b>UTM:</b> ${eUtmSource} / ${eUtmMedium} / ${eUtmCampaign}\n` : ""}🕐 ${timeStr}`;
   }
 
   try {
@@ -159,7 +193,8 @@ ${lead.utm_source || lead.utm_medium || lead.utm_campaign ? `📊 *UTM:* ${lead.
         body: JSON.stringify({
           chat_id: chatId,
           text: message,
-          parse_mode: "Markdown",
+          parse_mode: "HTML",
+          disable_web_page_preview: true,
         }),
       }
     );

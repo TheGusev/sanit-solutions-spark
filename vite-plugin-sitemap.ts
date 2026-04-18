@@ -269,7 +269,7 @@ const moleCitySlugs = [
 // Города МО
 const moscowRegionCitySlugs = [
   'khimki', 'mytishchi', 'balashikha', 'krasnogorsk', 'podolsk', 
-  'korolyov', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo',
+  'korolev', 'lyubertsy', 'odintsovo', 'dolgoprudny', 'shchyolkovo',
   'klin', 'ramenskoe', 'chekhov', 'domodedovo'
 ];
 
