@@ -25,8 +25,7 @@
 |---|---|---|---|---|
 | CRITICAL | Canonical | /uslugi/dezinfekciya-cao/: отсутствует canonical | Нарушение SEO-стандарта | Проверить SEOHead.tsx |
 | WARNING | Schema | /uslugi/dezinfekciya-cao/: BreadcrumbList отсутствует | Снижение видимости в SERP | Добавить разметку |
-| WARNING | Schema | /uslugi/sertifikaciya/: BreadcrumbList отсутствует | Снижение видимости в SERP | Добавить разметку |
-| WARNING | Sync | 9 путей из seoRoutes.ts отсутствуют в sitemap (пример: /privacy/, /terms/, /uslugi/borba-s-krotami/khimki/, /uslugi/demerkurizaciya/avtomobiley/, /uslugi/demerkurizaciya/detskih-sadov/) | Compile-time расходится с public sitemap | Проверить SSG-пайплайн / vite-plugin-sitemap.ts |
+| WARNING | Sync | 1 путей из seoRoutes.ts отсутствуют в sitemap (пример: /uslugi/borba-s-krotami/khimki/) | Compile-time расходится с public sitemap | Проверить SSG-пайплайн / vite-plugin-sitemap.ts |
 
 ---
 
@@ -34,12 +33,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 227 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 225 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 196 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 191 мс | — |
-| /blog/ | ✅ 200 | 196 мс | — |
-| /contacts/ | ✅ 200 | 151 мс | — |
+| / | ✅ 200 | 199 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 194 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 228 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 192 мс | — |
+| /blog/ | ✅ 200 | 236 мс | — |
+| /contacts/ | ✅ 200 | 150 мс | — |
 
 ---
 
@@ -71,7 +70,7 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| seoRoutes → sitemap | ⚠️ 9 missing | Compile-time vs public sitemap |
+| seoRoutes → sitemap | ⚠️ 1 missing | Compile-time vs public sitemap |
 | sitemap → seoRoutes | ⚠️ 868 orphan | Допустимы NCH/aux URL |
 | Sample HTTP 200 | ✅ | Детерминистическая выборка (50) |
 | Sample canonical match | ❌ 1/10 | Первые 10 из выборки |
@@ -91,7 +90,7 @@
 | mo_city | `/moscow-oblast/podolsk/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | mole_city | `/uslugi/borba-s-krotami/khimki/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | blog_post | `/blog/klopy-v-kvartire/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| excluded_page | `/uslugi/sertifikaciya/` | 200 | ✅ | ✅ noindex | ⚠️ no breadcrumb | ✅ | ✅ OK |
+| excluded_page | `/uslugi/sertifikaciya/` | 200 | ✅ | ✅ noindex | ✅ | ✅ | ✅ OK |
 
 ---
 
@@ -110,7 +109,7 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 197 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 199 мс | Порог: 3000 мс |
 | Largest HTML sample | 131.0 KB | Из representative audit |
 | SSL сертификат | ✅ 22.05.2026 | 33 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
@@ -128,10 +127,10 @@
 | district URLs | 131 | 131 | 0 |
 | MO city URLs | 71 | 71 | 0 |
 | mole city URLs | 23 | 23 | 0 |
-| representative failures | 1 | 4 | -3 |
-| critical alerts | 1 | 6 | -5 |
-| warnings | 3 | 3 | 0 |
-| avg response time (мс) | 197 | 205 | -8 |
+| representative failures | 1 | 1 | 0 |
+| critical alerts | 1 | 1 | 0 |
+| warnings | 2 | 3 | -1 |
+| avg response time (мс) | 199 | 197 | +2 |
 
 ---
 
@@ -165,4 +164,4 @@
 
 ---
 
-**Последнее обновление:** 18.04.2026 22:05 MSK
+**Последнее обновление:** 18.04.2026 22:16 MSK
