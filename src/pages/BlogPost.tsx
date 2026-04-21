@@ -37,10 +37,29 @@ import {
 // Commercial keywords that blog titles must NOT compete for
 const COMMERCIAL_MARKERS = [
   'dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'dezodoraciya',
+  // Russian commercial intent markers (slug + title)
+  'izbavitsya', 'izbavlenie', 'vyvesti', 'vyvedenie', 'unichtozhit', 'unichtozhenie',
+  'professionalnaya-obrabotka', 'professionalnaya обработка', 'избавиться', 'избавление',
+  'вывести', 'вывод', 'уничтожить', 'уничтожение', 'профессиональная обработка',
 ];
 const OBJECT_MARKERS = [
   'ofis', 'kvartr', 'domo', 'restoran', 'sklad', 'proizvodstv', 'gostinic', 'hostel', 'magazin',
 ];
+
+/**
+ * Slug patterns for blog posts that overlap heavily with each other (topical clusters).
+ * These get noindex,follow regardless of commercial overlap detection.
+ * Reason: Yandex flags them as "Малоценная или маловостребованная страница".
+ */
+const LOW_VALUE_BLOG_PATTERNS: RegExp[] = [
+  /^posle-obrabotki-/i,           // posle-obrabotki-{domov,moli,ofisov,restoranov,proizvodstv}
+  /^podgotovka-k-obrabotke-/i,    // podgotovka-k-obrabotke-{domov,ofisov,skladov}
+];
+
+/** Whether slug matches a low-value pattern that should be noindexed */
+function isLowValueBlogSlug(slug: string): boolean {
+  return LOW_VALUE_BLOG_PATTERNS.some(re => re.test(slug));
+}
 const INFO_SUFFIX_OPTIONS = [
   ': полный гайд и советы',
   ': подробная инструкция',
