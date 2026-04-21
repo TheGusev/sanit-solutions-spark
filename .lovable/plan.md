@@ -1,110 +1,96 @@
 
 
-# Полный аудит goruslugimsk.ru — план максимальной проверки
+# Анализ индексации + план фикса алертов мониторинга
 
-Проведу комплексный аудит сайта по всем направлениям с финальной оценкой по 100-балльной шкале.
+## Что показал глубокий аудит
 
-## Что проверю (10 направлений)
+### 1. CRITICAL мониторинг (canonical drift) — РЕАЛЬНАЯ ПРИЧИНА
 
-### 1. SEO Governance (Monitor v3.1)
-- Запущу `scripts/monitor.py` — свежий прогон всех 13 модулей
-- Проверю: representative URLs (10), sample-50 audit, SeoRoutes↔Sitemap sync, stop-conditions
-- Сравню с предыдущим прогоном (delta)
+Production отдаёт **stale кэш static HTML** для district-страниц (`Last-Modified: Sat, 18 Apr 2026`), хотя в репозитории файл `public/uslugi/dezinfekciya-cao/index.html` **уже содержит** правильный canonical (строка 8) и `BreadcrumbList` (строки 26-36).
 
-### 2. Sitemap & Indexability
-- `sitemap-index.xml` + 9 sub-sitemaps: общее количество URL, дубликаты, redirects
-- `robots.txt`: проверка disallow rules, LLM crawlers
-- Noindex policy: privacy, terms, sertifikaciya, NCH Tier 2/3
+То есть **код уже исправлен**, не задеплоен.
 
-### 3. Structured Data (JSON-LD)
-- BreadcrumbList на всех типах страниц (10 representative)
-- AggregateRating на pest pages
-- Organization, LocalBusiness, FAQPage, BlogPosting
-- Дубликаты схем
+### 2. WARNING `khimki` отсутствует в sitemap
 
-### 4. Canonical & Meta Tags
-- Sample 50 URL: canonical = fetched URL
-- og:url = canonical
-- Trailing slash compliance
-- Meta robots на noindex pages
+`vite-plugin-sitemap.ts` уже импортирует `moleCities` (строка 4), но production sitemap всё ещё старый (без `khimki`). Та же причина: stale deploy.
 
-### 5. HTTP Performance
-- Response time на 10 representative URL
-- 404/500 errors check
-- nginx headers (X-Robots-Tag, Cache-Control)
+### 3. ГЛАВНАЯ ПРОБЛЕМА (она важнее алертов мониторинга): «Малоценная или маловостребованная страница» в Яндекс.Вебмастере
 
-### 6. Build & SSG Integrity
-- `dist/` count vs sitemap count
-- Build guard checks (`scripts/verify-build.js`)
-- Static HTML files на districts (33 файла)
+Из скриншотов видно ~30+ страниц помечены как **малоценные**:
 
-### 7. Critical Business Logic
-- Контакты (8-495-018-18-17, @one_help, без WhatsApp)
-- Гарантия "до 3 лет"
-- Цены (от 1000₽, синхронизация с servicePrices.ts)
+| Тип страниц | Примеры | Текущий статус |
+|---|---|---|
+| `/blog/posle-obrabotki-*` (5 шт) | домов, мол, офисов, ресторанов, производств | 745-776 слов, `index, follow` |
+| `/blog/professionalnaya-obrabotka-ot-*` (3) | клопы, моль, тараканы | 956-963 слов, `index, follow` |
+| `/blog/kak-izbavitsya-ot-*` (4) | мыши, тараканы, моль, крысы | 1085-1097 слов, `index, follow` |
+| `/blog/podgotovka-k-obrabotke-*` (3) | домов, офисов, складов | малоценные |
+| `/blog/narodnye-sredstva-*` (2) | муравьи, тараканы | малоценные |
+| `/uslugi/ozonirovanie/{gostinic,hostela,magazinov}` | объекты-NCH | малоценные |
+| `/uslugi/dezinsekciya/{domashnih-klopov,postelnyh-klopov,unichtozhenie-klopov}` | дубликаты-кластера клопов | малоценные |
 
-### 8. Internal Linking
-- Admin links: rel="nofollow"
-- Money pages: 5-15 internal links each
-- Orphan pages detection
+Что общего: **высокий topical overlap** — все эти URL семантически почти идентичны коммерческим pest/object-страницам и/или друг другу. Яндекс считает их thin/duplicate относительно money-pages.
 
-### 9. Backend Health
-- handle-lead edge function status
-- Yandex Metrika ID 105828040 на всех страницах
-- Telegram CTA presence
+## План исправления (3 батча)
 
-### 10. Memory Standards Compliance
-- Проверка соответствия 80+ memory rules
-- Geographic scope (Москва и МО)
-- Mole control isolation
-- NCH indexing tiers
+### Батч 1 — Деплой (закрывает все 3 алерта мониторинга)
 
-## Метод проверки
+Цель: сбросить stale-кэш и задеплоить уже готовые в репозитории фиксы.
 
-```text
-Phase 1: Monitor.py run (3-5 мин) — automated audit
-Phase 2: Sitemap analysis — curl + xmllint
-Phase 3: Structured data deep-check — 10 sample URLs full GET
-Phase 4: Build verification — dist/ inspection
-Phase 5: Cross-check vs memory standards
-Phase 6: Score calculation per category
-```
+- Подтвердить что в репозитории актуальны:
+  - `public/uslugi/dezinfekciya-cao/index.html` с canonical + BreadcrumbList ✅ (проверено)
+  - `vite-plugin-sitemap.ts` импортирует `moleCities` ✅ (проверено)
+- Триггернуть production deploy (Docker rebuild + push)
+- После деплоя — повторный прогон `monitor.py`
 
-## Финальная оценка
+Ожидаемо: статус STABLE, 0 critical, 0 warnings.
 
-Финальная сводка в формате:
+### Батч 2 — Защита от «малоценных» блог-страниц (consolidation strategy)
 
-```text
-КАТЕГОРИЯ                          БАЛЛЫ    СТАТУС
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. SEO Governance                   __/10   ✅/⚠️/🚨
-2. Sitemap & Indexability           __/10
-3. Structured Data                  __/10
-4. Canonical & Meta Tags            __/10
-5. HTTP Performance                 __/10
-6. Build & SSG Integrity            __/10
-7. Business Logic                   __/10
-8. Internal Linking                 __/10
-9. Backend Health                   __/10
-10. Memory Standards                __/10
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИТОГО:                              __/100
-```
+Группа A — **`posle-obrabotki-*` (5 страниц)** и **`podgotovka-k-obrabotke-*` (3)**: 
+- Это сильнейший topical overlap между собой (одна тема, разные объекты).
+- Решение: добавить в `BlogPost.tsx` автоматический `noindex, follow` для слагов из этих двух групп → канонический трафик уйдёт на pillar-статью «после обработки» / «подготовка к обработке».
+- Если pillar-статьи нет — создаётся одна агрегирующая статья со ссылками на под-объекты (внутри одной статьи, не отдельные URL).
 
-С разбором каждой найденной проблемы и приоритезацией fix'ов.
+Группа B — **`kak-izbavitsya-ot-{tarakany,klopy,krysy,myshi,mol}` (5)** и **`professionalnaya-obrabotka-ot-*` (3)**:
+- Прямой intent-overlap с коммерческими `/uslugi/dezinsekciya/{pest}/`.
+- Решение: расширить `COMMERCIAL_MARKERS` в `BlogPost.tsx` (строки 38-40) — добавить русские триггеры «избавиться», «вывести», «уничтожить», «профессиональная обработка». Эти статьи получат `noindex` через `hasCommercialOverlap()`.
+
+Группа C — **`narodnye-sredstva-*`**: 
+- Народная тема, но низкий коммерческий потенциал. Оставить `index`, но добавить явный disambiguation в title («народные методы — что работает в 2026»).
+
+### Батч 3 — Зачистка thin pest/object-кластеров
+
+- `/uslugi/dezinsekciya/{domashnih-klopov, postelnyh-klopov, unichtozhenie-klopov}` — это 3 URL про **одних и тех же клопов**. Каноникал на `/uslugi/dezinsekciya/klopy/` (главная pest-страница).
+- `/uslugi/ozonirovanie/{gostinic, hostela, magazinov}` — переместить в noindex Tier 2 (по политике `nch-indexing-and-quality-policy`), они дублируют главную ozonirovanie + object-страницы.
+
+Всё через RouteResolver или canonical-override без правок `seoRoutes.ts`.
+
+## Файлы которые буду править
+
+- `src/pages/BlogPost.tsx` — расширение `COMMERCIAL_MARKERS` + новый список `LOW_VALUE_BLOG_PATTERNS` для авто-noindex
+- `src/pages/ServiceSubpage.tsx` или `ServicePestPage.tsx` — canonical-override для дубликатов клопов
+- `src/pages/ServiceObjectPage.tsx` — noindex для ozonirovanie-объектов
 
 ## Что НЕ трогаю
 
-- Никаких правок кода в этой фазе
-- Только аудит + отчёт
-- Если найдутся critical issues — отдельный план на фикс
+- `src/lib/seoRoutes.ts` (core lockdown) — URL остаются, меняется только индексируемость
+- Sitemap structure (структура остаётся, noindex обрабатывается через robots meta)
+- Контент статей — только мета
+
+## Проверка после внедрения
+
+1. `monitor.py` → STABLE без алертов
+2. Production curl на 5 обновлённых блог-страниц → `noindex` в robots meta
+3. Production curl на dezinsekciya pest-дубликаты → canonical = `/klopy/`
+4. Через 2-3 недели в Yandex Webmaster → массовое снятие статуса «Малоценная»
+
+## Очередь применения
+
+1. Сначала **Батч 1 (deploy)** — мгновенный фикс мониторинга
+2. Потом **Батч 2 (blog noindex)** — основная зачистка (~13 URL уйдут из Малоценных)
+3. Потом **Батч 3 (pest/object cleanup)** — финальная зачистка дубликатов
 
 ## Deliverable
 
-Один markdown-отчёт с:
-1. Финальная оценка (X/100)
-2. Поматричный разбор по 10 категориям
-3. Список всех найденных проблем (CRITICAL / WARNING / INFO)
-4. Сравнение с baseline трёх дней назад (что улучшилось)
-5. Roadmap до 100/100 (если не достигли)
+После внедрения: 0 алертов мониторинга + ~30 URL снимутся со статуса «Малоценная» в Яндексе в течение 2-4 недель, что освободит crawl budget и поднимет вес money-pages.
 
