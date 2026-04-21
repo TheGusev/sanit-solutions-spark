@@ -48,7 +48,17 @@ export default function ServiceObjectPage() {
   
   const pageTitle = `${serviceName} ${objectType.genitive} в Москве — от ${priceFrom}₽ | Выезд 30 мин`;
   const pageDescription = `${genderAdj} ${serviceName.toLowerCase()} ${objectType.genitive} в Москве от ${priceFrom}₽. Гарантия до 3 лет. ☎️ ${SEO_CONFIG.phone}`;
-  const seoMeta = generateSEOMeta(`/uslugi/${serviceSlug}/${objectSlug}`, pageTitle, pageDescription);
+  // NCH Tier 2 политика: тонкие object-NCH под ozonirovanie дублируют главную /uslugi/ozonirovanie/
+  // и соответствующие object-страницы. Помечены Яндексом как «Малоценная».
+  const NOINDEX_OBJECT_SLUGS_FOR_OZONIROVANIE = new Set(['gostinic', 'hostela', 'magazinov']);
+  const isLowValueObjectNch =
+    serviceSlug === 'ozonirovanie' && NOINDEX_OBJECT_SLUGS_FOR_OZONIROVANIE.has(objectSlug);
+  const seoMeta = generateSEOMeta(
+    `/uslugi/${serviceSlug}/${objectSlug}`,
+    pageTitle,
+    pageDescription,
+    isLowValueObjectNch ? { robots: 'noindex, follow' } : undefined,
+  );
   
   const breadcrumbItems = [
     { label: 'Услуги', href: '/uslugi/dezinsekciya' },
