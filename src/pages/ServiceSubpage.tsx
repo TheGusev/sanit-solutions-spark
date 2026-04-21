@@ -84,13 +84,28 @@ const ServiceSubpage = () => {
     }))
   };
 
+  // Canonical-override для thin-дубликатов одного и того же кластера.
+  // Все 3 URL про клопов канонизируются на главную pest-страницу /uslugi/dezinsekciya/klopy/.
+  const KLOPY_DUPLICATE_SLUGS = new Set([
+    'domashnih-klopov',
+    'postelnyh-klopov',
+    'unichtozhenie-klopov',
+  ]);
+  const isKlopyDuplicate =
+    parentSlug === 'dezinsekciya' && KLOPY_DUPLICATE_SLUGS.has(subpage.slug);
+  const canonicalPath = isKlopyDuplicate
+    ? '/uslugi/dezinsekciya/klopy/'
+    : (subpage.fullPath.endsWith('/') ? subpage.fullPath : subpage.fullPath + '/');
+  // Канонический дубликат → noindex,follow (не конкурируем сами с собой).
+  const robotsValue = isKlopyDuplicate ? 'noindex, follow' : 'index, follow';
+
   return (
     <>
       <SEOHead metadata={{
         title: subpage.metaTitle,
         description: subpage.metaDescription,
-        canonical: `https://goruslugimsk.ru${subpage.fullPath.endsWith('/') ? subpage.fullPath : subpage.fullPath + '/'}`,
-        robots: 'index, follow',
+        canonical: `https://goruslugimsk.ru${canonicalPath}`,
+        robots: robotsValue,
         ogTitle: subpage.metaTitle,
         ogDescription: subpage.metaDescription,
         schema: [schemaMarkup, faqSchema],
