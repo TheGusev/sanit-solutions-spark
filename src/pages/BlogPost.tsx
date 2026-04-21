@@ -37,10 +37,29 @@ import {
 // Commercial keywords that blog titles must NOT compete for
 const COMMERCIAL_MARKERS = [
   'dezinsekciya', 'dezinfekciya', 'deratizaciya', 'ozonirovanie', 'dezodoraciya',
+  // Russian commercial intent markers (slug + title)
+  'izbavitsya', 'izbavlenie', 'vyvesti', 'vyvedenie', 'unichtozhit', 'unichtozhenie',
+  'professionalnaya-obrabotka', 'professionalnaya обработка', 'избавиться', 'избавление',
+  'вывести', 'вывод', 'уничтожить', 'уничтожение', 'профессиональная обработка',
 ];
 const OBJECT_MARKERS = [
   'ofis', 'kvartr', 'domo', 'restoran', 'sklad', 'proizvodstv', 'gostinic', 'hostel', 'magazin',
 ];
+
+/**
+ * Slug patterns for blog posts that overlap heavily with each other (topical clusters).
+ * These get noindex,follow regardless of commercial overlap detection.
+ * Reason: Yandex flags them as "Малоценная или маловостребованная страница".
+ */
+const LOW_VALUE_BLOG_PATTERNS: RegExp[] = [
+  /^posle-obrabotki-/i,           // posle-obrabotki-{domov,moli,ofisov,restoranov,proizvodstv}
+  /^podgotovka-k-obrabotke-/i,    // podgotovka-k-obrabotke-{domov,ofisov,skladov}
+];
+
+/** Whether slug matches a low-value pattern that should be noindexed */
+function isLowValueBlogSlug(slug: string): boolean {
+  return LOW_VALUE_BLOG_PATTERNS.some(re => re.test(slug));
+}
 const INFO_SUFFIX_OPTIONS = [
   ': полный гайд и советы',
   ': подробная инструкция',
@@ -76,7 +95,16 @@ function hasCommercialOverlap(title: string, slug: string): boolean {
   const slugLower = slug.toLowerCase();
   const hasService = COMMERCIAL_MARKERS.some(m => lower.includes(m) || slugLower.includes(m));
   const hasObject = OBJECT_MARKERS.some(m => lower.includes(m) || slugLower.includes(m));
-  return hasService && hasObject;
+  // Commercial intent verbs (избавиться, уничтожить, вывести, профессиональная обработка)
+  // are commercial-overlap on their own — they cannibalize money-pages directly.
+  const STRONG_COMMERCIAL = [
+    'izbavitsya', 'izbavlenie', 'vyvesti', 'vyvedenie', 'unichtozhit', 'unichtozhenie',
+    'professionalnaya-obrabotka',
+    'избавиться', 'избавление', 'вывести', 'вывод', 'уничтожить', 'уничтожение',
+    'профессиональная обработка',
+  ];
+  const hasStrongCommercial = STRONG_COMMERCIAL.some(m => lower.includes(m) || slugLower.includes(m));
+  return (hasService && hasObject) || hasStrongCommercial;
 }
 
 const BlogPost = () => {
@@ -117,14 +145,18 @@ const BlogPost = () => {
 
   const safeTitle = deOptimizeBlogTitle(post.title, post.slug);
   const isCommercialOverlap = hasCommercialOverlap(post.title, post.slug);
+  const isLowValueCluster = isLowValueBlogSlug(post.slug);
+  // noindex,follow when статья: (a) cannibalizes commercial pages (Yandex flagged),
+  // или (b) принадлежит к thin-кластеру (posle-obrabotki-*, podgotovka-k-obrabotke-*).
+  const shouldNoindex = isCommercialOverlap || isLowValueCluster;
 
   return (
     <div className="min-h-screen">
       <Helmet>
         <title>{`${safeTitle} | Санитарные Решения`}</title>
         <meta name="description" content={post.excerpt} />
-        <meta name="robots" content={isCommercialOverlap 
-          ? "index, follow, max-snippet:160, max-image-preview:large" 
+        <meta name="robots" content={shouldNoindex
+          ? "noindex, follow"
           : "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
         } />
         <link rel="canonical" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}/`} />
