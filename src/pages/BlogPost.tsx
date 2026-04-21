@@ -145,14 +145,18 @@ const BlogPost = () => {
 
   const safeTitle = deOptimizeBlogTitle(post.title, post.slug);
   const isCommercialOverlap = hasCommercialOverlap(post.title, post.slug);
+  const isLowValueCluster = isLowValueBlogSlug(post.slug);
+  // noindex,follow when статья: (a) cannibalizes commercial pages (Yandex flagged),
+  // или (b) принадлежит к thin-кластеру (posle-obrabotki-*, podgotovka-k-obrabotke-*).
+  const shouldNoindex = isCommercialOverlap || isLowValueCluster;
 
   return (
     <div className="min-h-screen">
       <Helmet>
         <title>{`${safeTitle} | Санитарные Решения`}</title>
         <meta name="description" content={post.excerpt} />
-        <meta name="robots" content={isCommercialOverlap 
-          ? "index, follow, max-snippet:160, max-image-preview:large" 
+        <meta name="robots" content={shouldNoindex
+          ? "noindex, follow"
           : "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
         } />
         <link rel="canonical" href={`${SEO_CONFIG.baseUrl}/blog/${post.slug}/`} />
