@@ -95,7 +95,16 @@ function hasCommercialOverlap(title: string, slug: string): boolean {
   const slugLower = slug.toLowerCase();
   const hasService = COMMERCIAL_MARKERS.some(m => lower.includes(m) || slugLower.includes(m));
   const hasObject = OBJECT_MARKERS.some(m => lower.includes(m) || slugLower.includes(m));
-  return hasService && hasObject;
+  // Commercial intent verbs (избавиться, уничтожить, вывести, профессиональная обработка)
+  // are commercial-overlap on their own — they cannibalize money-pages directly.
+  const STRONG_COMMERCIAL = [
+    'izbavitsya', 'izbavlenie', 'vyvesti', 'vyvedenie', 'unichtozhit', 'unichtozhenie',
+    'professionalnaya-obrabotka',
+    'избавиться', 'избавление', 'вывести', 'вывод', 'уничтожить', 'уничтожение',
+    'профессиональная обработка',
+  ];
+  const hasStrongCommercial = STRONG_COMMERCIAL.some(m => lower.includes(m) || slugLower.includes(m));
+  return (hasService && hasObject) || hasStrongCommercial;
 }
 
 const BlogPost = () => {
