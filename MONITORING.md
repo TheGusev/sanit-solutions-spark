@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 21.04.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
+**Дата:** 22.04.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
 
 ---
 
@@ -15,7 +15,9 @@
 
 ### Что изменилось с прошлого запуска
 
-Существенных изменений не обнаружено.
+- sitemap URLs: 1076 → 1077 (+1)
+- service URLs: 666 → 667 (+1)
+- mole city URLs: 23 → 24 (+1)
 
 ---
 
@@ -24,8 +26,8 @@
 | Severity | Check | Problem | Impact | Action |
 |---|---|---|---|---|
 | CRITICAL | Canonical | /uslugi/dezinfekciya-cao/: отсутствует canonical | Нарушение SEO-стандарта | Проверить SEOHead.tsx |
+| CRITICAL | Indexability | /blog/klopy-v-kvartire/: должен индексироваться, но noindex | Страница выпадет из индекса | Снять noindex |
 | WARNING | Schema | /uslugi/dezinfekciya-cao/: BreadcrumbList отсутствует | Снижение видимости в SERP | Добавить разметку |
-| WARNING | Sync | 1 путей из seoRoutes.ts отсутствуют в sitemap (пример: /uslugi/borba-s-krotami/khimki/) | Compile-time расходится с public sitemap | Проверить SSG-пайплайн / vite-plugin-sitemap.ts |
 
 ---
 
@@ -33,12 +35,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 1326 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 1471 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 1155 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 806 мс | — |
-| /blog/ | ✅ 200 | 1201 мс | — |
-| /contacts/ | ✅ 200 | 635 мс | — |
+| / | ✅ 200 | 1208 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 1211 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 1195 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 741 мс | — |
+| /blog/ | ✅ 200 | 747 мс | — |
+| /contacts/ | ✅ 200 | 717 мс | — |
 
 ---
 
@@ -55,9 +57,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| sitemap-index.xml доступен | ✅ | 9 файлов, 1076 URL |
+| sitemap-index.xml доступен | ✅ | 9 файлов, 1077 URL |
 | robots.txt + Sitemap-директива | ✅ | — |
-| Indexability roles | ✅ OK | По REPRESENTATIVE_URLS |
+| Indexability roles | ❌ 1 drift | По REPRESENTATIVE_URLS |
 
 ### Structured Data
 
@@ -70,10 +72,10 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| seoRoutes → sitemap | ⚠️ 1 missing | Compile-time vs public sitemap |
+| seoRoutes → sitemap | ✅ | Compile-time vs public sitemap |
 | sitemap → seoRoutes | ⚠️ 868 orphan | Допустимы NCH/aux URL |
 | Sample HTTP 200 | ✅ | Детерминистическая выборка (50) |
-| Sample canonical match | ❌ 1/10 | Первые 10 из выборки |
+| Sample canonical match | ✅ | Первые 10 из выборки |
 
 ---
 
@@ -89,7 +91,7 @@
 | mo_overview | `/moscow-oblast/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | mo_city | `/moscow-oblast/podolsk/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | mole_city | `/uslugi/borba-s-krotami/khimki/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| blog_post | `/blog/klopy-v-kvartire/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| blog_post | `/blog/klopy-v-kvartire/` | 200 | ✅ | ❌ noindex | ✅ | ✅ | ❌ FAIL |
 | excluded_page | `/uslugi/sertifikaciya/` | 200 | ✅ | ✅ noindex | ✅ | ✅ | ✅ OK |
 
 ---
@@ -109,9 +111,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 1099 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 969 мс | Порог: 3000 мс |
 | Largest HTML sample | 131.0 KB | Из representative audit |
-| SSL сертификат | ✅ 22.05.2026 | 31 дн. до истечения |
+| SSL сертификат | ✅ 22.05.2026 | 30 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
 | Bundle size | unavailable | Не измеряется в runtime-мониторе |
 
@@ -121,16 +123,16 @@
 
 | Metric | Current | Previous | Delta |
 |---|---:|---:|---:|
-| total sitemap URLs | 1076 | 1076 | 0 |
-| service URLs | 666 | 666 | 0 |
+| total sitemap URLs | 1077 | 1076 | +1 |
+| service URLs | 667 | 666 | +1 |
 | blog URLs | 203 | 203 | 0 |
 | district URLs | 131 | 131 | 0 |
 | MO city URLs | 71 | 71 | 0 |
-| mole city URLs | 23 | 23 | 0 |
-| representative failures | 1 | 1 | 0 |
-| critical alerts | 1 | 1 | 0 |
-| warnings | 2 | 2 | 0 |
-| avg response time (мс) | 1099 | 1169 | -70 |
+| mole city URLs | 24 | 23 | +1 |
+| representative failures | 2 | 1 | +1 |
+| critical alerts | 2 | 1 | +1 |
+| warnings | 1 | 2 | -1 |
+| avg response time (мс) | 969 | 1099 | -130 |
 
 ---
 
@@ -141,7 +143,7 @@
 | Canonical drift | ❌ | Сработало — см. Critical Alerts |
 | Routing drift (rep URL ≠ 200) | ✅ | OK |
 | Sitemap participation drift | ✅ | OK |
-| Indexability-role drift | ✅ | OK |
+| Indexability-role drift | ❌ | Сработало — см. Critical Alerts |
 | Duplicate BreadcrumbList | ❌ | Сработало — см. Critical Alerts |
 | WhatsApp / brand regression | ✅ | OK |
 | Analytics regression | ✅ | OK |
@@ -161,7 +163,8 @@
 ### Required actions
 
 1. Проверить SEOHead.tsx
+2. Снять noindex
 
 ---
 
-**Последнее обновление:** 21.04.2026 10:26 MSK
+**Последнее обновление:** 22.04.2026 10:24 MSK
