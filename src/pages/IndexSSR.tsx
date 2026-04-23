@@ -24,12 +24,12 @@ const IndexSSR = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Дезинфекция, дезинсекция, дератизация в Москве — от 1000₽ | Санитарные Решения</title>
+        <title>Дезинфекция, дезинсекция, дератизация в Москве и МО</title>
         <meta name="description" content="СЭС служба в Москве: дезинфекция, дезинсекция, дератизация. Лицензия Роспотребнадзора. Гарантия до 3 лет. Выезд за 15 минут." />
         <meta name="keywords" content="дезинфекция, дезинсекция, дератизация, Москва, МО, уничтожение тараканов, уничтожение клопов, санитарная обработка" />
         <link rel="canonical" href="https://goruslugimsk.ru/" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Дезинфекция, дезинсекция, дератизация в Москве — Санитарные Решения" />
+        <meta property="og:title" content="Дезинфекция, дезинсекция, дератизация в Москве и МО" />
         <meta property="og:description" content="СЭС служба в Москве: дезинфекция, дезинсекция, дератизация. Лицензия Роспотребнадзора. Гарантия до 3 лет." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://goruslugimsk.ru/" />
@@ -43,6 +43,9 @@ const IndexSSR = () => {
       {/* Critical above-the-fold components */}
       <Header onCalculatorClick={noop} />
       <Hero onCalculatorClick={noop} />
+
+      {/* Тематический H2 — связывает H1 ↔ title ↔ контент в одну тему для Я.Директа */}
+      <h2 className="sr-only">Дезинфекция, дезинсекция и дератизация в Москве и МО</h2>
 
       {/* Main content sections */}
       <MiniPricing />
