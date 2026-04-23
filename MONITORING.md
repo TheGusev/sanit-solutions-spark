@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 22.04.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
+**Дата:** 23.04.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
 
 ---
 
@@ -15,9 +15,7 @@
 
 ### Что изменилось с прошлого запуска
 
-- sitemap URLs: 1076 → 1077 (+1)
-- service URLs: 666 → 667 (+1)
-- mole city URLs: 23 → 24 (+1)
+Существенных изменений не обнаружено.
 
 ---
 
@@ -35,12 +33,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 1208 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 1211 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 1195 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 741 мс | — |
-| /blog/ | ✅ 200 | 747 мс | — |
-| /contacts/ | ✅ 200 | 717 мс | — |
+| / | ✅ 200 | 683 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 818 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 806 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 607 мс | — |
+| /blog/ | ✅ 200 | 562 мс | — |
+| /contacts/ | ✅ 200 | 692 мс | — |
 
 ---
 
@@ -111,9 +109,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 969 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 694 мс | Порог: 3000 мс |
 | Largest HTML sample | 131.0 KB | Из representative audit |
-| SSL сертификат | ✅ 22.05.2026 | 30 дн. до истечения |
+| SSL сертификат | ✅ 21.07.2026 | 89 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
 | Bundle size | unavailable | Не измеряется в runtime-мониторе |
 
@@ -123,16 +121,16 @@
 
 | Metric | Current | Previous | Delta |
 |---|---:|---:|---:|
-| total sitemap URLs | 1077 | 1076 | +1 |
-| service URLs | 667 | 666 | +1 |
+| total sitemap URLs | 1077 | 1077 | 0 |
+| service URLs | 667 | 667 | 0 |
 | blog URLs | 203 | 203 | 0 |
 | district URLs | 131 | 131 | 0 |
 | MO city URLs | 71 | 71 | 0 |
-| mole city URLs | 24 | 23 | +1 |
-| representative failures | 2 | 1 | +1 |
-| critical alerts | 2 | 1 | +1 |
-| warnings | 1 | 2 | -1 |
-| avg response time (мс) | 969 | 1099 | -130 |
+| mole city URLs | 24 | 24 | 0 |
+| representative failures | 2 | 2 | 0 |
+| critical alerts | 2 | 2 | 0 |
+| warnings | 1 | 1 | 0 |
+| avg response time (мс) | 694 | 969 | -275 |
 
 ---
 
@@ -167,4 +165,4 @@
 
 ---
 
-**Последнее обновление:** 22.04.2026 10:24 MSK
+**Последнее обновление:** 23.04.2026 10:26 MSK
