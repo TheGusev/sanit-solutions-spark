@@ -25,9 +25,9 @@ interface HeroProps {
   onCalculatorClick?: () => void;
 }
 
-// ⚠️ SEO: H1 фиксирован для стабильности индексации
-const SEO_H1_TITLE = "Профессиональная СЭС служба";
-const SEO_H1_HIGHLIGHT = "в Москве и области";
+// ⚠️ SEO: H1 фиксирован для стабильности индексации (≤56 симв для Я.Директа)
+const SEO_H1_TITLE = "Дезинфекция, дезинсекция, дератизация";
+const SEO_H1_HIGHLIGHT = "в Москве и МО";
 
 const Hero = ({ onCalculatorClick }: HeroProps) => {
   const { context } = useTraffic();
