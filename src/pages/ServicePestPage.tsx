@@ -478,21 +478,31 @@ export default function ServicePestPage() {
         <RelatedBlogLinks serviceSlug={service} pestSlug={pestSlug} />
         
         
-        {/* CTA */}
-        <AnimatedSection className="py-12 bg-primary text-primary-foreground">
+        {/* Финальный CTA — 2 кнопки как у эталонных лендингов */}
+        <AnimatedSection className="py-12 md:py-16 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
               Закажите уничтожение {pest.genitive} сейчас
             </h2>
             <p className="text-lg opacity-90 mb-6">
-              Выезд мастера в течение 1 часа по Москве и МО. Работаем 24/7.
+              Бесплатный выезд мастера в течение 1 часа по Москве и МО. Работаем 24/7.
             </p>
-            <Button size="lg" variant="secondary" asChild className="whitespace-normal">
-              <a href={`tel:${SEO_CONFIG.phoneClean}`}>
-                <Phone className="w-5 h-5 mr-2" />
-                {SEO_CONFIG.phone}
-              </a>
-            </Button>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button size="lg" variant="secondary" asChild className="whitespace-normal">
+                <a href={`tel:${SEO_CONFIG.phoneClean}`}>
+                  <Phone className="w-5 h-5 mr-2" />
+                  {SEO_CONFIG.phone}
+                </a>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="whitespace-normal border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
+                onClick={() => setShowCalculator(true)}
+              >
+                Рассчитать стоимость
+              </Button>
+            </div>
           </div>
         </AnimatedSection>
         
