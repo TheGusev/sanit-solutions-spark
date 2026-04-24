@@ -35,6 +35,9 @@ import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 import ServiceStickyBar from '@/components/ServiceStickyBar';
 import HeroCallbackForm from '@/components/HeroCallbackForm';
 import LazySection from '@/components/LazySection';
+import WorkProcess from '@/components/WorkProcess';
+import { Badge } from '@/components/ui/badge';
+import { SERVICE_GALLERY, GALLERY_SUBTITLES } from '@/data/serviceGallery';
 
 export default function ServicePestPage() {
   const params = useParams<{ service?: string; pest?: string; parentSlug?: string; subSlug?: string }>();
