@@ -4,6 +4,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+
+concurrency:
+  group: docker-build
+  cancel-in-progress: true
+
 env:
   IMAGE_NAME: thegusev/sanit-solutions
 jobs:
