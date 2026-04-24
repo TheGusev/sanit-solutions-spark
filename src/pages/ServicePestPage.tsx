@@ -35,6 +35,9 @@ import { SEO_CONFIG, generateSEOMeta } from '@/lib/seo';
 import ServiceStickyBar from '@/components/ServiceStickyBar';
 import HeroCallbackForm from '@/components/HeroCallbackForm';
 import LazySection from '@/components/LazySection';
+import WorkProcess from '@/components/WorkProcess';
+import { Badge } from '@/components/ui/badge';
+import { SERVICE_GALLERY, GALLERY_SUBTITLES } from '@/data/serviceGallery';
 
 export default function ServicePestPage() {
   const params = useParams<{ service?: string; pest?: string; parentSlug?: string; subSlug?: string }>();
@@ -179,41 +182,10 @@ export default function ServicePestPage() {
       
       <main className="min-h-screen pt-16 pb-16 md:pb-0">
         {/* Hero Section */}
-        <section className="relative py-12 md:py-16 min-h-[60vh] overflow-hidden">
-          {pestImage && (
-            <>
-              <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
-              <style dangerouslySetInnerHTML={{ __html: `
-                .pest-hero-bg {
-                  filter: blur(1px);
-                  opacity: 0.95;
-                  transform: scale(1.05);
-                }
-                @media (min-width: 768px) {
-                  .pest-hero-bg {
-                    filter: blur(3px);
-                    opacity: 0.65;
-                    transform: scale(1.05);
-                  }
-                }
-              `}} />
-              <div 
-                className="absolute inset-0 bg-cover bg-center pest-hero-bg"
-                style={{ backgroundImage: `url('${pestImage.image}')` }}
-                role="img"
-                aria-label={pestImage.altText}
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/35 to-background/30" />
-              <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-transparent to-background/30" />
-            </>
-          )}
-          {!pestImage && (
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background" />
-          )}
-          
+        <section className="relative bg-gradient-to-br from-primary/10 via-background to-primary/5 py-12 md:py-20 overflow-hidden">
           <div className="container mx-auto px-4 relative z-10">
             <Breadcrumbs items={breadcrumbItems} showSchema={false} />
-            
+
             <div className="mt-6 grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <div className="flex items-center gap-3 mb-4">
@@ -229,12 +201,19 @@ export default function ServicePestPage() {
                      pest.dangerLevel === 'medium' ? 'Средняя опасность' : 'Низкая опасность'}
                   </span>
                 </div>
-                
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3">
                   Уничтожение {pest.genitive} в Москве и МО
                 </h1>
-                
-                <p className="text-lg md:text-xl text-muted-foreground mb-4">
+
+                {/* Триколор-разделитель */}
+                <div className="flex gap-1 mb-5">
+                  <span className="h-1 w-10 rounded bg-white border border-border" />
+                  <span className="h-1 w-10 rounded bg-[#003DA5]" />
+                  <span className="h-1 w-10 rounded bg-[#CC0000]" />
+                </div>
+
+                <p className="text-lg md:text-xl text-muted-foreground mb-5">
                   {pest.description}
                 </p>
 
@@ -249,23 +228,22 @@ export default function ServicePestPage() {
                     ))}
                   </ul>
                 )}
-                
-                <div className="flex flex-wrap gap-4 mb-8">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Clock className="w-5 h-5 text-primary" />
-                    <span>Результат за {pest.timeToResult}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Shield className="w-5 h-5 text-primary" />
-                    <span>Гарантия {guaranteeText}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <MapPin className="w-5 h-5 text-primary" />
-                    <span>Москва и МО</span>
-                  </div>
+
+                {/* Крупные trust-бейджи как на лендинге кротов/участков */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {[
+                    { icon: Clock, text: `Результат за ${pest.timeToResult}` },
+                    { icon: Shield, text: `Гарантия ${guaranteeText}` },
+                    { icon: MapPin, text: 'Москва и МО' },
+                  ].map(({ icon: Icon, text }, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm bg-card rounded-lg px-3 py-2 border">
+                      <Icon className="w-4 h-4 text-primary" />
+                      <span>{text}</span>
+                    </div>
+                  ))}
                 </div>
-                
-                <div className="flex flex-col sm:flex-row gap-4">
+
+                <div className="flex flex-col sm:flex-row gap-3">
                   <Button size="lg" asChild className="whitespace-normal">
                     <a href={`tel:${SEO_CONFIG.phoneClean}`}>
                       <Phone className="w-5 h-5 mr-2" />
@@ -279,11 +257,11 @@ export default function ServicePestPage() {
 
                 <HeroCallbackForm serviceSlug={`${service}/${pestSlug}`} />
               </div>
-              
+
               {pestImage && (
                 <div className="hidden md:block">
                   <div className="relative rounded-2xl overflow-hidden shadow-xl bg-background/80 backdrop-blur-sm">
-                    <img 
+                    <img
                       src={pestImage.image}
                       alt={pestImage.altText}
                       className="w-full h-64 md:h-80 object-cover"
@@ -304,19 +282,50 @@ export default function ServicePestPage() {
           </div>
         </section>
 
-        {/* Quiz */}
-        <LazySection minHeight="400px">
-          {pest.quizSteps && pest.quizSteps.length > 0 && (
-            <ServiceQuiz
-              steps={pest.quizSteps}
-              serviceSlug={`${service}/${pestSlug}`}
-              serviceTitle={`Уничтожение ${pest.genitive}`}
-              basePrice={pest.tariffs?.[0]?.price || `от ${pest.priceFrom} ₽`}
-            />
-          )}
-        </LazySection>
+        {/* Галерея «До → Процесс → После» — визуальное доказательство */}
+        {(() => {
+          const galleryItems = SERVICE_GALLERY[service] || [];
+          const gallerySubtitle = GALLERY_SUBTITLES[service] || '';
+          if (galleryItems.length === 0) return null;
+          return (
+            <AnimatedSection className="py-12 md:py-16 bg-muted/30">
+              <div className="container mx-auto px-4">
+                <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">
+                  Как мы избавляем от {pest.genitive}: до и после
+                </h2>
+                {gallerySubtitle && (
+                  <p className="text-center text-muted-foreground mb-8">{gallerySubtitle}</p>
+                )}
+                <div className="grid md:grid-cols-3 gap-6 mt-6">
+                  {galleryItems.map((item, i) => (
+                    <Card key={i} className="overflow-hidden">
+                      <div className="relative">
+                        <img
+                          src={item.src}
+                          alt={item.title}
+                          width={800}
+                          height={600}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-48 object-cover"
+                        />
+                        <Badge className={`absolute top-3 left-3 ${item.badgeColor}`}>
+                          {item.badge}
+                        </Badge>
+                      </div>
+                      <CardContent className="p-4">
+                        <h3 className="font-bold text-foreground mb-1">{item.title}</h3>
+                        <p className="text-sm text-muted-foreground">{item.desc}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </AnimatedSection>
+          );
+        })()}
 
-        {/* Tariffs */}
+        {/* Tariffs — цены сразу после галереи */}
         <LazySection minHeight="300px">
           {pest.tariffs && pest.tariffs.length > 0 && (
              <ServiceTariffs
@@ -326,9 +335,8 @@ export default function ServicePestPage() {
              />
           )}
         </LazySection>
-        
-        
-        {/* Signs */}
+
+        {/* Signs — диагностика */}
         <AnimatedSection className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6 text-center">
@@ -346,6 +354,23 @@ export default function ServicePestPage() {
             </div>
           </div>
         </AnimatedSection>
+
+        {/* Как мы работаем */}
+        <LazySection minHeight="300px">
+          <WorkProcess />
+        </LazySection>
+
+        {/* Quiz — расчёт после демонстрации процесса */}
+        <LazySection minHeight="400px">
+          {pest.quizSteps && pest.quizSteps.length > 0 && (
+            <ServiceQuiz
+              steps={pest.quizSteps}
+              serviceSlug={`${service}/${pestSlug}`}
+              serviceTitle={`Уничтожение ${pest.genitive}`}
+              basePrice={pest.tariffs?.[0]?.price || `от ${pest.priceFrom} ₽`}
+            />
+          )}
+        </LazySection>
 
         {/* WhyProblemReturns */}
         <LazySection minHeight="250px">
@@ -453,21 +478,31 @@ export default function ServicePestPage() {
         <RelatedBlogLinks serviceSlug={service} pestSlug={pestSlug} />
         
         
-        {/* CTA */}
-        <AnimatedSection className="py-12 bg-primary text-primary-foreground">
+        {/* Финальный CTA — 2 кнопки как у эталонных лендингов */}
+        <AnimatedSection className="py-12 md:py-16 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
               Закажите уничтожение {pest.genitive} сейчас
             </h2>
             <p className="text-lg opacity-90 mb-6">
-              Выезд мастера в течение 1 часа по Москве и МО. Работаем 24/7.
+              Бесплатный выезд мастера в течение 1 часа по Москве и МО. Работаем 24/7.
             </p>
-            <Button size="lg" variant="secondary" asChild className="whitespace-normal">
-              <a href={`tel:${SEO_CONFIG.phoneClean}`}>
-                <Phone className="w-5 h-5 mr-2" />
-                {SEO_CONFIG.phone}
-              </a>
-            </Button>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button size="lg" variant="secondary" asChild className="whitespace-normal">
+                <a href={`tel:${SEO_CONFIG.phoneClean}`}>
+                  <Phone className="w-5 h-5 mr-2" />
+                  {SEO_CONFIG.phone}
+                </a>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="whitespace-normal border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
+                onClick={() => setShowCalculator(true)}
+              >
+                Рассчитать стоимость
+              </Button>
+            </div>
           </div>
         </AnimatedSection>
         
