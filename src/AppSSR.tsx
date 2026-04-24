@@ -36,7 +36,7 @@ import NotFound from "./pages/NotFound";
 
 const AppSSR = () => (
   <TrafficProviderSSR>
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <Routes>
         {/* Главная и статичные */}
         <Route path="/" element={<IndexSSR />} />

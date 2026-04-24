@@ -8,9 +8,25 @@
 
     <!-- Security headers (meta-fallback для краулеров) -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- Pre-hydration theme script: must run BEFORE React hydration to avoid mismatch.
+         next-themes (defaultTheme="system" enableSystem) reads the same key. -->
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('theme');
+          var theme = stored;
+          if (!theme || theme === 'system') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          var d = document.documentElement;
+          d.classList.remove('light', 'dark');
+          d.classList.add(theme);
+          d.style.colorScheme = theme;
+        } catch (e) {}
+      })();
+    </script>
     <meta name="author" content="ООО Санитарные Решения" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <link rel="canonical" href="https://goruslugimsk.ru/" />

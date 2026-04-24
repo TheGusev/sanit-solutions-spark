@@ -229,6 +229,12 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
       device_type: context?.deviceType || undefined,
     };
 
+    // Safety: hard timeout so the button never hangs in "submitting" forever
+    const submitTimeout = setTimeout(() => {
+      setErrorMsg("Сервер не отвечает. Позвоните: 8-495-018-18-17");
+      setFormStatus("error");
+    }, 15000);
+
     try {
       const { data, error } = await supabase.functions.invoke("handle-lead", {
         body: leadData,
@@ -241,8 +247,10 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
       setFormStatus("success");
     } catch (err) {
       console.error("Lead submit error:", err);
-      setErrorMsg("Не удалось отправить заявку. Попробуйте позже.");
+      setErrorMsg("Не удалось отправить заявку. Попробуйте позже или позвоните: 8-495-018-18-17");
       setFormStatus("error");
+    } finally {
+      clearTimeout(submitTimeout);
     }
   };
 
