@@ -207,6 +207,25 @@ export function ssgPlugin(): Plugin {
         
         const template = readFileSync(templatePath, 'utf-8');
         console.log('[SSG:1/5] ✓ Template loaded');
+
+        // Generate clean SPA shell for /admin/* routes (no SSG content → clean CSR, no hydration)
+        try {
+          let adminShell = template
+            .replace('<!--app-html-->', '')
+            .replace(/<div id="root">[\s\S]*?<\/div>/, '<div id="root"></div>');
+          // Override title for admin shell
+          if (/<title[^>]*>[\s\S]*?<\/title>/i.test(adminShell)) {
+            adminShell = adminShell.replace(/<title[^>]*>[\s\S]*?<\/title>/i, '<title>Админ-панель</title>');
+          }
+          // Strip any pre-rendered helmet meta/link tags from template
+          adminShell = adminShell
+            .replace(/<meta[^>]+data-rh="true"[^>]*>\s*/gi, '')
+            .replace(/<link[^>]+data-rh="true"[^>]*>\s*/gi, '');
+          writeFileSync(resolve(distDir, 'admin.html'), adminShell);
+          console.log('[SSG:1/5] ✓ admin.html shell written (clean CSR for /admin/*)');
+        } catch (shellError) {
+          console.error('WARN: Failed to write admin.html shell:', shellError);
+        }
         
         // [SSG:2/5] Build SSR bundle
         console.log('[SSG:2/5] Building SSR bundle...');
