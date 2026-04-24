@@ -383,9 +383,13 @@ serve(async (req) => {
       }
     }
     
-    // Send notifications in parallel: Telegram, CRM, Push
+    // Notifications run in background — never block client response.
+    // Mobile Safari aborts long-running requests, causing false "server error" toasts
+    // even when the lead is already saved. We respond immediately after DB insert.
     const pushNotification = async () => {
       try {
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 4000);
         const pushResp = await fetch('https://goruslugimsk.ru/api/push/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -393,8 +397,10 @@ serve(async (req) => {
             title: '🔔 Новая заявка!',
             body: `${leadData.phone} — ${leadData.source || 'сайт'}`,
             url: '/admin/'
-          })
+          }),
+          signal: ctrl.signal,
         });
+        clearTimeout(t);
         if (pushResp.ok) {
           console.log('✅ Push notification sent');
         } else {
@@ -405,12 +411,18 @@ serve(async (req) => {
       }
     };
 
-    await Promise.all([
+    const backgroundWork = Promise.allSettled([
       sendTelegramNotification(leadData),
       sendLeadToCrm(leadData),
-      pushNotification()
+      pushNotification(),
     ]);
-    
+
+    // @ts-ignore — EdgeRuntime is provided by Supabase Edge Runtime
+    if (typeof EdgeRuntime !== 'undefined' && EdgeRuntime.waitUntil) {
+      // @ts-ignore
+      EdgeRuntime.waitUntil(backgroundWork);
+    }
+
     return new Response(
       JSON.stringify({ success: true, lead_id: data.id }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
