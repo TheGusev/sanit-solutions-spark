@@ -196,7 +196,10 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
   const handleSubmit = async () => {
     // Hard guard: prevent double-submit even if button click fires twice before disabled state propagates
     if (formStatus === "submitting") return;
-    if (!phone || phone.replace(/\D/g, "").length < 10) {
+
+    const phoneDigits = phone.replace(/\D/g, "");
+    // Accept Russian-style numbers: 10 digits (without country code) or 11 digits (with 7/8 prefix)
+    if (phoneDigits.length < 10 || phoneDigits.length > 15) {
       setErrorMsg("Введите корректный номер телефона");
       return;
     }
@@ -206,12 +209,20 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
     }
     if (!problem || !object || !price) return;
 
+    // Normalize phone to +7XXXXXXXXXX (server-side validation requires length >= 10)
+    let normalizedPhone = phoneDigits;
+    if (normalizedPhone.length === 10) normalizedPhone = "7" + normalizedPhone;
+    if (normalizedPhone.startsWith("8") && normalizedPhone.length === 11) {
+      normalizedPhone = "7" + normalizedPhone.slice(1);
+    }
+    normalizedPhone = "+" + normalizedPhone;
+
     setFormStatus("submitting");
     setErrorMsg("");
 
     const leadData = {
       name: "Калькулятор",
-      phone: phone.trim(),
+      phone: normalizedPhone,
       service: problem,
       object_type: object.label,
       method: room ? room.label : undefined,
@@ -229,50 +240,57 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
       device_type: context?.deviceType || undefined,
     };
 
-    // Safety: hard timeout so the button never hangs in "submitting" forever
-    const submitTimeout = setTimeout(() => {
-      setErrorMsg("Сервер не отвечает. Позвоните: 8-495-018-18-17");
-      setFormStatus("error");
-    }, 15000);
-
-    // Direct fetch fallback — used if supabase-js client failed to load
-    // (happens on iOS Safari with flaky network or unsupported top-level await chunks).
+    // Direct fetch — primary path. The supabase-js SDK has had reliability issues on iOS Safari
+    // (flaky network, cached service worker, lazy-loaded chunks). Plain fetch is the most reliable.
     const sendDirect = async (): Promise<{ success: boolean; lead_id?: string; error?: string }> => {
       const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
       const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
-      const resp = await fetch(`${SUPABASE_URL}/functions/v1/handle-lead`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          apikey: ANON_KEY,
-          Authorization: `Bearer ${ANON_KEY}`,
-        },
-        body: JSON.stringify(leadData),
-      });
-      if (!resp.ok) {
-        return { success: false, error: `HTTP ${resp.status}` };
+
+      const ctrl = new AbortController();
+      // Generous timeout — backend now responds immediately after DB save (notifications run in background).
+      const t = setTimeout(() => ctrl.abort(), 25000);
+
+      try {
+        const resp = await fetch(`${SUPABASE_URL}/functions/v1/handle-lead`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: ANON_KEY,
+            Authorization: `Bearer ${ANON_KEY}`,
+          },
+          body: JSON.stringify(leadData),
+          signal: ctrl.signal,
+          // iOS Safari sometimes serves a cached error response; bypass it.
+          cache: "no-store",
+        });
+        clearTimeout(t);
+        if (!resp.ok) {
+          return { success: false, error: `HTTP ${resp.status}` };
+        }
+        const json = await resp.json();
+        return json;
+      } catch (e) {
+        clearTimeout(t);
+        const msg = e instanceof Error ? e.message : String(e);
+        return { success: false, error: msg };
       }
-      return await resp.json();
     };
 
     try {
-      let result: { success?: boolean; lead_id?: string; error?: string } | null = null;
+      let result = await sendDirect();
 
-      // Try supabase-js client first (preferred path)
-      if (supabase?.functions?.invoke) {
+      // If direct fetch failed (e.g. CORS preflight glitch in some webviews), try SDK as fallback.
+      if (!result.success && supabase?.functions?.invoke) {
         try {
           const { data, error } = await supabase.functions.invoke("handle-lead", {
             body: leadData,
           });
-          if (error) throw error;
-          result = data;
+          if (!error && data) {
+            result = data as typeof result;
+          }
         } catch (sdkErr) {
-          console.warn("supabase.functions.invoke failed, falling back to fetch:", sdkErr);
-          result = await sendDirect();
+          console.warn("SDK fallback also failed:", sdkErr);
         }
-      } else {
-        // SDK not initialized → go direct
-        result = await sendDirect();
       }
 
       if (!result || result.success === false) {
@@ -283,10 +301,8 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
       setFormStatus("success");
     } catch (err) {
       console.error("Lead submit error:", err);
-      setErrorMsg("Не удалось отправить заявку. Попробуйте позже или позвоните: 8-495-018-18-17");
+      setErrorMsg("Не удалось отправить заявку. Позвоните: 8-495-018-18-17");
       setFormStatus("error");
-    } finally {
-      clearTimeout(submitTimeout);
     }
   };
 
