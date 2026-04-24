@@ -298,9 +298,11 @@ export function ssgPlugin(): Plugin {
         const titleMap = new Map<string, string[]>();
         const descriptionMap = new Map<string, string[]>();
         
-        console.log(`[SSG:5/5] Rendering ${routes.length} pages...\n`);
-        
-        for (const route of routes) {
+        const CONCURRENCY = parseInt(process.env.SSG_CONCURRENCY || '12', 10);
+        const VERBOSE = process.env.SSG_VERBOSE === 'true';
+        console.log(`[SSG:5/5] Rendering ${routes.length} pages (concurrency=${CONCURRENCY})...\n`);
+
+        const renderRoute = async (route: SSGRoute) => {
           try {
             // Render the route
             const result = render(route.path);
@@ -356,12 +358,14 @@ export function ssgPlugin(): Plugin {
               console.error(`❌ ${route.path}: Validation errors:`);
               validation.errors.forEach(err => console.error(`   - ${err}`));
               errorCount++;
-              continue;
+              return;
             }
             
             if (validation.warnings.length > 0) {
-              console.warn(`⚠️  ${route.path}: Quality warnings:`);
-              validation.warnings.forEach(warn => console.warn(`   - ${warn}`));
+              if (VERBOSE) {
+                console.warn(`⚠️  ${route.path}: Quality warnings:`);
+                validation.warnings.forEach(warn => console.warn(`   - ${warn}`));
+              }
               warningCount++;
             }
             
@@ -393,15 +397,27 @@ export function ssgPlugin(): Plugin {
             
             writeFileSync(outputPath, html);
             
-            const sizeKb = (html.length / 1024).toFixed(1);
-            const wordInfo = validation.meta.wordCount ? ` | ${validation.meta.wordCount}w` : '';
-            console.log(`✓ ${route.path} → ${route.outputPath} (${sizeKb}KB${wordInfo})`);
+            if (VERBOSE) {
+              const sizeKb = (html.length / 1024).toFixed(1);
+              const wordInfo = validation.meta.wordCount ? ` | ${validation.meta.wordCount}w` : '';
+              console.log(`✓ ${route.path} → ${route.outputPath} (${sizeKb}KB${wordInfo})`);
+            }
             successCount++;
             
           } catch (error) {
             console.error(`❌ ${route.path}: ${error instanceof Error ? error.message : 'Unknown error'}`);
-                    if (error instanceof Error && error.stack) console.error(error.stack);
+            if (error instanceof Error && error.stack) console.error(error.stack);
             errorCount++;
+          }
+        };
+
+        // Process routes in parallel batches
+        for (let i = 0; i < routes.length; i += CONCURRENCY) {
+          const batch = routes.slice(i, i + CONCURRENCY);
+          await Promise.all(batch.map(renderRoute));
+          const done = Math.min(i + CONCURRENCY, routes.length);
+          if (done % 100 === 0 || done === routes.length) {
+            console.log(`[SSG:5/5] Progress: ${done}/${routes.length} (✓ ${successCount}, ❌ ${errorCount}, ⚠️ ${warningCount})`);
           }
         }
         
