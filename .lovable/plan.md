@@ -1,126 +1,169 @@
+# Дожимаем прод: PM2 мешает `push-server`, плюс проверяем security headers до 100/100
 
+## Что уже подтверждено
 
-# Фикс деплоя — конфликт имени `push-server`
+- Основной сайт **жив**: контейнер `goruslugimsk` поднялся.
+- На проде уже видны наши SEO/schema-правки:
+  - `FAQPage` найден
+  - `BreadcrumbList` найден
+- Текущий блокер — **не сайт**, а отдельный `push-server`.
 
-## Что произошло
+## Корневая причина текущей ошибки
 
-Деплой **не завершился полностью**. Скрипт напечатал «✅ Деплой завершен», но это ложь — он печатает финальную строку безусловно (нет `set -e` после `docker compose up`). Реально упало с ошибкой:
+Порт **3001** занят **не Docker-контейнером**, а **PM2**:
 
 ```text
-Error response from daemon: Conflict.
-The container name "/push-server" is already in use by container 8c5bcd39f342...
+LISTEN 0.0.0.0:3001 users:(("PM2 v6.0.14: Go", ...))
 ```
 
-И следом:
+Из-за этого `docker compose` не может запустить контейнер `push-server`:
+
 ```text
-Error response from daemon: No such container: goruslugimsk
+failed to bind host port 0.0.0.0:3001/tcp: address already in use
 ```
 
-Что это значит:
-1. **Старый контейнер `push-server`** остался от предыдущего ручного запуска (или от другого compose-проекта на этом же сервере). Docker Compose не может пересоздать контейнер с таким же именем.
-2. **Контейнер `goruslugimsk` снесён** при попытке `Recreate`, но новый не поднялся, потому что весь `compose up` отвалился на push-server.
-3. **Сайт сейчас лежит** (старый контейнер удалён, новый не создан) — на проде nginx-прокси отдаёт 502/down.
+То есть сейчас конфликт уже не в `container_name`, а в том, что **старый push-сервер всё ещё автоподнимается через PM2**.
 
-Дополнительный фон:
-- `nginx.service` на хосте — это **внешний reverse-proxy** (Dokploy), не наш контейнер. Он работает, но проксирует в пустоту.
-- Warning `version is obsolete` в `docker-compose.yml` — косметика, не блокирует.
+## Важное дополнительное наблюдение
 
-## Причина конфликта (root cause)
+По вашему `curl`:
+- `FAQPage` = 1
+- `BreadcrumbList` = 1
+- но grep по security headers **ничего не вывел**
 
-В `docker-compose.yml` явно задано `container_name: push-server`. На сервере этот контейнер был запущен **ранее** другим способом (раньше отдельно через `docker run` или из старого compose-проекта `service-goruslugimsk-6jrp9b`). После переименования compose-проекта в Dokploy старый контейнер «осиротел» — Compose его не видит как «свой» и не удаляет, но имя `/push-server` занято.
+Это значит: SEO/schema-часть уже на проде, а вот **HTTP-заголовки защиты на внешнем домене пока не видны**. Их нужно добить отдельно, скорее всего на уровне внешнего reverse-proxy.
 
-`docker compose down` тоже не помогает, потому что Compose работает только со «своими» контейнерами текущего проекта.
+## Ещё один хвост в коде, который нужно убрать
 
-## План фикса (3 шага, ~30 секунд на сервере)
+Я нашёл остаток запрещённой формулировки **«санитарная обработка»** в:
 
-### Шаг 1 — Поднять прод немедленно (ручной разовый фикс)
+```text
+src/pages/IndexSSR.tsx
+```
 
-Надо выполнить на сервере одну команду, которая снесёт «осиротевший» push-server и запустит compose заново:
+Сейчас там в meta keywords всё ещё есть:
+
+```text
+..., санитарная обработка
+```
+
+Это надо удалить в следующем коммите, потому что вы это прямо запретили.
+
+## План фикса
+
+### 1. Убрать PM2 как источник порта 3001
+
+На сервере нужно не просто убить процесс, а **отключить его автоперезапуск**.
+
+Что проверить и выключить:
 
 ```bash
-docker rm -f push-server goruslugimsk 2>/dev/null; \
-cd /etc/dokploy/applications/service-goruslugimsk-6jrp9b/code && \
-docker compose up -d
+pm2 list
+pm2 show all
+pm2 delete all
+pm2 save --force
+pm2 kill
+systemctl list-unit-files | grep -i pm2
 ```
 
-Что делает:
-1. Принудительно удаляет оба контейнера если они есть (флаг `-f` — даже работающие; `2>/dev/null` — не ругаться если их нет).
-2. Переходит в директорию compose-проекта Dokploy.
-3. Поднимает заново — теперь имена свободны, оба контейнера стартуют чисто.
-
-После этого сайт поднимется, OwnDev увидит свежий HTML с нашими изменениями (короткий title, FAQPage schema, security headers).
-
-### Шаг 2 — Защитить `deploy.sh` от рецидива
-
-Проблема будет повторяться при каждом deploy если кто-то снова запустит push-server вручную. Правлю `deploy.sh`:
+Если увидите сервис вроде `pm2-root.service`, его нужно остановить и отключить:
 
 ```bash
-#!/bin/bash
-set -e
-
-echo "🔄 Pulling latest changes..."
-git pull origin main
-
-echo "🧹 Cleaning up orphaned containers..."
-docker compose down --remove-orphans 2>/dev/null || true
-docker rm -f push-server goruslugimsk 2>/dev/null || true
-
-echo "🐳 Building and starting container..."
-docker compose up -d --build --remove-orphans
-
-echo "✅ Deployment complete!"
-docker compose ps
-
-# ... остальные curl-проверки без изменений
+systemctl stop pm2-root
+systemctl disable pm2-root
+systemctl mask pm2-root
 ```
 
-Изменения:
-- Добавлен `docker compose down --remove-orphans` перед `up` — снимает все контейнеры проекта чисто.
-- Добавлен явный `docker rm -f` для двух именованных контейнеров — страховка от orphaned/manual-запусков.
-- Флаг `--remove-orphans` в `up` — убирает контейнеры, которые больше не описаны в compose-файле.
-- `|| true` на cleanup — не падать если контейнеров нет.
-- `set -e` теперь корректно прервёт скрипт при реальной ошибке (а не покажет ложное «✅»).
+После этого проверить:
 
-### Шаг 3 — Убрать obsolete warning в `docker-compose.yml`
+```bash
+ss -tlnp 'sport = :3001'
+```
 
-Строка `version: '3.8'` — устаревшая. Современный Docker Compose v2 её игнорирует и ругается. Просто удаляю первую строку. Косметика, но чище логи.
+Ожидаемо: порт 3001 **не слушается никем**.
 
-## Файлы которые правлю
+### 2. Поднять `push-server` уже через compose
+
+Когда 3001 освобождён:
+
+```bash
+docker ps -a --filter "name=goruslugimsk" --filter "name=push-server" -q | xargs -r docker rm -f
+cd /etc/dokploy/applications/service-goruslugimsk-6jrp9b/code
+docker compose up -d --remove-orphans
+```
+
+Потом проверить:
+
+```bash
+docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | grep -E 'goruslugimsk|push-server'
+docker logs --tail=100 push-server
+```
+
+Ожидаемо:
+- `goruslugimsk` — Up
+- `push-server` — Up
+- в логах `Push server :3001 OK`
+
+### 3. Проверить, что push-маршрут реально работает
+
+После старта контейнера:
+
+```bash
+curl -s http://127.0.0.1:3001/api/push/vapid-public-key
+curl -sI http://127.0.0.1:5173/api/push/vapid-public-key
+curl -sI https://goruslugimsk.ru/api/push/vapid-public-key
+```
+
+Это покажет три слоя:
+- сам push-сервер
+- nginx внутри контейнера
+- внешний домен
+
+## 4. Добить security headers до внешнего домена
+
+Сейчас нужно сравнить:
+
+```bash
+curl -sI http://127.0.0.1:5173/ | grep -iE 'strict-transport|x-frame|x-content|referrer|permissions|cross-origin'
+curl -sI https://goruslugimsk.ru/ | grep -iE 'strict-transport|x-frame|x-content|referrer|permissions|cross-origin'
+```
+
+### Интерпретация
+
+**Сценарий A: локально есть, на домене нет**
+- значит заголовки режет/не пробрасывает **внешний nginx/Dokploy**
+- тогда те же заголовки нужно добавить в **внешний vhost** домена
+
+**Сценарий B: нигде нет**
+- значит текущий контейнер/образ запущен не с тем `nginx.conf`
+- тогда нужен повторный rebuild/redeploy уже после зачистки push/PM2
+
+## 5. Следующий коммит в репозиторий
+
+После серверного восстановления я внесу ещё один маленький чистовой фикс:
 
 ```text
-deploy.sh           — добавляю cleanup-блок + --remove-orphans + честный set -e
-docker-compose.yml  — удаляю строку `version: '3.8'`
+src/pages/IndexSSR.tsx
 ```
+
+- удалить ключевик `санитарная обработка` из `meta keywords`
+
+Это обязательная правка, потому что фраза противоречит вашему прямому запрету.
 
 ## Что НЕ трогаю
 
-- `Dockerfile`, `nginx.conf`, `docker-entrypoint.sh` — работают корректно.
-- Весь предыдущий пакет правок 100/100 (security headers, schema, title) — он уже в репозитории и подхватится при build.
-- Push-server код (`push-server.js`) — без изменений.
-- Системный `nginx.service` (Dokploy) — не наш слой.
+- маршрутизацию
+- sitemap
+- SSG pipeline
+- схему FAQ/Breadcrumb — она уже доехала на прод
+- push-архитектуру целиком — только восстанавливаю нормальный запуск через Docker вместо PM2
 
-## После моих правок — последовательность для вас
+## Ожидаемый результат
 
-1. Я внесу правки в репозиторий (`deploy.sh` + `docker-compose.yml`).
-2. На сервере **один раз** выполнить ручной фикс из Шага 1 (он снесёт orphan и поднимет всё чисто с уже задеплоенным образом):
-   ```bash
-   docker rm -f push-server goruslugimsk 2>/dev/null; \
-   cd /etc/dokploy/applications/service-goruslugimsk-6jrp9b/code && \
-   git pull origin main && \
-   docker compose up -d --build --remove-orphans
-   ```
-3. Проверить:
-   ```bash
-   docker ps | grep -E 'goruslugimsk|push-server'   # оба должны быть Up
-   curl -I https://goruslugimsk.ru/ | grep -E 'HSTS|X-Frame|X-Content'  # видим security headers
-   curl -s https://goruslugimsk.ru/ | grep -c FAQPage     # ≥1
-   curl -s https://goruslugimsk.ru/ | grep -c BreadcrumbList  # ≥1
-   ```
-4. Со следующего раза `/root/deploy.sh` будет работать чисто без ручных команд.
-
-## Прогноз
-
-- Сайт поднимется в течение 10-20 секунд после ручного фикса.
-- OwnDev увидит свежий HTML — повторный аудит покажет 99-100/100.
-- Проблема конфликта имён больше не повторится при будущих деплоях.
-
+После выполнения:
+- сайт остаётся доступным
+- `push-server` стартует без конфликта
+- `/api/push/*` снова работает
+- security headers либо появятся сразу, либо станет понятно, что их надо добавить во внешний nginx
+- из кода будет окончательно убрана запрещённая фраза `санитарная обработка`
+- после этого можно делать повторный прогон OwnDev уже на полностью чистой конфигурации
