@@ -1,16 +1,20 @@
 /**
  * SSR-safe Supabase client wrapper.
- * During SSR (import.meta.env.SSR === true), exports a full no-op stub
- * so that any component importing supabase won't crash during static generation.
- * On the client side, re-exports the real Supabase client.
+ * 
+ * On the client side: re-exports the real Supabase client via STATIC import
+ * (no top-level await — required for iOS Safari < 15 and reliability on flaky mobile networks).
+ * 
+ * During SSR (import.meta.env.SSR === true): exports a no-op stub so that components
+ * importing supabase don't crash during static generation.
  */
+
+import { supabase as realClient } from '@/integrations/supabase/client';
 
 // Build a recursive no-op proxy that returns itself for any property access
 // and returns resolved promises for any function call
 const createNoopProxy = (): any => {
   const handler: ProxyHandler<any> = {
     get: (_target, prop) => {
-      // Common promise-returning methods
       if (prop === 'select' || prop === 'insert' || prop === 'update' || prop === 'delete' || prop === 'upsert') {
         return (..._args: any[]) => createNoopProxy();
       }
@@ -18,10 +22,9 @@ const createNoopProxy = (): any => {
         return (..._args: any[]) => Promise.resolve({ data: null, error: null });
       }
       if (prop === 'then') {
-        // Make the proxy thenable so await works
         return (resolve: any) => resolve({ data: [], error: null });
       }
-      if (prop === 'eq' || prop === 'neq' || prop === 'gt' || prop === 'lt' || 
+      if (prop === 'eq' || prop === 'neq' || prop === 'gt' || prop === 'lt' ||
           prop === 'gte' || prop === 'lte' || prop === 'like' || prop === 'ilike' ||
           prop === 'in' || prop === 'is' || prop === 'order' || prop === 'limit' ||
           prop === 'range' || prop === 'single' || prop === 'maybeSingle' ||
@@ -29,18 +32,17 @@ const createNoopProxy = (): any => {
           prop === 'contains' || prop === 'containedBy' || prop === 'textSearch') {
         return (..._args: any[]) => createNoopProxy();
       }
-      // Return the proxy for any other property access
       return createNoopProxy();
     },
     apply: () => createNoopProxy(),
   };
-  return new Proxy(function() {}, handler);
+  return new Proxy(function () {}, handler);
 };
 
 const noopClient = {
   from: () => createNoopProxy(),
-  functions: { 
-    invoke: () => Promise.resolve({ data: null, error: null }) 
+  functions: {
+    invoke: () => Promise.resolve({ data: null, error: null }),
   },
   auth: {
     getSession: () => Promise.resolve({ data: { session: null }, error: null }),
@@ -61,16 +63,8 @@ const noopClient = {
   },
 };
 
-let supabase: any;
-
-if (import.meta.env.SSR) {
-  supabase = noopClient;
-} else {
-  // Dynamic import is NOT used here — we do a static re-export so tree-shaking works.
-  // The SSR branch above ensures the real client is never loaded during SSG.
-  // This file is only imported by components, and the SSR build will use the noopClient.
-  const mod = await import('@/integrations/supabase/client');
-  supabase = mod.supabase;
-}
+// SSR check is evaluated at build time → Vite tree-shakes the unused branch.
+// On the client, `realClient` is available synchronously (no async chunk, no top-level await).
+const supabase: any = import.meta.env.SSR ? noopClient : realClient;
 
 export { supabase };
