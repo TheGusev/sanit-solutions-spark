@@ -235,13 +235,49 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
       setFormStatus("error");
     }, 15000);
 
-    try {
-      const { data, error } = await supabase.functions.invoke("handle-lead", {
-        body: leadData,
+    // Direct fetch fallback — used if supabase-js client failed to load
+    // (happens on iOS Safari with flaky network or unsupported top-level await chunks).
+    const sendDirect = async (): Promise<{ success: boolean; lead_id?: string; error?: string }> => {
+      const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+      const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+      const resp = await fetch(`${SUPABASE_URL}/functions/v1/handle-lead`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: ANON_KEY,
+          Authorization: `Bearer ${ANON_KEY}`,
+        },
+        body: JSON.stringify(leadData),
       });
+      if (!resp.ok) {
+        return { success: false, error: `HTTP ${resp.status}` };
+      }
+      return await resp.json();
+    };
 
-      if (error) throw error;
-      if (data && !data.success) throw new Error(data.error || "Ошибка отправки");
+    try {
+      let result: { success?: boolean; lead_id?: string; error?: string } | null = null;
+
+      // Try supabase-js client first (preferred path)
+      if (supabase?.functions?.invoke) {
+        try {
+          const { data, error } = await supabase.functions.invoke("handle-lead", {
+            body: leadData,
+          });
+          if (error) throw error;
+          result = data;
+        } catch (sdkErr) {
+          console.warn("supabase.functions.invoke failed, falling back to fetch:", sdkErr);
+          result = await sendDirect();
+        }
+      } else {
+        // SDK not initialized → go direct
+        result = await sendDirect();
+      }
+
+      if (!result || result.success === false) {
+        throw new Error(result?.error || "Ошибка отправки");
+      }
 
       trackGoal("lead_submit", { source: "calculator_v2", price });
       setFormStatus("success");
