@@ -298,31 +298,29 @@ export function ssgPlugin(): Plugin {
         const titleMap = new Map<string, string[]>();
         const descriptionMap = new Map<string, string[]>();
         
-        const CONCURRENCY = parseInt(process.env.SSG_CONCURRENCY || '12', 10);
-        const VERBOSE = process.env.SSG_VERBOSE === 'true';
-        console.log(`[SSG:5/5] Rendering ${routes.length} pages (concurrency=${CONCURRENCY})...\n`);
+        console.log(`[SSG:5/5] Rendering ${routes.length} pages...\n`);
 
-        const renderRoute = async (route: SSGRoute) => {
+        for (const route of routes as SSGRoute[]) {
           try {
             // Render the route
             const result = render(route.path);
-            
+
             // Replace entire root div content using indexOf for reliability
             // The regex /<div id="root">[\s\S]*?<\/div>/ can be greedy with nested divs
             const rootStartTag = '<div id="root">';
             const rootStartIndex = template.indexOf(rootStartTag);
-            
+
             // Find the matching closing </div> by counting nesting
             let depth = 1;
             let searchIndex = rootStartIndex + rootStartTag.length;
             let rootEndIndex = -1;
-            
+
             while (depth > 0 && searchIndex < template.length) {
               const nextOpen = template.indexOf('<div', searchIndex);
               const nextClose = template.indexOf('</div>', searchIndex);
-              
+
               if (nextClose === -1) break;
-              
+
               if (nextOpen !== -1 && nextOpen < nextClose) {
                 depth++;
                 searchIndex = nextOpen + 4;
@@ -334,11 +332,11 @@ export function ssgPlugin(): Plugin {
                 searchIndex = nextClose + 6;
               }
             }
-            
+
             let html: string;
             if (rootStartIndex !== -1 && rootEndIndex !== -1) {
-              html = template.substring(0, rootStartIndex) + 
-                     `<div id="root">${result.html}</div>` + 
+              html = template.substring(0, rootStartIndex) +
+                     `<div id="root">${result.html}</div>` +
                      template.substring(rootEndIndex);
             } else {
               // Fallback to regex if parsing fails
@@ -347,77 +345,63 @@ export function ssgPlugin(): Plugin {
                 `<div id="root">${result.html}</div>`
               );
             }
-            
+
             // Update all head tags from helmet
             html = replaceHeadTags(html, result.helmet);
-            
+
             // Validate HTML quality with enhanced checks
             const validation = validateHtml(html, route.path);
-            
+
             if (!validation.valid) {
               console.error(`❌ ${route.path}: Validation errors:`);
               validation.errors.forEach(err => console.error(`   - ${err}`));
               errorCount++;
-              return;
+              continue;
             }
-            
+
             if (validation.warnings.length > 0) {
-              if (VERBOSE) {
-                console.warn(`⚠️  ${route.path}: Quality warnings:`);
-                validation.warnings.forEach(warn => console.warn(`   - ${warn}`));
-              }
+              console.warn(`⚠️  ${route.path}: Quality warnings:`);
+              validation.warnings.forEach(warn => console.warn(`   - ${warn}`));
               warningCount++;
             }
-            
+
             // Track title and description for duplicate detection
             const title = extractTitle(html);
             const description = extractDescription(html);
-            
+
             if (title) {
               if (!titleMap.has(title)) {
                 titleMap.set(title, []);
               }
               titleMap.get(title)!.push(route.path);
             }
-            
+
             if (description) {
               if (!descriptionMap.has(description)) {
                 descriptionMap.set(description, []);
               }
               descriptionMap.get(description)!.push(route.path);
             }
-            
+
             // Write the file
             const outputPath = resolve(distDir, route.outputPath);
             const outputDir = dirname(outputPath);
-            
+
             if (!existsSync(outputDir)) {
               mkdirSync(outputDir, { recursive: true });
             }
-            
+
             writeFileSync(outputPath, html);
-            
-            if (VERBOSE) {
-              const sizeKb = (html.length / 1024).toFixed(1);
-              const wordInfo = validation.meta.wordCount ? ` | ${validation.meta.wordCount}w` : '';
-              console.log(`✓ ${route.path} → ${route.outputPath} (${sizeKb}KB${wordInfo})`);
-            }
+
+            const sizeKb = (html.length / 1024).toFixed(1);
+            const wordInfo = validation.meta.wordCount ? ` | ${validation.meta.wordCount}w` : '';
+            console.log(`✓ ${route.path} → ${route.outputPath} (${sizeKb}KB${wordInfo})`);
             successCount++;
-            
+
           } catch (error) {
             console.error(`❌ ${route.path}: ${error instanceof Error ? error.message : 'Unknown error'}`);
             if (error instanceof Error && error.stack) console.error(error.stack);
             errorCount++;
-          }
-        };
-
-        // Process routes in parallel batches
-        for (let i = 0; i < routes.length; i += CONCURRENCY) {
-          const batch = routes.slice(i, i + CONCURRENCY);
-          await Promise.all(batch.map(renderRoute));
-          const done = Math.min(i + CONCURRENCY, routes.length);
-          if (done % 100 === 0 || done === routes.length) {
-            console.log(`[SSG:5/5] Progress: ${done}/${routes.length} (✓ ${successCount}, ❌ ${errorCount}, ⚠️ ${warningCount})`);
           }
         }
         

@@ -240,61 +240,14 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
       device_type: context?.deviceType || undefined,
     };
 
-    // Direct fetch — primary path. The supabase-js SDK has had reliability issues on iOS Safari
-    // (flaky network, cached service worker, lazy-loaded chunks). Plain fetch is the most reliable.
-    const sendDirect = async (): Promise<{ success: boolean; lead_id?: string; error?: string }> => {
-      const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-      const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
-
-      const ctrl = new AbortController();
-      // Generous timeout — backend now responds immediately after DB save (notifications run in background).
-      const t = setTimeout(() => ctrl.abort(), 25000);
-
-      try {
-        const resp = await fetch(`${SUPABASE_URL}/functions/v1/handle-lead`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: ANON_KEY,
-            Authorization: `Bearer ${ANON_KEY}`,
-          },
-          body: JSON.stringify(leadData),
-          signal: ctrl.signal,
-          // iOS Safari sometimes serves a cached error response; bypass it.
-          cache: "no-store",
-        });
-        clearTimeout(t);
-        if (!resp.ok) {
-          return { success: false, error: `HTTP ${resp.status}` };
-        }
-        const json = await resp.json();
-        return json;
-      } catch (e) {
-        clearTimeout(t);
-        const msg = e instanceof Error ? e.message : String(e);
-        return { success: false, error: msg };
-      }
-    };
-
     try {
-      let result = await sendDirect();
+      const { data, error } = await supabase.functions.invoke("handle-lead", {
+        body: leadData,
+      });
 
-      // If direct fetch failed (e.g. CORS preflight glitch in some webviews), try SDK as fallback.
-      if (!result.success && supabase?.functions?.invoke) {
-        try {
-          const { data, error } = await supabase.functions.invoke("handle-lead", {
-            body: leadData,
-          });
-          if (!error && data) {
-            result = data as typeof result;
-          }
-        } catch (sdkErr) {
-          console.warn("SDK fallback also failed:", sdkErr);
-        }
-      }
-
-      if (!result || result.success === false) {
-        throw new Error(result?.error || "Ошибка отправки");
+      if (error) throw error;
+      if (!data || (data as { success?: boolean }).success === false) {
+        throw new Error((data as { error?: string })?.error || "Ошибка отправки");
       }
 
       trackGoal("lead_submit", { source: "calculator_v2", price });
