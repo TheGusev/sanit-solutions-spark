@@ -4,8 +4,12 @@ set -e
 echo "🔄 Pulling latest changes..."
 git pull origin main
 
+echo "🧹 Cleaning up orphaned containers..."
+docker compose down --remove-orphans 2>/dev/null || true
+docker rm -f push-server goruslugimsk 2>/dev/null || true
+
 echo "🐳 Building and starting container..."
-docker compose up -d --build
+docker compose up -d --build --remove-orphans
 
 echo "✅ Deployment complete!"
 echo ""
