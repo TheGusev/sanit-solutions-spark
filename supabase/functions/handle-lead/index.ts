@@ -383,44 +383,26 @@ serve(async (req) => {
       }
     }
     
-    // Notifications run in background — never block client response.
-    // Mobile Safari aborts long-running requests, causing false "server error" toasts
-    // even when the lead is already saved. We respond immediately after DB insert.
-    const pushNotification = async () => {
-      try {
-        const ctrl = new AbortController();
-        const t = setTimeout(() => ctrl.abort(), 4000);
-        const pushResp = await fetch('https://goruslugimsk.ru/api/push/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: '🔔 Новая заявка!',
-            body: `${leadData.phone} — ${leadData.source || 'сайт'}`,
-            url: '/admin/'
-          }),
-          signal: ctrl.signal,
-        });
-        clearTimeout(t);
-        if (pushResp.ok) {
-          console.log('✅ Push notification sent');
-        } else {
-          console.error('⚠️ Push server responded:', pushResp.status);
-        }
-      } catch (e) {
-        console.error('⚠️ Push send error:', e);
+    await sendTelegramNotification(leadData);
+    await sendLeadToCrm(leadData);
+
+    try {
+      const pushResp = await fetch('https://goruslugimsk.ru/api/push/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: '🔔 Новая заявка!',
+          body: `${leadData.phone} — ${leadData.source || 'сайт'}`,
+          url: '/admin/'
+        }),
+      });
+      if (pushResp.ok) {
+        console.log('✅ Push notification sent');
+      } else {
+        console.error('⚠️ Push server responded:', pushResp.status);
       }
-    };
-
-    const backgroundWork = Promise.allSettled([
-      sendTelegramNotification(leadData),
-      sendLeadToCrm(leadData),
-      pushNotification(),
-    ]);
-
-    // @ts-ignore — EdgeRuntime is provided by Supabase Edge Runtime
-    if (typeof EdgeRuntime !== 'undefined' && EdgeRuntime.waitUntil) {
-      // @ts-ignore
-      EdgeRuntime.waitUntil(backgroundWork);
+    } catch (e) {
+      console.error('⚠️ Push send error:', e);
     }
 
     return new Response(
