@@ -298,9 +298,11 @@ export function ssgPlugin(): Plugin {
         const titleMap = new Map<string, string[]>();
         const descriptionMap = new Map<string, string[]>();
         
-        console.log(`[SSG:5/5] Rendering ${routes.length} pages...\n`);
-        
-        for (const route of routes) {
+        const CONCURRENCY = parseInt(process.env.SSG_CONCURRENCY || '12', 10);
+        const VERBOSE = process.env.SSG_VERBOSE === 'true';
+        console.log(`[SSG:5/5] Rendering ${routes.length} pages (concurrency=${CONCURRENCY})...\n`);
+
+        const renderRoute = async (route: SSGRoute) => {
           try {
             // Render the route
             const result = render(route.path);
