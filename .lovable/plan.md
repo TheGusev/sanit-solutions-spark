@@ -1,38 +1,34 @@
-## Add concurrency control to docker-build workflow
+# План: добавить `.dockerignore`
 
-Add a `concurrency` block to `.github/workflows/docker-build.yml` so that when a new build starts, any in-progress build for the same workflow is automatically cancelled. This prevents queue buildup and stale builds blocking new commits.
+## Цель
+Уменьшить Docker build context с ~500MB до ~5MB и убрать зависание сборки.
 
-### Change
+## Действие (одно изменение)
+Создать новый файл `/.dockerignore` в корне репозитория со следующим содержимым:
 
-In `.github/workflows/docker-build.yml`, insert these 3 lines immediately after the `on:` block (before `env:`):
-
-```yaml
-concurrency:
-  group: docker-build
-  cancel-in-progress: true
+```
+node_modules
+.git
+.gitignore
+*.log
+.lovable
+dist
+.env
+.env.*
+README.md
+*.md
+.github
 ```
 
-### Resulting top of file
+## Что НЕ трогаем
+- Никакие другие файлы не изменяются.
+- `Dockerfile`, `docker-compose.yml`, workflow-файлы, `package.json`, исходники — без изменений.
+- Никаких параллельных «улучшений».
 
-```yaml
-name: Build and Push Docker Image
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+## Проверки перед созданием
+- Файл `.dockerignore` в корне репозитория отсутствует (подтверждено) — будет создан с нуля, ничего перезаписывать не нужно.
 
-concurrency:
-  group: docker-build
-  cancel-in-progress: true
-
-env:
-  IMAGE_NAME: thegusev/sanit-solutions
-jobs:
-  ...
-```
-
-### Scope
-
-- Only `.github/workflows/docker-build.yml` is modified.
-- No other files touched. No logic, jobs, steps, or env changed.
+## Ожидаемый эффект
+- Docker build context уменьшится примерно до ~5MB.
+- Время Docker-сборки стабилизируется (~20–25 минут вместо зависания на 1+ час).
+- Поведение приложения, SSG и edge-функций не меняется — затрагивается только то, что отправляется в Docker daemon как контекст.
