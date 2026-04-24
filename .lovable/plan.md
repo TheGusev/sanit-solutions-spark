@@ -1,169 +1,120 @@
-# Дожимаем прод: PM2 мешает `push-server`, плюс проверяем security headers до 100/100
 
-## Что уже подтверждено
 
-- Основной сайт **жив**: контейнер `goruslugimsk` поднялся.
-- На проде уже видны наши SEO/schema-правки:
-  - `FAQPage` найден
-  - `BreadcrumbList` найден
-- Текущий блокер — **не сайт**, а отдельный `push-server`.
+# План: убрать конфликт порта 3001 на push-server (правильно — без проброса на хост)
 
-## Корневая причина текущей ошибки
+## Корень проблемы (точная диагностика по коду)
 
-Порт **3001** занят **не Docker-контейнером**, а **PM2**:
+Карта взаимодействий push-server в текущем репозитории:
 
-```text
-LISTEN 0.0.0.0:3001 users:(("PM2 v6.0.14: Go", ...))
+```
+[ Браузер ] → https://goruslugimsk.ru/api/push/...
+                ↓
+[ host nginx (Dokploy) ] → 127.0.0.1:5173
+                ↓
+[ контейнер goruslugimsk (nginx) ] → location /api/push/
+                ↓                     proxy_pass http://push-server:3001
+                ↓                     ← это ИМЯ контейнера в docker-сети, НЕ хост
+[ контейнер push-server (node) ] → app.listen(3001)
 ```
 
-Из-за этого `docker compose` не может запустить контейнер `push-server`:
+**Где конфликт:** в `docker-compose.yml` строка `"3001:3001"` принудительно пробрасывает 3001 контейнера на **3001 хоста**. На хосте этот порт занят PM2 (`owndev-backend`). Docker не может забиндить порт → весь push-server не стартует.
 
-```text
-failed to bind host port 0.0.0.0:3001/tcp: address already in use
+**Почему проброс не нужен:** nginx-контейнер ходит к push-server **по имени** (`http://push-server:3001`) через внутреннюю docker-сеть `default`. Это резолвится Docker DNS (resolver `127.0.0.11` уже в конфиге, строка 288 nginx.conf) и работает без всякого хостового порта. Внешнего доступа к 3001 ни откуда не требуется — браузер ходит только на `https://goruslugimsk.ru/api/push/`, а это уже идёт через nginx.
+
+## Решение: убрать проброс совсем (вариант чище, чем смена на 3002)
+
+**Не нужно** менять `3001:3001` на `3002:3001` и потом править nginx-конфиг. Вместо этого правильнее **полностью удалить секцию `ports`** у `push-server` — сервис останется доступен только внутри docker-сети (что и нужно), а на хосте порт вообще не будет занят. Это:
+
+- убирает конфликт с PM2 раз и навсегда;
+- не требует изменений nginx (внутри контейнера всё работает по имени `push-server:3001`);
+- уменьшает атак-поверхность (3001 не торчит наружу хоста);
+- идиоматично для compose: «внутренние сервисы — без `ports`, только `expose` или вообще ничего».
+
+## Файлы которые правлю (1 файл, 2 строки)
+
+### `docker-compose.yml`
+
+Удаляю строки 27-28 (`ports: - "3001:3001"`). Готовый блок:
+
+```yaml
+  push-server:
+    image: node:20-alpine
+    container_name: push-server
+    working_dir: /app
+    command: sh -c "npm i && node push-server.js"
+    volumes:
+      - ./push-server.js:/app/push-server.js
+      - ./push-server-package.json:/app/package.json
+      - push-data:/data
+    restart: unless-stopped
+    environment:
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
 ```
 
-То есть сейчас конфликт уже не в `container_name`, а в том, что **старый push-сервер всё ещё автоподнимается через PM2**.
+Всё. Внутренний порт 3001 контейнера остаётся (это `app.listen(3001)` в `push-server.js` — не трогаем), но наружу хоста не пробрасывается.
 
-## Важное дополнительное наблюдение
+## Что НЕ трогаю и почему
 
-По вашему `curl`:
-- `FAQPage` = 1
-- `BreadcrumbList` = 1
-- но grep по security headers **ничего не вывел**
+- **`push-server.js` (`app.listen(3001)`)** — это внутренний порт контейнера, конфликтов нет.
+- **`nginx.conf` (`http://push-server:3001`)** — это резолв по имени контейнера в docker-сети, работает независимо от хостовых портов.
+- **`docker-entrypoint.sh`** — там тот же `http://push-server:3001` для legacy-фолбэка, тоже не трогаем.
+- **PM2 owndev-backend** — вообще другой проект, он остаётся на 3001 хоста как и был.
 
-Это значит: SEO/schema-часть уже на проде, а вот **HTTP-заголовки защиты на внешнем домене пока не видны**. Их нужно добить отдельно, скорее всего на уровне внешнего reverse-proxy.
+## Серверная процедура после моих правок
 
-## Ещё один хвост в коде, который нужно убрать
-
-Я нашёл остаток запрещённой формулировки **«санитарная обработка»** в:
-
-```text
-src/pages/IndexSSR.tsx
-```
-
-Сейчас там в meta keywords всё ещё есть:
-
-```text
-..., санитарная обработка
-```
-
-Это надо удалить в следующем коммите, потому что вы это прямо запретили.
-
-## План фикса
-
-### 1. Убрать PM2 как источник порта 3001
-
-На сервере нужно не просто убить процесс, а **отключить его автоперезапуск**.
-
-Что проверить и выключить:
+После моего коммита нужно на сервере:
 
 ```bash
-pm2 list
-pm2 show all
-pm2 delete all
-pm2 save --force
-pm2 kill
-systemctl list-unit-files | grep -i pm2
-```
-
-Если увидите сервис вроде `pm2-root.service`, его нужно остановить и отключить:
-
-```bash
-systemctl stop pm2-root
-systemctl disable pm2-root
-systemctl mask pm2-root
-```
-
-После этого проверить:
-
-```bash
-ss -tlnp 'sport = :3001'
-```
-
-Ожидаемо: порт 3001 **не слушается никем**.
-
-### 2. Поднять `push-server` уже через compose
-
-Когда 3001 освобождён:
-
-```bash
-docker ps -a --filter "name=goruslugimsk" --filter "name=push-server" -q | xargs -r docker rm -f
 cd /etc/dokploy/applications/service-goruslugimsk-6jrp9b/code
+# Сбросить локальные правки compose если они есть (как в прошлый раз)
+git checkout -- docker-compose.yml 2>/dev/null || true
+git pull origin main
+# Снести старые контейнеры и поднять заново
+docker rm -f push-server goruslugimsk 2>/dev/null
 docker compose up -d --remove-orphans
 ```
 
-Потом проверить:
+## Проверка после деплоя
 
 ```bash
+# 1. Оба контейнера Up, у push-server в колонке PORTS должно быть пусто или только internal
 docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | grep -E 'goruslugimsk|push-server'
-docker logs --tail=100 push-server
+
+# 2. Хостовый 3001 остаётся за PM2 (owndev), 5173 — за нашим nginx
+ss -tlnp | grep -E ':3001|:5173'
+
+# 3. Push API работает через домен (через внутренний proxy)
+curl -s https://goruslugimsk.ru/api/push/vapid-public-key
+# ожидаемо: {"key":"..."}
+
+# 4. Internal-резолв работает (опционально, для отладки)
+docker exec goruslugimsk wget -qO- http://push-server:3001/api/push/vapid-public-key
 ```
 
-Ожидаемо:
-- `goruslugimsk` — Up
-- `push-server` — Up
-- в логах `Push server :3001 OK`
+## Параллельно — вопрос security-headers
 
-### 3. Проверить, что push-маршрут реально работает
-
-После старта контейнера:
+В прошлый раз была подозрение что external reverse-proxy (host nginx Dokploy) режет наши `add_header`. После того как push-server поднимется, выполняем сравнение:
 
 ```bash
-curl -s http://127.0.0.1:3001/api/push/vapid-public-key
-curl -sI http://127.0.0.1:5173/api/push/vapid-public-key
-curl -sI https://goruslugimsk.ru/api/push/vapid-public-key
-```
-
-Это покажет три слоя:
-- сам push-сервер
-- nginx внутри контейнера
-- внешний домен
-
-## 4. Добить security headers до внешнего домена
-
-Сейчас нужно сравнить:
-
-```bash
+echo "--- ИЗ КОНТЕЙНЕРА (источник) ---"
 curl -sI http://127.0.0.1:5173/ | grep -iE 'strict-transport|x-frame|x-content|referrer|permissions|cross-origin'
+
+echo "--- ЧЕРЕЗ ДОМЕН (после host nginx) ---"
 curl -sI https://goruslugimsk.ru/ | grep -iE 'strict-transport|x-frame|x-content|referrer|permissions|cross-origin'
 ```
 
-### Интерпретация
+Если первый блок показывает все 7 заголовков, а второй — нет/меньше → host nginx (Dokploy) их фильтрует. Тогда отдельным шагом нужно либо:
+- добавить `proxy_pass_header` в host-конфиг Dokploy для нашего сайта;
+- либо включить пропуск заголовков от upstream в Dokploy UI;
+- либо продублировать заголовки на host-уровне.
 
-**Сценарий A: локально есть, на домене нет**
-- значит заголовки режет/не пробрасывает **внешний nginx/Dokploy**
-- тогда те же заголовки нужно добавить в **внешний vhost** домена
+Это уже отдельная задача после фикса push-server, не смешиваю.
 
-**Сценарий B: нигде нет**
-- значит текущий контейнер/образ запущен не с тем `nginx.conf`
-- тогда нужен повторный rebuild/redeploy уже после зачистки push/PM2
+## Прогноз
 
-## 5. Следующий коммит в репозиторий
+- Конфликт порта 3001 устраняется навсегда (а не до следующего ребута PM2).
+- Push-сервер остаётся полностью функциональным через домен.
+- Никаких ручных правок nginx, никаких изменений в коде кроме 2 удалённых строк в compose.
+- Следующие деплои `/root/deploy.sh` отрабатывают чисто.
 
-После серверного восстановления я внесу ещё один маленький чистовой фикс:
-
-```text
-src/pages/IndexSSR.tsx
-```
-
-- удалить ключевик `санитарная обработка` из `meta keywords`
-
-Это обязательная правка, потому что фраза противоречит вашему прямому запрету.
-
-## Что НЕ трогаю
-
-- маршрутизацию
-- sitemap
-- SSG pipeline
-- схему FAQ/Breadcrumb — она уже доехала на прод
-- push-архитектуру целиком — только восстанавливаю нормальный запуск через Docker вместо PM2
-
-## Ожидаемый результат
-
-После выполнения:
-- сайт остаётся доступным
-- `push-server` стартует без конфликта
-- `/api/push/*` снова работает
-- security headers либо появятся сразу, либо станет понятно, что их надо добавить во внешний nginx
-- из кода будет окончательно убрана запрещённая фраза `санитарная обработка`
-- после этого можно делать повторный прогон OwnDev уже на полностью чистой конфигурации
