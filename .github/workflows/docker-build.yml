@@ -45,6 +45,7 @@ jobs:
 
       - name: Smoke check SSG coverage
         run: |
+          docker pull ${{ env.IMAGE_NAME }}:${{ github.sha }}
           cat > /tmp/smoke_check.sh << 'SMOKE_EOF'
           #!/bin/sh
           set -e
