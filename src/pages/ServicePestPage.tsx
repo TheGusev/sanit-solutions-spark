@@ -325,19 +325,7 @@ export default function ServicePestPage() {
           );
         })()}
 
-        {/* Quiz */}
-        <LazySection minHeight="400px">
-          {pest.quizSteps && pest.quizSteps.length > 0 && (
-            <ServiceQuiz
-              steps={pest.quizSteps}
-              serviceSlug={`${service}/${pestSlug}`}
-              serviceTitle={`Уничтожение ${pest.genitive}`}
-              basePrice={pest.tariffs?.[0]?.price || `от ${pest.priceFrom} ₽`}
-            />
-          )}
-        </LazySection>
-
-        {/* Tariffs */}
+        {/* Tariffs — цены сразу после галереи */}
         <LazySection minHeight="300px">
           {pest.tariffs && pest.tariffs.length > 0 && (
              <ServiceTariffs
@@ -347,9 +335,8 @@ export default function ServicePestPage() {
              />
           )}
         </LazySection>
-        
-        
-        {/* Signs */}
+
+        {/* Signs — диагностика */}
         <AnimatedSection className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6 text-center">
@@ -367,6 +354,23 @@ export default function ServicePestPage() {
             </div>
           </div>
         </AnimatedSection>
+
+        {/* Как мы работаем */}
+        <LazySection minHeight="300px">
+          <WorkProcess />
+        </LazySection>
+
+        {/* Quiz — расчёт после демонстрации процесса */}
+        <LazySection minHeight="400px">
+          {pest.quizSteps && pest.quizSteps.length > 0 && (
+            <ServiceQuiz
+              steps={pest.quizSteps}
+              serviceSlug={`${service}/${pestSlug}`}
+              serviceTitle={`Уничтожение ${pest.genitive}`}
+              basePrice={pest.tariffs?.[0]?.price || `от ${pest.priceFrom} ₽`}
+            />
+          )}
+        </LazySection>
 
         {/* WhyProblemReturns */}
         <LazySection minHeight="250px">
