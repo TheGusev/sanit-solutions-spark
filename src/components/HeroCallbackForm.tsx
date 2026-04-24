@@ -53,28 +53,57 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
       service: serviceSlug,
     });
 
-    try {
-      const { data, error } = await supabase.functions.invoke('handle-lead', {
-        body: {
-          name: 'Обратный звонок',
-          phone,
-          source: 'hero_callback',
-          service: serviceSlug,
-          session_id: context?.sessionId || null,
-          intent: context?.intent || 'default',
-          variant_id: context?.variantId || null,
-          device_type: context?.deviceType || null,
-          last_page_url: window.location.href,
-          utm_source: context?.utm_source || null,
-          utm_medium: context?.utm_medium || null,
-          utm_campaign: context?.utm_campaign || null,
-          utm_content: context?.utm_content || null,
-          utm_term: context?.utm_term || null,
-        },
-      });
+    const leadBody = {
+      name: 'Обратный звонок',
+      phone,
+      source: 'hero_callback',
+      service: serviceSlug,
+      session_id: context?.sessionId || null,
+      intent: context?.intent || 'default',
+      variant_id: context?.variantId || null,
+      device_type: context?.deviceType || null,
+      last_page_url: window.location.href,
+      utm_source: context?.utm_source || null,
+      utm_medium: context?.utm_medium || null,
+      utm_campaign: context?.utm_campaign || null,
+      utm_content: context?.utm_content || null,
+      utm_term: context?.utm_term || null,
+    };
 
-      if (error || !data?.success) {
-        throw error || new Error('Failed');
+    const sendDirect = async () => {
+      const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+      const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+      const resp = await fetch(`${SUPABASE_URL}/functions/v1/handle-lead`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: ANON_KEY,
+          Authorization: `Bearer ${ANON_KEY}`,
+        },
+        body: JSON.stringify(leadBody),
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      return await resp.json();
+    };
+
+    try {
+      let result: { success?: boolean; error?: string } | null = null;
+
+      if (supabase?.functions?.invoke) {
+        try {
+          const { data, error } = await supabase.functions.invoke('handle-lead', { body: leadBody });
+          if (error) throw error;
+          result = data;
+        } catch (sdkErr) {
+          console.warn('supabase.functions.invoke failed, falling back to fetch:', sdkErr);
+          result = await sendDirect();
+        }
+      } else {
+        result = await sendDirect();
+      }
+
+      if (!result || result.success === false) {
+        throw new Error(result?.error || 'Failed');
       }
 
       toast.success('✅ Заявка отправлена! Перезвоним в течение 15 минут');
