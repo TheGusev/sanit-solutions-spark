@@ -15,6 +15,7 @@ COPY . .
 # Собираем приложение
 ENV DOCKER_BUILD=true
 ARG CACHEBUST=1
+ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN npm run build 2>&1 | tee /tmp/build-output.log && \
     SSG_COUNT=$(find /app/dist -name "index.html" | wc -l) && \
     echo "SSG pages: $SSG_COUNT" && \
