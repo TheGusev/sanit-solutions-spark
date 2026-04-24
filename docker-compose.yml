@@ -24,8 +24,6 @@ services:
       - ./push-server.js:/app/push-server.js
       - ./push-server-package.json:/app/package.json
       - push-data:/data
-    ports:
-      - "3001:3001"
     restart: unless-stopped
     environment:
       - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
