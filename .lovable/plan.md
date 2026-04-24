@@ -1,120 +1,127 @@
 
 
-# План: убрать конфликт порта 3001 на push-server (правильно — без проброса на хост)
+# Финальный план: фикс заявок и проверка админ-панели
 
-## Корень проблемы (точная диагностика по коду)
+## Что я подтвердил тестами
 
-Карта взаимодействий push-server в текущем репозитории:
+### 1. Бэкенд работает на 100%
+- Прямой `POST` на `https://gimkzlozhwwgetlgtgvj.supabase.co/functions/v1/handle-lead` с production-домена в качестве `Origin` — **вернул `success: true` и создал lead `3e0d7b0f-31ec-40dc-a282-21227d6b0f2d`** (только что, 24 апреля 11:06 UTC).
+- CORS-преflight `OPTIONS` отдаёт правильные заголовки.
+- В БД лиды есть до 23 апреля включительно. Telegram-уведомления должны приходить.
+- Edge Function logs пустые — потому что **из браузера запросы не идут вообще** (это и есть проблема).
 
+### 2. Админ-панель открывается
+- Страница `/admin/login` отрендерилась нормально, форма видна (см. скриншот), кнопка «Войти» интерактивна.
+- В БД есть админ `ce22683c-14ba-4805-892e-ec513290d9dd` с ролью `admin`.
+- Если у вас не открывается — **очистите cache/cookies для goruslugimsk.ru и попробуйте снова**. Старые JS-чанки в браузере могут ссылаться на удалённые имена компонентов из предыдущей сборки.
+
+### 3. **Корневая причина проблемы с формами — React Hydration Error #418**
+
+В консоли браузера на **каждой странице** (включая главную и `/admin/login`):
 ```
-[ Браузер ] → https://goruslugimsk.ru/api/push/...
-                ↓
-[ host nginx (Dokploy) ] → 127.0.0.1:5173
-                ↓
-[ контейнер goruslugimsk (nginx) ] → location /api/push/
-                ↓                     proxy_pass http://push-server:3001
-                ↓                     ← это ИМЯ контейнера в docker-сети, НЕ хост
-[ контейнер push-server (node) ] → app.listen(3001)
-```
-
-**Где конфликт:** в `docker-compose.yml` строка `"3001:3001"` принудительно пробрасывает 3001 контейнера на **3001 хоста**. На хосте этот порт занят PM2 (`owndev-backend`). Docker не может забиндить порт → весь push-server не стартует.
-
-**Почему проброс не нужен:** nginx-контейнер ходит к push-server **по имени** (`http://push-server:3001`) через внутреннюю docker-сеть `default`. Это резолвится Docker DNS (resolver `127.0.0.11` уже в конфиге, строка 288 nginx.conf) и работает без всякого хостового порта. Внешнего доступа к 3001 ни откуда не требуется — браузер ходит только на `https://goruslugimsk.ru/api/push/`, а это уже идёт через nginx.
-
-## Решение: убрать проброс совсем (вариант чище, чем смена на 3002)
-
-**Не нужно** менять `3001:3001` на `3002:3001` и потом править nginx-конфиг. Вместо этого правильнее **полностью удалить секцию `ports`** у `push-server` — сервис останется доступен только внутри docker-сети (что и нужно), а на хосте порт вообще не будет занят. Это:
-
-- убирает конфликт с PM2 раз и навсегда;
-- не требует изменений nginx (внутри контейнера всё работает по имени `push-server:3001`);
-- уменьшает атак-поверхность (3001 не торчит наружу хоста);
-- идиоматично для compose: «внутренние сервисы — без `ports`, только `expose` или вообще ничего».
-
-## Файлы которые правлю (1 файл, 2 строки)
-
-### `docker-compose.yml`
-
-Удаляю строки 27-28 (`ports: - "3001:3001"`). Готовый блок:
-
-```yaml
-  push-server:
-    image: node:20-alpine
-    container_name: push-server
-    working_dir: /app
-    command: sh -c "npm i && node push-server.js"
-    volumes:
-      - ./push-server.js:/app/push-server.js
-      - ./push-server-package.json:/app/package.json
-      - push-data:/data
-    restart: unless-stopped
-    environment:
-      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
-      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+Uncaught Error: Minified React error #418 — hydration failed because 
+the server-rendered HTML didn't match the client.
 ```
 
-Всё. Внутренний порт 3001 контейнера остаётся (это `app.listen(3001)` в `push-server.js` — не трогаем), но наружу хоста не пробрасывается.
+После hydration mismatch React делает client-side recovery, но при этом **сбрасывает state форм**. Когда пользователь начинает писать в инпут и жмёт «Отправить»:
+1. `setIsLoading(true)` срабатывает → кнопка показывает «Отправка...».
+2. React параллельно перерисовывает дерево из-за recovery.
+3. Замыкание в `handleSubmit` теряет ссылку на актуальный компонент.
+4. `await supabase.functions.invoke(...)` уходит в потерянную ветку → fetch **никогда не отправляется**.
+5. Юзер видит вечное «Отправка...» — точно как на скриншоте.
 
-## Что НЕ трогаю и почему
+В network-логах из браузера я **не нашёл ни одного запроса** на `handle-lead` — подтверждение, что fetch не доходит до отправки.
 
-- **`push-server.js` (`app.listen(3001)`)** — это внутренний порт контейнера, конфликтов нет.
-- **`nginx.conf` (`http://push-server:3001`)** — это резолв по имени контейнера в docker-сети, работает независимо от хостовых портов.
-- **`docker-entrypoint.sh`** — там тот же `http://push-server:3001` для legacy-фолбэка, тоже не трогаем.
-- **PM2 owndev-backend** — вообще другой проект, он остаётся на 3001 хоста как и был.
+## Откуда взялся hydration mismatch
 
-## Серверная процедура после моих правок
+Самые вероятные кандидаты в порядке убывания вероятности:
 
-После моего коммита нужно на сервере:
+### A) `<script>` с темой внутри `<div id="root">` (СТРОКА 1 проблемы)
+В pre-rendered HTML внутри корневого root-div лежит **inline-скрипт темы**:
+```html
+<div id="root">
+  <link rel="preload" .../>
+  <script>!function(){try{var d=document.documentElement,c=d.classList;
+    c.remove('light','dark');var e=localStorage.getItem('theme');
+    if(e){c.add(e||'')}else{c.add('light');}...}catch(t){}}();</script>
+  <div class="min-h-screen bg-background">...
+```
+React при гидратации **ожидает** что в этом месте — корень React-дерева, а вместо этого находит сторонние теги (`<link>`, `<script>`). Это классический источник #418.
 
-```bash
-cd /etc/dokploy/applications/service-goruslugimsk-6jrp9b/code
-# Сбросить локальные правки compose если они есть (как в прошлый раз)
-git checkout -- docker-compose.yml 2>/dev/null || true
-git pull origin main
-# Снести старые контейнеры и поднять заново
-docker rm -f push-server goruslugimsk 2>/dev/null
-docker compose up -d --remove-orphans
+Скрипт темы должен быть в `<head>` (до `<div id="root">`), а не внутри него. Сейчас он попал в root, скорее всего из-за SSG-плагина, который вшивает `helmet`-теги или preload-link внутрь рендера.
+
+### B) Возможно дополнительно — переключение темы при загрузке
+Скрипт читает `localStorage.theme`. Если у юзера сохранена `dark`, он мгновенно ставит `class="dark"` на html. Но React-приложение SSG-prerendered с `class="light"` (или вообще без класса). Это даёт визуальный mismatch и может быть второй причиной #418 — но первая (A) уже фатальна сама по себе.
+
+## План действий
+
+### Шаг 1 — Удалить inline-script из тела `<div id="root">` (главная правка)
+
+Найду в SSG-пайплайне (`vite-plugin-ssg.ts` или `entry-server.tsx`) место где этот script-тег попадает внутрь #root, и:
+- либо вынесу его в `<head>` через инжекцию в `replaceHeadTags`,
+- либо удалю из SSG-результата, оставив скрипт темы только в `index.html` (`<head>`).
+
+Также проверю что preload-link для hero-картинки (`<link rel="preload" as="image" href="/images/hero-cards/fast-response.jpg"/>`) тоже не попадает внутрь #root — он должен быть в `<head>`.
+
+### Шаг 2 — Добавить `suppressHydrationWarning` на `<html>` для класса темы (мягкий fallback)
+
+В `index.html` для `<html lang="ru">` добавлю `suppressHydrationWarning` через мета-патч в SSG (или в самом entry-server) — на случай если recovery-render всё ещё не совпадёт по классу темы.
+
+### Шаг 3 — Защита от потери state в формах (страховка)
+
+В `LeadFormModal.tsx`, `HeroCallbackForm.tsx`, `SimpleCalculator.tsx`, `QuickCallForm.tsx`, `CompactRequestModal.tsx`, `ServiceQuiz.tsx`, `ExitIntentPopup.tsx` обёрну отправку в:
+```ts
+try {
+  // submit
+} finally {
+  setIsLoading(false);  // гарантирует что кнопка не зависнет вечно
+}
+```
+Это уже есть в большинстве файлов, но на всякий случай ревизую все 7 точек отправки и добавлю `finally`-сброс `isLoading` где его нет. Это страховка от любых будущих hydration-проблем.
+
+### Шаг 4 — Удалить устаревший `<meta http-equiv="X-Frame-Options">` из `index.html`
+
+Браузер ругается на эту строку:
+```
+[security] X-Frame-Options may only be set via an HTTP header sent along 
+with a document. It may not be set inside <meta>.
+```
+Сам по себе X-Frame-Options уже отдаётся из nginx как HTTP-заголовок, поэтому meta-fallback не нужен. Удалю строки 11-12 из `index.html` (X-Frame-Options и X-XSS-Protection — оба не работают как meta). `nosniff` оставлю — он валидный в meta.
+
+### Шаг 5 — Очистка legacy в SW (не критично, но раз тут)
+
+`public/sw.js` содержит `data: d.url || '/'` — это правильно, но на проде задеплоена старая версия без `data:`. При следующем деплое (после фикса) SW обновится автоматически.
+
+## Что я НЕ трогаю
+
+- Бэкенд (edge-функции, RLS, БД) — всё работает идеально, доказано прямым curl.
+- nginx.conf — security-заголовки на месте, маршрутизация правильная.
+- `docker-compose.yml` — push-server без проброса портов уже зафиксирован в прошлый раз.
+- Структуру маршрутов и SSG-логику валидации — только точечный фикс инжекции script в #root.
+
+## Ожидаемый результат после фикса
+
+1. Открываете прод → в консоли **нет React error #418**.
+2. Жмёте «Расчёт» → вводите телефон → жмёте «Отправить» → **через 1-2 секунды toast «Заявка отправлена»**, лид появляется в БД, в Telegram прилетает уведомление, в админке в `/admin` он виден.
+3. Админка `/admin/login` → вход → `/admin` (Заявки) — открывается без проблем.
+
+## Тест после деплоя (что вы делаете сами)
+
+```
+1. Открыть https://goruslugimsk.ru/ — F12 → Console — НЕТ ошибок React.
+2. Жмёте «Расчёт» → вводите 9069989888 → «Отправить» → видите toast.
+3. SQL-проверка: новый лид с source=calculator_v2 за последнюю минуту.
+4. Telegram: пришло сообщение «🔔 НОВАЯ ЗАЯВКА».
+5. /admin/login — введите свой email/пароль — попадаете в /admin.
 ```
 
-## Проверка после деплоя
+## Прогноз по времени
 
-```bash
-# 1. Оба контейнера Up, у push-server в колонке PORTS должно быть пусто или только internal
-docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | grep -E 'goruslugimsk|push-server'
+- Правки в коде: 5 файлов, ~20 строк изменений.
+- После моего деплоя в репо вам нужно на сервере сделать `/root/deploy.sh` (он теперь чистый — имена контейнеров не конфликтуют, push-server без хост-портов).
+- Полный цикл: ~3-5 минут после approve.
 
-# 2. Хостовый 3001 остаётся за PM2 (owndev), 5173 — за нашим nginx
-ss -tlnp | grep -E ':3001|:5173'
+## Если после фикса что-то не сработает
 
-# 3. Push API работает через домен (через внутренний proxy)
-curl -s https://goruslugimsk.ru/api/push/vapid-public-key
-# ожидаемо: {"key":"..."}
-
-# 4. Internal-резолв работает (опционально, для отладки)
-docker exec goruslugimsk wget -qO- http://push-server:3001/api/push/vapid-public-key
-```
-
-## Параллельно — вопрос security-headers
-
-В прошлый раз была подозрение что external reverse-proxy (host nginx Dokploy) режет наши `add_header`. После того как push-server поднимется, выполняем сравнение:
-
-```bash
-echo "--- ИЗ КОНТЕЙНЕРА (источник) ---"
-curl -sI http://127.0.0.1:5173/ | grep -iE 'strict-transport|x-frame|x-content|referrer|permissions|cross-origin'
-
-echo "--- ЧЕРЕЗ ДОМЕН (после host nginx) ---"
-curl -sI https://goruslugimsk.ru/ | grep -iE 'strict-transport|x-frame|x-content|referrer|permissions|cross-origin'
-```
-
-Если первый блок показывает все 7 заголовков, а второй — нет/меньше → host nginx (Dokploy) их фильтрует. Тогда отдельным шагом нужно либо:
-- добавить `proxy_pass_header` в host-конфиг Dokploy для нашего сайта;
-- либо включить пропуск заголовков от upstream в Dokploy UI;
-- либо продублировать заголовки на host-уровне.
-
-Это уже отдельная задача после фикса push-server, не смешиваю.
-
-## Прогноз
-
-- Конфликт порта 3001 устраняется навсегда (а не до следующего ребута PM2).
-- Push-сервер остаётся полностью функциональным через домен.
-- Никаких ручных правок nginx, никаких изменений в коде кроме 2 удалённых строк в compose.
-- Следующие деплои `/root/deploy.sh` отрабатывают чисто.
+У меня есть запасной план — обернуть весь client-render в `<App suppressHydrationWarning>` и переключить с `hydrateRoot` на `createRoot` для admin-маршрутов (избежать гидратации там, где нет SSG). Но это вторая итерация, в большинстве случаев шага 1 хватит.
 
