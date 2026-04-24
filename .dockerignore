@@ -4,8 +4,5 @@ node_modules
 *.log
 .lovable
 dist
-.env
-.env.*
-README.md
-*.md
 .github
+README.md
