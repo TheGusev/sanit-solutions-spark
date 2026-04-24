@@ -1,40 +1,38 @@
-## Аварийный откат трёх файлов к рабочему состоянию
+## Add concurrency control to docker-build workflow
 
-Цель — вернуть сайт в стабильное состояние одним заходом, без попыток «починить» что-либо сверху. Никакие другие файлы не трогаю.
+Add a `concurrency` block to `.github/workflows/docker-build.yml` so that when a new build starts, any in-progress build for the same workflow is automatically cancelled. This prevents queue buildup and stale builds blocking new commits.
 
-### Шаг 1. `vite-plugin-ssg.ts` — вернуть последовательный рендер
-- Убрать `CONCURRENCY`, `VERBOSE` и батчевый цикл `Promise.all`.
-- Вернуть классический последовательный `for ... of routes` рендер, как было до правки.
-- Логика самого рендера одной страницы (replaceHeadTags, validateHtml, запись файла, сбор `titleMap`/`descriptionMap`, счётчики) остаётся та же — меняется только обвязка цикла.
-- Это снимает memory spike в Docker-раннере и устраняет `deadline_exceeded` при сборке.
+### Change
 
-### Шаг 2. `src/components/SimpleCalculator.tsx` — вернуть отправку через SDK
-- Убрать функцию `sendDirect` с прямым `fetch('/functions/v1/handle-lead')`, `AbortController`, `cache: "no-store"` и ручной передачей `apikey`/`Authorization`.
-- Вернуть отправку строго через `supabase.functions.invoke("handle-lead", { body: leadData })`.
-- Убрать «фолбэк на SDK» — теперь SDK единственный путь.
-- Нормализацию телефона (`+7XXXXXXXXXX`) и базовые валидации оставить — это безопасно и не влияет на транспорт.
-- Состояния `submitting`/`success`/`error` и UI шагов калькулятора не трогаю.
+In `.github/workflows/docker-build.yml`, insert these 3 lines immediately after the `on:` block (before `env:`):
 
-### Шаг 3. `supabase/functions/handle-lead/index.ts` — вернуть синхронный поток
-- Убрать `EdgeRuntime.waitUntil(backgroundWork)` и обвязку с `@ts-ignore`.
-- Убрать отдельный `pushNotification` с `AbortController`/таймаутом 4с в фоне.
-- Вернуть последовательный/синхронный вызов уведомлений до ответа клиенту: `await sendTelegramNotification(...)`, `await sendLeadToCrm(...)`, и обычный `fetch` на push без фонового запуска.
-- Ответ `{ success: true, lead_id: data.id }` отдаётся после того, как уведомления отработали (как было раньше).
-- CORS-логика через `getCorsHeaders(origin)` и rate-limit остаются без изменений.
+```yaml
+concurrency:
+  group: docker-build
+  cancel-in-progress: true
+```
 
-### Что НЕ делаю
-- Не трогаю `HeroCallbackForm`, `LeadFormModal`, `ServiceQuiz`, никакие SEO-файлы, роутинг, `seoRoutes.ts`, sitemap, sw.js, nginx, Docker.
-- Не добавляю новых «улучшений мобильной отправки» в этом заходе.
-- Не меняю `supabase/config.toml`.
+### Resulting top of file
 
-### После отката
-1. Дождаться, пока пройдёт сборка и деплой.
-2. Проверить отправку с iPhone в режиме инкогнито на `https://goruslugimsk.ru/`.
-3. Если «Сервер не отвечает» ушло — фиксируем это как baseline и только потом обсуждаем точечные мобильные улучшения по одному изменению за раз.
+```yaml
+name: Build and Push Docker Image
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
-### Технические детали (для справки)
-- `vite-plugin-ssg.ts`: цикл превращается обратно в `for (const route of routes) { await renderRoute(route); }`, без `process.env.SSG_CONCURRENCY` и без прогресс-логов раз в 100 страниц.
-- `SimpleCalculator.tsx`: `handleSubmit` вызывает только `supabase.functions.invoke("handle-lead", { body: leadData })`, ошибка SDK → `setFormStatus("error")`.
-- `handle-lead/index.ts`: после `supabase.from("leads").insert(...).select().single()` идёт обычный `await sendTelegramNotification(leadData)`, `await sendLeadToCrm(leadData)`, опциональный `await fetch('https://goruslugimsk.ru/api/push/send', ...)` в try/catch, и только потом `return new Response({ success: true, lead_id })`.
+concurrency:
+  group: docker-build
+  cancel-in-progress: true
 
-Если одобряешь — выполняю откат тремя правками в одном заходе и больше ничего в этой итерации не меняю.
+env:
+  IMAGE_NAME: thegusev/sanit-solutions
+jobs:
+  ...
+```
+
+### Scope
+
+- Only `.github/workflows/docker-build.yml` is modified.
+- No other files touched. No logic, jobs, steps, or env changed.
