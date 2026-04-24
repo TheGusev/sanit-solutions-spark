@@ -1,116 +1,126 @@
 
 
-# 100/100 в OwnDev — финальный план
+# Фикс деплоя — конфликт имени `push-server`
 
-## Решения по уточнениям
+## Что произошло
 
-- **H1 на главной (Hero.tsx):** «**Дезинфекция, дезинсекция, дератизация в Москве и МО**» (54 символа, ≤56 — проходит требование Я.Директ)
-- **Безопасность:** делаю полный набор заголовков на двух уровнях — `nginx.conf` (HTTP-заголовки для браузера/проверок) + `<meta http-equiv>` в `index.html` (фолбэк для краулеров OwnDev, читающих HTML)
+Деплой **не завершился полностью**. Скрипт напечатал «✅ Деплой завершен», но это ложь — он печатает финальную строку безусловно (нет `set -e` после `docker compose up`). Реально упало с ошибкой:
 
-## 12 пунктов аудита — что делаю
-
-### SEO / Контент
-
-**1. Дубликат H1 (+10).** В `index.html` строка 358 — `<h1>` внутри `<noscript>` → меняю на `<p>` с теми же стилями.
-
-**2. H1 длина (+10).** В `Hero.tsx` константы `SEO_H1_TITLE`+`SEO_H1_HIGHLIGHT` сейчас дают 58 симв. Меняю на:
-- `SEO_H1_TITLE` = «Дезинфекция, дезинсекция, дератизация»
-- `SEO_H1_HIGHLIGHT` = «в Москве и МО»
-- Итого 54 симв, начинается с буквы.
-
-**3. Title 78 симв (+5).** Сокращаю до **«Дезинфекция, дезинсекция, дератизация в Москве и МО»** (54 симв) в:
-- `index.html` строка 6 (`<title>`, `og:title`, `twitter:title`)
-- `src/pages/IndexSSR.tsx` строки 27, 33
-
-**4. Тематическая консистентность Я.Директ (+5).** В `IndexSSR.tsx` после `<Hero>` добавляю один `<h2>` «Дезинфекция, дезинсекция и дератизация в Москве и МО» — связывает H1↔title↔H2 в одну тему. Без выдуманных ключевиков.
-
-**5. Один `<img>` без alt (+5).** Прогон по `Hero.tsx`, `HeroBackground.tsx`, `MiniPricing.tsx`, `WhyUsExtended.tsx`, `PricingByArea.tsx` — добавляю описательный alt единственному найденному изображению.
-
-### Schema.org / AI
-
-**6. FAQPage Schema (+10) и hasFaq (+10).** В `FAQ.tsx` функция `generateFAQSchema()` уже написана, но **не вставляется в DOM**. Добавляю через `react-helmet-async` `<Helmet>` внутрь компонента → schema автоматически попадёт в SSG-HTML главной (FAQ уже рендерится в IndexSSR).
-
-**7. BreadcrumbList на главной (+5).** В `index.html` к существующему `@graph` (стр. 55-331) добавляю объект `BreadcrumbList` с одним элементом «Главная». Не трогаю LocalBusiness/Organization/Service.
-
-### Безопасность (полный набор — «вся защита»)
-
-**8. HSTS (+2).** Добавляю в `nginx.conf` + meta-fallback в `index.html`:
-```
-Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+```text
+Error response from daemon: Conflict.
+The container name "/push-server" is already in use by container 8c5bcd39f342...
 ```
 
-**9. X-Frame-Options (+2).** `nginx.conf` + meta:
-```
-X-Frame-Options: SAMEORIGIN
-```
-
-**10. X-Content-Type-Options (+2).** Уже в `_headers`, но прод его не отдаёт. Добавляю в `nginx.conf` + meta:
-```
-X-Content-Type-Options: nosniff
+И следом:
+```text
+Error response from daemon: No such container: goruslugimsk
 ```
 
-**11. Дополнительная защита (поверх аудита, чтобы железно занять 1-е место):**
-- `Referrer-Policy: strict-origin-when-cross-origin` (nginx + meta)
-- `Permissions-Policy: geolocation=(self), microphone=(), camera=(), payment=(), usb=()` (nginx)
-- `X-XSS-Protection: 1; mode=block` (nginx + meta) — legacy, но многие аудиторы плюсуют
-- `Cross-Origin-Opener-Policy: same-origin` (nginx)
+Что это значит:
+1. **Старый контейнер `push-server`** остался от предыдущего ручного запуска (или от другого compose-проекта на этом же сервере). Docker Compose не может пересоздать контейнер с таким же именем.
+2. **Контейнер `goruslugimsk` снесён** при попытке `Recreate`, но новый не поднялся, потому что весь `compose up` отвалился на push-server.
+3. **Сайт сейчас лежит** (старый контейнер удалён, новый не создан) — на проде nginx-прокси отдаёт 502/down.
 
-**CSP осознанно НЕ добавляю** — она не требуется аудитом OwnDev, а малейшая ошибка ломает Я.Метрику/Supabase realtime/карты Яндекса. Лишний риск без выгоды.
+Дополнительный фон:
+- `nginx.service` на хосте — это **внешний reverse-proxy** (Dokploy), не наш контейнер. Он работает, но проксирует в пустоту.
+- Warning `version is obsolete` в `docker-compose.yml` — косметика, не блокирует.
 
-### Twitter card (+2)
+## Причина конфликта (root cause)
 
-**12.** В `index.html` строки 343-346 meta `twitter:card` уже есть. Проблема — stale-кэш прода (от 18 апреля). Снимется автоматически после deploy. Доп. правок не нужно.
+В `docker-compose.yml` явно задано `container_name: push-server`. На сервере этот контейнер был запущен **ранее** другим способом (раньше отдельно через `docker run` или из старого compose-проекта `service-goruslugimsk-6jrp9b`). После переименования compose-проекта в Dokploy старый контейнер «осиротел» — Compose его не видит как «свой» и не удаляет, но имя `/push-server` занято.
+
+`docker compose down` тоже не помогает, потому что Compose работает только со «своими» контейнерами текущего проекта.
+
+## План фикса (3 шага, ~30 секунд на сервере)
+
+### Шаг 1 — Поднять прод немедленно (ручной разовый фикс)
+
+Надо выполнить на сервере одну команду, которая снесёт «осиротевший» push-server и запустит compose заново:
+
+```bash
+docker rm -f push-server goruslugimsk 2>/dev/null; \
+cd /etc/dokploy/applications/service-goruslugimsk-6jrp9b/code && \
+docker compose up -d
+```
+
+Что делает:
+1. Принудительно удаляет оба контейнера если они есть (флаг `-f` — даже работающие; `2>/dev/null` — не ругаться если их нет).
+2. Переходит в директорию compose-проекта Dokploy.
+3. Поднимает заново — теперь имена свободны, оба контейнера стартуют чисто.
+
+После этого сайт поднимется, OwnDev увидит свежий HTML с нашими изменениями (короткий title, FAQPage schema, security headers).
+
+### Шаг 2 — Защитить `deploy.sh` от рецидива
+
+Проблема будет повторяться при каждом deploy если кто-то снова запустит push-server вручную. Правлю `deploy.sh`:
+
+```bash
+#!/bin/bash
+set -e
+
+echo "🔄 Pulling latest changes..."
+git pull origin main
+
+echo "🧹 Cleaning up orphaned containers..."
+docker compose down --remove-orphans 2>/dev/null || true
+docker rm -f push-server goruslugimsk 2>/dev/null || true
+
+echo "🐳 Building and starting container..."
+docker compose up -d --build --remove-orphans
+
+echo "✅ Deployment complete!"
+docker compose ps
+
+# ... остальные curl-проверки без изменений
+```
+
+Изменения:
+- Добавлен `docker compose down --remove-orphans` перед `up` — снимает все контейнеры проекта чисто.
+- Добавлен явный `docker rm -f` для двух именованных контейнеров — страховка от orphaned/manual-запусков.
+- Флаг `--remove-orphans` в `up` — убирает контейнеры, которые больше не описаны в compose-файле.
+- `|| true` на cleanup — не падать если контейнеров нет.
+- `set -e` теперь корректно прервёт скрипт при реальной ошибке (а не покажет ложное «✅»).
+
+### Шаг 3 — Убрать obsolete warning в `docker-compose.yml`
+
+Строка `version: '3.8'` — устаревшая. Современный Docker Compose v2 её игнорирует и ругается. Просто удаляю первую строку. Косметика, но чище логи.
 
 ## Файлы которые правлю
 
 ```text
-index.html                — title 54 симв, <h1>→<p> в noscript, BreadcrumbList в @graph,
-                            meta http-equiv: X-Content-Type, X-Frame, Referrer, X-XSS
-src/pages/IndexSSR.tsx    — title 54 симв, <h2> тематический после Hero
-src/components/Hero.tsx   — SEO_H1_TITLE/HIGHLIGHT → 54 симв
-src/components/FAQ.tsx    — Helmet + JSON-LD из generateFAQSchema()
-src/components/{MiniPricing|HeroBackground|...}.tsx — alt для найденного img
-nginx.conf                — HSTS, X-Frame, X-Content, Referrer, Permissions, X-XSS, COOP
-public/_headers           — синхронизирую с nginx (для CDN-фолбэка)
+deploy.sh           — добавляю cleanup-блок + --remove-orphans + честный set -e
+docker-compose.yml  — удаляю строку `version: '3.8'`
 ```
 
 ## Что НЕ трогаю
 
-- `seoRoutes.ts`, sitemap, маршрутизация (core lockdown)
-- Существующий JSON-LD `@graph` (LocalBusiness/Service/Review) — валиден
-- H1 на других страницах
-- Контент кроме одного `<h2>` после Hero
-- CSP (см. выше — осознанный отказ)
-- Никаких выдуманных ключевиков типа «санитарная обработка»
+- `Dockerfile`, `nginx.conf`, `docker-entrypoint.sh` — работают корректно.
+- Весь предыдущий пакет правок 100/100 (security headers, schema, title) — он уже в репозитории и подхватится при build.
+- Push-server код (`push-server.js`) — без изменений.
+- Системный `nginx.service` (Dokploy) — не наш слой.
 
-## Проверка после deploy
+## После моих правок — последовательность для вас
 
-```bash
-curl -I https://goruslugimsk.ru/
-# ожидаем: HSTS, X-Frame, X-Content, Referrer, Permissions, X-XSS, COOP
-
-curl -s https://goruslugimsk.ru/ | grep -c '<h1'   # 1
-curl -s https://goruslugimsk.ru/ | grep -c 'FAQPage'        # ≥1
-curl -s https://goruslugimsk.ru/ | grep -c 'BreadcrumbList' # ≥1
-```
+1. Я внесу правки в репозиторий (`deploy.sh` + `docker-compose.yml`).
+2. На сервере **один раз** выполнить ручной фикс из Шага 1 (он снесёт orphan и поднимет всё чисто с уже задеплоенным образом):
+   ```bash
+   docker rm -f push-server goruslugimsk 2>/dev/null; \
+   cd /etc/dokploy/applications/service-goruslugimsk-6jrp9b/code && \
+   git pull origin main && \
+   docker compose up -d --build --remove-orphans
+   ```
+3. Проверить:
+   ```bash
+   docker ps | grep -E 'goruslugimsk|push-server'   # оба должны быть Up
+   curl -I https://goruslugimsk.ru/ | grep -E 'HSTS|X-Frame|X-Content'  # видим security headers
+   curl -s https://goruslugimsk.ru/ | grep -c FAQPage     # ≥1
+   curl -s https://goruslugimsk.ru/ | grep -c BreadcrumbList  # ≥1
+   ```
+4. Со следующего раза `/root/deploy.sh` будет работать чисто без ручных команд.
 
 ## Прогноз
 
-```text
-Раздел         До    После    Δ
-─────────────────────────────────
-Безопасность    0  → 100    +100  (HSTS + X-Frame + X-Content + Referrer + Permissions + X-XSS + COOP)
-SEO            79  → 100    +21   (title, H1×1, H1≤56, alt)
-Schema         65  → 100    +35   (FAQPage + BreadcrumbList)
-AI/LLM         85  → 100    +15   (hasFaq)
-Я.Директ       70  →  90    +20   (H1≤56 + единая тема)
-─────────────────────────────────
-Общий:         77  → 99-100
-```
-
-Соседи: arsentadez.ru — 87, borshevikstop.ru — 86. После правок и deploy у нас **99-100/100**, плюс расширенный набор security-заголовков (Referrer/Permissions/COOP/X-XSS), которых нет у конкурентов — отрыв станет недогоняемым.
-
-## После моих правок
-
-Нужен **production deploy** (Coolify), иначе OwnDev и дальше будет видеть HTML от 18 апреля. Сразу после деплоя — повторный прогон через owndev.ru для подтверждения.
+- Сайт поднимется в течение 10-20 секунд после ручного фикса.
+- OwnDev увидит свежий HTML — повторный аудит покажет 99-100/100.
+- Проблема конфликта имён больше не повторится при будущих деплоях.
 
