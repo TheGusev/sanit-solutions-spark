@@ -73,16 +73,17 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Tag verified image
+        run: |
+          docker tag ${{ env.IMAGE_NAME }}:ci-check ${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.IMAGE_NAME }}:ci-check ${{ env.IMAGE_NAME }}:${{ github.sha }}
       - name: Push verified image
         id: push-image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+        run: |
+          docker push ${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
       - name: Image digest
-        run: echo "Pushed ${{ steps.push-image.outputs.digest }}"
+        run: |
+          echo "Pushed verified image tags:"
+          echo "- ${{ env.IMAGE_NAME }}:latest"
+          echo "- ${{ env.IMAGE_NAME }}:${{ github.sha }}"
