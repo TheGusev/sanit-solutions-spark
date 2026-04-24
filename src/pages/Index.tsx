@@ -8,7 +8,6 @@ import SEOHead from "@/components/SEOHead";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MobileQuickCTA from "@/components/MobileQuickCTA";
-import TrustBadge from "@/components/TrustBadge";
 
 // New components for restructured layout
 const MiniPricing = lazy(() => import("@/components/MiniPricing"));
@@ -16,7 +15,6 @@ const WhyUsExtended = lazy(() => import("@/components/WhyUsExtended"));
 const WorkProcess = lazy(() => import("@/components/WorkProcess"));
 const PricingByArea = lazy(() => import("@/components/PricingByArea"));
 const ServiceAreaMap = lazy(() => import("@/components/ServiceAreaMap"));
-const ServiceAreaCollapsible = lazy(() => import("@/components/ServiceAreaCollapsible"));
 const Reviews = lazy(() => import("@/components/Reviews"));
 const WorkGallery = lazy(() => import("@/components/WorkGallery"));
 const FAQ = lazy(() => import("@/components/FAQ"));
