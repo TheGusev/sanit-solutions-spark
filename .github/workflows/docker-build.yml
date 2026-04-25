@@ -38,27 +38,46 @@ jobs:
         run: |
           echo "=== npm run build start $(date -u) ==="
           export NODE_OPTIONS=--max-old-space-size=4096
-          # SSG finishes in ~1-2 min but Node.js hangs after due to open handles.
-          # We use 'set +e' so timeout exit 124 doesn't immediately fail the step.
-          set +e
-          timeout 180 npm run build
-          BUILD_EXIT=$?
-          set -e
-          echo "=== npm run build exit=$BUILD_EXIT $(date -u) ==="
-          # 0   = clean exit
-          # 124 = timeout SIGTERM after SSG completed (expected behavior)
-          if [ $BUILD_EXIT -ne 0 ] && [ $BUILD_EXIT -ne 124 ]; then
-            echo "FATAL: Build failed with exit code $BUILD_EXIT"
-            exit $BUILD_EXIT
-          fi
+
+          # Run in background so we can detect when SSG is done
+          # even if the Node.js process hangs after.
+          npm run build &
+          BUILD_PID=$!
+          echo "Build PID: $BUILD_PID"
+
+          # Wait for SSG to complete by polling for the marker file
+          # vite-plugin-ssg writes files to dist/ and prints 'SSG prerendering complete!'
+          ELAPSED=0
+          MAX_WAIT=600
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            # Check if build process has exited cleanly (exit 0)
+            if ! kill -0 $BUILD_PID 2>/dev/null; then
+              wait $BUILD_PID
+              BEXIT=$?
+              echo "=== Build process exited with code $BEXIT $(date -u) ==="
+              break
+            fi
+            # Check if dist/ has enough HTML files (SSG done writing)
+            COUNT=$(find dist -name "index.html" 2>/dev/null | wc -l)
+            if [ "$COUNT" -ge 500 ]; then
+              echo "=== SSG complete: $COUNT pages detected at ${ELAPSED}s, killing hung process ==="
+              kill $BUILD_PID 2>/dev/null || true
+              sleep 2
+              break
+            fi
+            sleep 5
+            ELAPSED=$((ELAPSED + 5))
+          done
+
           SSG_COUNT=$(find dist -name "index.html" 2>/dev/null | wc -l)
-          echo "SSG pages built: $SSG_COUNT"
+          echo "=== Final SSG count: $SSG_COUNT pages ==="
           du -sh dist 2>/dev/null || echo "dist/ not found"
+
           if [ "$SSG_COUNT" -lt 500 ]; then
             echo "FATAL: only $SSG_COUNT pages generated (threshold: 500)"
             exit 1
           fi
-          echo "=== SSG OK: $SSG_COUNT pages ==="
+          echo "=== SSG OK $(date -u) ==="
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
