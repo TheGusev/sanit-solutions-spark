@@ -525,7 +525,8 @@ export function ssgPlugin(): Plugin {
           console.error(`FATAL: SSG had ${errorCount} rendering errors in CI — build cannot continue`);
           process.exit(1);
         }
-        
+                // Force exit in CI: prevent Node.js event loop hang from open handles (Supabase WS, esbuild workers)
+        if (isCI) process.exit(0);
       } catch (error) {
         console.error('❌ SSG prerendering failed:', error);
         if (isCI) {
