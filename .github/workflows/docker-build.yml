@@ -38,12 +38,13 @@ jobs:
         run: |
           echo "=== npm run build start $(date -u) ==="
           export NODE_OPTIONS=--max-old-space-size=4096
-          # timeout 900s as safety net in case process.exit(0) doesn't fire
-          timeout 900 npm run build
+          # SSG usually finishes in ~1-2 min but process hangs after.
+          # timeout 180 kills the hung process with SIGTERM (exit 124).
+          timeout 180 npm run build
           BUILD_EXIT=$?
           echo "=== npm run build exit=$BUILD_EXIT $(date -u) ==="
-          # exit 124 = timeout killed the process (SIGTERM) — that's OK if dist exists
-          # exit 0   = process.exit(0) fired correctly
+          # exit 0   = process exited cleanly (unlikely but OK)
+          # exit 124 = timeout killed the hung process after SSG completed
           # anything else = real build error
           if [ $BUILD_EXIT -ne 0 ] && [ $BUILD_EXIT -ne 124 ]; then
             echo "Build failed with exit code $BUILD_EXIT"
