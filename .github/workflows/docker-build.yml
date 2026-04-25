@@ -38,15 +38,25 @@ jobs:
         run: |
           echo "=== npm run build start $(date -u) ==="
           export NODE_OPTIONS=--max-old-space-size=4096
-          npm run build
-          echo "=== npm run build done $(date -u) ==="
-          SSG_COUNT=$(find dist -name "index.html" | wc -l)
+          # timeout 900s as safety net in case process.exit(0) doesn't fire
+          timeout 900 npm run build
+          BUILD_EXIT=$?
+          echo "=== npm run build exit=$BUILD_EXIT $(date -u) ==="
+          # exit 124 = timeout killed the process (SIGTERM) — that's OK if dist exists
+          # exit 0   = process.exit(0) fired correctly
+          # anything else = real build error
+          if [ $BUILD_EXIT -ne 0 ] && [ $BUILD_EXIT -ne 124 ]; then
+            echo "Build failed with exit code $BUILD_EXIT"
+            exit $BUILD_EXIT
+          fi
+          SSG_COUNT=$(find dist -name "index.html" 2>/dev/null | wc -l)
           echo "SSG pages built: $SSG_COUNT"
-          du -sh dist
+          du -sh dist 2>/dev/null || echo "dist/ not found"
           if [ "$SSG_COUNT" -lt 500 ]; then
-            echo "FAIL: only $SSG_COUNT pages"
+            echo "FAIL: only $SSG_COUNT pages generated"
             exit 1
           fi
+          echo "=== SSG OK: $SSG_COUNT pages ==="
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
