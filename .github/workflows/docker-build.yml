@@ -38,23 +38,24 @@ jobs:
         run: |
           echo "=== npm run build start $(date -u) ==="
           export NODE_OPTIONS=--max-old-space-size=4096
-          # SSG usually finishes in ~1-2 min but process hangs after.
-          # timeout 180 kills the hung process with SIGTERM (exit 124).
+          # SSG finishes in ~1-2 min but Node.js hangs after due to open handles.
+          # We use 'set +e' so timeout exit 124 doesn't immediately fail the step.
+          set +e
           timeout 180 npm run build
           BUILD_EXIT=$?
+          set -e
           echo "=== npm run build exit=$BUILD_EXIT $(date -u) ==="
-          # exit 0   = process exited cleanly (unlikely but OK)
-          # exit 124 = timeout killed the hung process after SSG completed
-          # anything else = real build error
+          # 0   = clean exit
+          # 124 = timeout SIGTERM after SSG completed (expected behavior)
           if [ $BUILD_EXIT -ne 0 ] && [ $BUILD_EXIT -ne 124 ]; then
-            echo "Build failed with exit code $BUILD_EXIT"
+            echo "FATAL: Build failed with exit code $BUILD_EXIT"
             exit $BUILD_EXIT
           fi
           SSG_COUNT=$(find dist -name "index.html" 2>/dev/null | wc -l)
           echo "SSG pages built: $SSG_COUNT"
           du -sh dist 2>/dev/null || echo "dist/ not found"
           if [ "$SSG_COUNT" -lt 500 ]; then
-            echo "FAIL: only $SSG_COUNT pages generated"
+            echo "FATAL: only $SSG_COUNT pages generated (threshold: 500)"
             exit 1
           fi
           echo "=== SSG OK: $SSG_COUNT pages ==="
