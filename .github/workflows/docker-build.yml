@@ -122,7 +122,15 @@ jobs:
                   echo "OK: $f"
                 fi
               done
-              [ $FAIL -eq 1 ] && exit 1
+              if [ $FAIL -eq 1 ]; then
+                echo "--- DEBUG: contents of rajony/ (first 30) ---"
+                ls -la /usr/share/nginx/html/rajony 2>/dev/null | head -30 || echo "rajony/ directory does not exist"
+                echo "--- DEBUG: contents of moscow-oblast/ (first 30) ---"
+                ls -la /usr/share/nginx/html/moscow-oblast 2>/dev/null | head -30 || echo "moscow-oblast/ directory does not exist"
+                echo "--- DEBUG: top-level dist contents ---"
+                ls -la /usr/share/nginx/html | head -40
+                exit 1
+              fi
               echo "All checks passed"
             '
           echo "=== smoke check done $(date -u) ==="
