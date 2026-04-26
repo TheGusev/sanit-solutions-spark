@@ -107,7 +107,7 @@ const NeighborhoodsOverview = () => {
       <main className="min-h-screen pt-20">
         {/* Breadcrumbs */}
         <div className="container mx-auto px-4 py-4">
-          <Breadcrumbs items={breadcrumbItems} />
+          <Breadcrumbs items={breadcrumbItems} showSchema={false} />
         </div>
 
         {/* Hero */}
