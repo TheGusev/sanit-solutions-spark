@@ -63,6 +63,8 @@ const WorkGallery = () => {
                   loop
                   playsInline
                   preload="none"
+                  aria-label={`${item.title} — ${item.desc}. Видеоотчёт ООО Санитарные Решения`}
+                  title={`${item.title} — ${item.desc}`}
                   onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
                   onMouseLeave={(e) => { e.currentTarget.pause(); e.currentTarget.currentTime = 0; }}
                 />
