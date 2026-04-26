@@ -1,132 +1,78 @@
-## Цель
+# План: устранить замечания мониторинга и аудита owndev.ru
 
-Сборка падает/виснет, и непонятно где. Текущий `docker build` — один большой шаг без промежуточных логов: всё от `npm ci` до nginx-слоя выглядит как один blob. Нужна **пошаговая отладка с таймстампами**, чтобы по логам GitHub Actions можно было точно сказать: «упало на этапе X через Y минут».
+## Корневые причины (доказанные)
 
-## Что делаю
+### 1. Дублирование BreadcrumbList (CRITICAL)
+В файле **`index.html`** (строки 351–362) находится статический `@graph`-узел с типом `BreadcrumbList` и `@id: #breadcrumbs`. Этот блок попадает в `<head>` **каждой** SSG-страницы как часть шаблона.
 
-### 1. `Dockerfile` — разбить на отдельные RUN-шаги с таймингами
+Доказательство (live):
+- `/uslugi/dezinsekciya/` → 2 BreadcrumbList (один из @graph + один от ServicePage)
+- `/uslugi/dezinsekciya/klopy/` → 2 BreadcrumbList (graph + ServicePestPage)
+- `/uslugi/dezinsekciya/ofisov/` → 2 BreadcrumbList (graph + ServiceSubpage)
+- `/moscow-oblast/` → 2 BreadcrumbList (graph + MoscowRegionOverview)
 
-Сейчас всё в одном `RUN npm run build ...`. Разделю на изолированные шаги, каждый с явным эхо `=== STEP N: ... ===` и `date -u`. Если шаг провалится — в логе будет видно конкретный этап и его длительность.
+Это нарушает политику mem://seo/structured-data-integrity-policy («единый источник» BreadcrumbList — компонент `Breadcrumbs.tsx`).
 
-```dockerfile
-FROM node:20-alpine AS builder
-WORKDIR /app
+### 2. Отсутствует canonical на `/uslugi/dezinfekciya-cao/`
+Доказательство (live):
+- `curl https://goruslugimsk.ru/uslugi/dezinfekciya-cao/` возвращает голый SPA-shell (~20 KB), без `<h1>`, с пустым `<title data-rh="true"></title>` и без `<link rel="canonical">`.
+- В `dist/` страница не сгенерирована потому, что **последняя сборка Docker не дошла до конца** (про что отчёт мониторинга и говорит: SSG не отработал → залит SPA-shell).
+- В коде маршрут есть: `seoRoutes.ts` строки 284–293 генерируют все 36 страниц `/uslugi/{dezinfekciya|dezinsekciya|deratizaciya}-{округ}/`. Сама страница `DistrictPage.tsx` корректно ставит canonical через `<Helmet>` (строка 152).
 
-# STEP 1: системные зависимости + информация о среде
-RUN echo "=== STEP 1: env info $(date -u) ===" && \
-    node --version && npm --version && \
-    free -m && df -h /
+Вывод: проблема исчезнет, как только билд успешно отрендерит округа. Дополнительно усилим гарантию: добавим в `validateHtml` SSG-плагина обязательную проверку наличия `<link rel="canonical">` — fail-fast, если canonical отсутствует.
 
-# STEP 2: установка зависимостей (отдельный слой для кэша)
-COPY package*.json ./
-RUN echo "=== STEP 2: npm ci start $(date -u) ===" && \
-    npm ci --legacy-peer-deps --no-audit --no-fund --prefer-offline 2>&1 | tail -50 && \
-    echo "=== STEP 2: npm ci done $(date -u) ===" && \
-    du -sh node_modules
+### 3. Owndev.ru audit (Yandex.Direct Score 70/100, SEO 95/100)
+Из скриншотов:
+- **Единая тематика** (15 б, 0/15) — главная описывает 4 услуги, для Яндекс.Директ-лендинга это считается «многотемной». Это архитектурное ограничение главной — поднимать вес «единой тематики» через инструменты Direct без изменения сути страницы нельзя. **Оставляем как есть** (приоритет SEO выше Direct-лендинг-метрик; главная — хаб услуг).
+- **Готовность заголовка** (15 б, 0/15) — H1 ≤35 символов для рекламного объявления. Текущий H1 главной: `Профессиональная служба СЭС в Москве и области` (47 симв.).
+- **Мультимодальность** (5 б, 0/5) — недостаточно `alt`-подписей у картинок.
 
-# STEP 3: копирование исходников
-COPY . .
-RUN echo "=== STEP 3: source copied $(date -u) ===" && \
-    du -sh /app --exclude=node_modules && \
-    ls -la /app/.env 2>/dev/null && echo ".env present" || echo ".env MISSING"
+## Что меняем
 
-# STEP 4: vite client build (без SSG)
-ENV DOCKER_BUILD=true
-ARG CACHEBUST=1
-ENV NODE_OPTIONS=--max-old-space-size=4096
-RUN echo "=== STEP 4: vite build start $(date -u) ===" && \
-    timeout 600 npm run build 2>&1 | tee /tmp/build.log | tail -100 ; \
-    EXIT=${PIPESTATUS[0]} ; \
-    echo "=== STEP 4: vite build exit=$EXIT $(date -u) ===" ; \
-    if [ $EXIT -ne 0 ]; then \
-      echo "--- last 200 lines of build log ---" ; tail -200 /tmp/build.log ; \
-      exit $EXIT ; \
-    fi
+### A. Убираем дублирующий BreadcrumbList из шаблона
+Файл `index.html`, строки 351–362:
+- Удалить узел `BreadcrumbList` из `@graph` целиком (включая запятую перед ним).
+- BreadcrumbList на главной останется ровно один — из `metadata.ts → generateIndexMetadata()` строки 128–136.
+- На остальных страницах останется ровно один — из соответствующего page-компонента.
 
-# STEP 5: верификация SSG
-RUN echo "=== STEP 5: SSG verification $(date -u) ===" && \
-    SSG_COUNT=$(find /app/dist -name "index.html" | wc -l) && \
-    echo "SSG pages: $SSG_COUNT" && \
-    du -sh /app/dist && \
-    if [ "$SSG_COUNT" -lt 500 ]; then \
-      echo "FAIL: only $SSG_COUNT pages" ; \
-      ls /app/dist/uslugi/ 2>/dev/null | head -20 ; \
-      tail -100 /tmp/build.log ; exit 1 ; \
-    fi
+### B. Жёсткая защита от регрессий в SSG
+Файл `vite-plugin-ssg.ts`, функция `validateHtml`:
+- Добавить проверку: страница должна содержать ровно один `<link rel="canonical">` и ровно один JSON-LD `BreadcrumbList`. Если 0 или ≥2 — `errors.push(...)` и страница не пишется.
+- Это гарантирует, что в будущем подобные регрессии будут падать на сборке (mem://architecture/ssg-fail-fast-policy).
 
-# STEP 6: nginx этап
-FROM nginx:alpine
-RUN echo "=== STEP 6: nginx stage $(date -u) ==="
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh && \
-    echo "=== STEP 6: done, files in /usr/share/nginx/html: $(find /usr/share/nginx/html -name index.html | wc -l) ==="
-EXPOSE 80
-ENTRYPOINT ["/docker-entrypoint.sh"]
-```
+### C. Owndev «Готовность заголовка» — H1 главной ≤35 символов
+Файл `src/lib/metadata.ts`, строка 153:
+- Заменить `h1: 'Профессиональная служба СЭС в Москве и области'` (47 симв.)
+- На `h1: 'СЭС служба в Москве и области'` (29 симв., укладывается в 35).
+- Title и description не трогаем (они и так оптимальны).
 
-### 2. `.github/workflows/docker-build.yml` — добавить диагностику вокруг docker build
+### D. Owndev «Мультимодальность» — alt-атрибуты
+Аудит главной. В `src/components/Hero.tsx`, `HeroBackground.tsx`, `MiniPricing.tsx`, `WorkProcess.tsx`, `Reviews.tsx`, `PestGallery.tsx`, `WorkGallery.tsx`:
+- Пройтись по всем `<img>` и `<SeoImage>` без `alt`/с пустым alt и проставить осмысленные подписи (название услуги/района/процесса). Цель — 100% покрытие изображений на главной.
+- Дополнительно: где есть decorative-картинки (background-эффекты), оставить `alt=""` + `aria-hidden="true"` — это валидно для аудита.
 
-Оборачиваю `docker build` в режим с явным выводом и метриками; ставлю `BuildKit progress=plain`, чтобы каждый RUN-шаг печатался в реальном времени, а не схлопывался.
+### E. Не трогаем
+- Логику Docker/CI — она сейчас стабилизируется отдельно, и наши SSG-проверки (B) только усилят гарантии следующего успешного билда.
+- BreadcrumbList в `Breadcrumbs.tsx`, `metadata.ts`, страницах — все источники корректны и единственны на странице после удаления `@graph`-дубликата.
+- Стабы `public/uslugi/*-{округ}/index.html` — SSG переписывает их в `dist/` после копирования из `public/`. Они безвредны, но удалим папки округов из `public/` (12 + 11 + 13 = 36 директорий стабов), чтобы не было путаницы и конфликтов при отладке.
 
-```yaml
-- name: Pre-build diagnostics
-  run: |
-    echo "=== Runner $(date -u) ==="
-    df -h
-    free -m
-    docker version
-    echo "Build context size:"
-    du -sh . --exclude=.git
-    echo "Top 10 largest dirs:"
-    du -sh */ 2>/dev/null | sort -rh | head -10
+## Файлы под изменение
+1. `index.html` — удалить узел BreadcrumbList из `@graph`.
+2. `vite-plugin-ssg.ts` — добавить fail-fast проверки canonical (=1) и BreadcrumbList (=1) в `validateHtml`.
+3. `src/lib/metadata.ts` — укоротить H1 главной до 29 символов.
+4. `src/components/Hero.tsx`, `Reviews.tsx`, `MiniPricing.tsx`, `WorkProcess.tsx`, `PestGallery.tsx`, `WorkGallery.tsx`, `Header.tsx`, `Certificates.tsx` — заполнить alt у `<img>` где они отсутствуют/пусты.
+5. Удалить директории `public/uslugi/dezinfekciya-*`, `public/uslugi/dezinsekciya-*`, `public/uslugi/deratizaciya-*` (36 устаревших стабов; SSG генерит свежие в `dist/`).
 
-- name: Build image (verbose)
-  env:
-    DOCKER_BUILDKIT: 1
-    BUILDKIT_PROGRESS: plain
-  run: |
-    set -o pipefail
-    START=$(date +%s)
-    docker build \
-      --progress=plain \
-      --build-arg CACHEBUST=${{ github.sha }} \
-      -t ${{ env.IMAGE_NAME }}:${{ github.sha }} \
-      -t ${{ env.IMAGE_NAME }}:latest \
-      . 2>&1 | ts '[%H:%M:%S]' || true
-    EXIT=${PIPESTATUS[0]}
-    END=$(date +%s)
-    echo "=== Build finished: exit=$EXIT, duration=$((END-START))s ==="
-    [ $EXIT -ne 0 ] && exit $EXIT
-    docker images ${{ env.IMAGE_NAME }}
+## Ожидаемый результат
+- `/uslugi/dezinsekciya/` → 1 BreadcrumbList ✓
+- `/uslugi/dezinsekciya/klopy/` → 1 BreadcrumbList ✓
+- `/uslugi/dezinsekciya/ofisov/` → 1 BreadcrumbList ✓
+- `/moscow-oblast/` → 1 BreadcrumbList ✓
+- `/uslugi/dezinfekciya-cao/` → canonical на месте (после успешного билда; новый guard в SSG предотвратит регрессию)
+- Owndev SEO Score: 95 → 100 (мультимодальность +5)
+- Owndev Direct Score: 70 → 85 (готовность заголовка +15; «единая тематика» — архитектурно оставляем 0)
 
-- name: Post-build diagnostics
-  if: always()
-  run: |
-    df -h
-    docker system df
-```
-
-(`ts` ставит таймстамп на каждой строке; пакет `moreutils` есть в ubuntu-latest.)
-
-Smoke check и push остаются как есть — они не виноваты, проблема до них не доходит.
-
-## Что это даст
-
-После следующего запуска в логах будет видно:
-
-- **Если виснет npm ci** — последняя строка `=== STEP 2: npm ci start ...`, дальше тишина → проблема в registry/сети npm.
-- **Если виснет vite build** — `=== STEP 4: vite build start ...` без `=== STEP 4: ... done`. Таймаут 600 с убьёт процесс и выведет 200 строк лога.
-- **Если виснет SSG** — `=== STEP 4: ...` идёт, но не завершается; в build.log будет видно последнюю отрендеренную страницу.
-- **Если виснет на копировании в nginx-слой** — STEP 5 завершён, STEP 6 не начинается → проблема в самом docker daemon/диске раннера.
-- **Если виснет на push** — все STEP'ы builder'а закрылись, висит `docker push` → проблема сети до Docker Hub.
-
-В каждом сценарии у нас будет конкретная точка отказа и тайминг, а не «висит 12 часов».
-
-## Файлы
-
-- `Dockerfile` — переписать с пронумерованными STEP'ами, таймстампами и `timeout 600` на vite build.
-- `.github/workflows/docker-build.yml` — добавить шаги `Pre-build diagnostics`, `Post-build diagnostics`, обернуть `docker build` в `ts` + `progress=plain`.
-
-Никакой логики SSG, маршрутов, фронтенда не трогаю.
+## Технические детали (для разработчика)
+- В `validateHtml` использовать regex: `(html.match(/"@type":\s*"BreadcrumbList"/g) || []).length` и `(html.match(/<link[^>]+rel="canonical"/gi) || []).length`. Оба должны быть равны 1, иначе `errors.push(...)` и страница не пишется (SSG прервётся в CI).
+- Удаление `BreadcrumbList` из `index.html`: убрать строки 351–362 + запятую в конце 350-й (после `}`). Получится валидный JSON.
+- H1 не влияет на Title/Description SEO; влияет только на in-page `<h1>` и Direct-аудит.
