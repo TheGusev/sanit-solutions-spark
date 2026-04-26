@@ -315,7 +315,8 @@ export function ssgPlugin(): Plugin {
         let warningCount = 0;
         const titleMap = new Map<string, string[]>();
         const descriptionMap = new Map<string, string[]>();
-        
+        const failedRoutes: Array<{ path: string; outputPath: string; errors: string[] }> = [];
+
         console.log(`[SSG:5/5] Rendering ${routes.length} pages...\n`);
 
         for (const route of routes as SSGRoute[]) {
@@ -371,8 +372,9 @@ export function ssgPlugin(): Plugin {
             const validation = validateHtml(html, route.path);
 
             if (!validation.valid) {
-              console.error(`❌ ${route.path}: Validation errors:`);
+              console.error(`❌ ${route.path} (→ ${route.outputPath}): Validation errors:`);
               validation.errors.forEach(err => console.error(`   - ${err}`));
+              failedRoutes.push({ path: route.path, outputPath: route.outputPath, errors: [...validation.errors] });
               errorCount++;
               continue;
             }
@@ -528,6 +530,13 @@ export function ssgPlugin(): Plugin {
         console.log(`   🔗 Dead links: ${deadLinks.length}`);
         if (duplicateCount > 0) {
           console.log(`   📋 Duplicate titles/descriptions: ${duplicateCount}`);
+        }
+        if (failedRoutes.length > 0) {
+          console.error(`\n❌ Failed routes (first 20 of ${failedRoutes.length}):`);
+          failedRoutes.slice(0, 20).forEach(r => {
+            console.error(`   ${r.path} → ${r.outputPath}`);
+            r.errors.forEach(e => console.error(`      • ${e}`));
+          });
         }
         console.log('');
         

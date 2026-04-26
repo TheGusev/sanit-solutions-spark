@@ -1,78 +1,70 @@
-# План: устранить замечания мониторинга и аудита owndev.ru
+Проблема подтверждена по скриншоту GitHub Actions: сборка не упала на Docker build и не зависла. Она дошла до Smoke check и упала из-за отсутствующих файлов:
 
-## Корневые причины (доказанные)
+```text
+Pages in image: 1143
+OK: uslugi/dezinsekciya/klopy/index.html
+OK: uslugi/dezinsekciya/blohi/index.html
+OK: uslugi/deratizaciya/krysy/index.html
+OK: uslugi/dezinfekciya/kvartir/index.html
+MISSING: rajony/arbat/index.html
+OK: moscow-oblast/khimki/index.html
+OK: blog/klopy-v-kvartire/index.html
+OK: sluzhba-dezinsekcii/index.html
+MISSING: rajony/maryino/index.html
+Error: Process completed with exit code 1
+```
 
-### 1. Дублирование BreadcrumbList (CRITICAL)
-В файле **`index.html`** (строки 351–362) находится статический `@graph`-узел с типом `BreadcrumbList` и `@id: #breadcrumbs`. Этот блок попадает в `<head>` **каждой** SSG-страницы как часть шаблона.
+То есть текущая причина красной сборки — не Docker, не cache, не provenance, а мой smoke-check, который проверяет страницы `/rajony/arbat/` и `/rajony/maryino/`, но они не попали в `dist`, хотя общий SSG сгенерировал 1143 страницы.
 
-Доказательство (live):
-- `/uslugi/dezinsekciya/` → 2 BreadcrumbList (один из @graph + один от ServicePage)
-- `/uslugi/dezinsekciya/klopy/` → 2 BreadcrumbList (graph + ServicePestPage)
-- `/uslugi/dezinsekciya/ofisov/` → 2 BreadcrumbList (graph + ServiceSubpage)
-- `/moscow-oblast/` → 2 BreadcrumbList (graph + MoscowRegionOverview)
+Что, скорее всего, произошло: после добавления fail-fast проверки на `BreadcrumbList` страницы `/rajony/*` стали не записываться, потому что `NeighborhoodPage.tsx` генерирует BreadcrumbList дважды:
 
-Это нарушает политику mem://seo/structured-data-integrity-policy («единый источник» BreadcrumbList — компонент `Breadcrumbs.tsx`).
+1. В `<Helmet>` через `generateBreadcrumbLD(...)`.
+2. В визуальном компоненте `<Breadcrumbs items={breadcrumbItems} />`, где `showSchema` по умолчанию `true`.
 
-### 2. Отсутствует canonical на `/uslugi/dezinfekciya-cao/`
-Доказательство (live):
-- `curl https://goruslugimsk.ru/uslugi/dezinfekciya-cao/` возвращает голый SPA-shell (~20 KB), без `<h1>`, с пустым `<title data-rh="true"></title>` и без `<link rel="canonical">`.
-- В `dist/` страница не сгенерирована потому, что **последняя сборка Docker не дошла до конца** (про что отчёт мониторинга и говорит: SSG не отработал → залит SPA-shell).
-- В коде маршрут есть: `seoRoutes.ts` строки 284–293 генерируют все 36 страниц `/uslugi/{dezinfekciya|dezinsekciya|deratizaciya}-{округ}/`. Сама страница `DistrictPage.tsx` корректно ставит canonical через `<Helmet>` (строка 152).
+Из-за этого `vite-plugin-ssg.ts` считает страницу ошибочной и пропускает запись файла. Smoke check затем честно ловит отсутствие `rajony/arbat/index.html` и `rajony/maryino/index.html`.
 
-Вывод: проблема исчезнет, как только билд успешно отрендерит округа. Дополнительно усилим гарантию: добавим в `validateHtml` SSG-плагина обязательную проверку наличия `<link rel="canonical">` — fail-fast, если canonical отсутствует.
+## План исправления
 
-### 3. Owndev.ru audit (Yandex.Direct Score 70/100, SEO 95/100)
-Из скриншотов:
-- **Единая тематика** (15 б, 0/15) — главная описывает 4 услуги, для Яндекс.Директ-лендинга это считается «многотемной». Это архитектурное ограничение главной — поднимать вес «единой тематики» через инструменты Direct без изменения сути страницы нельзя. **Оставляем как есть** (приоритет SEO выше Direct-лендинг-метрик; главная — хаб услуг).
-- **Готовность заголовка** (15 б, 0/15) — H1 ≤35 символов для рекламного объявления. Текущий H1 главной: `Профессиональная служба СЭС в Москве и области` (47 симв.).
-- **Мультимодальность** (5 б, 0/5) — недостаточно `alt`-подписей у картинок.
+1. Исправить дубли BreadcrumbList на страницах районов:
+   - В `src/pages/NeighborhoodPage.tsx` оставить JSON-LD BreadcrumbList в `<Helmet>` как основной источник.
+   - Для визуальных хлебных крошек заменить:
+     ```tsx
+     <Breadcrumbs items={breadcrumbItems} />
+     ```
+     на:
+     ```tsx
+     <Breadcrumbs items={breadcrumbItems} showSchema={false} />
+     ```
+   - Это должно вернуть генерацию `dist/rajony/arbat/index.html` и `dist/rajony/maryino/index.html`.
 
-## Что меняем
+2. Проверить другие страницы, где может быть такая же двойная генерация:
+   - `NeighborhoodsOverview.tsx`: сейчас есть `breadcrumbSchema` в `<Helmet>` и `<Breadcrumbs />` с `showSchema=true`; нужно сделать визуальные крошки `showSchema={false}`.
+   - Страницы, где JSON-LD уже приходит через `SEOHead`/`metadata.schema`, должны использовать `Breadcrumbs showSchema={false}`.
+   - Страницы, где отдельного BreadcrumbList нет, могут продолжать использовать `Breadcrumbs` как единственный источник схемы.
 
-### A. Убираем дублирующий BreadcrumbList из шаблона
-Файл `index.html`, строки 351–362:
-- Удалить узел `BreadcrumbList` из `@graph` целиком (включая запятую перед ним).
-- BreadcrumbList на главной останется ровно один — из `metadata.ts → generateIndexMetadata()` строки 128–136.
-- На остальных страницах останется ровно один — из соответствующего page-компонента.
+3. Усилить SSG-логи, чтобы больше не гадать:
+   - В `vite-plugin-ssg.ts` при `validation.errors` печатать не только ошибку, но и `route.outputPath`.
+   - В конце SSG печатать первые 20 failed routes.
+   - Это позволит сразу видеть, какие страницы не были записаны до smoke-check.
 
-### B. Жёсткая защита от регрессий в SSG
-Файл `vite-plugin-ssg.ts`, функция `validateHtml`:
-- Добавить проверку: страница должна содержать ровно один `<link rel="canonical">` и ровно один JSON-LD `BreadcrumbList`. Если 0 или ≥2 — `errors.push(...)` и страница не пишется.
-- Это гарантирует, что в будущем подобные регрессии будут падать на сборке (mem://architecture/ssg-fail-fast-policy).
+4. Сделать smoke-check точнее:
+   - Оставить проверку критичных страниц, включая `/rajony/arbat/` и `/rajony/maryino/`, потому что она сейчас правильно нашла регрессию.
+   - Добавить перед проверкой вывод дерева `rajony/` в контейнере при отсутствии файла, например `ls -la /usr/share/nginx/html/rajony | head`, чтобы в логе было видно: не создана вся ветка или только конкретные районы.
 
-### C. Owndev «Готовность заголовка» — H1 главной ≤35 символов
-Файл `src/lib/metadata.ts`, строка 153:
-- Заменить `h1: 'Профессиональная служба СЭС в Москве и области'` (47 симв.)
-- На `h1: 'СЭС служба в Москве и области'` (29 симв., укладывается в 35).
-- Title и description не трогаем (они и так оптимальны).
+5. После правок запустить локальную проверку сборки:
+   - `npm run build`
+   - проверить наличие:
+     ```text
+     dist/rajony/arbat/index.html
+     dist/rajony/maryino/index.html
+     dist/moscow-oblast/khimki/index.html
+     ```
+   - проверить, что на `/rajony/arbat/` и `/rajony/maryino/` ровно один `BreadcrumbList` и ровно один canonical.
 
-### D. Owndev «Мультимодальность» — alt-атрибуты
-Аудит главной. В `src/components/Hero.tsx`, `HeroBackground.tsx`, `MiniPricing.tsx`, `WorkProcess.tsx`, `Reviews.tsx`, `PestGallery.tsx`, `WorkGallery.tsx`:
-- Пройтись по всем `<img>` и `<SeoImage>` без `alt`/с пустым alt и проставить осмысленные подписи (название услуги/района/процесса). Цель — 100% покрытие изображений на главной.
-- Дополнительно: где есть decorative-картинки (background-эффекты), оставить `alt=""` + `aria-hidden="true"` — это валидно для аудита.
+6. Если локальная сборка подтвердит исправление — оставить Dockerfile как есть:
+   - текущий Dockerfile правильный для этой стадии: он только копирует готовый `dist/`, без `npm run build` внутри Docker.
+   - текущая красная сборка уже доказала, что образ собирается, а падает именно smoke-check из-за отсутствующих SSG-файлов.
 
-### E. Не трогаем
-- Логику Docker/CI — она сейчас стабилизируется отдельно, и наши SSG-проверки (B) только усилят гарантии следующего успешного билда.
-- BreadcrumbList в `Breadcrumbs.tsx`, `metadata.ts`, страницах — все источники корректны и единственны на странице после удаления `@graph`-дубликата.
-- Стабы `public/uslugi/*-{округ}/index.html` — SSG переписывает их в `dist/` после копирования из `public/`. Они безвредны, но удалим папки округов из `public/` (12 + 11 + 13 = 36 директорий стабов), чтобы не было путаницы и конфликтов при отладке.
+## Технический вывод
 
-## Файлы под изменение
-1. `index.html` — удалить узел BreadcrumbList из `@graph`.
-2. `vite-plugin-ssg.ts` — добавить fail-fast проверки canonical (=1) и BreadcrumbList (=1) в `validateHtml`.
-3. `src/lib/metadata.ts` — укоротить H1 главной до 29 символов.
-4. `src/components/Hero.tsx`, `Reviews.tsx`, `MiniPricing.tsx`, `WorkProcess.tsx`, `PestGallery.tsx`, `WorkGallery.tsx`, `Header.tsx`, `Certificates.tsx` — заполнить alt у `<img>` где они отсутствуют/пусты.
-5. Удалить директории `public/uslugi/dezinfekciya-*`, `public/uslugi/dezinsekciya-*`, `public/uslugi/deratizaciya-*` (36 устаревших стабов; SSG генерит свежие в `dist/`).
-
-## Ожидаемый результат
-- `/uslugi/dezinsekciya/` → 1 BreadcrumbList ✓
-- `/uslugi/dezinsekciya/klopy/` → 1 BreadcrumbList ✓
-- `/uslugi/dezinsekciya/ofisov/` → 1 BreadcrumbList ✓
-- `/moscow-oblast/` → 1 BreadcrumbList ✓
-- `/uslugi/dezinfekciya-cao/` → canonical на месте (после успешного билда; новый guard в SSG предотвратит регрессию)
-- Owndev SEO Score: 95 → 100 (мультимодальность +5)
-- Owndev Direct Score: 70 → 85 (готовность заголовка +15; «единая тематика» — архитектурно оставляем 0)
-
-## Технические детали (для разработчика)
-- В `validateHtml` использовать regex: `(html.match(/"@type":\s*"BreadcrumbList"/g) || []).length` и `(html.match(/<link[^>]+rel="canonical"/gi) || []).length`. Оба должны быть равны 1, иначе `errors.push(...)` и страница не пишется (SSG прервётся в CI).
-- Удаление `BreadcrumbList` из `index.html`: убрать строки 351–362 + запятую в конце 350-й (после `}`). Получится валидный JSON.
-- H1 не влияет на Title/Description SEO; влияет только на in-page `<h1>` и Direct-аудит.
+Причина текущего падения доказана логом: `MISSING: rajony/arbat/index.html` и `MISSING: rajony/maryino/index.html` в smoke-check. Причина отсутствия этих файлов в коде — конфликт новой fail-fast проверки `BreadcrumbList` с двойной генерацией хлебных крошек на страницах районов. Нужно не ослаблять smoke-check, а исправить источник дублей и добавить более явный отчет failed routes в SSG.
