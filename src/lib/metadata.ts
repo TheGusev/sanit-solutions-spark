@@ -150,7 +150,7 @@ export function generateIndexMetadata(): PageMetadata {
   return validateAndFormatMetadata({
         title: 'Дезинфекция и дератизация в Москве — от 1000₽ | Санитарные Решения',
     description: 'СЭС служба в Москве: дезинфекция, дезинсекция, дератизация. Лицензия Роспотребнадзора. Гарантия до 3 лет. Выезд за 15 минут.',
-    h1: 'Профессиональная служба СЭС в Москве и области',
+    h1: 'СЭС служба в Москве и области',
     canonical: 'https://goruslugimsk.ru/',
     ogImage: 'https://goruslugimsk.ru/og-image.jpg',
     keywords: ['дезинфекция москва', 'дезинсекция москва', 'дератизация москва', 'сэс москва'],
