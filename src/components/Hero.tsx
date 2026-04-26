@@ -141,7 +141,7 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
                   <div className="relative overflow-hidden bg-card rounded-xl shadow-sm hover-lift">
                     <img 
                       src={bg}
-                      alt={card.title}
+                      alt={`${card.title}: ${card.desc}. Дезинфекция, дезинсекция, дератизация в Москве — ООО Санитарные Решения`}
                       width={400}
                       height={300}
                       className="absolute inset-0 w-full h-full object-cover"
