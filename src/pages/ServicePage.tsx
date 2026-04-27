@@ -76,9 +76,7 @@ const ServicePage = () => {
     
     if (district) {
       return (
-        <Suspense fallback={<PageLoader />}>
-          <DistrictPage districtId={districtId} serviceType={servicePrefix as 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya'} />
-        </Suspense>
+        <DistrictPage districtId={districtId} serviceType={servicePrefix as 'dezinfekciya' | 'dezinsekciya' | 'deratizaciya'} />
       );
     }
   }
