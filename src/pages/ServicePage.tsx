@@ -50,8 +50,10 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import { SERVICE_GALLERY, GALLERY_SUBTITLES } from "@/data/serviceGallery";
 import { getServicePriceMap, getServicePriceStepIndex } from "@/data/quizPriceMap";
 
-// Ленивая загрузка DistrictPage для избежания циклических зависимостей
-const DistrictPage = lazy(() => import("./DistrictPage"));
+// Синхронный импорт DistrictPage — критично для SSR/SSG: lazy + Suspense
+// приводит к тому, что Helmet (canonical, title) не успевает собраться синхронно
+// и SSG fail-fast валидатор отбрасывает 36 окружных страниц как «Missing canonical».
+import DistrictPage from "./DistrictPage";
 
 const ServicePage = () => {
   const { slug } = useParams<{ slug: string }>();
