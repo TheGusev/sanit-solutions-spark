@@ -25,9 +25,10 @@ interface HeroProps {
   onCalculatorClick?: () => void;
 }
 
-// ⚠️ SEO: H1 фиксирован для стабильности индексации (≤56 симв для Я.Директа)
-const SEO_H1_TITLE = "Дезинфекция, дезинсекция, дератизация";
-const SEO_H1_HIGHLIGHT = "в Москве и МО";
+// ⚠️ SEO: H1 короткий (≤56 симв) и готов для рекламных заголовков Я.Директа.
+// Полная триада ключей раскрывается в видимых H2 (MiniPricing, WhyUsExtended) и subtitle ниже.
+const SEO_H1_TITLE = "Дезинфекция и дератизация";
+const SEO_H1_HIGHLIGHT = "в Москве";
 
 const Hero = ({ onCalculatorClick }: HeroProps) => {
   const { context } = useTraffic();
@@ -114,17 +115,31 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
             {copy.subtitle || "Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 3 лет"}
           </p>
 
-          <div className="flex justify-center">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            <Button 
+              onClick={() => {
+                trackGoal('hero_lead_cta');
+                if (typeof document !== 'undefined') {
+                  const el = document.getElementById('hero-callback') || document.getElementById('calculator');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              size="lg"
+              className="primary bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg px-8 py-6 h-auto whitespace-normal"
+            >
+              Оставить заявку
+            </Button>
             <Button 
               onClick={() => {
                 trackGoal('calc_open');
                 handleCalculatorClick();
               }}
               size="lg"
-              className="gradient-accent hover:opacity-90 text-accent-foreground font-bold text-lg px-8 py-6 h-auto whitespace-normal"
+              variant="outline"
+              className="font-bold text-lg px-8 py-6 h-auto whitespace-normal"
             >
               <Calculator className="w-5 h-5 mr-2 flex-shrink-0" />
-              Заказать обработку и рассчитать стоимость
+              Рассчитать стоимость
             </Button>
           </div>
 

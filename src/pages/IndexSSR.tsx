@@ -29,11 +29,20 @@ const IndexSSR = () => {
         <meta name="keywords" content="дезинфекция, дезинсекция, дератизация, Москва, МО, уничтожение тараканов, уничтожение клопов, СЭС, борьба с грызунами" />
         <link rel="canonical" href="https://goruslugimsk.ru/" />
         <meta name="robots" content="index, follow" />
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta httpEquiv="X-Frame-Options" content="SAMEORIGIN" />
+        <meta httpEquiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload" />
         <meta property="og:title" content="Дезинфекция, дезинсекция, дератизация в Москве и МО" />
         <meta property="og:description" content="СЭС служба в Москве: дезинфекция, дезинсекция, дератизация. Лицензия Роспотребнадзора. Гарантия до 3 лет." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://goruslugimsk.ru/" />
         <meta property="og:image" content="https://goruslugimsk.ru/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@goruslugimsk" />
+        <meta name="twitter:title" content="Дезинфекция, дезинсекция, дератизация в Москве и МО" />
+        <meta name="twitter:description" content="СЭС служба в Москве: дезинфекция, дезинсекция, дератизация. Гарантия до 3 лет." />
+        <meta name="twitter:image" content="https://goruslugimsk.ru/og-image.jpg" />
+        <meta name="twitter:image:alt" content="Дезинфекция, дезинсекция и дератизация в Москве" />
         <link rel="alternate" hrefLang="ru" href="https://goruslugimsk.ru/" />
         <link rel="alternate" hrefLang="x-default" href="https://goruslugimsk.ru/" />
       </Helmet>

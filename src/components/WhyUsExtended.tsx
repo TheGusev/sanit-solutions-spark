@@ -56,8 +56,7 @@ const WhyUsExtended = () => {
       <div className="container mx-auto px-4">
         <SectionHeading
           label="ПОЧЕМУ МЫ"
-          title="Профессиональный подход к"
-          titleHighlight="каждому объекту"
+          title="Почему выбирают нашу СЭС службу для дезинфекции, дезинсекции и дератизации"
           subtitle="Работаем по стандартам, которые гарантируют результат и безопасность"
         />
 
