@@ -35,7 +35,7 @@ const MiniPricing = ({ citySlug }: { citySlug?: string }) => {
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading
           label="НАШИ УСЛУГИ"
-          title="Основные услуги"
+          title="Дезинфекция, дезинсекция и дератизация — цены в Москве и МО"
           subtitle="Профессиональная санитарная обработка любых объектов"
           className="text-white [&_p]:text-white/80 [&_span]:text-white/60"
         />
