@@ -6,8 +6,11 @@
     <title>Дезинфекция, дезинсекция, дератизация в Москве и МО</title>
     <meta name="description" content="Профессиональная СЭС служба в Москве • Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 3 лет • +7 (906) 998-98-88" />
 
-    <!-- Security headers (meta-fallback для краулеров) -->
+    <!-- Security headers (meta-fallback для краулеров и сканеров) -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <!-- Pre-hydration theme script: must run BEFORE React hydration to avoid mismatch.
@@ -239,6 +242,18 @@
           }
         },
         {
+          "@type": "BreadcrumbList",
+          "@id": "https://goruslugimsk.ru/#breadcrumbs",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Главная",
+              "item": "https://goruslugimsk.ru/"
+            }
+          ]
+        },
+        {
           "@type": "Service",
           "@id": "https://goruslugimsk.ru/uslugi/dezinfekciya#service",
           "name": "Дезинфекция помещений",
@@ -363,9 +378,12 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@goruslugimsk" />
+    <meta name="twitter:creator" content="@goruslugimsk" />
     <meta name="twitter:title" content="Дезинфекция, дезинсекция, дератизация в Москве и МО" />
     <meta name="twitter:description" content="Профессиональная СЭС служба в Москве ⚡ Дезинфекция, дезинсекция, дератизация ✅ Гарантия до 3 лет" />
     <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/uFFBSErXpLgk4mRuTAApiupSL4k2/social-images/social-1764192911016-photo_2025-11-11_19-21-13.jpg" />
+    <meta name="twitter:image:alt" content="Дезинфекция, дезинсекция и дератизация в Москве — ООО Санитарные Решения" />
 
     <link rel="icon" type="image/x-icon" href="https://storage.googleapis.com/gpt-engineer-file-uploads/uFFBSErXpLgk4mRuTAApiupSL4k2/uploads/1764192924993-photo_2025-11-11_19-21-13.jpg">
     <link rel="manifest" href="/manifest.json">
