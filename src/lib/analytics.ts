@@ -175,7 +175,7 @@ export function trackGoal(goalName: string, params?: Record<string, any>): void 
   
   // Составная цель all_conversions — срабатывает при любой конверсии
   const ALL_CONV_GOALS = new Set([
-    'final_cta_call', 'final_cta_calculator', 'calc_open',
+    'final_cta_call', 'calc_open',
     'calc_interact', 'calc_price_view', 'service_sticky_call',
     'calc_calculate', 'lead_submit', 'hero_callback_submit', 'phone_click',
     'telegram_click', 'messenger_click'
