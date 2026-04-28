@@ -538,6 +538,43 @@ if (imgIssues === 0) {
 }
 
 // ══════════════════════════════════════════════════════════════
+// БЛОК 9.5: OwnDev / GEO-AUDIT КРИТЕРИИ ДЛЯ ГЛАВНОЙ
+// ══════════════════════════════════════════════════════════════
+header(95, 'OwnDev КРИТЕРИИ (HOMEPAGE)');
+
+if (hasDist && fs.existsSync('dist/index.html')) {
+  const home = fs.readFileSync('dist/index.html', 'utf-8');
+
+  const ownDevChecks = [
+    { needle: 'twitter:card', desc: 'twitter:card meta' },
+    { needle: '"@type":"BreadcrumbList"', desc: 'BreadcrumbList JSON-LD', alt: '"@type": "BreadcrumbList"' },
+    { needle: 'X-Content-Type-Options', desc: 'X-Content-Type-Options meta' },
+    { needle: 'X-Frame-Options', desc: 'X-Frame-Options meta' },
+    { needle: 'Strict-Transport-Security', desc: 'HSTS meta' },
+    { needle: 'Оставить заявку', desc: 'CTA "Оставить заявку" в первом экране' },
+  ];
+
+  for (const c of ownDevChecks) {
+    if (home.includes(c.needle) || (c.alt && home.includes(c.alt))) {
+      PASS(`[index.html] ${c.desc}`);
+    } else {
+      FAIL(`[index.html] не найдено: ${c.desc}`);
+    }
+  }
+
+  // H1 length check
+  const h1Match = home.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+  if (h1Match) {
+    const h1Text = h1Match[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    if (h1Text.length <= 56) {
+      PASS(`[index.html] H1 длина ${h1Text.length} ≤ 56 (готов для Я.Директа)`);
+    } else {
+      FAIL(`[index.html] H1 длина ${h1Text.length} > 56 — не готов для Я.Директа: "${h1Text}"`);
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
 // БЛОК 10: ИТОГОВЫЙ СЧЁТ
 // ══════════════════════════════════════════════════════════════
 header(10, 'ИТОГОВЫЙ СЧЁТ');
