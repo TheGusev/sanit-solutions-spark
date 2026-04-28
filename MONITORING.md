@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 27.04.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
+**Дата:** 28.04.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
 
 ---
 
@@ -23,9 +23,7 @@
 
 | Severity | Check | Problem | Impact | Action |
 |---|---|---|---|---|
-| CRITICAL | Representative | moscow_district (/uslugi/dezinfekciya-cao/) → HTTP 404 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
 | CRITICAL | Indexability | /blog/klopy-v-kvartire/: должен индексироваться, но noindex | Страница выпадет из индекса | Снять noindex |
-| WARNING | Sync | Sample-50: 5 URL ≠ 200 (10%) | Несколько страниц недоступны | Проверить дельту seoRoutes.ts vs deployed build |
 
 ---
 
@@ -33,12 +31,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 719 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 733 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 662 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 805 мс | — |
-| /blog/ | ✅ 200 | 731 мс | — |
-| /contacts/ | ✅ 200 | 536 мс | — |
+| / | ✅ 200 | 1301 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 1180 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 857 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 1195 мс | — |
+| /blog/ | ✅ 200 | 1247 мс | — |
+| /contacts/ | ✅ 200 | 661 мс | — |
 
 ---
 
@@ -72,7 +70,7 @@
 |---|---|---|
 | seoRoutes → sitemap | ✅ | Compile-time vs public sitemap |
 | sitemap → seoRoutes | ⚠️ 868 orphan | Допустимы NCH/aux URL |
-| Sample HTTP 200 | ❌ 5/50 | Детерминистическая выборка (50) |
+| Sample HTTP 200 | ✅ | Детерминистическая выборка (50) |
 | Sample canonical match | ✅ | Первые 10 из выборки |
 
 ---
@@ -85,7 +83,7 @@
 | service_hub | `/uslugi/dezinsekciya/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | pest_page | `/uslugi/dezinsekciya/klopy/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | object_page | `/uslugi/dezinsekciya/ofisov/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| moscow_district | `/uslugi/dezinfekciya-cao/` | 404 | — | — | — | ✅ | ❌ FAIL |
+| moscow_district | `/uslugi/dezinfekciya-cao/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | mo_overview | `/moscow-oblast/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | mo_city | `/moscow-oblast/podolsk/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | mole_city | `/uslugi/borba-s-krotami/khimki/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
@@ -109,9 +107,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 697 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 1073 мс | Порог: 3000 мс |
 | Largest HTML sample | 132.2 KB | Из representative audit |
-| SSL сертификат | ✅ 21.07.2026 | 85 дн. до истечения |
+| SSL сертификат | ✅ 21.07.2026 | 84 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
 | Bundle size | unavailable | Не измеряется в runtime-мониторе |
 
@@ -127,10 +125,10 @@
 | district URLs | 131 | 131 | 0 |
 | MO city URLs | 71 | 71 | 0 |
 | mole city URLs | 24 | 24 | 0 |
-| representative failures | 2 | 8 | -6 |
-| critical alerts | 2 | 9 | -7 |
-| warnings | 1 | 0 | +1 |
-| avg response time (мс) | 697 | 745 | -48 |
+| representative failures | 1 | 2 | -1 |
+| critical alerts | 1 | 2 | -1 |
+| warnings | 0 | 1 | -1 |
+| avg response time (мс) | 1073 | 697 | +376 |
 
 ---
 
@@ -139,7 +137,7 @@
 | Stop-condition | Status | Notes |
 |---|---|---|
 | Canonical drift | ✅ | OK |
-| Routing drift (rep URL ≠ 200) | ❌ | Сработало — см. Critical Alerts |
+| Routing drift (rep URL ≠ 200) | ✅ | OK |
 | Sitemap participation drift | ✅ | OK |
 | Indexability-role drift | ❌ | Сработало — см. Critical Alerts |
 | Duplicate BreadcrumbList | ✅ | OK |
@@ -160,9 +158,8 @@
 
 ### Required actions
 
-1. Проверить роутинг/SSG
-2. Снять noindex
+1. Снять noindex
 
 ---
 
-**Последнее обновление:** 27.04.2026 11:11 MSK
+**Последнее обновление:** 28.04.2026 11:13 MSK
