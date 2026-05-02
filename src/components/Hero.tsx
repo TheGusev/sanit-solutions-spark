@@ -101,17 +101,23 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
         />
       ))}
       
-      {/* Lighter overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-background/50 to-background/30 dark:from-background/80 dark:via-background/65 dark:to-background/50" />
+      {/* Brighter overlay — фото яркое и насыщенное, текст читается за счёт drop-shadow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background/35 via-background/15 to-transparent dark:from-background/55 dark:via-background/30 dark:to-background/10" />
 
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
+          <h1
+            className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight"
+            style={{ textShadow: '0 2px 18px hsl(var(--background) / 0.55)' }}
+          >
             {SEO_H1_TITLE}{" "}
             <span className="text-primary">{SEO_H1_HIGHLIGHT}</span>
           </h1>
           
-          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10">
+          <p
+            className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10"
+            style={{ textShadow: '0 1px 10px hsl(var(--background) / 0.65)' }}
+          >
             {copy.subtitle || "Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 3 лет"}
           </p>
 

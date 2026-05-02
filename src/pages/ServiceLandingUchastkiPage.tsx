@@ -23,7 +23,7 @@ import {
   Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Phone, TreePine, Bug, Droplets, Shield, Leaf, Calculator, Clock, Award } from "lucide-react";
+import { Phone, TreePine, Bug, Droplets, Shield, Leaf, Calculator, Clock, Award, FlaskConical, CheckCircle2, Beaker, Sprout, Heart } from "lucide-react";
 import CalculatorModal from "@/components/CalculatorModal";
 import { SERVICE_GALLERY, GALLERY_SUBTITLES } from "@/data/serviceGallery";
 import type { PageMetadata } from "@/lib/metadata";
@@ -48,6 +48,30 @@ const targets = [
   { icon: Leaf, title: "Борщевик", desc: "Химическая обработка борщевика Сосновского. Предотвращение повторного роста." },
   { icon: TreePine, title: "Короед и вредители деревьев", desc: "Инъекции в ствол дерева и опрыскивание кроны от короеда, щитовки, тли." },
   { icon: Bug, title: "Слизни", desc: "Уничтожение слизней на грядках, в теплицах и на газонах. Защита урожая безопасными методами." },
+];
+
+const preparations = [
+  { name: "Цифокс", type: "Циперметрин 25%", duration: "До 2 месяцев", purpose: "Клещи, комары, мошка" },
+  { name: "Сипаз-Супер", type: "Циперметрин + ПБО", duration: "До 6 недель", purpose: "Иксодовые клещи на газоне" },
+  { name: "Медилис-Ципер", type: "Циперметрин 25%", duration: "До 45 дней", purpose: "Комары, мухи, слепни" },
+  { name: "Дельта Зона", type: "Дельтаметрин 2,5%", duration: "До 60 дней", purpose: "Барьерная обработка периметра" },
+  { name: "Раундап / Торнадо", type: "Глифосат 360 г/л", duration: "Уничтожает корень", purpose: "Борщевик Сосновского" },
+];
+
+const safetyFacts = [
+  { icon: Heart, title: "4-й класс опасности", desc: "Малоопасные для человека и питомцев препараты при соблюдении регламента обработки." },
+  { icon: Sprout, title: "Безопасно для растений", desc: "Препараты не накапливаются в почве, не угнетают рост газона и декоративных культур." },
+  { icon: Clock, title: "Через 30–60 минут — можно", desc: "После высыхания препарата (30–60 мин) территория безопасна для людей и животных." },
+  { icon: Award, title: "Сертификаты Роспотребнадзора", desc: "Все средства зарегистрированы, имеют свидетельства госрегистрации и СанПиН-соответствие." },
+];
+
+const technologyPoints = [
+  "Холодный туман генератором — мелкодисперсный аэрозоль (10–50 мкм) проникает в траву, кустарники и крону деревьев",
+  "Барьерная обработка периметра — отдельный контур по границе участка предотвращает заход новых вредителей",
+  "Расход препарата 50–80 мл рабочего раствора на 1 м² — соответствует регламенту СанПиН 3.5.2.3472-17",
+  "Кратность 1–3 обработки за сезон в зависимости от плотности популяции и типа вредителя",
+  "Перед работой — обход территории, картирование зон активности (норы грызунов, мокрые низины, кучи листвы)",
+  "После обработки — инструктаж по срокам полива газона (не ранее 24 ч), сбору урожая (3–5 дней)",
 ];
 
 const pricing = [
@@ -83,7 +107,8 @@ const ServiceLandingUchastkiPage = () => {
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: "url('/images/work/outdoor-treatment.png')" }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/60" />
+          {/* Brighter overlay — фото остаётся насыщенным */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background/55 via-background/20 to-transparent dark:from-background/70 dark:via-background/35 dark:to-background/10" />
           <div className="container mx-auto px-4 relative z-10">
             <Breadcrumb className="mb-6">
               <BreadcrumbList>
@@ -184,9 +209,13 @@ const ServiceLandingUchastkiPage = () => {
           <section className="py-16">
             <div className="container mx-auto px-4">
               <SectionHeading title="От каких вредителей обрабатываем" />
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-                {targets.map(t => (
-                  <Card key={t.title}>
+              {/* 5 карточек центрируются: 3 в первом ряду, 2 во втором по центру */}
+              <div className="grid sm:grid-cols-2 lg:grid-cols-6 gap-6 mt-8 max-w-6xl mx-auto">
+                {targets.map((t, i) => (
+                  <Card
+                    key={t.title}
+                    className={`lg:col-span-2 ${i === 3 ? 'lg:col-start-2' : ''}`}
+                  >
                     <CardContent className="p-6 flex gap-4 items-start">
                       <t.icon className="h-8 w-8 text-primary flex-shrink-0" />
                       <div>
@@ -197,6 +226,69 @@ const ServiceLandingUchastkiPage = () => {
                   </Card>
                 ))}
               </div>
+            </div>
+          </section>
+        </AnimatedSection>
+
+        {/* NEW: Препараты и безопасность */}
+        <AnimatedSection>
+          <section className="py-16 bg-muted/30">
+            <div className="container mx-auto px-4 max-w-6xl">
+              <SectionHeading
+                label="ПРЕПАРАТЫ И БЕЗОПАСНОСТЬ"
+                title="Какие препараты применяем"
+                subtitle="Сертифицированные средства Роспотребнадзора 4 класса опасности — безопасны для людей, питомцев и растений"
+              />
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+                {preparations.map((p) => (
+                  <Card key={p.name} className="border-l-4 border-l-primary">
+                    <CardContent className="p-5">
+                      <div className="flex items-center gap-2 mb-2">
+                        <FlaskConical className="w-5 h-5 text-primary" />
+                        <h3 className="font-bold text-foreground">{p.name}</h3>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-2"><strong>Действующее вещество:</strong> {p.type}</p>
+                      <p className="text-sm text-foreground mb-1">{p.purpose}</p>
+                      <p className="text-xs text-primary font-medium">Защита: {p.duration}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+                {safetyFacts.map((s) => (
+                  <Card key={s.title}>
+                    <CardContent className="p-5 text-center">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                        <s.icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <h3 className="font-bold text-foreground text-sm mb-1">{s.title}</h3>
+                      <p className="text-xs text-muted-foreground">{s.desc}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+        </AnimatedSection>
+
+        {/* NEW: Технология обработки */}
+        <AnimatedSection>
+          <section className="py-16">
+            <div className="container mx-auto px-4 max-w-4xl">
+              <SectionHeading
+                label="ТЕХНОЛОГИЯ"
+                title="Как проходит химическая обработка участка"
+                subtitle="Прозрачный процесс по регламенту СанПиН — без вреда для газона и урожая"
+              />
+              <ul className="mt-8 space-y-3">
+                {technologyPoints.map((point, i) => (
+                  <li key={i} className="flex gap-3 items-start">
+                    <CheckCircle2 className="w-6 h-6 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-foreground leading-relaxed">{point}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </section>
         </AnimatedSection>
