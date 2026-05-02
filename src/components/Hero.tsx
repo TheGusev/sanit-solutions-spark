@@ -101,8 +101,8 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
         />
       ))}
       
-      {/* Lighter overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-background/50 to-background/30 dark:from-background/80 dark:via-background/65 dark:to-background/50" />
+      {/* Brighter overlay — фото яркое и насыщенное, текст читается за счёт drop-shadow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background/35 via-background/15 to-transparent dark:from-background/55 dark:via-background/30 dark:to-background/10" />
 
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">
