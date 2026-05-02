@@ -209,13 +209,13 @@ const ServicePage = () => {
               <div className="absolute inset-0 bg-primary/5" aria-hidden="true" />
               <style dangerouslySetInnerHTML={{ __html: `
                 .service-hero-bg {
-                  filter: blur(1px);
-                  opacity: 0.95;
+                  filter: blur(0.5px);
+                  opacity: 0.98;
                 }
                 @media (min-width: 768px) {
                   .service-hero-bg {
-                    filter: blur(3px);
-                    opacity: 0.65;
+                    filter: blur(1.5px);
+                    opacity: 0.9;
                   }
                 }
               `}} />
@@ -225,8 +225,8 @@ const ServicePage = () => {
                 role="img"
                 aria-label={service.title}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-background/35 to-background/30" />
-              <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-transparent to-background/30" />
+              {/* Brighter, single overlay — фото остаётся ярким */}
+              <div className="absolute inset-0 bg-gradient-to-r from-background/45 via-background/15 to-transparent dark:from-background/65 dark:via-background/30 dark:to-background/10" />
             </>
           )}
           <div className="container mx-auto px-4">
