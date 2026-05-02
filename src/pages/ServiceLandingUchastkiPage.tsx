@@ -83,7 +83,8 @@ const ServiceLandingUchastkiPage = () => {
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: "url('/images/work/outdoor-treatment.png')" }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/60" />
+          {/* Brighter overlay — фото остаётся насыщенным */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background/55 via-background/20 to-transparent dark:from-background/70 dark:via-background/35 dark:to-background/10" />
           <div className="container mx-auto px-4 relative z-10">
             <Breadcrumb className="mb-6">
               <BreadcrumbList>
