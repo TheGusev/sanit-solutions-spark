@@ -23,7 +23,7 @@ import {
   Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Phone, TreePine, Bug, Droplets, Shield, Leaf, Calculator, Clock, Award } from "lucide-react";
+import { Phone, TreePine, Bug, Droplets, Shield, Leaf, Calculator, Clock, Award, FlaskConical, CheckCircle2, Beaker, Sprout, Heart } from "lucide-react";
 import CalculatorModal from "@/components/CalculatorModal";
 import { SERVICE_GALLERY, GALLERY_SUBTITLES } from "@/data/serviceGallery";
 import type { PageMetadata } from "@/lib/metadata";
