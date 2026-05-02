@@ -209,9 +209,13 @@ const ServiceLandingUchastkiPage = () => {
           <section className="py-16">
             <div className="container mx-auto px-4">
               <SectionHeading title="От каких вредителей обрабатываем" />
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-                {targets.map(t => (
-                  <Card key={t.title}>
+              {/* 5 карточек центрируются: 3 в первом ряду, 2 во втором по центру */}
+              <div className="grid sm:grid-cols-2 lg:grid-cols-6 gap-6 mt-8 max-w-6xl mx-auto">
+                {targets.map((t, i) => (
+                  <Card
+                    key={t.title}
+                    className={`lg:col-span-2 ${i === 3 ? 'lg:col-start-2' : ''}`}
+                  >
                     <CardContent className="p-6 flex gap-4 items-start">
                       <t.icon className="h-8 w-8 text-primary flex-shrink-0" />
                       <div>
@@ -222,6 +226,69 @@ const ServiceLandingUchastkiPage = () => {
                   </Card>
                 ))}
               </div>
+            </div>
+          </section>
+        </AnimatedSection>
+
+        {/* NEW: Препараты и безопасность */}
+        <AnimatedSection>
+          <section className="py-16 bg-muted/30">
+            <div className="container mx-auto px-4 max-w-6xl">
+              <SectionHeading
+                label="ПРЕПАРАТЫ И БЕЗОПАСНОСТЬ"
+                title="Какие препараты применяем"
+                subtitle="Сертифицированные средства Роспотребнадзора 4 класса опасности — безопасны для людей, питомцев и растений"
+              />
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+                {preparations.map((p) => (
+                  <Card key={p.name} className="border-l-4 border-l-primary">
+                    <CardContent className="p-5">
+                      <div className="flex items-center gap-2 mb-2">
+                        <FlaskConical className="w-5 h-5 text-primary" />
+                        <h3 className="font-bold text-foreground">{p.name}</h3>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-2"><strong>Действующее вещество:</strong> {p.type}</p>
+                      <p className="text-sm text-foreground mb-1">{p.purpose}</p>
+                      <p className="text-xs text-primary font-medium">Защита: {p.duration}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+                {safetyFacts.map((s) => (
+                  <Card key={s.title}>
+                    <CardContent className="p-5 text-center">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                        <s.icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <h3 className="font-bold text-foreground text-sm mb-1">{s.title}</h3>
+                      <p className="text-xs text-muted-foreground">{s.desc}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+        </AnimatedSection>
+
+        {/* NEW: Технология обработки */}
+        <AnimatedSection>
+          <section className="py-16">
+            <div className="container mx-auto px-4 max-w-4xl">
+              <SectionHeading
+                label="ТЕХНОЛОГИЯ"
+                title="Как проходит химическая обработка участка"
+                subtitle="Прозрачный процесс по регламенту СанПиН — без вреда для газона и урожая"
+              />
+              <ul className="mt-8 space-y-3">
+                {technologyPoints.map((point, i) => (
+                  <li key={i} className="flex gap-3 items-start">
+                    <CheckCircle2 className="w-6 h-6 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-foreground leading-relaxed">{point}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </section>
         </AnimatedSection>
