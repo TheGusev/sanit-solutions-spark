@@ -106,12 +106,18 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
 
       <div className="container mx-auto px-4 relative z-10">
         <AnimatedSection animation="fade-up" className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
+          <h1
+            className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight"
+            style={{ textShadow: '0 2px 18px hsl(var(--background) / 0.55)' }}
+          >
             {SEO_H1_TITLE}{" "}
             <span className="text-primary">{SEO_H1_HIGHLIGHT}</span>
           </h1>
           
-          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10">
+          <p
+            className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-10"
+            style={{ textShadow: '0 1px 10px hsl(var(--background) / 0.65)' }}
+          >
             {copy.subtitle || "Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 3 лет"}
           </p>
 
