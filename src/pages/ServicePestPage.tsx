@@ -187,8 +187,8 @@ export default function ServicePestPage() {
             <Breadcrumbs items={breadcrumbItems} showSchema={false} />
 
             <div className="mt-6 grid md:grid-cols-2 gap-8 items-center">
-              <div>
-                <div className="flex items-center gap-3 mb-4">
+              <div className="flex flex-col">
+                <div className="flex items-center gap-3 mb-4 order-1">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <IconFromKey iconKey={getIconKeyFromEmoji(pest.icon)} className="w-7 h-7 text-primary" />
                   </div>
@@ -202,24 +202,87 @@ export default function ServicePestPage() {
                   </span>
                 </div>
 
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 order-2">
                   Уничтожение {pest.genitive} в Москве и МО
                 </h1>
 
                 {/* Триколор-разделитель */}
-                <div className="flex gap-1 mb-5">
+                <div className="flex gap-1 mb-5 order-3">
                   <span className="h-1 w-10 rounded bg-white border border-border" />
                   <span className="h-1 w-10 rounded bg-[#003DA5]" />
                   <span className="h-1 w-10 rounded bg-[#CC0000]" />
                 </div>
 
-                <p className="text-lg md:text-xl text-muted-foreground mb-5">
+                {/* МОБИЛЬНОЕ ВИЗУАЛЬНОЕ ДОКАЗАТЕЛЬСТВО — фото вредителя или реальные фото для клопов */}
+                {pestSlug === 'klopy' ? (
+                  <div className="md:hidden order-4 mb-5">
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      <div className="relative rounded-xl overflow-hidden shadow-lg aspect-square">
+                        <img
+                          src="/images/pests/real/bedbug-mattress-real.jpg"
+                          alt="Заражённый клопами матрас — реальное фото с объекта в Москве"
+                          className="w-full h-full object-cover"
+                          loading="eager"
+                          width="400"
+                          height="400"
+                        />
+                        <span className="absolute top-2 left-2 bg-destructive text-destructive-foreground text-xs font-bold px-2 py-1 rounded">До</span>
+                      </div>
+                      <div className="relative rounded-xl overflow-hidden shadow-lg aspect-square">
+                        <img
+                          src="/images/pests/real/bedbug-treatment-real.jpg"
+                          alt="Специалист обрабатывает квартиру от клопов — наша работа"
+                          className="w-full h-full object-cover"
+                          loading="eager"
+                          width="400"
+                          height="400"
+                        />
+                        <span className="absolute top-2 left-2 bg-success text-success-foreground text-xs font-bold px-2 py-1 rounded">Работа</span>
+                      </div>
+                    </div>
+                    <video
+                      className="w-full rounded-xl shadow-lg"
+                      style={{ maxHeight: 240 }}
+                      muted
+                      playsInline
+                      autoPlay
+                      loop
+                      preload="metadata"
+                      poster="/videos/bedbug-process-poster.jpg"
+                      width="640"
+                      height="360"
+                    >
+                      <source src="/videos/bedbug-process.mp4" type="video/mp4" />
+                    </video>
+                  </div>
+                ) : pestImage ? (
+                  <div className="md:hidden order-4 mb-5">
+                    <div className="relative rounded-2xl overflow-hidden shadow-xl">
+                      <img
+                        src={pestImage.image}
+                        alt={pestImage.altText}
+                        className="w-full h-56 object-cover"
+                        loading="eager"
+                        width="640"
+                        height="360"
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                        <div className="flex items-center gap-2 text-white">
+                          <CheckCircle className="w-5 h-5 text-green-400" />
+                          <span className="font-semibold text-sm">Избавим за 1 день!</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                <p className="text-lg md:text-xl text-muted-foreground mb-5 order-5">
                   {pest.description}
                 </p>
 
                 {/* Hero Bullets */}
                 {pest.heroBullets && pest.heroBullets.length > 0 && (
-                  <ul className="space-y-2 mb-6">
+                  <ul className="space-y-2 mb-6 order-6">
                     {pest.heroBullets.map((bullet, i) => (
                       <li key={i} className="flex items-center gap-2 text-sm md:text-base">
                         <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -229,8 +292,7 @@ export default function ServicePestPage() {
                   </ul>
                 )}
 
-                {/* Крупные trust-бейджи как на лендинге кротов/участков */}
-                <div className="flex flex-wrap gap-2 mb-6">
+                <div className="flex flex-wrap gap-2 mb-6 order-7">
                   {[
                     { icon: Clock, text: `Результат за ${pest.timeToResult}` },
                     { icon: Shield, text: `Гарантия ${guaranteeText}` },
@@ -243,7 +305,7 @@ export default function ServicePestPage() {
                   ))}
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 order-8">
                   <Button size="lg" asChild className="whitespace-normal">
                     <a href={`tel:${SEO_CONFIG.phoneClean}`}>
                       <Phone className="w-5 h-5 mr-2" />
@@ -255,7 +317,9 @@ export default function ServicePestPage() {
                   </Button>
                 </div>
 
-                <HeroCallbackForm serviceSlug={`${service}/${pestSlug}`} />
+                <div className="order-9">
+                  <HeroCallbackForm serviceSlug={`${service}/${pestSlug}`} />
+                </div>
               </div>
 
               {pestImage && (
@@ -281,6 +345,60 @@ export default function ServicePestPage() {
             </div>
           </div>
         </section>
+
+        {/* Реальные фото с объекта — для клопов на десктопе */}
+        {pestSlug === 'klopy' && (
+          <AnimatedSection className="hidden md:block py-12 bg-muted/30">
+            <div className="container mx-auto px-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">
+                Реальные фото с объекта в Москве
+              </h2>
+              <p className="text-center text-muted-foreground mb-8">
+                Наша работа — без стоковых картинок
+              </p>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3]">
+                  <img
+                    src="/images/pests/real/bedbug-mattress-real.jpg"
+                    alt="Заражённый клопами матрас — фото до обработки"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    width="800"
+                    height="600"
+                  />
+                  <span className="absolute top-3 left-3 bg-destructive text-destructive-foreground text-sm font-bold px-3 py-1 rounded">До обработки</span>
+                </div>
+                <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3] bg-black">
+                  <video
+                    className="w-full h-full object-cover"
+                    muted
+                    playsInline
+                    autoPlay
+                    loop
+                    preload="metadata"
+                    poster="/videos/bedbug-process-poster.jpg"
+                    width="800"
+                    height="600"
+                  >
+                    <source src="/videos/bedbug-process.mp4" type="video/mp4" />
+                  </video>
+                  <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-sm font-bold px-3 py-1 rounded">Процесс</span>
+                </div>
+                <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[4/3]">
+                  <img
+                    src="/images/pests/real/bedbug-treatment-real.jpg"
+                    alt="Специалист обрабатывает квартиру парогенератором от клопов"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    width="800"
+                    height="600"
+                  />
+                  <span className="absolute top-3 left-3 bg-success text-success-foreground text-sm font-bold px-3 py-1 rounded">Наша работа</span>
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
+        )}
 
         {/* Галерея «До → Процесс → После» — визуальное доказательство */}
         {(() => {
