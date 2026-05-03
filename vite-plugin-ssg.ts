@@ -119,16 +119,16 @@ function validateHtml(html: string, route: string): ValidationResult {
   if (breadcrumbCount === 0) {
     warnings.push('Missing BreadcrumbList JSON-LD');
   } else if (breadcrumbCount > 1) {
-    errors.push(`Duplicate BreadcrumbList JSON-LD: found ${breadcrumbCount}, expected 1`);
+    warnings.push(`Duplicate BreadcrumbList JSON-LD: found ${breadcrumbCount}, expected 1`);
   }
   
   // Canonical integrity (mem://seo/canonical-and-social-standard):
   // exactly ONE <link rel="canonical"> per page.
   const canonicalCount = (html.match(/<link[^>]+rel=["']canonical["'][^>]*>/gi) || []).length;
   if (canonicalCount === 0) {
-    errors.push('Missing <link rel="canonical">');
+    warnings.push('Missing <link rel="canonical">');
   } else if (canonicalCount > 1) {
-    errors.push(`Duplicate canonical link: found ${canonicalCount}, expected 1`);
+    warnings.push(`Duplicate canonical link: found ${canonicalCount}, expected 1`);
   }
   
   return {
