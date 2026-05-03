@@ -116,7 +116,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
           variant_id: context?.variantId || null,
           device_type: context?.deviceType || null,
           first_landing_url: context?.firstLandingUrl || null,
-          last_page_url: window.location.href,
+          last_page_url: getCurrentPageUrl(),
           utm_source: context?.utm_source || null,
           utm_medium: context?.utm_medium || null,
           utm_campaign: context?.utm_campaign || null,
@@ -162,7 +162,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
   };
 
   const isNameValid = name.trim().length >= 2;
-  const isPhoneValid = phone.length === 18;
+  const isPhoneValid = isValidRuPhone(phone);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
