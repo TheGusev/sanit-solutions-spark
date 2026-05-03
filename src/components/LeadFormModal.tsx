@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, Loader2, Clock, Shield, Target } from "lucide-react";
 import { trackGoal, getYmGoalPrefix } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
+import { formatRuPhone, isValidRuPhone, RU_PHONE_INITIAL, getCurrentPageUrl } from "@/lib/phoneUtils";
 
 interface LeadFormModalProps {
   open: boolean;
@@ -32,7 +33,7 @@ interface LeadFormModalProps {
 export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }: LeadFormModalProps) {
   const { context } = useTraffic();
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("+7 ");
+  const [phone, setPhone] = useState(RU_PHONE_INITIAL);
   const [honeypot, setHoneypot] = useState("");
   const [consent, setConsent] = useState(true);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
