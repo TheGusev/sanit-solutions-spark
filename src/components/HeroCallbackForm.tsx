@@ -50,7 +50,7 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
       intent: context?.intent || 'default',
       variant_id: context?.variantId || null,
       device_type: context?.deviceType || null,
-      last_page_url: window.location.href,
+      last_page_url: getCurrentPageUrl(),
       utm_source: context?.utm_source || null,
       utm_medium: context?.utm_medium || null,
       utm_campaign: context?.utm_campaign || null,
