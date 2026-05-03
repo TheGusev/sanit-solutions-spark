@@ -382,7 +382,13 @@ const ServicePage = () => {
                 <SectionHeading label="КОГДА НУЖНО" title={`Когда нужна ${service.title.toLowerCase()}`} subtitle={service.whenNeeded.intro} />
               </AnimatedSection>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              <div className={`grid gap-6 max-w-5xl mx-auto ${
+                service.whenNeeded.reasons.length === 4
+                  ? 'sm:grid-cols-2 lg:grid-cols-4'
+                  : service.whenNeeded.reasons.length === 5
+                    ? 'sm:grid-cols-2 lg:grid-cols-3 [&>*:nth-child(4)]:lg:col-start-1 [&>*:nth-child(5)]:lg:col-start-2'
+                    : 'sm:grid-cols-2 lg:grid-cols-3'
+              }`}>
                 {service.whenNeeded.reasons.map((reason, idx) => (
                   <AnimatedSection key={idx} animation="fade-up" delay={idx * 100}>
                     <Card className="h-full hover:shadow-lg transition-shadow border-l-4 border-l-primary">
