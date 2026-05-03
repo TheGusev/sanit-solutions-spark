@@ -41,29 +41,13 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
-  const formatPhone = (value: string) => {
-    const cleaned = value.replace(/\D/g, "");
-    if (!cleaned) return "+7 ";
-    
-    const match = cleaned.match(/^(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/);
-    if (!match) return value;
-    
-    const parts = [
-      "+7",
-      match[2] && ` (${match[2]}`,
-      match[3] && `) ${match[3]}`,
-      match[4] && `-${match[4]}`,
-      match[5] && `-${match[5]}`
-    ].filter(Boolean);
-    
-    return parts.join("");
-  };
+  const formatPhone = formatRuPhone;
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhone(e.target.value);
     setPhone(formatted);
     
-    if (formatted.length === 18) {
+    if (isValidRuPhone(formatted)) {
       setErrors(prev => ({ ...prev, phone: "" }));
     }
   };
@@ -75,8 +59,8 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
       newErrors.name = "Имя должно содержать минимум 2 символа";
     }
 
-    if (phone.length !== 18) {
-      newErrors.phone = "Введите корректный номер телефона";
+    if (!isValidRuPhone(phone)) {
+      newErrors.phone = "Введите корректный номер в формате +7 (XXX) XXX-XX-XX";
     }
 
     if (!consent) {
