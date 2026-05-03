@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, Loader2, Clock, Shield, Target } from "lucide-react";
 import { trackGoal, getYmGoalPrefix } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
+import { formatRuPhone, isValidRuPhone, RU_PHONE_INITIAL, getCurrentPageUrl } from "@/lib/phoneUtils";
 
 interface LeadFormModalProps {
   open: boolean;
@@ -32,7 +33,7 @@ interface LeadFormModalProps {
 export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }: LeadFormModalProps) {
   const { context } = useTraffic();
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("+7 ");
+  const [phone, setPhone] = useState(RU_PHONE_INITIAL);
   const [honeypot, setHoneypot] = useState("");
   const [consent, setConsent] = useState(true);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
@@ -40,29 +41,13 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
-  const formatPhone = (value: string) => {
-    const cleaned = value.replace(/\D/g, "");
-    if (!cleaned) return "+7 ";
-    
-    const match = cleaned.match(/^(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/);
-    if (!match) return value;
-    
-    const parts = [
-      "+7",
-      match[2] && ` (${match[2]}`,
-      match[3] && `) ${match[3]}`,
-      match[4] && `-${match[4]}`,
-      match[5] && `-${match[5]}`
-    ].filter(Boolean);
-    
-    return parts.join("");
-  };
+  const formatPhone = formatRuPhone;
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhone(e.target.value);
     setPhone(formatted);
     
-    if (formatted.length === 18) {
+    if (isValidRuPhone(formatted)) {
       setErrors(prev => ({ ...prev, phone: "" }));
     }
   };
@@ -74,8 +59,8 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
       newErrors.name = "Имя должно содержать минимум 2 символа";
     }
 
-    if (phone.length !== 18) {
-      newErrors.phone = "Введите корректный номер телефона";
+    if (!isValidRuPhone(phone)) {
+      newErrors.phone = "Введите корректный номер в формате +7 (XXX) XXX-XX-XX";
     }
 
     if (!consent) {
@@ -131,7 +116,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
           variant_id: context?.variantId || null,
           device_type: context?.deviceType || null,
           first_landing_url: context?.firstLandingUrl || null,
-          last_page_url: window.location.href,
+          last_page_url: getCurrentPageUrl(),
           utm_source: context?.utm_source || null,
           utm_medium: context?.utm_medium || null,
           utm_campaign: context?.utm_campaign || null,
@@ -177,7 +162,7 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
   };
 
   const isNameValid = name.trim().length >= 2;
-  const isPhoneValid = phone.length === 18;
+  const isPhoneValid = isValidRuPhone(phone);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

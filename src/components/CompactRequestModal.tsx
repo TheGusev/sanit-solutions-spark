@@ -12,6 +12,7 @@ import {
 import { useTraffic } from "@/contexts/TrafficContext";
 import { supabase } from "@/lib/supabaseClient";
 import { trackGoal, getYmGoalPrefix } from "@/lib/analytics";
+import { formatRuPhone, isValidRuPhone, RU_PHONE_INITIAL, getCurrentPageUrl } from "@/lib/phoneUtils";
 
 interface CompactRequestModalProps {
   open: boolean;
@@ -37,7 +38,7 @@ export const CompactRequestModal = ({
 }: CompactRequestModalProps) => {
   const { context } = useTraffic();
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("+7");
+  const [phone, setPhone] = useState(RU_PHONE_INITIAL);
   const [agreed, setAgreed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -49,8 +50,8 @@ export const CompactRequestModal = ({
       return;
     }
 
-    if (!phone || phone.length < 11) {
-      toast.error("Введите корректный номер телефона");
+    if (!isValidRuPhone(phone)) {
+      toast.error("Введите корректный номер в формате +7 (XXX) XXX-XX-XX");
       return;
     }
 
@@ -85,7 +86,7 @@ export const CompactRequestModal = ({
           intent: context?.intent || 'default',
           variant_id: context?.variantId || null,
           device_type: context?.deviceType || null,
-          last_page_url: window.location.href,
+          last_page_url: getCurrentPageUrl(),
           utm_source: context?.utm_source || null,
           utm_medium: context?.utm_medium || null,
           utm_campaign: context?.utm_campaign || null,
@@ -102,7 +103,7 @@ export const CompactRequestModal = ({
       onOpenChange(false);
       
       setName("");
-      setPhone("+7");
+      setPhone(RU_PHONE_INITIAL);
       setAgreed(false);
       
     } catch (error) {
@@ -113,18 +114,7 @@ export const CompactRequestModal = ({
     }
   };
 
-  const formatPhone = (value: string) => {
-    let phone = value.replace(/\D/g, '');
-    if (!phone.startsWith('7')) phone = '7' + phone;
-    
-    let formatted = '+7';
-    if (phone.length > 1) formatted += ` (${phone.substring(1, 4)}`;
-    if (phone.length > 4) formatted += `) ${phone.substring(4, 7)}`;
-    if (phone.length > 7) formatted += `-${phone.substring(7, 9)}`;
-    if (phone.length > 9) formatted += `-${phone.substring(9, 11)}`;
-    
-    return formatted;
-  };
+  // formatPhone вынесен в @/lib/phoneUtils
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -163,13 +153,14 @@ export const CompactRequestModal = ({
               <Input
                 id="phone"
                 type="tel"
+                inputMode="tel"
                 placeholder="+7 (___) ___-__-__"
                 value={phone}
-                onChange={(e) => {
-                  const formatted = formatPhone(e.target.value);
-                  setPhone(formatted);
-                }}
-                className="h-12"
+                onChange={(e) => setPhone(formatRuPhone(e.target.value))}
+                className={`h-12 ${
+                  phone.length > 4 && !isValidRuPhone(phone) ? 'border-destructive' : isValidRuPhone(phone) ? 'border-success' : ''
+                }`}
+                aria-invalid={phone.length > 4 && !isValidRuPhone(phone)}
                 required
               />
             </div>
