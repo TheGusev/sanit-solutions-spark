@@ -112,10 +112,14 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
       <div className="flex flex-col sm:flex-row gap-3">
         <Input
           type="tel"
+          inputMode="tel"
           placeholder="+7 (___) ___-__-__"
           value={phone}
-          onChange={(e) => setPhone(formatPhone(e.target.value))}
-          className="h-12 text-base flex-1"
+          onChange={(e) => setPhone(formatRuPhone(e.target.value))}
+          className={`h-12 text-base flex-1 ${
+            phone.length > 4 && !isPhoneValid ? 'border-destructive' : isPhoneValid ? 'border-success' : ''
+          }`}
+          aria-invalid={phone.length > 4 && !isPhoneValid}
           required
         />
         <Button
