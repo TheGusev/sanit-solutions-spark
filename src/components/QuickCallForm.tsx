@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/hooks/use-toast";
 import { trackGoal } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
+import { formatRuPhone, isValidRuPhone, RU_PHONE_INITIAL, getCurrentPageUrl } from "@/lib/phoneUtils";
 
 interface QuickCallFormProps {
   calculatorData: {
@@ -25,45 +26,29 @@ interface QuickCallFormProps {
 
 export function QuickCallForm({ calculatorData, onSuccess }: QuickCallFormProps) {
   const { context } = useTraffic();
-  const [phone, setPhone] = useState("+7 ");
+  const [phone, setPhone] = useState(RU_PHONE_INITIAL);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const formatPhone = (value: string) => {
-    const cleaned = value.replace(/\D/g, "");
-    if (!cleaned) return "+7 ";
-    
-    const match = cleaned.match(/^(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})$/);
-    if (!match) return value;
-    
-    const parts = [
-      "+7",
-      match[2] && ` (${match[2]}`,
-      match[3] && `) ${match[3]}`,
-      match[4] && `-${match[4]}`,
-      match[5] && `-${match[5]}`
-    ].filter(Boolean);
-    
-    return parts.join("");
-  };
+  const formatPhone = formatRuPhone;
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhone(e.target.value);
     setPhone(formatted);
-    if (error && formatted.length === 18) {
+    if (error && isValidRuPhone(formatted)) {
       setError(null);
     }
   };
 
-  const isPhoneValid = phone.length === 18;
+  const isPhoneValid = isValidRuPhone(phone);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isPhoneValid) {
-      setError("Введите корректный номер");
+      setError("Введите корректный номер в формате +7 (XXX) XXX-XX-XX");
       return;
     }
 
