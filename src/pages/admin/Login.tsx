@@ -58,7 +58,11 @@ const AdminLogin = () => {
       navigate('/admin');
     } catch (error: any) {
       console.error('Login failed:', error.message);
-      toast.error(error.message || 'Ошибка входа');
+      if (error.message === 'TIMEOUT') {
+        toast.error('Сеть недоступна. Попробуйте Wi-Fi, VPN или другого мобильного оператора.');
+      } else {
+        toast.error(error.message || 'Ошибка входа');
+      }
     } finally {
       setIsLoading(false);
     }
