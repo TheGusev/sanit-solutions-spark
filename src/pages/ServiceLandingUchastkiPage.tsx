@@ -75,10 +75,10 @@ const technologyPoints = [
 ];
 
 const pricing = [
-  { area: "до 6 соток", price: "от 4 000 ₽" },
-  { area: "6–10 соток", price: "от 5 500 ₽" },
-  { area: "10–20 соток", price: "от 8 000 ₽" },
-  { area: "20–50 соток", price: "от 12 000 ₽" },
+  { area: "до 6 соток", price: "4 000 ₽" },
+  { area: "6–10 соток", price: "5 500 ₽" },
+  { area: "10–20 соток", price: "8 000 ₽" },
+  { area: "20–50 соток", price: "12 000 ₽" },
   { area: "от 50 соток", price: "договорная" },
 ];
 
@@ -328,7 +328,7 @@ const ServiceLandingUchastkiPage = () => {
         <ServiceQuiz
           serviceSlug="obrabotka-uchastkov"
           serviceTitle="Обработка участков"
-          basePrice="от 4 000 ₽"
+          basePrice="4 000 ₽"
           priceMap={getServicePriceMap("obrabotka-uchastkov")}
           priceStepIndex={getServicePriceStepIndex("obrabotka-uchastkov")}
           steps={[

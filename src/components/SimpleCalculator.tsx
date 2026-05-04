@@ -107,7 +107,7 @@ const PRICE_MAP: Record<string, string> = {
   "demerkurizaciya.1room": "3 000 ₽",
   "demerkurizaciya.2rooms": "4 500 ₽",
   "demerkurizaciya.full": "6 000 ₽",
-  "demerkurizaciya.office": "от 60 ₽/м²",
+  "demerkurizaciya.office": "60 ₽/м²",
 };
 
 const PROBLEM_LABELS: Record<ProblemKey, string> = {
