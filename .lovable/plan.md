@@ -1,49 +1,51 @@
-## Что делаем
+## 1. Hero на главной
 
-Привожу все 4 формы заявок к единому стандарту: строгая маска телефона `+7 (XXX) XXX-XX-XX` (ровно 18 символов), визуальная валидация в реальном времени, гарантированная авто-подстановка UTM/intent/session/device/page из `TrafficContext`. Это уберёт «Введите корректный номер» при невалидных номерах и устранит провалы вставки заявок (RLS требует `length(phone) >= 10`).
+**Файл:** `src/components/Hero.tsx` (строки 124–150)
 
-## Текущее состояние (что уже работает)
+- Удалить кнопку **«Оставить заявку»** (она ссылается на несуществующий `#hero-callback`/`#calculator` и не работает).
+- Кнопку **«Рассчитать стоимость»** оставить единственной CTA, отцентрировать. В тёмной теме сделать её **синей** (заполненной): сменить `variant="outline"` → `variant="default"` и добавить классы `bg-primary text-primary-foreground hover:bg-primary/90 border-transparent` (primary в проекте — синий #3B82F6).
 
-- `HeroCallbackForm`, `LeadFormModal`, `CompactRequestModal`, `QuickCallForm` — все уже подключены к `useTraffic()` и шлют `utm_source/medium/campaign/content/term`, `session_id`, `intent`, `variant_id`, `device_type`, `last_page_url` в edge-функцию `handle-lead`.
-- `LeadFormModal` и `QuickCallForm` уже используют строгую проверку `phone.length === 18`.
+## 2. Замена фоновых изображений
 
-## Что нужно поправить
+**Файлы:**
+- `public/images/services/borba-s-krotami-bg.jpg` — заменить на загруженное фото с кротовинами (`user-uploads://91031128-2b9d-440c-8bca-8f436147c59c.png`).
+- `public/images/services/ozonirovanie-bg.jpg` — заменить на загруженное фото озонатора (`user-uploads://f6e2448a-8814-444a-ae95-aa278ba4fcc8.png`).
 
-### 1. CompactRequestModal — слабая валидация
-Сейчас: `if (!phone || phone.length < 11)` пропускает «+7 (123» (12 символов) → отправка → ошибка RLS.
-Стандарт: `phone.length !== 18` + единое сообщение об ошибке + визуальный индикатор (border-success/destructive) как в LeadFormModal.
+Используется в `src/components/MiniPricing.tsx` — пути не меняем, только перезаписываем файлы через `code--copy` с `overwrite=true`. Кэш браузера обновится сам (новый хеш при сборке Vite не нужен — это `public/`, поэтому добавим `?v=2026-05-04` в `bgImage` для гарантированной инвалидации).
 
-### 2. HeroCallbackForm — нет визуальной валидации
-Добавить `isPhoneValid` и зелёную/красную рамку, синхронно с остальными формами.
+## 3. Убрать слово «от» из цен
 
-### 3. Единый помощник `formatRuPhone`
-Сейчас `formatPhone` дублируется в 4 файлах с мелкими расхождениями (где-то начальное значение `"+7 "`, где-то `"+7"`). Вынести в `src/lib/phoneUtils.ts`:
-- `formatRuPhone(value: string): string` — маска `+7 (XXX) XXX-XX-XX`.
-- `isValidRuPhone(value: string): boolean` — `value.length === 18`.
-- `RU_PHONE_PLACEHOLDER = "+7 "`.
+Удаляем префикс **только в строках вида `"от NNNN ₽"` / `"от NNNN₽"`** (цены). Сохраняем «от» в:
+- длительностях («от 3 ч», «от 2 часов»)
+- условиях скидок («скидка от 50 000₽», «от 3 участков»)
+- описаниях площади/расстояний («от 6 соток», «от 40 минут»)
 
-### 4. Авто-подстановка last_page_url + referrer
-Сейчас `last_page_url: window.location.href` есть только в CompactRequestModal. Добавить во все 4 формы (referrer передавать в `utm_content` не надо — оставляем чистым).
+**Файлы под правку:**
+- `src/data/servicePrices.ts` — 16 цен
+- `src/components/PricingByArea.tsx` — 20 цен (если хардкод дублируется)
+- `src/data/serviceSubpages.ts` — ~80 цен (price + coldFog/hotFog тарифы)
+- `src/data/quizPriceMap.ts` — ~30 цен квиза
+- `src/data/pests.ts` — тарифы Эконом/Стандарт/Максимум
+- `src/pages/ServiceLandingUchastkiPage.tsx` — таблица соток + `basePrice`
+- `src/components/SimpleCalculator.tsx` — строки `"от N ₽/м²"` и рендер `от {price}`
+- `src/components/district/DistrictPricing.tsx` — где это цена (не время)
 
-### 5. SSR-guard
-`window.location.href` оборачиваем в `typeof window !== 'undefined' ? window.location.href : null` — иначе при SSG-пререндере крашит (см. core-rule про `import.meta.env.SSR`).
+Применяется регулярка `/^от\s+(\d[\d\s]*\s*₽.*)$/` → `$1`. Проверяем каждый файл вручную, исключая ложные срабатывания.
 
-## Технические детали (для разработчика)
+## 4. Составная цель `all_conversions`
 
-Файлы на изменение:
-```
-src/lib/phoneUtils.ts                    (новый)
-src/components/CompactRequestModal.tsx   (валидация + импорт хелпера)
-src/components/HeroCallbackForm.tsx      (визуальная валидация + хелпер)
-src/components/LeadFormModal.tsx         (импорт хелпера, поведение не меняем)
-src/components/QuickCallForm.tsx         (импорт хелпера, last_page_url)
-```
+**Файл:** `src/lib/analytics.ts` (строки 177–182)
 
-Контракт `handle-lead` не меняем — только клиент. RLS-правило (`length(phone) between 10 and 30`) уже соблюдено маской `+7 (XXX) XXX-XX-XX` = 18 символов = 11 цифр.
+Удалить `'calc_open'` из `ALL_CONV_GOALS` (это цель №3 на скрине — «открытие калькулятора»). Открытие калькулятора — не конверсия, не должно засорять составную цель.
 
-## Проверка после реализации
+## Что не трогаем
 
-1. На `/` открыть мини-форму Hero, ввести «123» — кнопка disabled, рамка красная, тоста нет.
-2. Открыть калькулятор → нажать «Оставить заявку» → ввести полный номер → проверить успешный сабмит.
-3. Зайти на `?utm_source=test&utm_campaign=fix` → отправить заявку → в БД у lead должен быть `utm_source=test`, `utm_campaign=fix`, `last_page_url`.
-4. SSG-сборка `npm run build` должна пройти без ошибок (нет `window` вне guard).
+- Логика SSG/роутинга, `seoRoutes.ts`, edge-функций.
+- Прочие места «от …» (длительности, условия, площади).
+- Строки SEO/мета (там «от 1500₽» в title оставим — это коммерческий триггер для сниппета поиска).
+
+## Проверка после правок
+
+- `rg "от \d.*₽" src/data src/components src/pages` — ожидаем оставшиеся только в SEO‑метаданных и в условиях скидок.
+- Визуально: главная страница — одна синяя кнопка под заголовком; блоки «Кроты» и «Озонирование» в `MiniPricing` имеют новые фоны.
+- Сборка не должна сломаться (правки только в data/JSX‑строках и одном Set).
