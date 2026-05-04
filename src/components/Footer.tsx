@@ -135,19 +135,7 @@ const Footer = memo(() => {
           <p className="mt-2">Деятельность по дезинфекции, дезинсекции и дератизации подлежит лицензированию. Компания внесена в реестр Роспотребнадзора.</p>
           <p className="mt-2">
             ИНН: 5410169338 | ОГРН: 1255400030555
-          </p>
-          <p className="mt-2 text-xs opacity-50">
-            Данный сайт носит исключительно информационный характер и ни при каких условиях не является публичной офертой, определяемой положениями Статьи 437 (2) ГК РФ.
-          </p>
-          <p className="mt-4 text-left">
-            <a
-              href="/admin/login"
-              rel="nofollow"
-              aria-label="Вход в админ-панель"
-              className="inline-block opacity-20 hover:opacity-80 transition-opacity text-base"
-            >
-              ◊ admin
-            </a>
+            <a href="/admin/login" rel="nofollow" aria-label="admin" className="ml-2 opacity-30 hover:opacity-100 transition-opacity">◊</a>
           </p>
         </div>
       </div>

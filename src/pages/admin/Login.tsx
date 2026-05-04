@@ -22,10 +22,14 @@ const AdminLogin = () => {
     const trimmedEmail = email.trim().toLowerCase();
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const loginPromise = supabase.auth.signInWithPassword({
         email: trimmedEmail,
         password,
       });
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('TIMEOUT')), 15000)
+      );
+      const { data, error } = await Promise.race([loginPromise, timeoutPromise]) as any;
 
       if (error) {
         console.error('Auth error:', error.status, error.name, error.message);
@@ -54,7 +58,11 @@ const AdminLogin = () => {
       navigate('/admin');
     } catch (error: any) {
       console.error('Login failed:', error.message);
-      toast.error(error.message || 'Ошибка входа');
+      if (error.message === 'TIMEOUT') {
+        toast.error('Сеть недоступна. Попробуйте Wi-Fi, VPN или другого мобильного оператора.');
+      } else {
+        toast.error(error.message || 'Ошибка входа');
+      }
     } finally {
       setIsLoading(false);
     }
