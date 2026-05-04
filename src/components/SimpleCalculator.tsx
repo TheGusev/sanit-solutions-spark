@@ -107,7 +107,7 @@ const PRICE_MAP: Record<string, string> = {
   "demerkurizaciya.1room": "3 000 ₽",
   "demerkurizaciya.2rooms": "4 500 ₽",
   "demerkurizaciya.full": "6 000 ₽",
-  "demerkurizaciya.office": "от 60 ₽/м²",
+  "demerkurizaciya.office": "60 ₽/м²",
 };
 
 const PROBLEM_LABELS: Record<ProblemKey, string> = {
@@ -349,7 +349,7 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
             <p className="text-xs text-muted-foreground">
               {PROBLEM_LABELS[problem]} → {object.label}{room ? ` → ${room.label}` : ""}
             </p>
-            <div className="text-3xl font-bold text-primary">от {price}</div>
+            <div className="text-3xl font-bold text-primary">{price}</div>
             <p className="text-xs text-muted-foreground">Точную стоимость рассчитает специалист</p>
           </div>
 

@@ -148,9 +148,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/dezinfekciya/ofisov", title: "Дезинфекция офисов", price: "от 1800₽", icon: "🏢" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🛏️" },
-      { slug: "/uslugi/ozonirovanie", title: "Озонирование", price: "от 1500₽", icon: "💨" }
+      { slug: "/uslugi/dezinfekciya/ofisov", title: "Дезинфекция офисов", price: "1800₽", icon: "🏢" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "1200₽", icon: "🛏️" },
+      { slug: "/uslugi/ozonirovanie", title: "Озонирование", price: "1500₽", icon: "💨" }
     ],
     
     priceFrom: 1000,
@@ -232,9 +232,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартир", price: "от 1000₽", icon: "🏠" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Уничтожение тараканов", price: "от 1200₽", icon: "🪳" },
-      { slug: "/uslugi/ozonirovanie", title: "Озонирование", price: "от 1500₽", icon: "💨" }
+      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартир", price: "1000₽", icon: "🏠" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Уничтожение тараканов", price: "1200₽", icon: "🪳" },
+      { slug: "/uslugi/ozonirovanie", title: "Озонирование", price: "1500₽", icon: "💨" }
     ],
     
     priceFrom: 1800,
@@ -275,7 +275,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 200 ₽", hotFog: "1 800 ₽", duration: "1-1.5 часа" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "1 800 ₽", hotFog: "2 500 ₽", duration: "1.5-2 часа", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "2 500 ₽", hotFog: "3 500 ₽", duration: "2-2.5 часа" },
-      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 3 000 ₽", hotFog: "от 4 000 ₽", duration: "от 2.5 часов" }
+      { type: "4+ комнатная", area: "90+ м²", coldFog: "3 000 ₽", hotFog: "4 000 ₽", duration: "от 2.5 часов" }
     ],
     
     includedInPrice: [
@@ -317,9 +317,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Уничтожение тараканов", price: "от 1200₽", icon: "🪳" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "от 1200₽", icon: "🐕" },
-      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартиры", price: "от 1000₽", icon: "🏠" }
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Уничтожение тараканов", price: "1200₽", icon: "🪳" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "1200₽", icon: "🐕" },
+      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартиры", price: "1000₽", icon: "🏠" }
     ],
     
     priceFrom: 1200,
@@ -359,7 +359,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 200 ₽", hotFog: "1 800 ₽", duration: "1 час" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "1 500 ₽", hotFog: "2 200 ₽", duration: "1-1.5 часа", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "1 800 ₽", hotFog: "2 500 ₽", duration: "1.5-2 часа" },
-      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 2 200 ₽", hotFog: "от 3 000 ₽", duration: "от 2 часов" }
+      { type: "4+ комнатная", area: "90+ м²", coldFog: "2 200 ₽", hotFog: "3 000 ₽", duration: "от 2 часов" }
     ],
     
     includedInPrice: [
@@ -400,9 +400,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🛏️" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-muravev", title: "Уничтожение муравьёв", price: "от 1200₽", icon: "🐜" },
-      { slug: "/uslugi/deratizaciya", title: "Дератизация", price: "от 1400₽", icon: "🐀" }
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "1200₽", icon: "🛏️" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-muravev", title: "Уничтожение муравьёв", price: "1200₽", icon: "🐜" },
+      { slug: "/uslugi/deratizaciya", title: "Дератизация", price: "1400₽", icon: "🐀" }
     ],
     
     priceFrom: 1200,
@@ -442,8 +442,8 @@ export const serviceSubpages: ServiceSubpage[] = [
     pricing: [
       { type: "Квартира", area: "любая", coldFog: "1 400 ₽", hotFog: "—", duration: "1-2 часа" },
       { type: "Частный дом", area: "до 150 м²", coldFog: "2 500 ₽", hotFog: "—", duration: "2-3 часа", highlighted: true },
-      { type: "Частный дом", area: "150+ м²", coldFog: "от 3 500 ₽", hotFog: "—", duration: "от 3 часов" },
-      { type: "Склад/офис", area: "любая", coldFog: "от 2 500 ₽", hotFog: "—", duration: "По договорённости" }
+      { type: "Частный дом", area: "150+ м²", coldFog: "3 500 ₽", hotFog: "—", duration: "от 3 часов" },
+      { type: "Склад/офис", area: "любая", coldFog: "2 500 ₽", hotFog: "—", duration: "По договорённости" }
     ],
     
     includedInPrice: [
@@ -484,9 +484,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/deratizaciya/unichtozhenie-myshej", title: "Уничтожение мышей", price: "от 1400₽", icon: "🐭" },
-      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция", price: "от 1000₽", icon: "🦠" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "от 1200₽", icon: "🐕" }
+      { slug: "/uslugi/deratizaciya/unichtozhenie-myshej", title: "Уничтожение мышей", price: "1400₽", icon: "🐭" },
+      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция", price: "1000₽", icon: "🦠" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "1200₽", icon: "🐕" }
     ],
     
     priceFrom: 1400,
@@ -525,8 +525,8 @@ export const serviceSubpages: ServiceSubpage[] = [
     pricing: [
       { type: "Квартира", area: "любая", coldFog: "3 000 ₽", hotFog: "—", duration: "1-2 часа" },
       { type: "Частный дом", area: "до 100 м²", coldFog: "4 000 ₽", hotFog: "—", duration: "2-3 часа", highlighted: true },
-      { type: "Частный дом", area: "100+ м²", coldFog: "от 5 000 ₽", hotFog: "—", duration: "от 3 часов" },
-      { type: "Дача/подвал", area: "любая", coldFog: "от 3 000 ₽", hotFog: "—", duration: "По договорённости" }
+      { type: "Частный дом", area: "100+ м²", coldFog: "5 000 ₽", hotFog: "—", duration: "от 3 часов" },
+      { type: "Дача/подвал", area: "любая", coldFog: "3 000 ₽", hotFog: "—", duration: "По договорённости" }
     ],
     
     includedInPrice: [
@@ -567,9 +567,9 @@ export const serviceSubpages: ServiceSubpage[] = [
     ],
     
     relatedServices: [
-      { slug: "/uslugi/deratizaciya/unichtozhenie-krys", title: "Уничтожение крыс", price: "от 1400₽", icon: "🐀" },
-      { slug: "/uslugi/dezinfekciya/domov", title: "Дезинфекция дома", price: "от 1500₽", icon: "🏡" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "от 1200₽", icon: "🐕" }
+      { slug: "/uslugi/deratizaciya/unichtozhenie-krys", title: "Уничтожение крыс", price: "1400₽", icon: "🐀" },
+      { slug: "/uslugi/dezinfekciya/domov", title: "Дезинфекция дома", price: "1500₽", icon: "🏡" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-bloh", title: "Уничтожение блох", price: "1200₽", icon: "🐕" }
     ],
     
     priceFrom: 1400,
@@ -608,7 +608,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 200 ₽", hotFog: "1 800 ₽", duration: "1-1.5 часа" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "1 800 ₽", hotFog: "2 500 ₽", duration: "1.5-2 часа", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "2 500 ₽", hotFog: "3 500 ₽", duration: "2-2.5 часа" },
-      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 3 000 ₽", hotFog: "от 4 000 ₽", duration: "от 2.5 часов" }
+      { type: "4+ комнатная", area: "90+ м²", coldFog: "3 000 ₽", hotFog: "4 000 ₽", duration: "от 2.5 часов" }
     ],
     includedInPrice: ["Выезд специалиста", "Осмотр и диагностика", "Обработка всех помещений", "Повторная обработка через 14-21 день", "Гарантия до 3 лет", "Консультация по профилактике"],
     additionalServices: ["Обработка паром матраса — +500 ₽", "Срочный выезд (1-2 часа) — +1000 ₽", "Обработка соседних квартир — скидка 20%"],
@@ -628,9 +628,9 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия?", answer: "До 3 лет. При возвращении клопов — бесплатная повторная обработка." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/postelnyh-klopov", title: "Постельные клопы", price: "от 1200₽", icon: "🛏️" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Уничтожение тараканов", price: "от 1200₽", icon: "🪳" },
-      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартиры", price: "от 1000₽", icon: "🏠" }
+      { slug: "/uslugi/dezinsekciya/postelnyh-klopov", title: "Постельные клопы", price: "1200₽", icon: "🛏️" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Уничтожение тараканов", price: "1200₽", icon: "🪳" },
+      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартиры", price: "1000₽", icon: "🏠" }
     ],
     priceFrom: 1200,
     priceRange: "1200-4000"
@@ -666,7 +666,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 200 ₽", hotFog: "1 800 ₽", duration: "1-1.5 часа" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "1 800 ₽", hotFog: "2 500 ₽", duration: "1.5-2 часа", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "2 500 ₽", hotFog: "3 500 ₽", duration: "2-2.5 часа" },
-      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 3 000 ₽", hotFog: "от 4 000 ₽", duration: "от 2.5 часов" }
+      { type: "4+ комнатная", area: "90+ м²", coldFog: "3 000 ₽", hotFog: "4 000 ₽", duration: "от 2.5 часов" }
     ],
     includedInPrice: ["Выезд и диагностика", "Обработка всех помещений", "Обработка матрасов и мебели", "Повторная обработка (14-21 день)", "Гарантия до 3 лет", "Рекомендации по профилактике"],
     additionalServices: ["Обработка паром — +500 ₽", "Срочный выезд — +1000 ₽", "Комплекс с дезинфекцией — скидка 15%"],
@@ -686,9 +686,9 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия на обработку от постельных клопов?", answer: "До 3 лет. Если клопы вернутся — бесплатная повторная обработка." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/klopov-v-kvartire", title: "Клопы в квартире", price: "от 1200₽", icon: "🏠" },
-      { slug: "/uslugi/dezinsekciya/domashnih-klopov", title: "Домашние клопы", price: "от 1200₽", icon: "🪲" },
-      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартиры", price: "от 1000₽", icon: "🦠" }
+      { slug: "/uslugi/dezinsekciya/klopov-v-kvartire", title: "Клопы в квартире", price: "1200₽", icon: "🏠" },
+      { slug: "/uslugi/dezinsekciya/domashnih-klopov", title: "Домашние клопы", price: "1200₽", icon: "🪲" },
+      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция квартиры", price: "1000₽", icon: "🦠" }
     ],
     priceFrom: 1200,
     priceRange: "1200-4000"
@@ -724,7 +724,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 200 ₽", hotFog: "1 800 ₽", duration: "1-1.5 часа" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "1 800 ₽", hotFog: "2 500 ₽", duration: "1.5-2 часа", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "2 500 ₽", hotFog: "3 500 ₽", duration: "2-2.5 часа" },
-      { type: "Частный дом", area: "до 150 м²", coldFog: "от 3 000 ₽", hotFog: "от 4 500 ₽", duration: "2-3 часа" }
+      { type: "Частный дом", area: "до 150 м²", coldFog: "3 000 ₽", hotFog: "4 500 ₽", duration: "2-3 часа" }
     ],
     includedInPrice: ["Выезд и осмотр", "Полная обработка", "Повторная обработка", "Гарантия до 3 лет", "Рекомендации"],
     additionalServices: ["Срочный выезд — +1000 ₽", "Обработка паром — +500 ₽"],
@@ -744,9 +744,9 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия?", answer: "До 3 лет. Бесплатная повторная обработка при необходимости." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/klopov-v-kvartire", title: "Клопы в квартире", price: "от 1200₽", icon: "🏠" },
-      { slug: "/uslugi/dezinsekciya/postelnyh-klopov", title: "Постельные клопы", price: "от 1200₽", icon: "🛏️" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Тараканы", price: "от 1200₽", icon: "🪳" }
+      { slug: "/uslugi/dezinsekciya/klopov-v-kvartire", title: "Клопы в квартире", price: "1200₽", icon: "🏠" },
+      { slug: "/uslugi/dezinsekciya/postelnyh-klopov", title: "Постельные клопы", price: "1200₽", icon: "🛏️" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Тараканы", price: "1200₽", icon: "🪳" }
     ],
     priceFrom: 1200,
     priceRange: "1200-4500"
@@ -782,7 +782,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 200 ₽", hotFog: "1 800 ₽", duration: "1 час" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "1 500 ₽", hotFog: "2 200 ₽", duration: "1-1.5 часа", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "1 800 ₽", hotFog: "2 500 ₽", duration: "1.5-2 часа" },
-      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 2 200 ₽", hotFog: "от 3 000 ₽", duration: "от 2 часов" }
+      { type: "4+ комнатная", area: "90+ м²", coldFog: "2 200 ₽", hotFog: "3 000 ₽", duration: "от 2 часов" }
     ],
     includedInPrice: ["Выезд специалиста", "Обработка туманом", "Гелевая приманка", "Барьерная защита", "Гарантия до 3 лет"],
     additionalServices: ["Срочный выезд — +1000 ₽", "Барьерная защита от соседей — +500 ₽"],
@@ -802,9 +802,9 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия?", answer: "До 3 лет. Бесплатная повторная обработка при возвращении тараканов." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Тараканы (общая)", price: "от 1200₽", icon: "🪳" },
-      { slug: "/uslugi/dezinsekciya/klopov-v-kvartire", title: "Клопы в квартире", price: "от 1200₽", icon: "🛏️" },
-      { slug: "/uslugi/deratizaciya", title: "Дератизация", price: "от 1400₽", icon: "🐀" }
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Тараканы (общая)", price: "1200₽", icon: "🪳" },
+      { slug: "/uslugi/dezinsekciya/klopov-v-kvartire", title: "Клопы в квартире", price: "1200₽", icon: "🛏️" },
+      { slug: "/uslugi/deratizaciya", title: "Дератизация", price: "1400₽", icon: "🐀" }
     ],
     priceFrom: 1200,
     priceRange: "1200-3000"
@@ -842,7 +842,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 200 ₽", hotFog: "1 800 ₽", duration: "1 час" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "1 500 ₽", hotFog: "2 200 ₽", duration: "1-1.5 часа", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "1 800 ₽", hotFog: "2 500 ₽", duration: "1.5-2 часа" },
-      { type: "Частный дом", area: "до 150 м²", coldFog: "от 2 500 ₽", hotFog: "от 3 500 ₽", duration: "2-3 часа" }
+      { type: "Частный дом", area: "до 150 м²", coldFog: "2 500 ₽", hotFog: "3 500 ₽", duration: "2-3 часа" }
     ],
     includedInPrice: ["Выезд специалиста", "Обработка всех помещений", "Рекомендации по питомцу", "Гарантия до 3 лет"],
     additionalServices: ["Срочный выезд — +1000 ₽", "Обработка подвала — от 2000 ₽", "Комплекс с клопами — скидка 15%"],
@@ -862,8 +862,8 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия?", answer: "До 3 лет. При возвращении блох — бесплатная повторная обработка." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🛏️" },
-      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция", price: "от 1000₽", icon: "🦠" }
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "1200₽", icon: "🛏️" },
+      { slug: "/uslugi/dezinfekciya/kvartir", title: "Дезинфекция", price: "1000₽", icon: "🦠" }
     ],
     priceFrom: 1200,
     priceRange: "1200-3500"
@@ -901,7 +901,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 200 ₽", hotFog: "—", duration: "30-40 минут" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "1 500 ₽", hotFog: "—", duration: "40-60 минут", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "1 800 ₽", hotFog: "—", duration: "1-1.5 часа" },
-      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 2 200 ₽", hotFog: "—", duration: "от 1.5 часов" }
+      { type: "4+ комнатная", area: "90+ м²", coldFog: "2 200 ₽", hotFog: "—", duration: "от 1.5 часов" }
     ],
     includedInPrice: ["Выезд специалиста", "Обработка всех помещений", "Препараты", "Гарантия до 3 лет"],
     additionalServices: ["Горячий туман (усиленная обработка) — +50%", "Гелевая приманка — +500 ₽", "Срочный выезд — +1000 ₽"],
@@ -921,9 +921,9 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия?", answer: "До 3 лет с бесплатной повторной обработкой." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/parom", title: "Обработка паром", price: "от 1500₽", icon: "♨️" },
-      { slug: "/uslugi/dezinsekciya/bez-zapaha", title: "Без запаха", price: "от 1500₽", icon: "👃" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🛏️" }
+      { slug: "/uslugi/dezinsekciya/parom", title: "Обработка паром", price: "1500₽", icon: "♨️" },
+      { slug: "/uslugi/dezinsekciya/bez-zapaha", title: "Без запаха", price: "1500₽", icon: "👃" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "1200₽", icon: "🛏️" }
     ],
     priceFrom: 1200,
     priceRange: "1200-2200"
@@ -959,7 +959,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 500 ₽", hotFog: "2 000 ₽", duration: "1-1.5 часа" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "2 000 ₽", hotFog: "2 800 ₽", duration: "1.5-2 часа", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "2 800 ₽", hotFog: "3 800 ₽", duration: "2-3 часа" },
-      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 3 500 ₽", hotFog: "от 4 500 ₽", duration: "от 3 часов" }
+      { type: "4+ комнатная", area: "90+ м²", coldFog: "3 500 ₽", hotFog: "4 500 ₽", duration: "от 3 часов" }
     ],
     includedInPrice: ["Выезд специалиста", "Паровая обработка очагов", "Осмотр и диагностика", "Рекомендации", "Гарантия до 3 лет"],
     additionalServices: ["Химическая обработка — +1000 ₽", "Обработка всей квартиры паром — +500 ₽"],
@@ -979,9 +979,9 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия?", answer: "До 3 лет при комбинированной обработке (пар + химия)." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/parogeneratorom", title: "Парогенератором", price: "от 1500₽", icon: "♨️" },
-      { slug: "/uslugi/dezinsekciya/holodnym-tumanom", title: "Холодный туман", price: "от 1200₽", icon: "🌫️" },
-      { slug: "/uslugi/dezinsekciya/bez-zapaha", title: "Без запаха", price: "от 1500₽", icon: "👃" }
+      { slug: "/uslugi/dezinsekciya/parogeneratorom", title: "Парогенератором", price: "1500₽", icon: "♨️" },
+      { slug: "/uslugi/dezinsekciya/holodnym-tumanom", title: "Холодный туман", price: "1200₽", icon: "🌫️" },
+      { slug: "/uslugi/dezinsekciya/bez-zapaha", title: "Без запаха", price: "1500₽", icon: "👃" }
     ],
     priceFrom: 1500,
     priceRange: "1500-4500"
@@ -1017,7 +1017,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 500 ₽", hotFog: "2 000 ₽", duration: "1-1.5 часа" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "2 000 ₽", hotFog: "2 800 ₽", duration: "1.5-2 часа", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "2 800 ₽", hotFog: "3 800 ₽", duration: "2-3 часа" },
-      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 3 500 ₽", hotFog: "от 4 500 ₽", duration: "от 3 часов" }
+      { type: "4+ комнатная", area: "90+ м²", coldFog: "3 500 ₽", hotFog: "4 500 ₽", duration: "от 3 часов" }
     ],
     includedInPrice: ["Выезд специалиста", "Обработка парогенератором", "Диагностика", "Рекомендации", "Гарантия до 3 лет"],
     additionalServices: ["Химическая барьерная обработка — +1000 ₽", "Срочный выезд — +1000 ₽"],
@@ -1037,9 +1037,9 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия?", answer: "До 3 лет при комбинированной обработке." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/parom", title: "Обработка паром", price: "от 1500₽", icon: "♨️" },
-      { slug: "/uslugi/dezinsekciya/holodnym-tumanom", title: "Холодный туман", price: "от 1200₽", icon: "🌫️" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🛏️" }
+      { slug: "/uslugi/dezinsekciya/parom", title: "Обработка паром", price: "1500₽", icon: "♨️" },
+      { slug: "/uslugi/dezinsekciya/holodnym-tumanom", title: "Холодный туман", price: "1200₽", icon: "🌫️" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "1200₽", icon: "🛏️" }
     ],
     priceFrom: 1500,
     priceRange: "1500-4500"
@@ -1075,7 +1075,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 500 ₽", hotFog: "—", duration: "30-40 минут" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "2 000 ₽", hotFog: "—", duration: "40-60 минут", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "2 500 ₽", hotFog: "—", duration: "1-1.5 часа" },
-      { type: "4+ комнатная", area: "90+ м²", coldFog: "от 3 000 ₽", hotFog: "—", duration: "от 1.5 часов" }
+      { type: "4+ комнатная", area: "90+ м²", coldFog: "3 000 ₽", hotFog: "—", duration: "от 1.5 часов" }
     ],
     includedInPrice: ["Выезд специалиста", "Препараты без запаха", "Обработка", "Гарантия до 3 лет"],
     additionalServices: ["Гелевая приманка — +500 ₽", "Срочный выезд — +1000 ₽"],
@@ -1095,9 +1095,9 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия?", answer: "До 3 лет с бесплатной повторной обработкой." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/holodnym-tumanom", title: "Холодный туман", price: "от 1200₽", icon: "🌫️" },
-      { slug: "/uslugi/dezinsekciya/parom", title: "Обработка паром", price: "от 1500₽", icon: "♨️" },
-      { slug: "/uslugi/dezinsekciya/srochno", title: "Срочная обработка", price: "от 2200₽", icon: "🚨" }
+      { slug: "/uslugi/dezinsekciya/holodnym-tumanom", title: "Холодный туман", price: "1200₽", icon: "🌫️" },
+      { slug: "/uslugi/dezinsekciya/parom", title: "Обработка паром", price: "1500₽", icon: "♨️" },
+      { slug: "/uslugi/dezinsekciya/srochno", title: "Срочная обработка", price: "2200₽", icon: "🚨" }
     ],
     priceFrom: 1500,
     priceRange: "1500-3000"
@@ -1133,7 +1133,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "2 200 ₽", hotFog: "2 800 ₽", duration: "1 час" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "2 800 ₽", hotFog: "3 500 ₽", duration: "1-1.5 часа", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "3 500 ₽", hotFog: "4 500 ₽", duration: "1.5-2 часа" },
-      { type: "Коммерческое", area: "любая", coldFog: "от 3 000 ₽", hotFog: "от 4 000 ₽", duration: "По договорённости" }
+      { type: "Коммерческое", area: "любая", coldFog: "3 000 ₽", hotFog: "4 000 ₽", duration: "По договорённости" }
     ],
     includedInPrice: ["Экспресс-выезд за 1 час", "Обработка всех помещений", "Усиленные препараты", "Гарантия до 3 лет"],
     additionalServices: ["Обработка в ночное время — без доплаты", "Барьерная защита — +500 ₽"],
@@ -1153,9 +1153,9 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия на срочную обработку?", answer: "Такая же, как на обычную — до 3 лет." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/kruglosutochno", title: "Круглосуточная обработка", price: "от 2200₽", icon: "🌙" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "от 1200₽", icon: "🛏️" },
-      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Тараканы", price: "от 1200₽", icon: "🪳" }
+      { slug: "/uslugi/dezinsekciya/kruglosutochno", title: "Круглосуточная обработка", price: "2200₽", icon: "🌙" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-klopov", title: "Уничтожение клопов", price: "1200₽", icon: "🛏️" },
+      { slug: "/uslugi/dezinsekciya/unichtozhenie-tarakanov", title: "Тараканы", price: "1200₽", icon: "🪳" }
     ],
     priceFrom: 2200,
     priceRange: "2200-4500"
@@ -1191,7 +1191,7 @@ export const serviceSubpages: ServiceSubpage[] = [
       { type: "1-комнатная", area: "до 40 м²", coldFog: "1 200 ₽", hotFog: "1 800 ₽", duration: "1 час" },
       { type: "2-комнатная", area: "40-60 м²", coldFog: "1 500 ₽", hotFog: "2 200 ₽", duration: "1-1.5 часа", highlighted: true },
       { type: "3-комнатная", area: "60-90 м²", coldFog: "1 800 ₽", hotFog: "2 500 ₽", duration: "1.5-2 часа" },
-      { type: "Коммерческое", area: "любая", coldFog: "от 2 500 ₽", hotFog: "от 3 500 ₽", duration: "По договорённости" }
+      { type: "Коммерческое", area: "любая", coldFog: "2 500 ₽", hotFog: "3 500 ₽", duration: "По договорённости" }
     ],
     includedInPrice: ["Выезд в любое время", "Обработка всех помещений", "Без доплаты за ночь", "Гарантия до 3 лет"],
     additionalServices: ["Экспресс-выезд за 1 час — +1000 ₽", "Барьерная защита — +500 ₽"],
@@ -1211,9 +1211,9 @@ export const serviceSubpages: ServiceSubpage[] = [
       { question: "Какая гарантия?", answer: "До 3 лет — как при обычном вызове." }
     ],
     relatedServices: [
-      { slug: "/uslugi/dezinsekciya/srochno", title: "Срочная обработка", price: "от 2200₽", icon: "🚨" },
-      { slug: "/uslugi/dezinsekciya/bez-zapaha", title: "Без запаха", price: "от 1500₽", icon: "👃" },
-      { slug: "/uslugi/dezinsekciya/holodnym-tumanom", title: "Холодный туман", price: "от 1200₽", icon: "🌫️" }
+      { slug: "/uslugi/dezinsekciya/srochno", title: "Срочная обработка", price: "2200₽", icon: "🚨" },
+      { slug: "/uslugi/dezinsekciya/bez-zapaha", title: "Без запаха", price: "1500₽", icon: "👃" },
+      { slug: "/uslugi/dezinsekciya/holodnym-tumanom", title: "Холодный туман", price: "1200₽", icon: "🌫️" }
     ],
     priceFrom: 1200,
     priceRange: "1200-3500"
