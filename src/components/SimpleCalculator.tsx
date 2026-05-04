@@ -349,7 +349,7 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
             <p className="text-xs text-muted-foreground">
               {PROBLEM_LABELS[problem]} → {object.label}{room ? ` → ${room.label}` : ""}
             </p>
-            <div className="text-3xl font-bold text-primary">от {price}</div>
+            <div className="text-3xl font-bold text-primary">{price}</div>
             <p className="text-xs text-muted-foreground">Точную стоимость рассчитает специалист</p>
           </div>
 
