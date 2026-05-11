@@ -156,7 +156,9 @@ const BlogPost = () => {
   const isLowValueCluster = isLowValueBlogSlug(post.slug);
   // noindex,follow when статья: (a) cannibalizes commercial pages (Yandex flagged),
   // или (b) принадлежит к thin-кластеру (posle-obrabotki-*, podgotovka-k-obrabotke-*).
-  const shouldNoindex = isCommercialOverlap || isLowValueCluster;
+  // Whitelist (HIGH_VALUE_BLOG_SLUGS) overrides both checks.
+  const shouldNoindex = !HIGH_VALUE_BLOG_SLUGS.has(post.slug)
+    && (isCommercialOverlap || isLowValueCluster);
 
   return (
     <div className="min-h-screen">
