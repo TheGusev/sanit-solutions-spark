@@ -1,40 +1,50 @@
-## Что чиним
+# Fix 1: Дубликаты BreadcrumbList на подстраницах + Fix 2: Снять noindex с `/blog/klopy-v-kvartire/`
 
-### 1. Футер — вернуть как было (`src/components/Footer.tsx`)
+## Что нашёл
 
-Сейчас в футере две лишние вещи, которые я добавил:
-- Большая ссылка `◊ admin` отдельным абзацем слева (видна всем).
-- Длинный дисклеймер «Данный сайт носит исключительно информационный характер… Статьи 437 (2) ГК РФ».
+### 1) Дубликаты BreadcrumbList (8 URL)
+В `index.html` (строки 80–368) лежит большой `<script type="application/ld+json">` с `@graph`, который содержит `LocalBusiness`, `WebSite`, `BreadcrumbList` главной и кучу `Service`. Этот блок шаблонный — SSG копирует его **в каждую** сгенерированную страницу. На страницах услуг/районов/блога дополнительно рендерится свой корректный `BreadcrumbList` (через `<Breadcrumbs>` или `metadata.schema`) → в HTML оказывается **2× BreadcrumbList**.
 
-Надо вернуть исходное состояние:
-- Удалить блок `<p className="mt-4 text-left">…◊ admin…</p>`.
-- Удалить параграф с дисклеймером про Статью 437.
-- Вернуть маленький `◊` справа от строки «ИНН: 5410169338 | ОГРН: 1255400030555» (как было: `<a href="/admin/login" className="ml-2 opacity-30 hover:opacity-100 transition-opacity">◊</a>`), `rel="nofollow"`, без текста «admin».
+В `mem://seo/ssg-schema-isolation` правило зафиксировано, но соответствующего шага в `vite-plugin-ssg.ts` нет — отсюда регрессия.
 
-Результат — точно как на скрине у пользователя: цифры ИНН/ОГРН и сразу ромбик-вход рядом, никаких лишних абзацев.
+### 2) `/blog/klopy-v-kvartire/` помечен `noindex`
+В `BlogPost.tsx` (`hasCommercialOverlap`) слово «**уничтожить**» в заголовке статьи срабатывает как `STRONG_COMMERCIAL` маркер и принудительно выставляет `noindex, follow`. Статья при этом — приоритетная информационная (упомянута во внутренних связках, у неё LLM-summary, автор и FAQ).
 
-### 2. Вход в админку с мобильного
+## Что сделаю
 
-По логам Supabase (`auth-logs`) последние входы в 19:24 и 19:28 МСК прошли успешно с реферером `https://goruslugimsk.ru/` и `https://preview--…lovable.app/` — статус 200. То есть сам бэкенд логина работает.
+### Fix 1 — изоляция шаблонного `@graph` на этапе SSG
 
-На скрине с мобильного видно, что кнопка «Войти» зависает в состоянии `Вход…` (спиннер крутится бесконечно). Это значит запрос на `gimkzlozhwwgetlgtgvj.supabase.co/auth/v1/token` с мобильного интернета не доходит — на ПК через VPN всё ок. Это типичная история на российских мобильных операторах: домен `*.supabase.co` периодически режется/замедляется МТС/Билайн/Мегафоном.
+**`vite-plugin-ssg.ts`** — после `replaceHeadTags(...)` и до `validateHtml(...)`:
+- Если `route.path !== '/'`, удалить из `html` ровно один `<script type="application/ld+json">…</script>`, содержащий уникальный анкер шаблонного блока — `"@id": "https://goruslugimsk.ru/#organization-entity"`. Регексп с не-жадным `[\s\S]*?` + проверка наличия маркера. Если маркер не найден — ничего не трогаем.
+- Главная (`/`) не меняется — её `@graph` остаётся.
+- Логика страниц (`Breadcrumbs.tsx`, `metadata.ts`, `internalLinking.ts`) не меняется.
 
-Что делаем в коде сейчас, чтобы помочь диагностике и не блокировать UI:
-- В `src/pages/admin/Login.tsx` обернуть `signInWithPassword` в `Promise.race` с таймаутом 15 сек: если ответа нет — показывать toast «Сеть недоступна. Попробуйте через Wi-Fi/VPN или другой оператор» и сбрасывать `isLoading`, чтобы кнопка не висела.
-- В `catch` логировать `error.message` подробнее (уже логируется, оставляем).
+Дополнительно (защита от регрессий): в `validateHtml` поднять текущий warning `Duplicate BreadcrumbList JSON-LD` до ошибки, проваливающей CI, при `breadcrumbCount > 1`. Случай «0» не трогаем.
 
-Полное решение проблемы блокировок (custom-домен прокси для Supabase через Cloudflare Worker) — отдельная задача, делать сейчас не будем. Сообщу об этом текстом после правок.
+### Fix 2 — индексировать `/blog/klopy-v-kvartire/`
 
-### 3. Что НЕ трогаем
+**`src/pages/BlogPost.tsx`** — добавить узкий white-list приоритетных info-слугов:
+```ts
+const HIGH_VALUE_BLOG_SLUGS = new Set<string>(['klopy-v-kvartire']);
+```
+И в вычислении `shouldNoindex`:
+```ts
+const shouldNoindex = !HIGH_VALUE_BLOG_SLUGS.has(post.slug)
+  && (isCommercialOverlap || isLowValueCluster);
+```
+Глобальные эвристики `hasCommercialOverlap` / `isLowValueBlogSlug` не трогаем — поведение остальных статей сохраняется.
 
-- `nginx.conf` (роутинг `/admin/`) — работает.
-- `public/_redirects` — работает.
-- Service worker `public/sw.js` — он не кеширует страницы, на логин не влияет.
-- `src/integrations/supabase/client.ts` — править нельзя (авто-генерируется).
+## Чего НЕ трогаю
 
-## Файлы
+- `index.html` (большой `@graph` нужен главной).
+- `<Breadcrumbs>`, `metadata.ts`, `internalLinking.ts`, schema-генераторы страниц.
+- `seoRoutes.ts`, sitemap, _redirects, nginx.
+- Эвристики анти-каннибализации блога — только адресный whitelist.
 
-- `src/components/Footer.tsx` — убрать абзац «◊ admin» и дисклеймер про Статью 437, вернуть маленький `◊` рядом с ОГРН.
-- `src/pages/admin/Login.tsx` — добавить таймаут 15 сек на `signInWithPassword`, чтобы кнопка не зависала на плохой сети.
+## Ожидаемый результат
 
-Сборка не сломается: правки локальные, никакой логики SSG/роутинга/типов не задеваем.
+После пересборки и деплоя:
+- На `/uslugi/dezinsekciya/`, `/uslugi/dezinsekciya/klopy/`, `/uslugi/dezinsekciya/ofisov/`, `/uslugi/dezinfekciya-cao/`, `/moscow-oblast/`, `/moscow-oblast/podolsk/`, `/uslugi/borba-s-krotami/khimki/`, `/blog/klopy-v-kvartire/` — ровно **1** `BreadcrumbList`.
+- `/` — `BreadcrumbList` главной остаётся (1 шт).
+- `/blog/klopy-v-kvartire/` — `meta robots` = `index, follow, ...`.
+- Мониторинг: 9 CRITICAL → 0.
