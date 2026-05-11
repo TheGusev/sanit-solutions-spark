@@ -119,7 +119,7 @@ function validateHtml(html: string, route: string): ValidationResult {
   if (breadcrumbCount === 0) {
     warnings.push('Missing BreadcrumbList JSON-LD');
   } else if (breadcrumbCount > 1) {
-    warnings.push(`Duplicate BreadcrumbList JSON-LD: found ${breadcrumbCount}, expected 1`);
+    errors.push(`Duplicate BreadcrumbList JSON-LD: found ${breadcrumbCount}, expected 1`);
   }
   
   // Canonical integrity (mem://seo/canonical-and-social-standard):
