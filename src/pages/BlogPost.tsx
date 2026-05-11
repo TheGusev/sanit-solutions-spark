@@ -56,6 +56,14 @@ const LOW_VALUE_BLOG_PATTERNS: RegExp[] = [
   /^podgotovka-k-obrabotke-/i,    // podgotovka-k-obrabotke-{domov,ofisov,skladov}
 ];
 
+/**
+ * High-value info articles that must always be indexable,
+ * even if their title contains commercial markers (e.g. "уничтожить").
+ */
+const HIGH_VALUE_BLOG_SLUGS = new Set<string>([
+  'klopy-v-kvartire',
+]);
+
 /** Whether slug matches a low-value pattern that should be noindexed */
 function isLowValueBlogSlug(slug: string): boolean {
   return LOW_VALUE_BLOG_PATTERNS.some(re => re.test(slug));
@@ -148,7 +156,9 @@ const BlogPost = () => {
   const isLowValueCluster = isLowValueBlogSlug(post.slug);
   // noindex,follow when статья: (a) cannibalizes commercial pages (Yandex flagged),
   // или (b) принадлежит к thin-кластеру (posle-obrabotki-*, podgotovka-k-obrabotke-*).
-  const shouldNoindex = isCommercialOverlap || isLowValueCluster;
+  // Whitelist (HIGH_VALUE_BLOG_SLUGS) overrides both checks.
+  const shouldNoindex = !HIGH_VALUE_BLOG_SLUGS.has(post.slug)
+    && (isCommercialOverlap || isLowValueCluster);
 
   return (
     <div className="min-h-screen">
