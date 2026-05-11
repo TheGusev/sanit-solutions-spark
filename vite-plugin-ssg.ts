@@ -368,6 +368,16 @@ export function ssgPlugin(): Plugin {
             // Update all head tags from helmet
             html = replaceHeadTags(html, result.helmet);
 
+            // Schema isolation (mem://seo/ssg-schema-isolation):
+            // Strip the homepage @graph JSON-LD block from any non-home page.
+            // The block is uniquely anchored by "@id":"https://goruslugimsk.ru/#organization-entity".
+            if (route.path !== '/') {
+              const HOME_GRAPH_RE = /<script[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?#organization-entity[\s\S]*?<\/script>\s*/;
+              if (HOME_GRAPH_RE.test(html)) {
+                html = html.replace(HOME_GRAPH_RE, '');
+              }
+            }
+
             // Validate HTML quality with enhanced checks
             const validation = validateHtml(html, route.path);
 
