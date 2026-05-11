@@ -56,6 +56,14 @@ const LOW_VALUE_BLOG_PATTERNS: RegExp[] = [
   /^podgotovka-k-obrabotke-/i,    // podgotovka-k-obrabotke-{domov,ofisov,skladov}
 ];
 
+/**
+ * High-value info articles that must always be indexable,
+ * even if their title contains commercial markers (e.g. "уничтожить").
+ */
+const HIGH_VALUE_BLOG_SLUGS = new Set<string>([
+  'klopy-v-kvartire',
+]);
+
 /** Whether slug matches a low-value pattern that should be noindexed */
 function isLowValueBlogSlug(slug: string): boolean {
   return LOW_VALUE_BLOG_PATTERNS.some(re => re.test(slug));
