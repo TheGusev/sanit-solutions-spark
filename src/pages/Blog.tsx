@@ -79,6 +79,25 @@ const Blog = () => {
     });
   }, [selectedCategory, sortBy]);
 
+  // Auto-load more on scroll near sentinel
+  const hasMore = visibleCount < filteredPosts.length;
+  useEffect(() => {
+    if (!hasMore) return;
+    if (typeof IntersectionObserver === 'undefined') return;
+    const el = sentinelRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((c) => c + 10);
+        }
+      },
+      { rootMargin: '300px 0px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasMore, visibleCount, filteredPosts.length]);
+
   const itemListSource = selectedCategory === "Все" ? allBlogArticles : filteredPosts;
   const itemListData = itemListSource.slice(0, 50).map((post, index) => ({
     name: post.title,
