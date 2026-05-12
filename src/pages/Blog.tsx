@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Header from "@/components/Header";
@@ -46,9 +46,15 @@ const popularSlugs = allBlogArticles.slice(0, 5).map(a => a.slug);
 
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
-  const [visibleCount, setVisibleCount] = useState(30);
+  const [visibleCount, setVisibleCount] = useState(10);
   const [sortBy, setSortBy] = useState<SortMode>('default');
   const sortRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  // Reset visible count when sort changes
+  useEffect(() => {
+    setVisibleCount(10);
+  }, [sortBy]);
 
   const filteredPosts = useMemo(() => {
     const baseList = selectedCategory === "Все" 
@@ -72,6 +78,25 @@ const Blog = () => {
       return 0;
     });
   }, [selectedCategory, sortBy]);
+
+  // Auto-load more on scroll near sentinel
+  const hasMore = visibleCount < filteredPosts.length;
+  useEffect(() => {
+    if (!hasMore) return;
+    if (typeof IntersectionObserver === 'undefined') return;
+    const el = sentinelRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((c) => c + 10);
+        }
+      },
+      { rootMargin: '300px 0px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasMore, visibleCount, filteredPosts.length]);
 
   const itemListSource = selectedCategory === "Все" ? allBlogArticles : filteredPosts;
   const itemListData = itemListSource.slice(0, 50).map((post, index) => ({
@@ -165,7 +190,7 @@ const Blog = () => {
                   key={category}
                   role="tab"
                   aria-selected={isActive}
-                  onClick={() => { setSelectedCategory(category); setVisibleCount(30); setTimeout(() => sortRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}
+                  onClick={() => { setSelectedCategory(category); setVisibleCount(10); setTimeout(() => sortRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}
                   className={`
                     folder-card flex items-center gap-2.5 px-4 py-3.5 text-left cursor-pointer
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
@@ -268,12 +293,19 @@ const Blog = () => {
               })}
             </div>
           )}
-          {visibleCount < filteredPosts.length && (
-            <div className="text-center mt-8">
-              <Button variant="outline" size="lg" onClick={() => setVisibleCount(c => c + 30)}>
-                Показать ещё ({filteredPosts.length - visibleCount} осталось)
-              </Button>
-            </div>
+          {hasMore && (
+            <>
+              <div ref={sentinelRef} aria-hidden className="h-1 w-full" />
+              <div className="mt-6 md:mt-8">
+                <Button
+                  variant="secondary"
+                  className="w-full md:w-auto md:mx-auto md:flex"
+                  onClick={() => setVisibleCount((c) => c + 10)}
+                >
+                  Показать ещё ({filteredPosts.length - visibleCount} осталось)
+                </Button>
+              </div>
+            </>
           )}
         </div>
       </section>
