@@ -190,7 +190,7 @@ const Blog = () => {
                   key={category}
                   role="tab"
                   aria-selected={isActive}
-                  onClick={() => { setSelectedCategory(category); setVisibleCount(30); setTimeout(() => sortRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}
+                  onClick={() => { setSelectedCategory(category); setVisibleCount(10); setTimeout(() => sortRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}
                   className={`
                     folder-card flex items-center gap-2.5 px-4 py-3.5 text-left cursor-pointer
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
