@@ -1,50 +1,47 @@
-# Fix 1: Дубликаты BreadcrumbList на подстраницах + Fix 2: Снять noindex с `/blog/klopy-v-kvartire/`
+## Цель
+Привести мобильный вид страницы `/blog/` в полное соответствие с присланным скриншотом. Только фронтенд‑визуал, контент и ссылки не трогаем.
 
-## Что нашёл
+## Что не совпадает сейчас (анализ скрина vs текущий Blog.tsx)
 
-### 1) Дубликаты BreadcrumbList (8 URL)
-В `index.html` (строки 80–368) лежит большой `<script type="application/ld+json">` с `@graph`, который содержит `LocalBusiness`, `WebSite`, `BreadcrumbList` главной и кучу `Service`. Этот блок шаблонный — SSG копирует его **в каждую** сгенерированную страницу. На страницах услуг/районов/блога дополнительно рендерится свой корректный `BreadcrumbList` (через `<Breadcrumbs>` или `metadata.schema`) → в HTML оказывается **2× BreadcrumbList**.
+1. **Активная папка «Все»** — на скрине яркое неоновое сияние вокруг карточки и более насыщенный синий. Сейчас glow есть, но слабее и без выраженного «outer halo».
+2. **Карточки статей**:
+   - На скрине бейдж категории — **сплошной синий** (filled, белый текст). Сейчас `bg-primary/10 text-primary` (бледный).
+   - На скрине **нет** левой акцентной полосы. Сейчас стоит `border-l-2 border-l-primary/15`.
+   - «Популярное» на скрине — просто текст справа без иконки. Сейчас рядом `TrendingUp` иконка.
+   - Карточки на скрине более «пухлые», с бо́льшим внутренним отступом и более выраженным rounded (≈ `rounded-2xl`), чёрно‑графитовый фон.
+   - Первая карточка имеет **миниатюру‑превью справа** (квадрат ~72×72 со скруглением). Остальные — без миниатюры.
 
-В `mem://seo/ssg-schema-isolation` правило зафиксировано, но соответствующего шага в `vite-plugin-ssg.ts` нет — отсюда регрессия.
+## План правок (только визуал)
 
-### 2) `/blog/klopy-v-kvartire/` помечен `noindex`
-В `BlogPost.tsx` (`hasCommercialOverlap`) слово «**уничтожить**» в заголовке статьи срабатывает как `STRONG_COMMERCIAL` маркер и принудительно выставляет `noindex, follow`. Статья при этом — приоритетная информационная (упомянута во внутренних связках, у неё LLM-summary, автор и FAQ).
-
-## Что сделаю
-
-### Fix 1 — изоляция шаблонного `@graph` на этапе SSG
-
-**`vite-plugin-ssg.ts`** — после `replaceHeadTags(...)` и до `validateHtml(...)`:
-- Если `route.path !== '/'`, удалить из `html` ровно один `<script type="application/ld+json">…</script>`, содержащий уникальный анкер шаблонного блока — `"@id": "https://goruslugimsk.ru/#organization-entity"`. Регексп с не-жадным `[\s\S]*?` + проверка наличия маркера. Если маркер не найден — ничего не трогаем.
-- Главная (`/`) не меняется — её `@graph` остаётся.
-- Логика страниц (`Breadcrumbs.tsx`, `metadata.ts`, `internalLinking.ts`) не меняется.
-
-Дополнительно (защита от регрессий): в `validateHtml` поднять текущий warning `Duplicate BreadcrumbList JSON-LD` до ошибки, проваливающей CI, при `breadcrumbCount > 1`. Случай «0» не трогаем.
-
-### Fix 2 — индексировать `/blog/klopy-v-kvartire/`
-
-**`src/pages/BlogPost.tsx`** — добавить узкий white-list приоритетных info-слугов:
-```ts
-const HIGH_VALUE_BLOG_SLUGS = new Set<string>(['klopy-v-kvartire']);
+### 1. `src/index.css` — усилить активную папку (dark)
+Добавить более выраженный неоновый ореол только в dark‑mode для `.dark .folder-card--active` и её `::before`:
 ```
-И в вычислении `shouldNoindex`:
-```ts
-const shouldNoindex = !HIGH_VALUE_BLOG_SLUGS.has(post.slug)
-  && (isCommercialOverlap || isLowValueCluster);
+box-shadow:
+  0 0 0 1.5px hsl(var(--primary) / 0.9),
+  0 0 28px 4px hsl(var(--primary) / 0.55),
+  0 0 60px 8px hsl(var(--primary) / 0.25),
+  inset 0 1px 0 hsl(0 0% 100% / 0.12);
 ```
-Глобальные эвристики `hasCommercialOverlap` / `isLowValueBlogSlug` не трогаем — поведение остальных статей сохраняется.
+Light‑mode оставить как есть.
 
-## Чего НЕ трогаю
+### 2. `src/pages/Blog.tsx` — карточки статей
+В блоке рендера статей:
+- Убрать классы `border-l-2 border-l-primary/15 ... hover:border-l-primary`.
+- Заменить контейнер на `rounded-2xl ... p-4 md:p-5` с чуть большим внутренним отступом (для мобильного `p-4`).
+- Бейдж категории: `bg-primary text-primary-foreground` (сплошной синий, белый текст), `rounded-full px-2.5 py-0.5 text-xs font-semibold`.
+- «Популярное» — убрать иконку `TrendingUp`, оставить только текст `text-xs text-primary/90 font-medium`.
+- Заголовок: `text-[15px] md:text-lg font-bold leading-snug` (как на скрине — плотнее).
+- Excerpt: `text-[13px] md:text-sm text-muted-foreground line-clamp-2`.
+- Внутренняя сетка: для **первой** карточки списка добавить flex‑строку с миниатюрой справа `72×72 rounded-xl` — фон `bg-gradient-to-br from-primary/20 to-primary/5` + по центру иконка категории (Lucide) `w-7 h-7 text-primary/80`. Для остальных — без миниатюры (как на скрине).
+- Удалить из импортов неиспользуемый `TrendingUp`, если он больше нигде не нужен в файле.
 
-- `index.html` (большой `@graph` нужен главной).
-- `<Breadcrumbs>`, `metadata.ts`, `internalLinking.ts`, schema-генераторы страниц.
-- `seoRoutes.ts`, sitemap, _redirects, nginx.
-- Эвристики анти-каннибализации блога — только адресный whitelist.
+### 3. Без изменений
+- Список статей, категории, сортировка, ссылки, SEO/Helmet, Breadcrumbs, CTA‑секция, Header/Footer, RelatedServices/RelatedGeoLinks.
+- Никаких изменений в desktop‑верстке логики — все правки совместимы с `md:` брейкпоинтом и просто шлифуют мобильное отображение.
+
+## Технические детали
+- Файлы: `src/index.css` (строки 580–592 блок `.dark .folder-card--active`), `src/pages/Blog.tsx` (секция `Blog Posts` строки ~210–260, импорты сверху).
+- Никакой бизнес‑логики, новых компонентов, новых данных. Только классы Tailwind и небольшая правка CSS‑переменных box‑shadow.
 
 ## Ожидаемый результат
-
-После пересборки и деплоя:
-- На `/uslugi/dezinsekciya/`, `/uslugi/dezinsekciya/klopy/`, `/uslugi/dezinsekciya/ofisov/`, `/uslugi/dezinfekciya-cao/`, `/moscow-oblast/`, `/moscow-oblast/podolsk/`, `/uslugi/borba-s-krotami/khimki/`, `/blog/klopy-v-kvartire/` — ровно **1** `BreadcrumbList`.
-- `/` — `BreadcrumbList` главной остаётся (1 шт).
-- `/blog/klopy-v-kvartire/` — `meta robots` = `index, follow, ...`.
-- Мониторинг: 9 CRITICAL → 0.
+Мобильный `/blog/` визуально соответствует скриншоту: ярко светящаяся активная папка «Все», аккуратные карточки‑документы с сплошным синим бейджем категории, без левой полосы, с чистым «Популярное» текстом справа и миниатюрой у первой карточки.
