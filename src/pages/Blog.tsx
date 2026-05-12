@@ -10,7 +10,7 @@ import StructuredData from "@/components/StructuredData";
 import { allBlogArticles, blogCategories } from "@/data/blog";
 import { Button } from "@/components/ui/button";
 import { 
-  TrendingUp, FolderOpen, Bug, FlaskConical,
+  FolderOpen, Bug, FlaskConical,
   ShieldCheck, Lightbulb, Scale, Mouse, Clock, Briefcase,
   FileText
 } from "lucide-react";
