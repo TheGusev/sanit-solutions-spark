@@ -46,9 +46,15 @@ const popularSlugs = allBlogArticles.slice(0, 5).map(a => a.slug);
 
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("Все");
-  const [visibleCount, setVisibleCount] = useState(30);
+  const [visibleCount, setVisibleCount] = useState(10);
   const [sortBy, setSortBy] = useState<SortMode>('default');
   const sortRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  // Reset visible count when sort changes
+  useEffect(() => {
+    setVisibleCount(10);
+  }, [sortBy]);
 
   const filteredPosts = useMemo(() => {
     const baseList = selectedCategory === "Все" 
