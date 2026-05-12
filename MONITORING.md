@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 11.05.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
+**Дата:** 12.05.2026 | **Статус:** STABLE | **Финальный вердикт:** SAFE TO KEEP LIVE
 
 ---
 
@@ -8,30 +8,20 @@
 
 - Сайт: **ONLINE**
 - Build / SSG: **OK**
-- Canonical / Sitemap / Indexability: **FAIL**
-- Schema: **FAIL**
+- Canonical / Sitemap / Indexability: **OK**
+- Schema: **OK**
 - Conversion / Analytics: **OK**
 - Performance / Cache: **OK**
 
 ### Что изменилось с прошлого запуска
 
-Существенных изменений не обнаружено.
+- Все критичные алерты устранены ✅
 
 ---
 
 ## 2. Critical Alerts
 
-| Severity | Check | Problem | Impact | Action |
-|---|---|---|---|---|
-| CRITICAL | Schema | /uslugi/dezinsekciya/: 2 BreadcrumbList | Дубликаты разметки | Использовать единый источник |
-| CRITICAL | Schema | /uslugi/dezinsekciya/klopy/: 2 BreadcrumbList | Дубликаты разметки | Использовать единый источник |
-| CRITICAL | Schema | /uslugi/dezinsekciya/ofisov/: 2 BreadcrumbList | Дубликаты разметки | Использовать единый источник |
-| CRITICAL | Schema | /uslugi/dezinfekciya-cao/: 2 BreadcrumbList | Дубликаты разметки | Использовать единый источник |
-| CRITICAL | Schema | /moscow-oblast/: 2 BreadcrumbList | Дубликаты разметки | Использовать единый источник |
-| CRITICAL | Schema | /moscow-oblast/podolsk/: 2 BreadcrumbList | Дубликаты разметки | Использовать единый источник |
-| CRITICAL | Schema | /uslugi/borba-s-krotami/khimki/: 2 BreadcrumbList | Дубликаты разметки | Использовать единый источник |
-| CRITICAL | Indexability | /blog/klopy-v-kvartire/: должен индексироваться, но noindex | Страница выпадет из индекса | Снять noindex |
-| CRITICAL | Schema | /blog/klopy-v-kvartire/: 2 BreadcrumbList | Дубликаты разметки | Использовать единый источник |
+✅ Critical issues not detected
 
 ---
 
@@ -39,12 +29,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 581 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 694 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 815 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 669 мс | — |
-| /blog/ | ✅ 200 | 707 мс | — |
-| /contacts/ | ✅ 200 | 551 мс | — |
+| / | ✅ 200 | 652 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 663 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 718 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 729 мс | — |
+| /blog/ | ✅ 200 | 708 мс | — |
+| /contacts/ | ✅ 200 | 394 мс | — |
 
 ---
 
@@ -63,13 +53,13 @@
 |---|---|---|
 | sitemap-index.xml доступен | ✅ | 9 файлов, 1077 URL |
 | robots.txt + Sitemap-директива | ✅ | — |
-| Indexability roles | ❌ 1 drift | По REPRESENTATIVE_URLS |
+| Indexability roles | ✅ OK | По REPRESENTATIVE_URLS |
 
 ### Structured Data
 
 | Check | Result | Notes |
 |---|---|---|
-| Один BreadcrumbList на страницу | ❌ 8 drift | По representative URLs |
+| Один BreadcrumbList на страницу | ✅ OK | По representative URLs |
 | Валидный JSON-LD | ✅ OK | json.loads() на каждом блоке |
 
 ### SeoRoutes ↔ Sitemap Sync
@@ -88,14 +78,14 @@
 | URL Type | Sample URL | HTTP | Canonical | Indexability | Schema | Mobile | Result |
 |---|---|---|---|---|---|---|---|
 | homepage | `/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| service_hub | `/uslugi/dezinsekciya/` | 200 | ✅ | ✅ index | ❌ 2× BreadcrumbList | ✅ | ❌ FAIL |
-| pest_page | `/uslugi/dezinsekciya/klopy/` | 200 | ✅ | ✅ index | ❌ 2× BreadcrumbList | ✅ | ❌ FAIL |
-| object_page | `/uslugi/dezinsekciya/ofisov/` | 200 | ✅ | ✅ index | ❌ 2× BreadcrumbList | ✅ | ❌ FAIL |
-| moscow_district | `/uslugi/dezinfekciya-cao/` | 200 | ✅ | ✅ index | ❌ 2× BreadcrumbList | ✅ | ❌ FAIL |
-| mo_overview | `/moscow-oblast/` | 200 | ✅ | ✅ index | ❌ 2× BreadcrumbList | ✅ | ❌ FAIL |
-| mo_city | `/moscow-oblast/podolsk/` | 200 | ✅ | ✅ index | ❌ 2× BreadcrumbList | ✅ | ❌ FAIL |
-| mole_city | `/uslugi/borba-s-krotami/khimki/` | 200 | ✅ | ✅ index | ❌ 2× BreadcrumbList | ✅ | ❌ FAIL |
-| blog_post | `/blog/klopy-v-kvartire/` | 200 | ✅ | ❌ noindex | ❌ 2× BreadcrumbList | ✅ | ❌ FAIL |
+| service_hub | `/uslugi/dezinsekciya/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| pest_page | `/uslugi/dezinsekciya/klopy/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| object_page | `/uslugi/dezinsekciya/ofisov/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| moscow_district | `/uslugi/dezinfekciya-cao/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| mo_overview | `/moscow-oblast/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| mo_city | `/moscow-oblast/podolsk/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| mole_city | `/uslugi/borba-s-krotami/khimki/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
+| blog_post | `/blog/klopy-v-kvartire/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | excluded_page | `/uslugi/sertifikaciya/` | 200 | ✅ | ✅ noindex | ✅ | ✅ | ✅ OK |
 
 ---
@@ -115,9 +105,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 669 мс | Порог: 3000 мс |
-| Largest HTML sample | 132.6 KB | Из representative audit |
-| SSL сертификат | ✅ 21.07.2026 | 71 дн. до истечения |
+| Avg response time (key URLs) | 644 мс | Порог: 3000 мс |
+| Largest HTML sample | 121.6 KB | Из representative audit |
+| SSL сертификат | ✅ 21.07.2026 | 70 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
 | Bundle size | unavailable | Не измеряется в runtime-мониторе |
 
@@ -133,10 +123,10 @@
 | district URLs | 131 | 131 | 0 |
 | MO city URLs | 71 | 71 | 0 |
 | mole city URLs | 24 | 24 | 0 |
-| representative failures | 8 | 8 | 0 |
-| critical alerts | 9 | 9 | 0 |
+| representative failures | 0 | 8 | -8 |
+| critical alerts | 0 | 9 | -9 |
 | warnings | 0 | 0 | 0 |
-| avg response time (мс) | 669 | 651 | +18 |
+| avg response time (мс) | 644 | 669 | -25 |
 
 ---
 
@@ -147,8 +137,8 @@
 | Canonical drift | ✅ | OK |
 | Routing drift (rep URL ≠ 200) | ✅ | OK |
 | Sitemap participation drift | ✅ | OK |
-| Indexability-role drift | ❌ | Сработало — см. Critical Alerts |
-| Duplicate BreadcrumbList | ❌ | Сработало — см. Critical Alerts |
+| Indexability-role drift | ✅ | OK |
+| Duplicate BreadcrumbList | ✅ | OK |
 | WhatsApp / brand regression | ✅ | OK |
 | Analytics regression | ✅ | OK |
 | Conversion regression | ✅ | OK |
@@ -161,14 +151,13 @@
 
 ## 10. Final Verdict
 
-**Status:** CRITICAL  
-**Decision:** NOT SAFE UNTIL FIXED
+**Status:** STABLE  
+**Decision:** SAFE TO KEEP LIVE
 
 ### Required actions
 
-1. Использовать единый источник
-2. Снять noindex
+1. Действий не требуется — система стабильна.
 
 ---
 
-**Последнее обновление:** 11.05.2026 12:29 MSK
+**Последнее обновление:** 12.05.2026 11:30 MSK
