@@ -293,12 +293,19 @@ const Blog = () => {
               })}
             </div>
           )}
-          {visibleCount < filteredPosts.length && (
-            <div className="text-center mt-8">
-              <Button variant="outline" size="lg" onClick={() => setVisibleCount(c => c + 30)}>
-                Показать ещё ({filteredPosts.length - visibleCount} осталось)
-              </Button>
-            </div>
+          {hasMore && (
+            <>
+              <div ref={sentinelRef} aria-hidden className="h-1 w-full" />
+              <div className="mt-6 md:mt-8">
+                <Button
+                  variant="secondary"
+                  className="w-full md:w-auto md:mx-auto md:flex"
+                  onClick={() => setVisibleCount((c) => c + 10)}
+                >
+                  Показать ещё ({filteredPosts.length - visibleCount} осталось)
+                </Button>
+              </div>
+            </>
           )}
         </div>
       </section>
