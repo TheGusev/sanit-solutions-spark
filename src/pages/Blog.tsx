@@ -184,7 +184,7 @@ const Blog = () => {
       </section>
 
       {/* Sort Controls — segmented pills */}
-      <section ref={sortRef} className="py-4 px-3 md:px-4">
+      <section ref={sortRef} className="py-3 md:py-4 px-3 md:px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="inline-flex items-center gap-0.5 bg-muted/40 dark:bg-[hsl(240,10%,16%)] dark:border dark:border-border/50 rounded-xl p-1">
             {sortOptions.map(opt => (
@@ -207,7 +207,7 @@ const Blog = () => {
       </section>
 
       {/* Blog Posts — document cards */}
-      <section className="py-8 md:py-16 px-2 md:px-4">
+      <section className="pt-2 pb-8 md:py-16 px-3 md:px-4">
         <div className="container mx-auto max-w-6xl">
           {filteredPosts.length === 0 ? (
             <div className="text-center py-16">
@@ -218,7 +218,7 @@ const Blog = () => {
             <div className="flex flex-col gap-3">
               {filteredPosts.slice(0, visibleCount).map((post, idx) => {
                 const isPopular = popularSlugs.includes(post.slug);
-                const showThumb = idx === 0;
+                const isFeatured = idx === 0;
                 const ThumbIcon = categoryIcons[post.category] || FileText;
 
                 return (
@@ -227,33 +227,37 @@ const Blog = () => {
                     to={`/blog/${post.slug}`}
                     className="group"
                   >
-                    <div className="rounded-2xl border border-border bg-card dark:bg-[hsl(240,10%,16%)] p-4 md:p-5 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] dark:border-border/50 transition-all duration-200 hover:shadow-md hover:border-border/80 hover:-translate-y-0.5">
+                    <div className="rounded-2xl bg-card dark:bg-[hsl(240,8%,17%)] p-4 md:p-5 ring-1 ring-border/60 dark:ring-white/[0.04] dark:shadow-[0_2px_10px_rgba(0,0,0,0.35)] transition-all duration-200 hover:ring-border dark:hover:ring-white/[0.08] hover:-translate-y-0.5">
                       <div className="flex items-center justify-between mb-2.5">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[11px] md:text-xs px-2.5 py-1 rounded-full bg-primary text-primary-foreground font-semibold">
+                        <div className="flex items-center gap-2.5">
+                          <span className={`text-[11px] md:text-xs px-2.5 py-1 rounded-full font-semibold ${
+                            isFeatured
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-foreground/[0.06] dark:bg-white/[0.06] text-foreground/85'
+                          }`}>
                             {post.category}
                           </span>
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Clock className="w-3 h-3" /> {post.readTime}
+                          <span className="text-[12px] text-muted-foreground flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5" /> {post.readTime}
                           </span>
                         </div>
                         {isPopular && (
-                          <span className="text-xs text-primary/90 font-medium">
+                          <span className="text-[12px] text-muted-foreground/80 font-normal">
                             Популярное
                           </span>
                         )}
                       </div>
-                      <div className={showThumb ? "flex items-start gap-3" : ""}>
+                      <div className={isFeatured ? "flex items-start gap-3" : ""}>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-[15px] md:text-lg font-bold leading-snug mb-1.5 group-hover:text-primary transition-colors">
+                          <h3 className="text-[15.5px] md:text-lg font-bold leading-[1.3] mb-1.5 group-hover:text-primary transition-colors line-clamp-3">
                             {post.title}
                           </h3>
-                          <p className="text-[13px] md:text-sm text-muted-foreground line-clamp-2">
+                          <p className="text-[13px] md:text-sm leading-[1.5] text-muted-foreground/85 line-clamp-3">
                             {post.excerpt}
                           </p>
                         </div>
-                        {showThumb && (
-                          <div className="shrink-0 w-[72px] h-[72px] rounded-xl bg-gradient-to-br from-primary/25 to-primary/5 flex items-center justify-center border border-primary/15">
+                        {isFeatured && (
+                          <div className="shrink-0 mt-0.5 w-[68px] h-[68px] rounded-xl bg-gradient-to-br from-primary/25 to-primary/5 flex items-center justify-center ring-1 ring-primary/15">
                             <ThumbIcon className="w-7 h-7 text-primary/80" />
                           </div>
                         )}
