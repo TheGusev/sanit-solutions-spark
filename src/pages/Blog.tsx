@@ -216,19 +216,21 @@ const Blog = () => {
             </div>
           ) : (
             <div className="flex flex-col gap-3">
-              {filteredPosts.slice(0, visibleCount).map((post) => {
+              {filteredPosts.slice(0, visibleCount).map((post, idx) => {
                 const isPopular = popularSlugs.includes(post.slug);
-                
+                const showThumb = idx === 0;
+                const ThumbIcon = categoryIcons[post.category] || FileText;
+
                 return (
-                  <Link 
-                    key={post.id} 
+                  <Link
+                    key={post.id}
                     to={`/blog/${post.slug}`}
                     className="group"
                   >
-                    <div className="rounded-xl border border-border bg-card dark:bg-[hsl(240,10%,16%)] p-4 border-l-2 border-l-primary/15 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] dark:border-border/50 transition-all duration-200 hover:shadow-md hover:border-border/80 hover:-translate-y-0.5 hover:border-l-primary">
-                      <div className="flex items-center justify-between mb-2">
+                    <div className="rounded-2xl border border-border bg-card dark:bg-[hsl(240,10%,16%)] p-4 md:p-5 dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] dark:border-border/50 transition-all duration-200 hover:shadow-md hover:border-border/80 hover:-translate-y-0.5">
+                      <div className="flex items-center justify-between mb-2.5">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                          <span className="text-[11px] md:text-xs px-2.5 py-1 rounded-full bg-primary text-primary-foreground font-semibold">
                             {post.category}
                           </span>
                           <span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -236,17 +238,26 @@ const Blog = () => {
                           </span>
                         </div>
                         {isPopular && (
-                          <span className="text-xs text-primary font-medium flex items-center gap-1">
-                            <TrendingUp className="w-3 h-3" /> Популярное
+                          <span className="text-xs text-primary/90 font-medium">
+                            Популярное
                           </span>
                         )}
                       </div>
-                      <h3 className="text-base md:text-lg font-bold leading-snug mb-1 group-hover:text-primary transition-colors">
-                        {post.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {post.excerpt}
-                      </p>
+                      <div className={showThumb ? "flex items-start gap-3" : ""}>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-[15px] md:text-lg font-bold leading-snug mb-1.5 group-hover:text-primary transition-colors">
+                            {post.title}
+                          </h3>
+                          <p className="text-[13px] md:text-sm text-muted-foreground line-clamp-2">
+                            {post.excerpt}
+                          </p>
+                        </div>
+                        {showThumb && (
+                          <div className="shrink-0 w-[72px] h-[72px] rounded-xl bg-gradient-to-br from-primary/25 to-primary/5 flex items-center justify-center border border-primary/15">
+                            <ThumbIcon className="w-7 h-7 text-primary/80" />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </Link>
                 );
