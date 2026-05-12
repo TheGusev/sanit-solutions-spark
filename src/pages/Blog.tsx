@@ -126,19 +126,19 @@ const Blog = () => {
       <Header />
 
       {/* Breadcrumbs */}
-      <section className="pt-28 pb-4 px-2 md:px-4 border-b">
+      <section className="pt-28 pb-3 px-3 md:px-4 md:border-b">
         <div className="container mx-auto max-w-6xl">
           <Breadcrumbs items={[{ label: "Блог" }]} />
         </div>
       </section>
 
       {/* Hero */}
-      <section className="py-8 md:py-12 px-3 md:px-4">
+      <section className="pt-2 pb-6 md:py-12 px-3 md:px-4">
         <div className="container mx-auto max-w-6xl">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 text-foreground">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05] mb-3 text-foreground">
             Полезные статьи
           </h1>
-          <p className="text-base md:text-lg text-muted-foreground max-w-2xl">
+          <p className="text-[15px] md:text-lg leading-[1.45] text-muted-foreground max-w-2xl">
             Экспертные советы о дезинфекции и защите от вредителей.
             В блоге собрано <span className="font-medium text-foreground">{allBlogArticles.length} статей</span> от наших профессионалов.
           </p>
@@ -146,10 +146,10 @@ const Blog = () => {
       </section>
 
       {/* Category Folder Cards */}
-      <section className="py-6 md:py-8 px-3 md:px-4 border-b border-border">
+      <section className="py-4 md:py-8 px-3 md:px-4 md:border-b md:border-border">
         <div className="container mx-auto max-w-6xl">
           <div
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-5 md:gap-x-4 md:gap-y-6"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 gap-y-4 md:gap-x-4 md:gap-y-6"
             role="tablist"
             aria-label="Категории статей"
           >
@@ -167,14 +167,14 @@ const Blog = () => {
                   aria-selected={isActive}
                   onClick={() => { setSelectedCategory(category); setVisibleCount(30); setTimeout(() => sortRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}
                   className={`
-                    folder-card flex items-center gap-3 px-4 py-3 md:py-3.5 text-left cursor-pointer
+                    folder-card flex items-center gap-2.5 px-4 py-3.5 text-left cursor-pointer
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
                     ${isActive ? 'folder-card--active' : 'folder-card--inactive'}
                   `}
                 >
-                  <IconComp className="shrink-0 opacity-90" size={20} />
-                  <span className="text-sm md:text-base font-semibold leading-snug line-clamp-2">
-                    {category} ({count})
+                  <IconComp className="shrink-0 opacity-95" size={18} />
+                  <span className="text-[15px] md:text-base font-semibold leading-snug line-clamp-1">
+                    {category} <span className="opacity-70 font-medium">({count})</span>
                   </span>
                 </button>
               );
