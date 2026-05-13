@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 12.05.2026 | **Статус:** STABLE | **Финальный вердикт:** SAFE TO KEEP LIVE
+**Дата:** 13.05.2026 | **Статус:** STABLE | **Финальный вердикт:** SAFE TO KEEP LIVE
 
 ---
 
@@ -15,7 +15,7 @@
 
 ### Что изменилось с прошлого запуска
 
-- Все критичные алерты устранены ✅
+Существенных изменений не обнаружено.
 
 ---
 
@@ -29,12 +29,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 652 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 663 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 718 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 729 мс | — |
-| /blog/ | ✅ 200 | 708 мс | — |
-| /contacts/ | ✅ 200 | 394 мс | — |
+| / | ✅ 200 | 1234 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 1369 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 795 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 1053 мс | — |
+| /blog/ | ✅ 200 | 1234 мс | — |
+| /contacts/ | ✅ 200 | 966 мс | — |
 
 ---
 
@@ -105,9 +105,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 644 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 1108 мс | Порог: 3000 мс |
 | Largest HTML sample | 121.6 KB | Из representative audit |
-| SSL сертификат | ✅ 21.07.2026 | 70 дн. до истечения |
+| SSL сертификат | ✅ 21.07.2026 | 69 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
 | Bundle size | unavailable | Не измеряется в runtime-мониторе |
 
@@ -123,10 +123,10 @@
 | district URLs | 131 | 131 | 0 |
 | MO city URLs | 71 | 71 | 0 |
 | mole city URLs | 24 | 24 | 0 |
-| representative failures | 0 | 8 | -8 |
-| critical alerts | 0 | 9 | -9 |
+| representative failures | 0 | 0 | 0 |
+| critical alerts | 0 | 0 | 0 |
 | warnings | 0 | 0 | 0 |
-| avg response time (мс) | 644 | 669 | -25 |
+| avg response time (мс) | 1108 | 644 | +464 |
 
 ---
 
@@ -160,4 +160,4 @@
 
 ---
 
-**Последнее обновление:** 12.05.2026 11:30 MSK
+**Последнее обновление:** 13.05.2026 11:37 MSK
