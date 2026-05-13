@@ -109,6 +109,17 @@ const Footer = memo(() => {
               <li className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4 flex-shrink-0" />
                 <a 
+                  href="https://t.me/one_help" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:opacity-100"
+                >
+                  Telegram @one_help
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <MessageCircle className="h-4 w-4 flex-shrink-0" />
+                <a 
                   href="https://max.ru/u/f9LHodD0cOLnq-s7zesBNQy44zFsmKRWA0ggLQyxcSygnjU6MTchzhcEMBo" 
                   target="_blank" 
                   rel="noopener noreferrer" 

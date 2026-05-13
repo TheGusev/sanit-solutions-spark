@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Zap, CheckCircle, Shield, Calculator } from "lucide-react";
+import { Zap, CheckCircle, Shield, Calculator, Phone } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useParallax } from "@/hooks/useParallax";
 import { useTraffic } from "@/contexts/TrafficContext";
@@ -121,7 +121,7 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
             {copy.subtitle || "Дезинфекция, дезинсекция, дератизация • Лицензия Роспотребнадзора • Гарантия до 3 лет"}
           </p>
 
-          <div className="flex justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center">
             <Button 
               onClick={() => {
                 trackGoal('calc_open');
@@ -133,6 +133,15 @@ const Hero = ({ onCalculatorClick }: HeroProps) => {
               <Calculator className="w-5 h-5 mr-2 flex-shrink-0" />
               Рассчитать стоимость
             </Button>
+            <a
+              href="tel:84950181817"
+              onClick={() => trackGoal('hero_phone_click')}
+              className="inline-flex items-center justify-center gap-2 rounded-md font-bold text-lg px-8 py-6 h-auto whitespace-normal bg-background/80 hover:bg-background text-foreground border-2 border-primary backdrop-blur-sm transition-colors"
+              aria-label="Позвонить 8-495-018-18-17"
+            >
+              <Phone className="w-5 h-5 flex-shrink-0" />
+              Позвонить
+            </a>
           </div>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
