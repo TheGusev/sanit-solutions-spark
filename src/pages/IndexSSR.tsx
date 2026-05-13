@@ -56,24 +56,77 @@ const IndexSSR = () => {
       <Header onCalculatorClick={noop} />
       <Hero onCalculatorClick={noop} />
 
-      {/* Тематический H2 — связывает H1 ↔ title ↔ контент в одну тему для Я.Директа */}
-      <h2 className="sr-only">Дезинфекция, дезинсекция и дератизация в Москве и МО</h2>
+      <main id="main-content">
+        {/* Тематический H2 — связывает H1 ↔ title ↔ контент в одну тему для Я.Директа */}
+        <h2 className="sr-only">Дезинфекция, дезинсекция и дератизация в Москве и МО</h2>
 
-      {/* Main content sections */}
-      <MiniPricing />
-      <WhyUsExtended />
-      <PricingByArea />
-      <ServiceAreaMap />
-      <section className="py-4 md:py-8 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-            <ServiceAreaCollapsible />
-            <Reviews />
+        {/* Краткий цитируемый ответ — для GEO/AI */}
+        <section
+          aria-label="Краткая информация о компании"
+          className="py-6 md:py-8 bg-background border-b border-border/40"
+        >
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+              <article className="flex items-start gap-3">
+                <ShieldCheck className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
+                <p className="text-sm md:text-base text-foreground/85 leading-snug">
+                  <strong className="text-foreground">Лицензия Роспотребнадзора</strong> — гарантия до 3 лет на все виды работ.
+                </p>
+              </article>
+              <article className="flex items-start gap-3">
+                <Clock3 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
+                <p className="text-sm md:text-base text-foreground/85 leading-snug">
+                  <strong className="text-foreground">Выезд в день обращения</strong> по Москве и МО, работаем круглосуточно.
+                </p>
+              </article>
+              <article className="flex items-start gap-3">
+                <Wallet className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
+                <p className="text-sm md:text-base text-foreground/85 leading-snug">
+                  <strong className="text-foreground">Цены от 1 000 ₽</strong> — фиксированная стоимость, без скрытых надбавок.
+                </p>
+              </article>
+            </div>
           </div>
-        </div>
-      </section>
-      <FAQ />
-      <FinalCTA onOpenCalculator={noop} />
+        </section>
+
+        {/* Контактная форма — видимая в статическом HTML */}
+        <section
+          aria-label="Заказать обратный звонок"
+          className="py-6 md:py-10 bg-muted/30"
+        >
+          <div className="container mx-auto px-4">
+            <div className="max-w-xl mx-auto text-center mb-4">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground">
+                Закажите бесплатный обратный звонок
+              </h2>
+              <p className="text-sm md:text-base text-muted-foreground mt-2">
+                Перезвоним в течение 15 минут и рассчитаем стоимость
+              </p>
+            </div>
+            <div className="max-w-xl mx-auto">
+              <HeroCallbackForm serviceSlug="homepage" />
+            </div>
+          </div>
+        </section>
+
+        {/* Main content sections */}
+        <MiniPricing />
+        <WhyUsExtended />
+        <WorkGallery />
+        <PricingByArea />
+        <ServiceAreaMap />
+        <section className="py-4 md:py-8 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+              <ServiceAreaCollapsible />
+              <Reviews />
+            </div>
+          </div>
+        </section>
+        <FAQ />
+        <FinalCTA onOpenCalculator={noop} />
+      </main>
+
       <Footer />
 
       {/* Note: Modal components (CalculatorModal, FloatingButtons, StickyCTA, etc.) 
