@@ -5,14 +5,17 @@
  */
 
 import { Helmet } from "react-helmet-async";
+import { ShieldCheck, Clock3, Wallet } from "lucide-react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import HeroCallbackForm from "@/components/HeroCallbackForm";
 import MiniPricing from "@/components/MiniPricing";
 import WhyUsExtended from "@/components/WhyUsExtended";
 import PricingByArea from "@/components/PricingByArea";
 import ServiceAreaMap from "@/components/ServiceAreaMap";
 import ServiceAreaCollapsible from "@/components/ServiceAreaCollapsible";
 import Reviews from "@/components/Reviews";
+import WorkGallery from "@/components/WorkGallery";
 import FAQ from "@/components/FAQ";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
