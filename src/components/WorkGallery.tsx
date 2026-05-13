@@ -55,35 +55,37 @@ const WorkGallery = () => {
               delay={index * 100}
               className="relative rounded-xl overflow-hidden group aspect-[4/3] shadow-md"
             >
-              {item.type === "video" ? (
-                <video 
-                  src={item.src}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  muted
-                  loop
-                  playsInline
-                  preload="none"
-                  aria-label={`${item.title} — ${item.desc}. Видеоотчёт ООО Санитарные Решения`}
-                  title={`${item.title} — ${item.desc}`}
-                  onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
-                  onMouseLeave={(e) => { e.currentTarget.pause(); e.currentTarget.currentTime = 0; }}
-                />
-              ) : (
-                <img 
-                  src={item.src} 
-                  alt={`${item.title} — ${item.desc}. Санитарные Решения`}
-                  width={400}
-                  height={300}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 text-white">
-                <p className="font-bold text-sm md:text-base">{item.title}</p>
-                <p className="text-xs md:text-sm opacity-80">{item.desc}</p>
-              </div>
+              <figure className="m-0 w-full h-full">
+                {item.type === "video" ? (
+                  <video 
+                    src={item.src}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    muted
+                    loop
+                    playsInline
+                    preload="none"
+                    aria-label={`${item.title} — ${item.desc}. Видеоотчёт ООО Санитарные Решения`}
+                    title={`${item.title} — ${item.desc}`}
+                    onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
+                    onMouseLeave={(e) => { e.currentTarget.pause(); e.currentTarget.currentTime = 0; }}
+                  />
+                ) : (
+                  <img 
+                    src={item.src} 
+                    alt={`${item.title} — ${item.desc}. Санитарные Решения`}
+                    width={400}
+                    height={300}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+                <figcaption className="absolute bottom-0 left-0 right-0 p-3 md:p-4 text-white">
+                  <span className="block font-bold text-sm md:text-base">{item.title}</span>
+                  <span className="block text-xs md:text-sm opacity-80">{item.desc}</span>
+                </figcaption>
+              </figure>
             </AnimatedSection>
           ))}
         </div>
