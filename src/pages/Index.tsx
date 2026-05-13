@@ -9,7 +9,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MobileQuickCTA from "@/components/MobileQuickCTA";
 import HeroCallbackForm from "@/components/HeroCallbackForm";
-import { Phone, ShieldCheck, Clock3, Wallet } from "lucide-react";
+import { ShieldCheck, Clock3, Wallet } from "lucide-react";
 
 // New components for restructured layout
 const MiniPricing = lazy(() => import("@/components/MiniPricing"));
