@@ -43,7 +43,7 @@ export function CookieBanner() {
       role="dialog"
       aria-label="Уведомление о cookies"
     >
-      <div className="container mx-auto max-w-4xl flex flex-row items-center justify-between gap-2 sm:gap-4">
+      <div className="container mx-auto max-w-4xl flex flex-row items-center justify-between gap-2 sm:gap-4 pr-16 sm:pr-0">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Cookie className="h-5 w-5 text-primary shrink-0 hidden sm:block" aria-hidden="true" />
           <p className="text-xs sm:text-sm text-muted-foreground">
