@@ -1,8 +1,8 @@
 {
-  "avg_response_ms": 914,
+  "avg_response_ms": 725,
   "blog_urls": 203,
   "critical_alerts": 0,
-  "date": "2026-05-18",
+  "date": "2026-05-19",
   "district_urls": 131,
   "mo_city_urls": 71,
   "mole_city_urls": 24,
@@ -12,7 +12,7 @@
   "seoroutes_sitemap_diff": 0,
   "service_urls": 667,
   "sitemap_total": 1077,
-  "ssl_days_left": 64,
+  "ssl_days_left": 63,
   "stop_conditions_triggered": [],
   "warnings": 0
 }

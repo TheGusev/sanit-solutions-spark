@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 18.05.2026 | **Статус:** STABLE | **Финальный вердикт:** SAFE TO KEEP LIVE
+**Дата:** 19.05.2026 | **Статус:** STABLE | **Финальный вердикт:** SAFE TO KEEP LIVE
 
 ---
 
@@ -29,12 +29,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 850 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 1051 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 913 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 997 мс | — |
-| /blog/ | ✅ 200 | 879 мс | — |
-| /contacts/ | ✅ 200 | 798 мс | — |
+| / | ✅ 200 | 669 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 714 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 679 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 669 мс | — |
+| /blog/ | ✅ 200 | 841 мс | — |
+| /contacts/ | ✅ 200 | 783 мс | — |
 
 ---
 
@@ -105,9 +105,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 914 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 725 мс | Порог: 3000 мс |
 | Largest HTML sample | 122.1 KB | Из representative audit |
-| SSL сертификат | ✅ 21.07.2026 | 64 дн. до истечения |
+| SSL сертификат | ✅ 21.07.2026 | 63 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
 | Bundle size | unavailable | Не измеряется в runtime-мониторе |
 
@@ -126,7 +126,7 @@
 | representative failures | 0 | 0 | 0 |
 | critical alerts | 0 | 0 | 0 |
 | warnings | 0 | 0 | 0 |
-| avg response time (мс) | 914 | 866 | +48 |
+| avg response time (мс) | 725 | 914 | -189 |
 
 ---
 
@@ -160,4 +160,4 @@
 
 ---
 
-**Последнее обновление:** 18.05.2026 12:47 MSK
+**Последнее обновление:** 19.05.2026 12:31 MSK
