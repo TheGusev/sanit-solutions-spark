@@ -376,6 +376,8 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
                     });
                   }
                 }}
+                className="pl-10 h-12 text-base"
+                autoComplete="tel"
               />
             </div>
 
