@@ -239,6 +239,13 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle, basePric
                     placeholder="+7 (___) ___-__-__"
                     value={phone}
                     onChange={(e) => setPhone(formatPhone(e.target.value))}
+                    onBlur={() => phone.length === 18 && trackPhoneInput(phone, 'service_quiz', {
+                      session_id: context?.sessionId,
+                      intent: context?.intent,
+                      variant_id: context?.variantId,
+                      device_type: context?.deviceType,
+                      service: serviceSlug,
+                    })}
                     className="h-12 text-base"
                     required
                   />
