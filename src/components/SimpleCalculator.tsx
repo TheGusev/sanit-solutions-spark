@@ -365,8 +365,17 @@ const SimpleCalculator = ({ isModal = false }: SimpleCalculatorProps) => {
                   setPhone(e.target.value);
                   setErrorMsg("");
                 }}
-                className="pl-10 h-12 text-base"
-                autoComplete="tel"
+                onBlur={() => {
+                  const formatted = formatRuPhone(phone);
+                  if (isValidRuPhone(formatted)) {
+                    trackPhoneInput(formatted, 'simple_calculator', {
+                      session_id: context?.sessionId,
+                      intent: context?.intent,
+                      variant_id: context?.variantId,
+                      device_type: context?.deviceType,
+                    });
+                  }
+                }}
               />
             </div>
 
