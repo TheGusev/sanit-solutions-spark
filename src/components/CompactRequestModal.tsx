@@ -157,6 +157,12 @@ export const CompactRequestModal = ({
                 placeholder="+7 (___) ___-__-__"
                 value={phone}
                 onChange={(e) => setPhone(formatRuPhone(e.target.value))}
+                onBlur={() => isValidRuPhone(phone) && trackPhoneInput(phone, 'calculator_compact_form', {
+                  session_id: context?.sessionId,
+                  intent: context?.intent,
+                  variant_id: context?.variantId,
+                  device_type: context?.deviceType,
+                })}
                 className={`h-12 ${
                   phone.length > 4 && !isValidRuPhone(phone) ? 'border-destructive' : isValidRuPhone(phone) ? 'border-success' : ''
                 }`}
