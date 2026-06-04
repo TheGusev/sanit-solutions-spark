@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
 import { useTraffic } from '@/contexts/TrafficContext';
-import { trackGoal, getYmGoalPrefix } from '@/lib/analytics';
+import { trackGoal, getYmGoalPrefix, trackPhoneInput } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
 
@@ -239,6 +239,13 @@ export default function ServiceQuiz({ steps, serviceSlug, serviceTitle, basePric
                     placeholder="+7 (___) ___-__-__"
                     value={phone}
                     onChange={(e) => setPhone(formatPhone(e.target.value))}
+                    onBlur={() => phone.length === 18 && trackPhoneInput(phone, 'service_quiz', {
+                      session_id: context?.sessionId,
+                      intent: context?.intent,
+                      variant_id: context?.variantId,
+                      device_type: context?.deviceType,
+                      service: serviceSlug,
+                    })}
                     className="h-12 text-base"
                     required
                   />

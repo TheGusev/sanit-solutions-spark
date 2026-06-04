@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, Loader2, Clock, Shield, Target } from "lucide-react";
-import { trackGoal, getYmGoalPrefix } from "@/lib/analytics";
+import { trackGoal, getYmGoalPrefix, trackPhoneInput } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { formatRuPhone, isValidRuPhone, RU_PHONE_INITIAL, getCurrentPageUrl } from "@/lib/phoneUtils";
 
@@ -233,6 +233,12 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
                 id="phone"
                 value={phone}
                 onChange={handlePhoneChange}
+                onBlur={() => isPhoneValid && trackPhoneInput(phone, 'lead_modal', {
+                  session_id: context?.sessionId,
+                  intent: context?.intent,
+                  variant_id: context?.variantId,
+                  device_type: context?.deviceType,
+                })}
                 placeholder="+7 (___) ___-__-__"
                 className={`h-12 text-base ${errors.phone ? "border-destructive" : isPhoneValid ? "border-success" : ""}`}
               />

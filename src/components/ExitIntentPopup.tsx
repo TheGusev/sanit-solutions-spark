@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabaseClient";
 import { useTraffic } from "@/contexts/TrafficContext";
-import { trackGoal } from "@/lib/analytics";
+import { trackGoal, trackPhoneInput } from "@/lib/analytics";
 import { Gift, Clock, Phone } from "lucide-react";
 
 const ExitIntentPopup = () => {
@@ -230,6 +230,12 @@ const ExitIntentPopup = () => {
                   type="tel"
                   value={phone}
                   onChange={handlePhoneChange}
+                  onBlur={() => phone.length === 18 && trackPhoneInput(phone, 'exit_intent', {
+                    session_id: context?.sessionId,
+                    intent: context?.intent,
+                    variant_id: context?.variantId,
+                    device_type: context?.deviceType,
+                  })}
                   placeholder="+7 (999) 123-45-67"
                   required
                 />

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { supabase } from "@/lib/supabaseClient";
-import { trackGoal, getYmGoalPrefix } from "@/lib/analytics";
+import { trackGoal, getYmGoalPrefix, trackPhoneInput } from "@/lib/analytics";
 import { formatRuPhone, isValidRuPhone, RU_PHONE_INITIAL, getCurrentPageUrl } from "@/lib/phoneUtils";
 
 interface CompactRequestModalProps {
@@ -157,6 +157,12 @@ export const CompactRequestModal = ({
                 placeholder="+7 (___) ___-__-__"
                 value={phone}
                 onChange={(e) => setPhone(formatRuPhone(e.target.value))}
+                onBlur={() => isValidRuPhone(phone) && trackPhoneInput(phone, 'calculator_compact_form', {
+                  session_id: context?.sessionId,
+                  intent: context?.intent,
+                  variant_id: context?.variantId,
+                  device_type: context?.deviceType,
+                })}
                 className={`h-12 ${
                   phone.length > 4 && !isValidRuPhone(phone) ? 'border-destructive' : isValidRuPhone(phone) ? 'border-success' : ''
                 }`}

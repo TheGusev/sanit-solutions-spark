@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
 import { useTraffic } from '@/contexts/TrafficContext';
-import { trackGoal } from '@/lib/analytics';
+import { trackGoal, trackPhoneInput } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import { formatRuPhone, isValidRuPhone, RU_PHONE_INITIAL, getCurrentPageUrl } from '@/lib/phoneUtils';
 
@@ -116,6 +116,13 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
           placeholder="+7 (___) ___-__-__"
           value={phone}
           onChange={(e) => setPhone(formatRuPhone(e.target.value))}
+          onBlur={() => isPhoneValid && trackPhoneInput(phone, 'hero_callback', {
+            session_id: context?.sessionId,
+            intent: context?.intent,
+            variant_id: context?.variantId,
+            device_type: context?.deviceType,
+            service: serviceSlug,
+          })}
           className={`h-12 text-base flex-1 ${
             phone.length > 4 && !isPhoneValid ? 'border-destructive' : isPhoneValid ? 'border-success' : ''
           }`}
