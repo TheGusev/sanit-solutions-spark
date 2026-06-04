@@ -230,6 +230,12 @@ const ExitIntentPopup = () => {
                   type="tel"
                   value={phone}
                   onChange={handlePhoneChange}
+                  onBlur={() => phone.length === 18 && trackPhoneInput(phone, 'exit_intent', {
+                    session_id: context?.sessionId,
+                    intent: context?.intent,
+                    variant_id: context?.variantId,
+                    device_type: context?.deviceType,
+                  })}
                   placeholder="+7 (999) 123-45-67"
                   required
                 />
