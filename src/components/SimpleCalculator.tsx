@@ -5,7 +5,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Bug, Rat, Microscope, Wind, Sparkles, AlertTriangle, Phone, Check, Loader2, ArrowLeft } from "lucide-react";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { supabase } from "@/lib/supabaseClient";
-import { trackGoal } from "@/lib/analytics";
+import { trackGoal, trackPhoneInput } from "@/lib/analytics";
+import { formatRuPhone, isValidRuPhone } from "@/lib/phoneUtils";
 
 // ─── Price mapping — single source of truth from services.ts pricing arrays ───
 type ProblemKey = 'dezinsekciya' | 'deratizaciya' | 'dezinfekciya' | 'dezodoraciya' | 'ozonirovanie' | 'demerkurizaciya';
