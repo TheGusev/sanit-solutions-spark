@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, Loader2, Clock, Shield, Target } from "lucide-react";
-import { trackGoal, getYmGoalPrefix } from "@/lib/analytics";
+import { trackGoal, getYmGoalPrefix, trackPhoneInput } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { formatRuPhone, isValidRuPhone, RU_PHONE_INITIAL, getCurrentPageUrl } from "@/lib/phoneUtils";
 
