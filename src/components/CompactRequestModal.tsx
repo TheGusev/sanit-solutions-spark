@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { supabase } from "@/lib/supabaseClient";
-import { trackGoal, getYmGoalPrefix } from "@/lib/analytics";
+import { trackGoal, getYmGoalPrefix, trackPhoneInput } from "@/lib/analytics";
 import { formatRuPhone, isValidRuPhone, RU_PHONE_INITIAL, getCurrentPageUrl } from "@/lib/phoneUtils";
 
 interface CompactRequestModalProps {
