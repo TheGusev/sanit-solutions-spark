@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabaseClient";
 import { useTraffic } from "@/contexts/TrafficContext";
-import { trackGoal } from "@/lib/analytics";
+import { trackGoal, trackPhoneInput } from "@/lib/analytics";
 import { Gift, Clock, Phone } from "lucide-react";
 
 const ExitIntentPopup = () => {
