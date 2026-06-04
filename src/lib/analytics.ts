@@ -210,6 +210,51 @@ export function trackPageView(url: string, params?: Record<string, any>): void {
 }
 
 
+// ============================================================
+// Логирование промежуточных номеров телефона (служебное событие).
+// Не триггерит цели Метрики. Используется, чтобы восстановить номер,
+// если пользователь ввёл валидный телефон, но не отправил форму.
+// ============================================================
+const sentPhones = new Set<string>();
+
+export async function trackPhoneInput(
+  phone: string,
+  source: string,
+  extra?: Record<string, unknown>
+): Promise<void> {
+  if (import.meta.env.SSR || typeof window === 'undefined') return;
+  if (!phone || phone.length !== 18) return; // ровно +7 (XXX) XXX-XX-XX
+
+  const key = `${source}:${phone}`;
+  if (sentPhones.has(key)) return;
+  sentPhones.add(key);
+
+  try {
+    const { supabase } = await import('@/lib/supabaseClient');
+    await supabase.functions.invoke('log-traffic-event', {
+      body: {
+        session_id: (extra?.session_id as string) || null,
+        page_url: window.location.href,
+        intent: (extra?.intent as string) || null,
+        variant_id: (extra?.variant_id as string) || null,
+        device_type: (extra?.device_type as string) || null,
+        event_type: 'phone_input_captured',
+        event_data: {
+          phone,
+          source,
+          timestamp: new Date().toISOString(),
+          ...extra,
+        },
+      },
+    });
+  } catch {
+    /* silent */
+  }
+}
+
+
+
+
 // Lazy loading Hotjar (безопасный метод без innerHTML)
 function loadHotjar(siteId: string): void {
   // Валидация siteId - только цифры
