@@ -132,6 +132,12 @@ export function QuickCallForm({ calculatorData, onSuccess }: QuickCallFormProps)
           <Input
             value={phone}
             onChange={handlePhoneChange}
+            onBlur={() => isPhoneValid && trackPhoneInput(phone, 'quick_call', {
+              session_id: context?.sessionId,
+              intent: context?.intent,
+              variant_id: context?.variantId,
+              device_type: context?.deviceType,
+            })}
             placeholder="+7 (___) ___-__-__"
             className={`flex-1 h-12 text-base ${error ? 'border-destructive' : isPhoneValid ? 'border-success' : ''}`}
           />
