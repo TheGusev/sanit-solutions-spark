@@ -233,6 +233,12 @@ export function LeadFormModal({ open, onOpenChange, calculatorData, onSuccess }:
                 id="phone"
                 value={phone}
                 onChange={handlePhoneChange}
+                onBlur={() => isPhoneValid && trackPhoneInput(phone, 'lead_modal', {
+                  session_id: context?.sessionId,
+                  intent: context?.intent,
+                  variant_id: context?.variantId,
+                  device_type: context?.deviceType,
+                })}
                 placeholder="+7 (___) ___-__-__"
                 className={`h-12 text-base ${errors.phone ? "border-destructive" : isPhoneValid ? "border-success" : ""}`}
               />
