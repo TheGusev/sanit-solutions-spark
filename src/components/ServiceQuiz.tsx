@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
 import { useTraffic } from '@/contexts/TrafficContext';
-import { trackGoal, getYmGoalPrefix } from '@/lib/analytics';
+import { trackGoal, getYmGoalPrefix, trackPhoneInput } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import AnimatedSection from '@/components/AnimatedSection';
 
