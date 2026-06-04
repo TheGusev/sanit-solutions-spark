@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Phone, CheckCircle2, Loader2, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/hooks/use-toast";
-import { trackGoal } from "@/lib/analytics";
+import { trackGoal, trackPhoneInput } from "@/lib/analytics";
 import { useTraffic } from "@/contexts/TrafficContext";
 import { formatRuPhone, isValidRuPhone, RU_PHONE_INITIAL, getCurrentPageUrl } from "@/lib/phoneUtils";
 
