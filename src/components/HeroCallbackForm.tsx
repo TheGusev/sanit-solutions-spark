@@ -116,6 +116,13 @@ export default function HeroCallbackForm({ serviceSlug }: HeroCallbackFormProps)
           placeholder="+7 (___) ___-__-__"
           value={phone}
           onChange={(e) => setPhone(formatRuPhone(e.target.value))}
+          onBlur={() => isPhoneValid && trackPhoneInput(phone, 'hero_callback', {
+            session_id: context?.sessionId,
+            intent: context?.intent,
+            variant_id: context?.variantId,
+            device_type: context?.deviceType,
+            service: serviceSlug,
+          })}
           className={`h-12 text-base flex-1 ${
             phone.length > 4 && !isPhoneValid ? 'border-destructive' : isPhoneValid ? 'border-success' : ''
           }`}
