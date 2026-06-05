@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 04.06.2026 | **Статус:** STABLE | **Финальный вердикт:** SAFE TO KEEP LIVE
+**Дата:** 05.06.2026 | **Статус:** STABLE | **Финальный вердикт:** SAFE TO KEEP LIVE
 
 ---
 
@@ -29,12 +29,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 800 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 921 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 698 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 838 мс | — |
-| /blog/ | ✅ 200 | 720 мс | — |
-| /contacts/ | ✅ 200 | 560 мс | — |
+| / | ✅ 200 | 986 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 1111 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 1068 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 698 мс | — |
+| /blog/ | ✅ 200 | 734 мс | — |
+| /contacts/ | ✅ 200 | 853 мс | — |
 
 ---
 
@@ -68,8 +68,8 @@
 |---|---|---|
 | seoRoutes → sitemap | ✅ | Compile-time vs public sitemap |
 | sitemap → seoRoutes | ⚠️ 868 orphan | Допустимы NCH/aux URL |
-| Sample HTTP 200 | ✅ | Детерминистическая выборка (50) |
-| Sample canonical match | ✅ | Первые 10 из выборки |
+| Sample HTTP 200 | ❌ 2/50 | Детерминистическая выборка (50) |
+| Sample canonical match | ❌ 1/10 | Первые 10 из выборки |
 
 ---
 
@@ -105,9 +105,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 756 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 908 мс | Порог: 3000 мс |
 | Largest HTML sample | 122.1 KB | Из representative audit |
-| SSL сертификат | ✅ 21.07.2026 | 47 дн. до истечения |
+| SSL сертификат | ✅ 21.07.2026 | 46 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
 | Bundle size | unavailable | Не измеряется в runtime-мониторе |
 
@@ -126,7 +126,7 @@
 | representative failures | 0 | 0 | 0 |
 | critical alerts | 0 | 0 | 0 |
 | warnings | 0 | 0 | 0 |
-| avg response time (мс) | 756 | 813 | -57 |
+| avg response time (мс) | 908 | 756 | +152 |
 
 ---
 
@@ -160,4 +160,4 @@
 
 ---
 
-**Последнее обновление:** 04.06.2026 12:47 MSK
+**Последнее обновление:** 05.06.2026 12:35 MSK
