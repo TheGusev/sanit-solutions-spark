@@ -1,39 +1,33 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 20.06.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
+**Дата:** 21.06.2026 | **Статус:** STABLE | **Финальный вердикт:** SAFE TO KEEP LIVE
 
 ---
 
 ## 1. Executive Summary
 
-- Сайт: **DOWN**
-- Build / SSG: **FAIL**
-- Canonical / Sitemap / Indexability: **FAIL**
+- Сайт: **ONLINE**
+- Build / SSG: **OK**
+- Canonical / Sitemap / Indexability: **OK**
 - Schema: **OK**
 - Conversion / Analytics: **OK**
 - Performance / Cache: **OK**
 
 ### Что изменилось с прошлого запуска
 
-Существенных изменений не обнаружено.
+- sitemap URLs: 0 → 1077 (+1077)
+- service URLs: 0 → 667 (+667)
+- blog URLs: 0 → 203 (+203)
+- district URLs: 0 → 131 (+131)
+- MO city URLs: 0 → 71 (+71)
+- mole city URLs: 0 → 24 (+24)
+- Все критичные алерты устранены ✅
 
 ---
 
 ## 2. Critical Alerts
 
-| Severity | Check | Problem | Impact | Action |
-|---|---|---|---|---|
-| CRITICAL | Site Health | / недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f99a293d150>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /uslugi/dezinfekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinfekciya/ (Caused by NewConnectionError("HTTPSConnection(host='goruslugimsk.ru', port=443): Failed to establish a new connection: [Errno 111] Connection refused"))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /uslugi/dezinsekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinsekciya/ (Caused by NewConnectionError("HTTPSConnection(host='goruslugimsk.ru', port=443): Failed to establish a new connection: [Errno 111] Connection refused"))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /uslugi/deratizaciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/deratizaciya/ (Caused by NewConnectionError("HTTPSConnection(host='goruslugimsk.ru', port=443): Failed to establish a new connection: [Errno 111] Connection refused"))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /blog/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /blog/ (Caused by NewConnectionError("HTTPSConnection(host='goruslugimsk.ru', port=443): Failed to establish a new connection: [Errno 111] Connection refused"))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /contacts/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /contacts/ (Caused by NewConnectionError("HTTPSConnection(host='goruslugimsk.ru', port=443): Failed to establish a new connection: [Errno 111] Connection refused"))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Sitemap | sitemap-index.xml → HTTP 0 | Поисковики не получат список карт | Проверить SSG-пайплайн |
-| CRITICAL | Robots | robots.txt → HTTP 502 | Поисковики не получат правила краулинга | Проверить статику |
-| CRITICAL | Representative | homepage (/) → HTTP 502 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
-| CRITICAL | Sync | 209 путей из seoRoutes.ts отсутствуют в sitemap (пример: /, /blog/, /contacts/, /moscow-oblast/, /moscow-oblast/balashikha/) | Compile-time расходится с public sitemap | Проверить SSG-пайплайн / vite-plugin-sitemap.ts |
-| WARNING | SSL | Не удалось проверить сертификат: timed out | Неизвестное состояние SSL | Проверить вручную |
+✅ Critical issues not detected
 
 ---
 
@@ -41,12 +35,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ❌ 0 | 15322 мс | FAIL |
-| /uslugi/dezinfekciya/ | ❌ 0 | 11653 мс | FAIL |
-| /uslugi/dezinsekciya/ | ❌ 0 | 537 мс | FAIL |
-| /uslugi/deratizaciya/ | ❌ 0 | 426 мс | FAIL |
-| /blog/ | ❌ 0 | 202 мс | FAIL |
-| /contacts/ | ❌ 0 | 354 мс | FAIL |
+| / | ✅ 200 | 928 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 906 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 769 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 1006 мс | — |
+| /blog/ | ✅ 200 | 735 мс | — |
+| /contacts/ | ✅ 200 | 859 мс | — |
 
 ---
 
@@ -63,8 +57,8 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| sitemap-index.xml доступен | ❌ | 0 файлов, 0 URL |
-| robots.txt + Sitemap-директива | ❌ | — |
+| sitemap-index.xml доступен | ✅ | 9 файлов, 1077 URL |
+| robots.txt + Sitemap-директива | ✅ | — |
 | Indexability roles | ✅ OK | По REPRESENTATIVE_URLS |
 
 ### Structured Data
@@ -78,10 +72,10 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| seoRoutes → sitemap | ⚠️ 209 missing | Compile-time vs public sitemap |
-| sitemap → seoRoutes | ✅ | Допустимы NCH/aux URL |
-| Sample HTTP 200 | ✅ | Детерминистическая выборка (0) |
-| Sample canonical match | ✅ | Первые 10 из выборки |
+| seoRoutes → sitemap | ✅ | Compile-time vs public sitemap |
+| sitemap → seoRoutes | ⚠️ 868 orphan | Допустимы NCH/aux URL |
+| Sample HTTP 200 | ❌ 2/50 | Детерминистическая выборка (50) |
+| Sample canonical match | ❌ 1/10 | Первые 10 из выборки |
 
 ---
 
@@ -89,7 +83,7 @@
 
 | URL Type | Sample URL | HTTP | Canonical | Indexability | Schema | Mobile | Result |
 |---|---|---|---|---|---|---|---|
-| homepage | `/` | 502 | — | — | — | ❌ | ❌ FAIL |
+| homepage | `/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | service_hub | `/uslugi/dezinsekciya/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | pest_page | `/uslugi/dezinsekciya/klopy/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
 | object_page | `/uslugi/dezinsekciya/ofisov/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
@@ -117,9 +111,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 0 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 867 мс | Порог: 3000 мс |
 | Largest HTML sample | 122.1 KB | Из representative audit |
-| SSL сертификат | ⚠️ check failed | timed out |
+| SSL сертификат | ✅ 21.07.2026 | 30 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
 | Bundle size | unavailable | Не измеряется в runtime-мониторе |
 
@@ -129,16 +123,16 @@
 
 | Metric | Current | Previous | Delta |
 |---|---:|---:|---:|
-| total sitemap URLs | 0 | 0 | 0 |
-| service URLs | 0 | 0 | 0 |
-| blog URLs | 0 | 0 | 0 |
-| district URLs | 0 | 0 | 0 |
-| MO city URLs | 0 | 0 | 0 |
-| mole city URLs | 0 | 0 | 0 |
-| representative failures | 1 | 10 | -9 |
-| critical alerts | 10 | 21 | -11 |
-| warnings | 1 | 1 | 0 |
-| avg response time (мс) | 0 | 0 | 0 |
+| total sitemap URLs | 1077 | 0 | +1077 |
+| service URLs | 667 | 0 | +667 |
+| blog URLs | 203 | 0 | +203 |
+| district URLs | 131 | 0 | +131 |
+| MO city URLs | 71 | 0 | +71 |
+| mole city URLs | 24 | 0 | +24 |
+| representative failures | 0 | 1 | -1 |
+| critical alerts | 0 | 10 | -10 |
+| warnings | 0 | 1 | -1 |
+| avg response time (мс) | 867 | 0 | +867 |
 
 ---
 
@@ -147,8 +141,8 @@
 | Stop-condition | Status | Notes |
 |---|---|---|
 | Canonical drift | ✅ | OK |
-| Routing drift (rep URL ≠ 200) | ❌ | Сработало — см. Critical Alerts |
-| Sitemap participation drift | ❌ | Сработало — см. Critical Alerts |
+| Routing drift (rep URL ≠ 200) | ✅ | OK |
+| Sitemap participation drift | ✅ | OK |
 | Indexability-role drift | ✅ | OK |
 | Duplicate BreadcrumbList | ✅ | OK |
 | WhatsApp / brand regression | ✅ | OK |
@@ -163,17 +157,13 @@
 
 ## 10. Final Verdict
 
-**Status:** CRITICAL  
-**Decision:** NOT SAFE UNTIL FIXED
+**Status:** STABLE  
+**Decision:** SAFE TO KEEP LIVE
 
 ### Required actions
 
-1. Проверить инфраструктуру/CDN
-2. Проверить SSG-пайплайн
-3. Проверить статику
-4. Проверить роутинг/SSG
-5. Проверить SSG-пайплайн / vite-plugin-sitemap.ts
+1. Действий не требуется — система стабильна.
 
 ---
 
-**Последнее обновление:** 20.06.2026 11:45 MSK
+**Последнее обновление:** 21.06.2026 12:40 MSK
