@@ -1,27 +1,56 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 22.06.2026 | **Статус:** STABLE | **Финальный вердикт:** SAFE TO KEEP LIVE
+**Дата:** 23.06.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
 
 ---
 
 ## 1. Executive Summary
 
-- Сайт: **ONLINE**
-- Build / SSG: **OK**
-- Canonical / Sitemap / Indexability: **OK**
+- Сайт: **DOWN**
+- Build / SSG: **FAIL**
+- Canonical / Sitemap / Indexability: **FAIL**
 - Schema: **OK**
-- Conversion / Analytics: **OK**
+- Conversion / Analytics: **FAIL**
 - Performance / Cache: **OK**
 
 ### Что изменилось с прошлого запуска
 
-Существенных изменений не обнаружено.
+- sitemap URLs: 1077 → 0 (-1077)
+- service URLs: 667 → 0 (-667)
+- blog URLs: 203 → 0 (-203)
+- district URLs: 131 → 0 (-131)
+- MO city URLs: 71 → 0 (-71)
+- mole city URLs: 24 → 0 (-24)
+- Появились критичные алерты: 21
 
 ---
 
 ## 2. Critical Alerts
 
-✅ Critical issues not detected
+| Severity | Check | Problem | Impact | Action |
+|---|---|---|---|---|
+| CRITICAL | Site Health | / недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f55d5f53610>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /uslugi/dezinfekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinfekciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f55d5f50290>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /uslugi/dezinsekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinsekciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f55d5f554d0>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /uslugi/deratizaciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/deratizaciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f55d5f57190>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /blog/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /blog/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f55d5f5cf90>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /contacts/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /contacts/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f55d5f5ed90>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Sitemap | sitemap-index.xml → HTTP 0 | Поисковики не получат список карт | Проверить SSG-пайплайн |
+| CRITICAL | Robots | robots.txt → HTTP 0 | Поисковики не получат правила краулинга | Проверить статику |
+| CRITICAL | Representative | homepage (/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Representative | service_hub (/uslugi/dezinsekciya/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Representative | pest_page (/uslugi/dezinsekciya/klopy/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Representative | object_page (/uslugi/dezinsekciya/ofisov/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Representative | moscow_district (/uslugi/dezinfekciya-cao/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Representative | mo_overview (/moscow-oblast/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Representative | mo_city (/moscow-oblast/podolsk/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Representative | mole_city (/uslugi/borba-s-krotami/khimki/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Representative | blog_post (/blog/klopy-v-kvartire/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Representative | excluded_page (/uslugi/sertifikaciya/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
+| CRITICAL | Conversion | На главной нет Telegram CTA | Потеря канала конверсии | Проверить FloatingButtons.tsx |
+| CRITICAL | Analytics | Метрика 105828040 не найдена на главной | Полная потеря аналитики | Восстановить счётчик |
+| CRITICAL | Sync | 209 путей из seoRoutes.ts отсутствуют в sitemap (пример: /, /blog/, /contacts/, /moscow-oblast/, /moscow-oblast/balashikha/) | Compile-time расходится с public sitemap | Проверить SSG-пайплайн / vite-plugin-sitemap.ts |
+| WARNING | SSL | Не удалось проверить сертификат: timed out | Неизвестное состояние SSL | Проверить вручную |
 
 ---
 
@@ -29,12 +58,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 1042 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 1100 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 766 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 1095 мс | — |
-| /blog/ | ✅ 200 | 1015 мс | — |
-| /contacts/ | ✅ 200 | 897 мс | — |
+| / | ❌ 0 | 15263 мс | FAIL |
+| /uslugi/dezinfekciya/ | ❌ 0 | 15203 мс | FAIL |
+| /uslugi/dezinsekciya/ | ❌ 0 | 15281 мс | FAIL |
+| /uslugi/deratizaciya/ | ❌ 0 | 15274 мс | FAIL |
+| /blog/ | ❌ 0 | 15268 мс | FAIL |
+| /contacts/ | ❌ 0 | 15277 мс | FAIL |
 
 ---
 
@@ -51,8 +80,8 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| sitemap-index.xml доступен | ✅ | 9 файлов, 1077 URL |
-| robots.txt + Sitemap-директива | ✅ | — |
+| sitemap-index.xml доступен | ❌ | 0 файлов, 0 URL |
+| robots.txt + Sitemap-директива | ❌ | — |
 | Indexability roles | ✅ OK | По REPRESENTATIVE_URLS |
 
 ### Structured Data
@@ -66,10 +95,10 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| seoRoutes → sitemap | ✅ | Compile-time vs public sitemap |
-| sitemap → seoRoutes | ⚠️ 868 orphan | Допустимы NCH/aux URL |
-| Sample HTTP 200 | ❌ 2/50 | Детерминистическая выборка (50) |
-| Sample canonical match | ❌ 1/10 | Первые 10 из выборки |
+| seoRoutes → sitemap | ⚠️ 209 missing | Compile-time vs public sitemap |
+| sitemap → seoRoutes | ✅ | Допустимы NCH/aux URL |
+| Sample HTTP 200 | ✅ | Детерминистическая выборка (0) |
+| Sample canonical match | ✅ | Первые 10 из выборки |
 
 ---
 
@@ -77,16 +106,16 @@
 
 | URL Type | Sample URL | HTTP | Canonical | Indexability | Schema | Mobile | Result |
 |---|---|---|---|---|---|---|---|
-| homepage | `/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| service_hub | `/uslugi/dezinsekciya/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| pest_page | `/uslugi/dezinsekciya/klopy/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| object_page | `/uslugi/dezinsekciya/ofisov/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| moscow_district | `/uslugi/dezinfekciya-cao/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| mo_overview | `/moscow-oblast/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| mo_city | `/moscow-oblast/podolsk/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| mole_city | `/uslugi/borba-s-krotami/khimki/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| blog_post | `/blog/klopy-v-kvartire/` | 200 | ✅ | ✅ index | ✅ | ✅ | ✅ OK |
-| excluded_page | `/uslugi/sertifikaciya/` | 200 | ✅ | ✅ noindex | ✅ | ✅ | ✅ OK |
+| homepage | `/` | 0 | — | — | — | ❌ | ❌ FAIL |
+| service_hub | `/uslugi/dezinsekciya/` | 0 | — | — | — | ❌ | ❌ FAIL |
+| pest_page | `/uslugi/dezinsekciya/klopy/` | 0 | — | — | — | ❌ | ❌ FAIL |
+| object_page | `/uslugi/dezinsekciya/ofisov/` | 0 | — | — | — | ❌ | ❌ FAIL |
+| moscow_district | `/uslugi/dezinfekciya-cao/` | 0 | — | — | — | ❌ | ❌ FAIL |
+| mo_overview | `/moscow-oblast/` | 0 | — | — | — | ❌ | ❌ FAIL |
+| mo_city | `/moscow-oblast/podolsk/` | 0 | — | — | — | ❌ | ❌ FAIL |
+| mole_city | `/uslugi/borba-s-krotami/khimki/` | 0 | — | — | — | ❌ | ❌ FAIL |
+| blog_post | `/blog/klopy-v-kvartire/` | 0 | — | — | — | ❌ | ❌ FAIL |
+| excluded_page | `/uslugi/sertifikaciya/` | 0 | — | — | — | ❌ | ❌ FAIL |
 
 ---
 
@@ -94,9 +123,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Telegram CTA на главной | ✅ present | — |
+| Telegram CTA на главной | ❌ missing | Проверить FloatingButtons.tsx |
 | all_conversions composite goal | ⚠️ not in HTML | Может быть в JS-bundle |
-| Yandex Metrika counter | ✅ 105828040 | — |
+| Yandex Metrika counter | ❌ missing | Проверить index.html |
 | handle-lead edge function | ⚠️ 500 | Lead flow может быть нарушен |
 
 ---
@@ -105,9 +134,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 985 мс | Порог: 3000 мс |
-| Largest HTML sample | 122.1 KB | Из representative audit |
-| SSL сертификат | ✅ 19.09.2026 | 89 дн. до истечения |
+| Avg response time (key URLs) | 0 мс | Порог: 3000 мс |
+| Largest HTML sample | 0 KB | Из representative audit |
+| SSL сертификат | ⚠️ check failed | timed out |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
 | Bundle size | unavailable | Не измеряется в runtime-мониторе |
 
@@ -117,16 +146,16 @@
 
 | Metric | Current | Previous | Delta |
 |---|---:|---:|---:|
-| total sitemap URLs | 1077 | 1077 | 0 |
-| service URLs | 667 | 667 | 0 |
-| blog URLs | 203 | 203 | 0 |
-| district URLs | 131 | 131 | 0 |
-| MO city URLs | 71 | 71 | 0 |
-| mole city URLs | 24 | 24 | 0 |
-| representative failures | 0 | 0 | 0 |
-| critical alerts | 0 | 0 | 0 |
-| warnings | 0 | 0 | 0 |
-| avg response time (мс) | 985 | 867 | +118 |
+| total sitemap URLs | 0 | 1077 | -1077 |
+| service URLs | 0 | 667 | -667 |
+| blog URLs | 0 | 203 | -203 |
+| district URLs | 0 | 131 | -131 |
+| MO city URLs | 0 | 71 | -71 |
+| mole city URLs | 0 | 24 | -24 |
+| representative failures | 10 | 0 | +10 |
+| critical alerts | 21 | 0 | +21 |
+| warnings | 1 | 0 | +1 |
+| avg response time (мс) | 0 | 985 | -985 |
 
 ---
 
@@ -135,13 +164,13 @@
 | Stop-condition | Status | Notes |
 |---|---|---|
 | Canonical drift | ✅ | OK |
-| Routing drift (rep URL ≠ 200) | ✅ | OK |
-| Sitemap participation drift | ✅ | OK |
+| Routing drift (rep URL ≠ 200) | ❌ | Сработало — см. Critical Alerts |
+| Sitemap participation drift | ❌ | Сработало — см. Critical Alerts |
 | Indexability-role drift | ✅ | OK |
 | Duplicate BreadcrumbList | ✅ | OK |
 | WhatsApp / brand regression | ✅ | OK |
-| Analytics regression | ✅ | OK |
-| Conversion regression | ✅ | OK |
+| Analytics regression | ❌ | Сработало — см. Critical Alerts |
+| Conversion regression | ❌ | Сработало — см. Critical Alerts |
 | Malformed JSON-LD | ✅ | OK |
 | Critical response time breach | ✅ | OK |
 | Internal linking leak (/admin) | ✅ | OK |
@@ -151,13 +180,17 @@
 
 ## 10. Final Verdict
 
-**Status:** STABLE  
-**Decision:** SAFE TO KEEP LIVE
+**Status:** CRITICAL  
+**Decision:** NOT SAFE UNTIL FIXED
 
 ### Required actions
 
-1. Действий не требуется — система стабильна.
+1. Проверить инфраструктуру/CDN
+2. Проверить SSG-пайплайн
+3. Проверить статику
+4. Проверить роутинг/SSG
+5. Проверить FloatingButtons.tsx
 
 ---
 
-**Последнее обновление:** 22.06.2026 14:40 MSK
+**Последнее обновление:** 23.06.2026 12:31 MSK
