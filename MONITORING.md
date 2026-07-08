@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 07.07.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
+**Дата:** 08.07.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
 
 ---
 
@@ -52,12 +52,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ❌ 0 | 589 мс | FAIL |
-| /uslugi/dezinfekciya/ | ❌ 0 | 411 мс | FAIL |
-| /uslugi/dezinsekciya/ | ❌ 0 | 418 мс | FAIL |
-| /uslugi/deratizaciya/ | ❌ 0 | 4433 мс | FAIL |
-| /blog/ | ❌ 0 | 445 мс | FAIL |
-| /contacts/ | ❌ 0 | 421 мс | FAIL |
+| / | ❌ 0 | 494 мс | FAIL |
+| /uslugi/dezinfekciya/ | ❌ 0 | 554 мс | FAIL |
+| /uslugi/dezinsekciya/ | ❌ 0 | 510 мс | FAIL |
+| /uslugi/deratizaciya/ | ❌ 0 | 415 мс | FAIL |
+| /blog/ | ❌ 0 | 271 мс | FAIL |
+| /contacts/ | ❌ 0 | 614 мс | FAIL |
 
 ---
 
@@ -187,4 +187,4 @@
 
 ---
 
-**Последнее обновление:** 07.07.2026 12:28 MSK
+**Последнее обновление:** 08.07.2026 11:13 MSK
