@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 27.07.2026 | **Статус:** WARNING | **Финальный вердикт:** SAFE WITH WARNINGS
+**Дата:** 28.07.2026 | **Статус:** STABLE | **Финальный вердикт:** SAFE TO KEEP LIVE
 
 ---
 
@@ -11,7 +11,7 @@
 - Canonical / Sitemap / Indexability: **OK**
 - Schema: **OK**
 - Conversion / Analytics: **OK**
-- Performance / Cache: **WARNING**
+- Performance / Cache: **OK**
 
 ### Что изменилось с прошлого запуска
 
@@ -21,9 +21,7 @@
 
 ## 2. Critical Alerts
 
-| Severity | Check | Problem | Impact | Action |
-|---|---|---|---|---|
-| WARNING | Performance | / отвечает 5063 мс (>3000) | Замедление на критичной странице | Проверить кэш/bundle |
+✅ Critical issues not detected
 
 ---
 
@@ -31,12 +29,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 5063 мс | медленно |
-| /uslugi/dezinfekciya/ | ✅ 200 | 2063 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 1109 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 1213 мс | — |
-| /blog/ | ✅ 200 | 1099 мс | — |
-| /contacts/ | ✅ 200 | 880 мс | — |
+| / | ✅ 200 | 773 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 739 мс | — |
+| /uslugi/dezinsekciya/ | ✅ 200 | 866 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 646 мс | — |
+| /blog/ | ✅ 200 | 884 мс | — |
+| /contacts/ | ✅ 200 | 593 мс | — |
 
 ---
 
@@ -107,9 +105,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 1904 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 750 мс | Порог: 3000 мс |
 | Largest HTML sample | 122.1 KB | Из representative audit |
-| SSL сертификат | ✅ 14.10.2026 | 79 дн. до истечения |
+| SSL сертификат | ✅ 14.10.2026 | 78 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
 | Bundle size | unavailable | Не измеряется в runtime-мониторе |
 
@@ -127,8 +125,8 @@
 | mole city URLs | 24 | 24 | 0 |
 | representative failures | 0 | 0 | 0 |
 | critical alerts | 0 | 0 | 0 |
-| warnings | 1 | 0 | +1 |
-| avg response time (мс) | 1904 | 739 | +1165 |
+| warnings | 0 | 1 | -1 |
+| avg response time (мс) | 750 | 1904 | -1154 |
 
 ---
 
@@ -145,7 +143,7 @@
 | Analytics regression | ✅ | OK |
 | Conversion regression | ✅ | OK |
 | Malformed JSON-LD | ✅ | OK |
-| Critical response time breach | ❌ | Сработало — см. Critical Alerts |
+| Critical response time breach | ✅ | OK |
 | Internal linking leak (/admin) | ✅ | OK |
 | SSL expiry < 14 дней | ✅ | OK |
 
@@ -153,13 +151,13 @@
 
 ## 10. Final Verdict
 
-**Status:** WARNING  
-**Decision:** SAFE WITH WARNINGS
+**Status:** STABLE  
+**Decision:** SAFE TO KEEP LIVE
 
 ### Required actions
 
-1. Проверить кэш/bundle
+1. Действий не требуется — система стабильна.
 
 ---
 
-**Последнее обновление:** 27.07.2026 12:37 MSK
+**Последнее обновление:** 28.07.2026 11:21 MSK
