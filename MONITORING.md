@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 22.08.2026 | **Статус:** STABLE | **Финальный вердикт:** SAFE TO KEEP LIVE
+**Дата:** 23.08.2026 | **Статус:** WARNING | **Финальный вердикт:** SAFE WITH WARNINGS
 
 ---
 
@@ -11,7 +11,7 @@
 - Canonical / Sitemap / Indexability: **OK**
 - Schema: **OK**
 - Conversion / Analytics: **OK**
-- Performance / Cache: **OK**
+- Performance / Cache: **WARNING**
 
 ### Что изменилось с прошлого запуска
 
@@ -21,7 +21,9 @@
 
 ## 2. Critical Alerts
 
-✅ Critical issues not detected
+| Severity | Check | Problem | Impact | Action |
+|---|---|---|---|---|
+| WARNING | Performance | /uslugi/dezinfekciya/ отвечает 3237 мс (>3000) | Замедление на критичной странице | Проверить кэш/bundle |
 
 ---
 
@@ -29,12 +31,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ✅ 200 | 921 мс | — |
-| /uslugi/dezinfekciya/ | ✅ 200 | 693 мс | — |
-| /uslugi/dezinsekciya/ | ✅ 200 | 843 мс | — |
-| /uslugi/deratizaciya/ | ✅ 200 | 558 мс | — |
-| /blog/ | ✅ 200 | 667 мс | — |
-| /contacts/ | ✅ 200 | 724 мс | — |
+| / | ✅ 200 | 678 мс | — |
+| /uslugi/dezinfekciya/ | ✅ 200 | 3237 мс | медленно |
+| /uslugi/dezinsekciya/ | ✅ 200 | 694 мс | — |
+| /uslugi/deratizaciya/ | ✅ 200 | 720 мс | — |
+| /blog/ | ✅ 200 | 861 мс | — |
+| /contacts/ | ✅ 200 | 645 мс | — |
 
 ---
 
@@ -97,7 +99,7 @@
 | Telegram CTA на главной | ✅ present | — |
 | all_conversions composite goal | ⚠️ not in HTML | Может быть в JS-bundle |
 | Yandex Metrika counter | ✅ 105828040 | — |
-| handle-lead edge function | ⚠️ 500 | Lead flow может быть нарушен |
+| handle-lead edge function | ⚠️ HTTPSConnectionPool(host='gimkzlozhwwgetlgtgvj.supabase.co', port=443): Max retries exceeded with url: /functions/v1/handle-lead (Caused by NameResolutionError("HTTPSConnection(host='gimkzlozhwwgetlgtgvj.supabase.co', port=443): Failed to resolve 'gimkzlozhwwgetlgtgvj.supabase.co' ([Errno -2] Name or service not known)")) | Lead flow может быть нарушен |
 
 ---
 
@@ -105,9 +107,9 @@
 
 | Check | Result | Notes |
 |---|---|---|
-| Avg response time (key URLs) | 734 мс | Порог: 3000 мс |
+| Avg response time (key URLs) | 1139 мс | Порог: 3000 мс |
 | Largest HTML sample | 122.1 KB | Из representative audit |
-| SSL сертификат | ✅ 14.10.2026 | 53 дн. до истечения |
+| SSL сертификат | ✅ 14.10.2026 | 52 дн. до истечения |
 | PageSpeed Insights | unavailable | Источник данных не подключён |
 | Bundle size | unavailable | Не измеряется в runtime-мониторе |
 
@@ -125,8 +127,8 @@
 | mole city URLs | 24 | 24 | 0 |
 | representative failures | 0 | 0 | 0 |
 | critical alerts | 0 | 0 | 0 |
-| warnings | 0 | 0 | 0 |
-| avg response time (мс) | 734 | 1013 | -279 |
+| warnings | 1 | 0 | +1 |
+| avg response time (мс) | 1139 | 734 | +405 |
 
 ---
 
@@ -143,7 +145,7 @@
 | Analytics regression | ✅ | OK |
 | Conversion regression | ✅ | OK |
 | Malformed JSON-LD | ✅ | OK |
-| Critical response time breach | ✅ | OK |
+| Critical response time breach | ❌ | Сработало — см. Critical Alerts |
 | Internal linking leak (/admin) | ✅ | OK |
 | SSL expiry < 14 дней | ✅ | OK |
 
@@ -151,13 +153,13 @@
 
 ## 10. Final Verdict
 
-**Status:** STABLE  
-**Decision:** SAFE TO KEEP LIVE
+**Status:** WARNING  
+**Decision:** SAFE WITH WARNINGS
 
 ### Required actions
 
-1. Действий не требуется — система стабильна.
+1. Проверить кэш/bundle
 
 ---
 
-**Последнее обновление:** 22.08.2026 09:27 MSK
+**Последнее обновление:** 23.08.2026 09:28 MSK
