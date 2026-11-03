@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 02.11.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
+**Дата:** 03.11.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
 
 ---
 
@@ -15,13 +15,7 @@
 
 ### Что изменилось с прошлого запуска
 
-- sitemap URLs: 1077 → 0 (-1077)
-- service URLs: 667 → 0 (-667)
-- blog URLs: 203 → 0 (-203)
-- district URLs: 131 → 0 (-131)
-- MO city URLs: 71 → 0 (-71)
-- mole city URLs: 24 → 0 (-24)
-- Появились критичные алерты: 21
+Существенных изменений не обнаружено.
 
 ---
 
@@ -29,12 +23,12 @@
 
 | Severity | Check | Problem | Impact | Action |
 |---|---|---|---|---|
-| CRITICAL | Site Health | / недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f82997c44d0>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /uslugi/dezinfekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinfekciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f8298d2a9d0>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /uslugi/dezinsekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinsekciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f8298d310d0>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /uslugi/deratizaciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/deratizaciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f8298d33210>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /blog/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /blog/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f8298d39410>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /contacts/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /contacts/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f8298d3b650>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | / недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f22f7d7f510>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /uslugi/dezinfekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinfekciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f22f8130990>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /uslugi/dezinsekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinsekciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f22f7d89750>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /uslugi/deratizaciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/deratizaciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f22f7d8b890>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /blog/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /blog/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f22f7d91ad0>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /contacts/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /contacts/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7f22f7d93cd0>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
 | CRITICAL | Sitemap | sitemap-index.xml → HTTP 0 | Поисковики не получат список карт | Проверить SSG-пайплайн |
 | CRITICAL | Robots | robots.txt → HTTP 0 | Поисковики не получат правила краулинга | Проверить статику |
 | CRITICAL | Representative | homepage (/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
@@ -58,12 +52,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ❌ 0 | 15360 мс | FAIL |
-| /uslugi/dezinfekciya/ | ❌ 0 | 15340 мс | FAIL |
-| /uslugi/dezinsekciya/ | ❌ 0 | 15175 мс | FAIL |
-| /uslugi/deratizaciya/ | ❌ 0 | 15499 мс | FAIL |
+| / | ❌ 0 | 15347 мс | FAIL |
+| /uslugi/dezinfekciya/ | ❌ 0 | 15349 мс | FAIL |
+| /uslugi/dezinsekciya/ | ❌ 0 | 15015 мс | FAIL |
+| /uslugi/deratizaciya/ | ❌ 0 | 15265 мс | FAIL |
 | /blog/ | ❌ 0 | 15015 мс | FAIL |
-| /contacts/ | ❌ 0 | 15348 мс | FAIL |
+| /contacts/ | ❌ 0 | 15015 мс | FAIL |
 
 ---
 
@@ -146,16 +140,16 @@
 
 | Metric | Current | Previous | Delta |
 |---|---:|---:|---:|
-| total sitemap URLs | 0 | 1077 | -1077 |
-| service URLs | 0 | 667 | -667 |
-| blog URLs | 0 | 203 | -203 |
-| district URLs | 0 | 131 | -131 |
-| MO city URLs | 0 | 71 | -71 |
-| mole city URLs | 0 | 24 | -24 |
-| representative failures | 10 | 0 | +10 |
-| critical alerts | 21 | 0 | +21 |
-| warnings | 1 | 0 | +1 |
-| avg response time (мс) | 0 | 776 | -776 |
+| total sitemap URLs | 0 | 0 | 0 |
+| service URLs | 0 | 0 | 0 |
+| blog URLs | 0 | 0 | 0 |
+| district URLs | 0 | 0 | 0 |
+| MO city URLs | 0 | 0 | 0 |
+| mole city URLs | 0 | 0 | 0 |
+| representative failures | 10 | 10 | 0 |
+| critical alerts | 21 | 21 | 0 |
+| warnings | 1 | 1 | 0 |
+| avg response time (мс) | 0 | 0 | 0 |
 
 ---
 
@@ -193,4 +187,4 @@
 
 ---
 
-**Последнее обновление:** 02.11.2026 17:30 MSK
+**Последнее обновление:** 03.11.2026 16:29 MSK
