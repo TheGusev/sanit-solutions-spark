@@ -1,6 +1,6 @@
 # 🤖 MONITORING.md — goruslugimsk.ru
 
-**Дата:** 12.11.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
+**Дата:** 13.11.2026 | **Статус:** CRITICAL | **Финальный вердикт:** NOT SAFE UNTIL FIXED
 
 ---
 
@@ -23,12 +23,12 @@
 
 | Severity | Check | Problem | Impact | Action |
 |---|---|---|---|---|
-| CRITICAL | Site Health | / недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7741c754f910>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /uslugi/dezinfekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinfekciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7741c5a734d0>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /uslugi/dezinsekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinsekciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7741c5a79610>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /uslugi/deratizaciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/deratizaciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7741c5a7b750>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /blog/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /blog/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7741c5305950>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
-| CRITICAL | Site Health | /contacts/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /contacts/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7741c5a7a090>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | / недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7b52eaa93f90>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /uslugi/dezinfekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinfekciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7b52ea306c90>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /uslugi/dezinsekciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/dezinsekciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7b52ea30ce10>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /uslugi/deratizaciya/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /uslugi/deratizaciya/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7b52ea30ef50>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /blog/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /blog/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7b52ea319190>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
+| CRITICAL | Site Health | /contacts/ недоступен (HTTPSConnectionPool(host='goruslugimsk.ru', port=443): Max retries exceeded with url: /contacts/ (Caused by ConnectTimeoutError(<HTTPSConnection(host='goruslugimsk.ru', port=443) at 0x7b52ea30d490>, 'Connection to goruslugimsk.ru timed out. (connect timeout=15)'))) | Страница не отвечает | Проверить инфраструктуру/CDN |
 | CRITICAL | Sitemap | sitemap-index.xml → HTTP 0 | Поисковики не получат список карт | Проверить SSG-пайплайн |
 | CRITICAL | Robots | robots.txt → HTTP 0 | Поисковики не получат правила краулинга | Проверить статику |
 | CRITICAL | Representative | homepage (/) → HTTP 0 | Шаблон страницы не отдаётся | Проверить роутинг/SSG |
@@ -52,12 +52,12 @@
 
 | URL | HTTP | Response Time | Notes |
 |---|---|---:|---|
-| / | ❌ 0 | 15249 мс | FAIL |
-| /uslugi/dezinfekciya/ | ❌ 0 | 15202 мс | FAIL |
-| /uslugi/dezinsekciya/ | ❌ 0 | 15200 мс | FAIL |
-| /uslugi/deratizaciya/ | ❌ 0 | 15198 мс | FAIL |
-| /blog/ | ❌ 0 | 15235 мс | FAIL |
-| /contacts/ | ❌ 0 | 15245 мс | FAIL |
+| / | ❌ 0 | 15351 мс | FAIL |
+| /uslugi/dezinfekciya/ | ❌ 0 | 15365 мс | FAIL |
+| /uslugi/dezinsekciya/ | ❌ 0 | 15015 мс | FAIL |
+| /uslugi/deratizaciya/ | ❌ 0 | 15530 мс | FAIL |
+| /blog/ | ❌ 0 | 15017 мс | FAIL |
+| /contacts/ | ❌ 0 | 15348 мс | FAIL |
 
 ---
 
@@ -187,4 +187,4 @@
 
 ---
 
-**Последнее обновление:** 12.11.2026 17:30 MSK
+**Последнее обновление:** 13.11.2026 16:49 MSK
